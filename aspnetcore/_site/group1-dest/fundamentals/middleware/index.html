@@ -1,0 +1,777 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#38388;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#38388;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/middleware/index">
+<h1 id="aspnet-core-middleware">ASP.NET Core 中间件</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://ardalis.com/">Steve Smith</a></p>
+<p>中间件是一种装配到应用管道以处理请求和响应的软件。 每个组件：</p>
+<ul>
+<li>选择是否将请求传递到管道中的下一个组件。</li>
+<li>可在管道中的下一个组件前后执行工作。</li>
+</ul>
+<p>请求委托用于生成请求管道。 请求委托处理每个 HTTP 请求。</p>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Builder.RunExtensions.Run%2A&gt;&lt;xref:Microsoft.AspNetCore.Builder.MapExtensions.Map%2A&gt; 和 &lt;xref:Microsoft.AspNetCore.Builder.UseExtensions.Use%2A&gt; 扩展方法来配置请求委托。 可将一个单独的请求委托并行指定为匿名方法（称为并行中间件），或在可重用的类中对其进行定义。 这些可重用的类和并行匿名方法即为中间件，也叫中间件组件。 请求管道中的每个中间件组件负责调用管道中的下一个组件，或使管道短路。 当中间件短路时，它被称为“终端中间件”，因为它阻止中间件进一步处理请求。</p>
+<p><a class="xref" href="../../migration/http-modules.html">将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件</a>介绍了 ASP.NET Core 和 ASP.NET 4.x 中请求管道之间的差异，并提供了更多的中间件示例。</p>
+<h2 id="create-a-middleware-pipeline-with-iapplicationbuilder">使用 IApplicationBuilder 创建中间件管道</h2>
+<p>ASP.NET Core 请求管道包含一系列请求委托，依次调用。 下图演示了这一概念。 沿黑色箭头执行。</p>
+<p><img src="index/_static/request-delegate-pipeline.png" alt="请求处理模式显示请求到达、通过三个中间件进行处理以及响应离开应用。 每个中间件运行其逻辑，并在 next() 语句处将请求传递到下一个中间件。 在第三个中间件处理请求之后，请求按相反顺序返回通过前两个中间件，以进行离开应用前并在其 next() 语句后的其他处理，作为对客户端的响应。"></p>
+<p>每个委托均可在下一个委托前后执行操作。 应尽早在管道中调用异常处理委托，这样它们就能捕获在管道的后期阶段发生的异常。</p>
+<p>尽可能简单的 ASP.NET Core 应用设置了处理所有请求的单个请求委托。 这种情况不包括实际请求管道。 调用单个匿名函数以响应每个 HTTP 请求。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>用 &lt;xref:Microsoft.AspNetCore.Builder.UseExtensions.Use%2A&gt; 将多个请求委托链接在一起。 <code>next</code> 参数表示管道中的下一个委托。 可通过不调用 next 参数使管道短路。 通常可在下一个委托前后执行操作，如以下示例所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>当委托不将请求传递给下一个委托时，它被称为“让请求管道短路”。 通常需要短路，因为这样可以避免不必要的工作。 例如，<a class="xref" href="../static-files.html">静态文件中间件</a>可以处理对静态文件的请求，并让管道的其余部分短路，从而起到终端中间件的作用。 如果中间件添加到管道中，且位于终止进一步处理的中间件前，它们仍处理 <code>next.Invoke</code> 语句后面的代码。 不过，请参阅下面有关尝试对已发送的响应执行写入操作的警告。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>在向客户端发送响应后，请勿调用 <code>next.Invoke</code>。 响应启动后，针对 &lt;xref:Microsoft.AspNetCore.Http.HttpResponse&gt; 的更改将引发异常。 例如，<a class="xref" href="../../performance/performance-best-practices.html#do-not-modify-the-status-code-or-headers-after-the-response-body-has-started">设置标头和状态代码更改将引发异常</a>。 调用 <code>next</code> 后写入响应正文：</p>
+<ul>
+<li>可能导致违反协议。 例如，写入的长度超过规定的 <code>Content-Length</code>。</li>
+<li>可能损坏正文格式。 例如，向 CSS 文件中写入 HTML 页脚。</li>
+</ul>
+<p>&lt;xref:Microsoft.AspNetCore.Http.HttpResponse.HasStarted%2A&gt; 是一个有用的提示，指示是否已发送标头或已写入正文。</p>
+</div>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.RunExtensions.Run%2A&gt; 委托不会收到 <code>next</code> 参数。 第一个 <code>Run</code> 委托始终为终端，用于终止管道。 <code>Run</code> 是一种约定。 某些中间件组件可能会公开在管道末尾运行的 <code>Run[Middleware]</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>若要查看翻译为非英语语言的代码注释，请在 <a href="https://github.com/MicrosoftDocs/feedback/issues/2515">此 GitHub 讨论问题</a>中告诉我们。</p>
+
+<p>在前面的示例中，<code>Run</code> 委托将 <code>&quot;Hello from 2nd delegate.&quot;</code> 写入响应，然后终止管道。 如果在 <code>Run</code> 委托之后添加了另一个 <code>Use</code> 或 <code>Run</code> 委托，则不会调用该委托。</p>
+<p><a name="order"></a></p>
+<h2 id="middleware-order">中间件顺序</h2>
+<p>下图显示了 ASP.NET Core MVC 和 Razor Pages 应用的完整请求处理管道。 你可以在典型应用中了解现有中间件的顺序，以及在哪里添加自定义中间件。 你可以完全控制如何重新排列现有中间件，或根据场景需要注入新的自定义中间件。</p>
+<p><img src="index/_static/middleware-pipeline.svg" alt="ASP.NET Core 中间件管道"></p>
+<p>上图中的“终结点”中间件为相应的应用类型（MVC 或 Razor Pages）执行筛选器管道。</p>
+<p><img src="index/_static/mvc-endpoint.svg" alt="ASP.NET Core 筛选器管道"></p>
+<p>向 <code>Startup.Configure</code> 方法添加中间件组件的顺序定义了针对请求调用这些组件的顺序，以及响应的相反顺序。 此顺序对于安全性、性能和功能至关重要。</p>
+<p>下面的 <code>Startup.Configure</code> 方法按照建议的顺序增加与安全相关的中间件组件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中：</p>
+<ul>
+<li>在使用<a class="xref" href="../../security/authentication/identity.html">单个用户帐户</a>创建新的 Web 应用时未添加的中间件已被注释掉。</li>
+<li>并非所有中间件都需要准确按照此顺序运行，但许多中间件必须遵循这个顺序。 例如：
+<ul>
+<li><code>UseCors</code>、<code>UseAuthentication</code> 和 <code>UseAuthorization</code> 必须按照上述顺序运行。</li>
+<li>由于<a href="https://github.com/dotnet/aspnetcore/issues/23218">此错误</a>，<code>UseCors</code> 当前必须在 <code>UseResponseCaching</code> 之前运行。</li>
+</ul>
+</li>
+</ul>
+<p>以下 <code>Startup.Configure</code> 方法将为常见应用方案添加中间件组件：</p>
+<ol>
+<li>异常/错误处理
+<ul>
+<li>当应用在开发环境中运行时：
+<ul>
+<li>开发人员异常页中间件 (&lt;xref:Microsoft.AspNetCore.Builder.DeveloperExceptionPageExtensions.UseDeveloperExceptionPage%2A&gt;) 报告应用运行时错误。</li>
+<li>数据库错误页中间件报告数据库运行时错误。</li>
+</ul>
+</li>
+<li>当应用在生产环境中运行时：
+<ul>
+<li>异常处理程序中间件 (&lt;xref:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler%2A&gt;) 捕获以下中间件中引发的异常。</li>
+<li>HTTP 严格传输安全协议 (HSTS) 中间件 (&lt;xref:Microsoft.AspNetCore.Builder.HstsBuilderExtensions.UseHsts%2A&gt;) 添加 <code>Strict-Transport-Security</code> 标头。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>HTTPS 重定向中间件 (&lt;xref:Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%2A&gt;) 将 HTTP 请求重定向到 HTTPS。</li>
+<li>静态文件中间件 (&lt;xref:Microsoft.AspNetCore.Builder.StaticFileExtensions.UseStaticFiles%2A&gt;) 返回静态文件，并简化进一步请求处理。</li>
+<li>Cookie 策略中间件 (&lt;xref:Microsoft.AspNetCore.Builder.CookiePolicyAppBuilderExtensions.UseCookiePolicy%2A&gt;) 使应用符合欧盟一般数据保护条例 (GDPR) 规定。</li>
+<li>用于路由请求的路由中间件 (&lt;xref:Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseRouting%2A&gt;)。</li>
+<li>身份验证中间件 (&lt;xref:Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%2A&gt;) 尝试对用户进行身份验证，然后才会允许用户访问安全资源。</li>
+<li>用于授权用户访问安全资源的授权中间件 (&lt;xref:Microsoft.AspNetCore.Builder.AuthorizationAppBuilderExtensions.UseAuthorization%2A&gt;)。</li>
+<li>会话中间件 (&lt;xref:Microsoft.AspNetCore.Builder.SessionMiddlewareExtensions.UseSession%2A&gt;) 建立和维护会话状态。 如果应用使用会话状态，请在 Cookie 策略中间件之后和 MVC 中间件之前调用会话中间件。</li>
+<li>用于将 Razor Pages 终结点添加到请求管道的终结点路由中间件（带有 &lt;xref:Microsoft.AspNetCore.Builder.RazorPagesEndpointRouteBuilderExtensions.MapRazorPages%2A&gt; 的 &lt;xref:Microsoft.AspNetCore.Builder.EndpointRoutingApplicationBuilderExtensions.UseEndpoints%2A&gt;）。</li>
+</ol>
+<!--
+
+FUTURE UPDATE
+
+On the next topic overhaul/release update, add API crosslink to "Database Error Page Middleware" in Item 1 of the list ...
+
+Microsoft.AspNetCore.Builder.DatabaseErrorPageExtensions.UseDatabaseErrorPage*
+
+... when available via the API docs.
+
+-->
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseDatabaseErrorPage();
+    }
+    else
+    {
+        app.UseExceptionHandler(&quot;/Error&quot;);
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseCookiePolicy();
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseSession();
+
+    app.UseEndpoints(endpoints =&gt;
+    {
+        endpoints.MapRazorPages();
+    });
+}
+</code></pre>
+<p>在前面的示例代码中，每个中间件扩展方法都通过 &lt;xref:Microsoft.AspNetCore.Builder?displayProperty=fullName&gt; 命名空间在 &lt;xref:Microsoft.AspNetCore.Builder.IApplicationBuilder&gt; 上公开。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler%2A&gt; 是添加到管道的第一个中间件组件。 因此，异常处理程序中间件可捕获稍后调用中发生的任何异常。</p>
+<p>尽早在管道中调用静态文件中间件，以便它可以处理请求并使其短路，而无需通过剩余组件。 静态文件中间件不提供授权检查。 可公开访问由静态文件中间件服务的任何文件，包括 wwwroot 下的文件。 若要了解如何保护静态文件，请参阅 <a class="xref" href="../static-files.html">ASP.NET Core 中的静态文件</a>。</p>
+<p>如果静态文件中间件未处理请求，则请求将被传递给执行身份验证的身份验证中间件 (&lt;xref:Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%2A&gt;)。 身份验证不使未经身份验证的请求短路。 虽然身份验证中间件对请求进行身份验证，但仅在 MVC 选择特定 Razor Page 或 MVC 控制器和操作后，才发生授权（和拒绝）。</p>
+<p>以下示例演示中间件排序，其中静态文件的请求在响应压缩中间件前由静态文件中间件进行处理。 使用此中间件顺序不压缩静态文件。 可以压缩 Razor Pages 响应。</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    // Static files aren't compressed by Static File Middleware.
+    app.UseStaticFiles();
+
+    app.UseResponseCompression();
+
+    app.UseEndpoints(endpoints =&gt;
+    {
+        endpoints.MapRazorPages();
+    });
+}
+</code></pre>
+<p>对于单页应用程序 (SPA)，SPA 中间件 &lt;xref:Microsoft.Extensions.DependencyInjection.SpaStaticFilesExtensions.UseSpaStaticFiles%2A&gt; 通常是中间件管道中的最后一个。 SPA 中间件处于最后的作用是：</p>
+<ul>
+<li>允许所有其他中间件首先响应匹配的请求。</li>
+<li>允许具有客户端侧路由的 SPA 针对服务器应用无法识别的所有路由运行。</li>
+</ul>
+<p>若要详细了解 SPA，请参阅 <a class="xref" href="../../client-side/spa/react.html">React</a> 和 <a class="xref" href="../../client-side/spa/angular.html">Angular</a> 项目模板的指南。</p>
+<h3 id="forwarded-headers-middleware-order">转接头中间件顺序</h3>
+<p>转接头中间件应在其他中间件之前运行。 此顺序可确保依赖于转接头信息的中间件可以使用标头值进行处理。 若要在诊断和错误处理中间件后运行转接头中间件，请参阅<a class="xref" href="../../host-and-deploy/proxy-load-balancer.html#fhmo">转接头中间件顺序</a>。</p>
+<h2 id="branch-the-middleware-pipeline">对中间件管道进行分支</h2>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.MapExtensions.Map%2A&gt; 扩展用作约定来创建管道分支。 <code>Map</code> 基于给定请求路径的匹配项来创建请求管道分支。 如果请求路径以给定路径开头，则执行分支。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>下表使用前面的代码显示来自 <code>http://localhost:1234</code> 的请求和响应。</p>
+<table>
+<thead>
+<tr>
+<th>请求</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>localhost:1234</td>
+<td>Hello from non-Map delegate.</td>
+</tr>
+<tr>
+<td>localhost:1234/map1</td>
+<td>Map Test 1</td>
+</tr>
+<tr>
+<td>localhost:1234/map2</td>
+<td>Map Test 2</td>
+</tr>
+<tr>
+<td>localhost:1234/map3</td>
+<td>Hello from non-Map delegate.</td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>Map</code> 时，将从 <code>HttpRequest.Path</code> 中删除匹配的路径段，并针对每个请求将该路径段追加到 <code>HttpRequest.PathBase</code>。</p>
+<p><code>Map</code> 支持嵌套，例如：</p>
+<pre><code class="lang-csharp">app.Map(&quot;/level1&quot;, level1App =&gt; {
+    level1App.Map(&quot;/level2a&quot;, level2AApp =&gt; {
+        // &quot;/level1/level2a&quot; processing
+    });
+    level1App.Map(&quot;/level2b&quot;, level2BApp =&gt; {
+        // &quot;/level1/level2b&quot; processing
+    });
+});
+</code></pre>
+<p>此外，<code>Map</code> 还可同时匹配多个段：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.MapWhenExtensions.MapWhen%2A&gt; 基于给定谓词的结果创建请求管道分支。 <code>Func&lt;HttpContext, bool&gt;</code> 类型的任何谓词均可用于将请求映射到管道的新分支。 在以下示例中，谓词用于检测查询字符串变量 <code>branch</code> 是否存在：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>下表使用前面的代码显示来自 <code>http://localhost:1234</code> 的请求和响应：</p>
+<table>
+<thead>
+<tr>
+<th>请求</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>localhost:1234</td>
+<td>Hello from non-Map delegate.</td>
+</tr>
+<tr>
+<td>localhost:1234/?branch=master</td>
+<td>Branch used = master</td>
+</tr>
+</tbody>
+</table>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.UseWhenExtensions.UseWhen%2A&gt; 也基于给定谓词的结果创建请求管道分支。 与 <code>MapWhen</code> 不同的是，如果这个分支不发生短路或包含终端中间件，则会重新加入主管道：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的示例中，响应 &quot;Hello from main pipeline.&quot; 是为所有请求编写的。 如果请求中包含查询字符串变量 <code>branch</code>，则在重新加入主管道之前会记录其值。</p>
+<h2 id="built-in-middleware">内置中间件</h2>
+<p>ASP.NET Core 附带以下中间件组件。 “顺序”列提供备注，以说明中间件在请求处理管道中的放置，以及中间件可能会终止请求处理的条件。 如果中间件让请求处理管道短路，并阻止下游中间件进一步处理请求，它被称为“终端中间件”。 若要详细了解短路，请参阅<a href="#create-a-middleware-pipeline-with-iapplicationbuilder">使用 IApplicationBuilder 创建中间件管道</a>部分。</p>
+<table>
+<thead>
+<tr>
+<th>中间件</th>
+<th>描述</th>
+<th>顺序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="../../security/authentication/identity.html">身份验证</a></td>
+<td>提供身份验证支持。</td>
+<td>在需要 <code>HttpContext.User</code> 之前。 OAuth 回叫的终端。</td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Builder.AuthorizationAppBuilderExtensions.UseAuthorization%2A">授权</a></td>
+<td>提供身份验证支持。</td>
+<td>紧接在身份验证中间件之后。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/gdpr.html">Cookie 策略</a></td>
+<td>跟踪用户是否同意存储个人信息，并强制实施 cookie 字段（如 <code>secure</code> 和 <code>SameSite</code>）的最低标准。</td>
+<td>在发出 cookie 的中间件之前。 示例：身份验证、会话、MVC (TempData)。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/cors.html">CORS</a></td>
+<td>配置跨域资源共享。</td>
+<td>在使用 CORS 的组件之前。 由于<a href="https://github.com/dotnet/aspnetcore/issues/23218">此错误</a>，<code>UseCors</code> 当前必须在 <code>UseResponseCaching</code> 之前运行。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../error-handling.html">诊断</a></td>
+<td>提供新应用的开发人员异常页、异常处理、状态代码页和默认网页的几个单独的中间件。</td>
+<td>在生成错误的组件之前。 异常终端或为新应用提供默认网页的终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../host-and-deploy/proxy-load-balancer.html">转接头</a></td>
+<td>将代理标头转发到当前请求。</td>
+<td>在使用已更新字段的组件之前。 示例：方案、主机、客户端 IP、方法。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../host-and-deploy/health-checks.html">运行状况检查</a></td>
+<td>检查 ASP.NET Core 应用及其依赖项的运行状况，如检查数据库可用性。</td>
+<td>如果请求与运行状况检查终结点匹配，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../http-requests.html#header-propagation-middleware">标头传播</a></td>
+<td>将 HTTP 标头从传入的请求传播到传出的 HTTP 客户端请求中。</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Builder.HttpMethodOverrideExtensions">HTTP 方法重写</a></td>
+<td>允许传入 POST 请求重写方法。</td>
+<td>在使用已更新方法的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/enforcing-ssl.html#require-https">HTTPS 重定向</a></td>
+<td>将所有 HTTP 请求重定向到 HTTPS。</td>
+<td>在使用 URL 的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/enforcing-ssl.html#http-strict-transport-security-protocol-hsts">HTTP 严格传输安全性 (HSTS)</a></td>
+<td>添加特殊响应标头的安全增强中间件。</td>
+<td>在发送响应之前，修改请求的组件之后。 示例：转接头、URL 重写。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../mvc/overview.html">MVC</a></td>
+<td>用 MVC/Razor Pages 处理请求。</td>
+<td>如果请求与路由匹配，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../owin.html">OWIN</a></td>
+<td>与基于 OWIN 的应用、服务器和中间件进行互操作。</td>
+<td>如果 OWIN 中间件处理完请求，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../performance/caching/middleware.html">响应缓存</a></td>
+<td>提供对缓存响应的支持。</td>
+<td>在需要缓存的组件之前。 <code>UseCORS</code> 必须在 <code>UseResponseCaching</code> 之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../performance/response-compression.html">响应压缩</a></td>
+<td>提供对压缩响应的支持。</td>
+<td>在需要压缩的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../localization.html">请求本地化</a></td>
+<td>提供本地化支持。</td>
+<td>在对本地化敏感的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../routing.html">终结点路由</a></td>
+<td>定义和约束请求路由。</td>
+<td>用于匹配路由的终端。</td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Builder.SpaApplicationBuilderExtensions.UseSpa%2A">SPA</a></td>
+<td>通过返回单页应用程序 (SPA) 的默认页面，在中间件链中处理来自这个点的所有请求</td>
+<td>在链中处于靠后位置，因此其他服务于静态文件、MVC 操作等内容的中间件占据优先位置。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../app-state.html">会话</a></td>
+<td>提供对管理用户会话的支持。</td>
+<td>在需要会话的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../static-files.html">静态文件</a></td>
+<td>为提供静态文件和目录浏览提供支持。</td>
+<td>如果请求与文件匹配，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../url-rewriting.html">URL 重写</a></td>
+<td>提供对重写 URL 和重定向请求的支持。</td>
+<td>在使用 URL 的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../websockets.html">WebSockets</a></td>
+<td>启用 WebSockets 协议。</td>
+<td>在接受 WebSocket 请求所需的组件之前。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../dependency-injection.html#lifetime-and-registration-options">生存期和注册选项</a>包含已设置范围、临时性和单一实例生存期服务的中间件的完整示例  。</li>
+<li><a class="xref" href="write.html">写入自定义 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../../test/middleware.html">测试 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../../migration/http-modules.html">将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../startup.html">ASP.NET Core 中的应用启动</a></li>
+<li><a class="xref" href="../request-features.html">ASP.NET Core 中的请求功能</a></li>
+<li><a class="xref" href="extensibility.html">ASP.NET Core 中基于工厂的中间件激活</a></li>
+<li><a class="xref" href="extensibility-third-party-container.html">使用 ASP.NET Core 中的第三方容器激活中间件</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://ardalis.com/">Steve Smith</a></p>
+<p>中间件是一种装配到应用管道以处理请求和响应的软件。 每个组件：</p>
+<ul>
+<li>选择是否将请求传递到管道中的下一个组件。</li>
+<li>可在管道中的下一个组件前后执行工作。</li>
+</ul>
+<p>请求委托用于生成请求管道。 请求委托处理每个 HTTP 请求。</p>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Builder.RunExtensions.Run%2A&gt;&lt;xref:Microsoft.AspNetCore.Builder.MapExtensions.Map%2A&gt; 和 &lt;xref:Microsoft.AspNetCore.Builder.UseExtensions.Use%2A&gt; 扩展方法来配置请求委托。 可将一个单独的请求委托并行指定为匿名方法（称为并行中间件），或在可重用的类中对其进行定义。 这些可重用的类和并行匿名方法即为中间件，也叫中间件组件。 请求管道中的每个中间件组件负责调用管道中的下一个组件，或使管道短路。 当中间件短路时，它被称为“终端中间件”，因为它阻止中间件进一步处理请求。</p>
+<p><a class="xref" href="../../migration/http-modules.html">将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件</a>介绍了 ASP.NET Core 和 ASP.NET 4.x 中请求管道之间的差异，并提供了更多的中间件示例。</p>
+<h2 id="create-a-middleware-pipeline-with-iapplicationbuilder">使用 IApplicationBuilder 创建中间件管道</h2>
+<p>ASP.NET Core 请求管道包含一系列请求委托，依次调用。 下图演示了这一概念。 沿黑色箭头执行。</p>
+<p><img src="index/_static/request-delegate-pipeline.png" alt="请求处理模式显示请求到达、通过三个中间件进行处理以及响应离开应用。 每个中间件运行其逻辑，并在 next() 语句处将请求传递到下一个中间件。 在第三个中间件处理请求之后，请求按相反顺序返回通过前两个中间件，以进行离开应用前并在其 next() 语句后的其他处理，作为对客户端的响应。"></p>
+<p>每个委托均可在下一个委托前后执行操作。 应尽早在管道中调用异常处理委托，这样它们就能捕获在管道的后期阶段发生的异常。</p>
+<p>尽可能简单的 ASP.NET Core 应用设置了处理所有请求的单个请求委托。 这种情况不包括实际请求管道。 调用单个匿名函数以响应每个 HTTP 请求。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>第一个 &lt;xref:Microsoft.AspNetCore.Builder.RunExtensions.Run%2A&gt; 委托终止了管道。</p>
+<p>用 &lt;xref:Microsoft.AspNetCore.Builder.UseExtensions.Use%2A&gt; 将多个请求委托链接在一起。 <code>next</code> 参数表示管道中的下一个委托。 可通过不调用 next 参数使管道短路。 通常可在下一个委托前后执行操作，如以下示例所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>当委托不将请求传递给下一个委托时，它被称为“让请求管道短路”。 通常需要短路，因为这样可以避免不必要的工作。 例如，<a class="xref" href="../static-files.html">静态文件中间件</a>可以处理对静态文件的请求，并让管道的其余部分短路，从而起到终端中间件的作用。 如果中间件添加到管道中，且位于终止进一步处理的中间件前，它们仍处理 <code>next.Invoke</code> 语句后面的代码。 不过，请参阅下面有关尝试对已发送的响应执行写入操作的警告。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>在向客户端发送响应后，请勿调用 <code>next.Invoke</code>。 响应启动后，针对 &lt;xref:Microsoft.AspNetCore.Http.HttpResponse&gt; 的更改将引发异常。 例如，设置标头和状态代码更改将引发异常。 调用 <code>next</code> 后写入响应正文：</p>
+<ul>
+<li>可能导致违反协议。 例如，写入的长度超过规定的 <code>Content-Length</code>。</li>
+<li>可能损坏正文格式。 例如，向 CSS 文件中写入 HTML 页脚。</li>
+</ul>
+<p>&lt;xref:Microsoft.AspNetCore.Http.HttpResponse.HasStarted%2A&gt; 是一个有用的提示，指示是否已发送标头或已写入正文。</p>
+</div>
+<p><a name="order"></a></p>
+<h2 id="middleware-order">中间件顺序</h2>
+<p>向 <code>Startup.Configure</code> 方法添加中间件组件的顺序定义了针对请求调用这些组件的顺序，以及响应的相反顺序。 此顺序对于安全性、性能和功能至关重要。</p>
+<p>下面的 <code>Startup.Configure</code> 方法按照建议的顺序增加与安全相关的中间件组件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中：</p>
+<ul>
+<li>在使用<a class="xref" href="../../security/authentication/identity.html">单个用户帐户</a>创建新的 Web 应用时未添加的中间件已被注释掉。</li>
+<li>并非所有中间件都需要准确按照此顺序运行，但许多中间件必须遵循这个顺序。 例如，<code>UseCors</code> 和 <code>UseAuthentication</code> 必须按照上述顺序运行。</li>
+</ul>
+<p>以下 <code>Startup.Configure</code> 方法将为常见应用方案添加中间件组件：</p>
+<ol>
+<li>异常/错误处理
+<ul>
+<li>当应用在开发环境中运行时：
+<ul>
+<li>开发人员异常页中间件 (&lt;xref:Microsoft.AspNetCore.Builder.DeveloperExceptionPageExtensions.UseDeveloperExceptionPage%2A&gt;) 报告应用运行时错误。</li>
+<li>数据库错误页中间件 (<code>Microsoft.AspNetCore.Builder.DatabaseErrorPageExtensions.UseDatabaseErrorPage</code>) 报告数据库运行时错误。</li>
+</ul>
+</li>
+<li>当应用在生产环境中运行时：
+<ul>
+<li>异常处理程序中间件 (&lt;xref:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler%2A&gt;) 捕获以下中间件中引发的异常。</li>
+<li>HTTP 严格传输安全协议 (HSTS) 中间件 (&lt;xref:Microsoft.AspNetCore.Builder.HstsBuilderExtensions.UseHsts%2A&gt;) 添加 <code>Strict-Transport-Security</code> 标头。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>HTTPS 重定向中间件 (&lt;xref:Microsoft.AspNetCore.Builder.HttpsPolicyBuilderExtensions.UseHttpsRedirection%2A&gt;) 将 HTTP 请求重定向到 HTTPS。</li>
+<li>静态文件中间件 (&lt;xref:Microsoft.AspNetCore.Builder.StaticFileExtensions.UseStaticFiles%2A&gt;) 返回静态文件，并简化进一步请求处理。</li>
+<li>Cookie 策略中间件 (&lt;xref:Microsoft.AspNetCore.Builder.CookiePolicyAppBuilderExtensions.UseCookiePolicy%2A&gt;) 使应用符合欧盟一般数据保护条例 (GDPR) 规定。</li>
+<li>身份验证中间件 (&lt;xref:Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%2A&gt;) 尝试对用户进行身份验证，然后才会允许用户访问安全资源。</li>
+<li>会话中间件 (&lt;xref:Microsoft.AspNetCore.Builder.SessionMiddlewareExtensions.UseSession%2A&gt;) 建立和维护会话状态。 如果应用使用会话状态，请在 Cookie 策略中间件之后和 MVC 中间件之前调用会话中间件。</li>
+<li>MVC (&lt;xref:Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions.UseMvc%2A&gt;) 将 MVC 添加到请求管道。</li>
+</ol>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseDatabaseErrorPage();
+    }
+    else
+    {
+        app.UseExceptionHandler(&quot;/Error&quot;);
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseCookiePolicy();
+    app.UseAuthentication();
+    app.UseSession();
+    app.UseMvc();
+}
+</code></pre>
+<p>在前面的示例代码中，每个中间件扩展方法都通过 &lt;xref:Microsoft.AspNetCore.Builder?displayProperty=fullName&gt; 命名空间在 &lt;xref:Microsoft.AspNetCore.Builder.IApplicationBuilder&gt; 上公开。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler%2A&gt; 是添加到管道的第一个中间件组件。 因此，异常处理程序中间件可捕获稍后调用中发生的任何异常。</p>
+<p>尽早在管道中调用静态文件中间件，以便它可以处理请求并使其短路，而无需通过剩余组件。 静态文件中间件不提供授权检查。 可公开访问由静态文件中间件服务的任何文件，包括 wwwroot 下的文件。 若要了解如何保护静态文件，请参阅 <a class="xref" href="../static-files.html">ASP.NET Core 中的静态文件</a>。</p>
+<p>如果静态文件中间件未处理请求，则请求将被传递给执行身份验证的身份验证中间件 (&lt;xref:Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication%2A&gt;)。 身份验证不使未经身份验证的请求短路。 虽然身份验证中间件对请求进行身份验证，但仅在 MVC 选择特定 Razor Page 或 MVC 控制器和操作后，才发生授权（和拒绝）。</p>
+<p>以下示例演示中间件排序，其中静态文件的请求在响应压缩中间件前由静态文件中间件进行处理。 使用此中间件顺序不压缩静态文件。 可以压缩来自 &lt;xref:Microsoft.AspNetCore.Builder.MvcApplicationBuilderExtensions.UseMvcWithDefaultRoute%2A&gt; 的 MVC 响应。</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    // Static files aren't compressed by Static File Middleware.
+    app.UseStaticFiles();
+
+    app.UseResponseCompression();
+
+    app.UseMvcWithDefaultRoute();
+}
+</code></pre>
+<h2 id="use-run-and-map">Use、Run 和 Map</h2>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Builder.UseExtensions.Use%2A&gt;、&lt;xref:Microsoft.AspNetCore.Builder.RunExtensions.Run%2A&gt; 和 &lt;xref:Microsoft.AspNetCore.Builder.MapExtensions.Map%2A&gt; 配置 HTTP 管道。 <code>Use</code> 方法可使管道短路（即不调用 <code>next</code> 请求委托）。 <code>Run</code> 是一种约定，并且某些中间件组件可公开在管道末尾运行的 <code>Run[Middleware]</code> 方法。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.MapExtensions.Map%2A&gt; 扩展用作约定来创建管道分支。 <code>Map</code> 基于给定请求路径的匹配项来创建请求管道分支。 如果请求路径以给定路径开头，则执行分支。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>下表使用前面的代码显示来自 <code>http://localhost:1234</code> 的请求和响应。</p>
+<table>
+<thead>
+<tr>
+<th>请求</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>localhost:1234</td>
+<td>Hello from non-Map delegate.</td>
+</tr>
+<tr>
+<td>localhost:1234/map1</td>
+<td>Map Test 1</td>
+</tr>
+<tr>
+<td>localhost:1234/map2</td>
+<td>Map Test 2</td>
+</tr>
+<tr>
+<td>localhost:1234/map3</td>
+<td>Hello from non-Map delegate.</td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>Map</code> 时，将从 <code>HttpRequest.Path</code> 中删除匹配的路径段，并针对每个请求将该路径段追加到 <code>HttpRequest.PathBase</code>。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.MapWhenExtensions.MapWhen%2A&gt; 基于给定谓词的结果创建请求管道分支。 <code>Func&lt;HttpContext, bool&gt;</code> 类型的任何谓词均可用于将请求映射到管道的新分支。 在以下示例中，谓词用于检测查询字符串变量 <code>branch</code> 是否存在：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>下表使用前面的代码显示来自 <code>http://localhost:1234</code> 的请求和响应。</p>
+<table>
+<thead>
+<tr>
+<th>请求</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>localhost:1234</td>
+<td>Hello from non-Map delegate.</td>
+</tr>
+<tr>
+<td>localhost:1234/?branch=master</td>
+<td>Branch used = master</td>
+</tr>
+</tbody>
+</table>
+<p><code>Map</code> 支持嵌套，例如：</p>
+<pre><code class="lang-csharp">app.Map(&quot;/level1&quot;, level1App =&gt; {
+    level1App.Map(&quot;/level2a&quot;, level2AApp =&gt; {
+        // &quot;/level1/level2a&quot; processing
+    });
+    level1App.Map(&quot;/level2b&quot;, level2BApp =&gt; {
+        // &quot;/level1/level2b&quot; processing
+    });
+});
+</code></pre>
+<p>此外，<code>Map</code> 还可同时匹配多个段：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="built-in-middleware">内置中间件</h2>
+<p>ASP.NET Core 附带以下中间件组件。 “顺序”列提供备注，以说明中间件在请求处理管道中的放置，以及中间件可能会终止请求处理的条件。 如果中间件让请求处理管道短路，并阻止下游中间件进一步处理请求，它被称为“终端中间件”。 若要详细了解短路，请参阅<a href="#create-a-middleware-pipeline-with-iapplicationbuilder">使用 IApplicationBuilder 创建中间件管道</a>部分。</p>
+<table>
+<thead>
+<tr>
+<th>中间件</th>
+<th>描述</th>
+<th>顺序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="../../security/authentication/identity.html">身份验证</a></td>
+<td>提供身份验证支持。</td>
+<td>在需要 <code>HttpContext.User</code> 之前。 OAuth 回叫的终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/gdpr.html">Cookie 策略</a></td>
+<td>跟踪用户是否同意存储个人信息，并强制实施 cookie 字段（如 <code>secure</code> 和 <code>SameSite</code>）的最低标准。</td>
+<td>在发出 cookie 的中间件之前。 示例：身份验证、会话、MVC (TempData)。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/cors.html">CORS</a></td>
+<td>配置跨域资源共享。</td>
+<td>在使用 CORS 的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../error-handling.html">诊断</a></td>
+<td>提供新应用的开发人员异常页、异常处理、状态代码页和默认网页的几个单独的中间件。</td>
+<td>在生成错误的组件之前。 异常终端或为新应用提供默认网页的终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../host-and-deploy/proxy-load-balancer.html">转接头</a></td>
+<td>将代理标头转发到当前请求。</td>
+<td>在使用已更新字段的组件之前。 示例：方案、主机、客户端 IP、方法。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../host-and-deploy/health-checks.html">运行状况检查</a></td>
+<td>检查 ASP.NET Core 应用及其依赖项的运行状况，如检查数据库可用性。</td>
+<td>如果请求与运行状况检查终结点匹配，则为终端。</td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Builder.HttpMethodOverrideExtensions">HTTP 方法重写</a></td>
+<td>允许传入 POST 请求重写方法。</td>
+<td>在使用已更新方法的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/enforcing-ssl.html#require-https">HTTPS 重定向</a></td>
+<td>将所有 HTTP 请求重定向到 HTTPS。</td>
+<td>在使用 URL 的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../security/enforcing-ssl.html#http-strict-transport-security-protocol-hsts">HTTP 严格传输安全性 (HSTS)</a></td>
+<td>添加特殊响应标头的安全增强中间件。</td>
+<td>在发送响应之前，修改请求的组件之后。 示例：转接头、URL 重写。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../mvc/overview.html">MVC</a></td>
+<td>用 MVC/Razor Pages 处理请求。</td>
+<td>如果请求与路由匹配，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../owin.html">OWIN</a></td>
+<td>与基于 OWIN 的应用、服务器和中间件进行互操作。</td>
+<td>如果 OWIN 中间件处理完请求，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../performance/caching/middleware.html">响应缓存</a></td>
+<td>提供对缓存响应的支持。</td>
+<td>在需要缓存的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../../performance/response-compression.html">响应压缩</a></td>
+<td>提供对压缩响应的支持。</td>
+<td>在需要压缩的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../localization.html">请求本地化</a></td>
+<td>提供本地化支持。</td>
+<td>在对本地化敏感的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../routing.html">终结点路由</a></td>
+<td>定义和约束请求路由。</td>
+<td>用于匹配路由的终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../app-state.html">会话</a></td>
+<td>提供对管理用户会话的支持。</td>
+<td>在需要会话的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../static-files.html">静态文件</a></td>
+<td>为提供静态文件和目录浏览提供支持。</td>
+<td>如果请求与文件匹配，则为终端。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../url-rewriting.html">URL 重写</a></td>
+<td>提供对重写 URL 和重定向请求的支持。</td>
+<td>在使用 URL 的组件之前。</td>
+</tr>
+<tr>
+<td><a class="xref" href="../websockets.html">WebSockets</a></td>
+<td>启用 WebSockets 协议。</td>
+<td>在接受 WebSocket 请求所需的组件之前。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="write.html">写入自定义 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../../test/middleware.html">测试 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../../migration/http-modules.html">将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../startup.html">ASP.NET Core 中的应用启动</a></li>
+<li><a class="xref" href="../request-features.html">ASP.NET Core 中的请求功能</a></li>
+<li><a class="xref" href="extensibility.html">ASP.NET Core 中基于工厂的中间件激活</a></li>
+<li><a class="xref" href="extensibility-third-party-container.html">使用 ASP.NET Core 中的第三方容器激活中间件</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

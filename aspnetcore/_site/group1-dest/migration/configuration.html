@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#23558;&#37197;&#32622;&#36801;&#31227;&#21040; ASP.NET Core </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#23558;&#37197;&#32622;&#36801;&#31227;&#21040; ASP.NET Core ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="migration/configuration">
+<h1 id="migrate-configuration-to-aspnet-core">将配置迁移到 ASP.NET Core</h1>
+
+<p>作者：<a href="https://ardalis.com/">Steve Smith</a> 和 <a href="https://scottaddie.com">Scott Addie</a></p>
+<p>在前面的文章中，我们开始将 <a class="xref" href="mvc.html">ASP.NET mvc 项目迁移到 ASP.NET CORE mvc</a>。 本文将迁移配置。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/migration/configuration/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="setup-configuration">设置配置</h2>
+<p>ASP.NET Core 不再使用以前版本的 ASP.NET 使用的 <em>global.asax</em> 和 <em>web.config</em> 文件。 在早期版本的 ASP.NET 中，应用程序启动逻辑放置在 <code>Application_StartUp</code> <em>global.asax</em> 内的方法中。 稍后，在 ASP.NET MVC 中， <em>Startup.cs</em> 文件包含在项目的根目录中;并在应用程序启动时调用。 ASP.NET Core 通过将所有启动逻辑放在 <em>Startup.cs</em> 文件中来完全采用这种方法。</p>
+<p><em>web.config</em> 文件也已替换为 ASP.NET Core。 配置本身现在可以配置为 <em>Startup.cs</em> 中所述的应用程序启动过程的一部分。 配置仍可利用 XML 文件，但通常 ASP.NET Core 项目会将配置值放入 JSON 格式的文件中，例如 <em>appsettings.json</em> 。 ASP.NET Core 的配置系统还可以轻松地访问环境变量，从而为特定于环境的值提供 <a class="xref" href="../security/app-secrets.html">更安全、更可靠的位置</a> 。 对于不应签入源控件的机密（如连接字符串和 API 密钥），尤其如此。 若要详细了解 ASP.NET Core 中的配置，请参阅 <a class="xref" href="../fundamentals/configuration/index.html">配置</a> 。</p>
+<p>对于本文，我们将从 <a class="xref" href="mvc.html">上一篇文章</a>中的部分迁移 ASP.NET Core 项目开始。 若要设置配置，请将以下构造函数和属性添加到位于项目根目录中的 <em>Startup.cs</em> 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请注意，此时， <em>Startup.cs</em> 文件不会进行编译，因为我们仍需要添加以下 <code>using</code> 语句：</p>
+<pre><code class="lang-csharp">using Microsoft.Extensions.Configuration;
+</code></pre>
+<p><em>appsettings.json</em> 使用适当的项模板，将文件添加到项目的根目录：</p>
+<p><img src="configuration/_static/add-appsettings-json.png" alt="添加 AppSettings JSON"></p>
+<h2 id="migrate-configuration-settings-from-webconfig">从 web.config 迁移配置设置</h2>
+<p>在元素的 <em>web.config</em> 中，我们的 ASP.NET MVC 项目包含所需的数据库连接字符串 <code>&lt;connectionStrings&gt;</code> 。 在 ASP.NET Core 项目中，我们要将此信息存储在文件中 <em>appsettings.json</em> 。 打开 <em>appsettings.json</em> ，请注意，它已包含以下内容：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上面所示的突出显示的行中，将数据库的名称从 <strong>_CHANGE_ME</strong> 更改为数据库的名称。</p>
+<h2 id="summary">摘要</h2>
+<p>ASP.NET Core 将应用程序的所有启动逻辑放在一个文件中，可以在其中定义和配置所需的服务和依赖项。 它将 <em>web.config</em> 文件替换为灵活的配置功能，该功能可利用各种文件格式（如 JSON）以及环境变量。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

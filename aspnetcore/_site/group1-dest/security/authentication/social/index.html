@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; Facebook&#12289;Google &#21644;&#22806;&#37096;&#25552;&#20379;&#31243;&#24207;&#36523;&#20221;&#39564;&#35777; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; Facebook&#12289;Google &#21644;&#22806;&#37096;&#25552;&#20379;&#31243;&#24207;&#36523;&#20221;&#39564;&#35777; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/social/index">
+<h1 id="facebook-google-and-external-provider-authentication-in-aspnet-core">ASP.NET Core 中的 Facebook、Google 和外部提供程序身份验证</h1>
+
+<p>作者：<a href="https://github.com/01binary">Valeriy Novytskyy</a> 和 <a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>本教程演示如何生成 ASP.NET Core 3.0 应用，该应用可让用户使用外部身份验证提供程序提供的凭据通过 OAuth 2.0 登录。</p>
+<p>以下几节中介绍了 <a class="xref" href="facebook-logins.html">Facebook</a>、<a class="xref" href="twitter-logins.html">Twitter</a>、<a class="xref" href="google-logins.html">Google</a> 和 <a class="xref" href="microsoft-logins.html">Microsoft</a> 提供程序，这些提供程序使用本文中创建的初学者项目。 第三方程序包中提供了其他提供程序，例如 <a href="https://github.com/aspnet-contrib/AspNet.Security.OAuth.Providers">AspNet.Security.OAuth.Providers</a> 和 <a href="https://github.com/aspnet-contrib/AspNet.Security.OpenId.Providers">AspNet.Security.OpenId.Providers</a>。</p>
+<p>让用户使用其现有凭据登录的好处：</p>
+<ul>
+<li>方便用户操作。</li>
+<li>将管理登录流程的许多复杂性转移到了第三方。</li>
+</ul>
+<p>有关社交登录如何驱动流量和客户转换的示例，请参阅 <a href="https://www.facebook.com/unsupportedbrowser">Facebook</a> 和 <a href="https://dev.twitter.com/resources/case-studies">Twitter</a> 的案例分析。</p>
+<h2 id="create-a-new-aspnet-core-project">创建新的 ASP.NET Core 项目</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>创建新项目。</li>
+<li>依次选择“ASP.NET Core Web 应用程序”和“下一步” 。</li>
+<li>提供项目名称，再确认或更改位置 。 选择“创建”。</li>
+<li>在下拉列表 (ASP.NET Core {X.Y}) 中选择最新版 ASP.NET Core，然后选择“Web 应用程序” 。</li>
+<li>在“身份验证”下，选择“更改”再设置针对单个用户帐户的身份验证  。 选择“确定”。</li>
+<li>在“创建新的 ASP.NET Core Web 应用程序”窗口中，选择“创建” 。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>打开终端。  对于 Visual Studio Code，可以打开<a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a>。</p>
+</li>
+<li><p>将目录更改为 (<code>cd</code>) 包含项目的文件夹。</p>
+</li>
+<li><p>对于 Windows，运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new webapp -o WebApp1 -au Individual -uld
+</code></pre>
+<p>对于 macOS 和 Linux，运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new webapp -o WebApp1 -au Individual
+</code></pre>
+<ul>
+<li><code>dotnet new</code> 命令在“WebApp1”文件夹中新建 Razor Pages 项目。</li>
+<li><code>-au Individual</code> 创建用于个人身份验证的代码。</li>
+<li><code>-uld</code> 使用 LocalDB，这是 SQL Server Express for Windows 的轻型版本。 省略 <code>-uld</code> 以使用 SQLite。</li>
+<li><code>code</code> 命令将在新 Visual Studio Code 实例中打开“WebApp1”文件夹。</li>
+</ul>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="apply-migrations">应用迁移</h2>
+<ul>
+<li>运行应用并选择“注册”链接。</li>
+<li>输入新帐户的电子邮件地址和密码，再选择“注册”。</li>
+<li>按照说明操作来应用迁移。</li>
+</ul>
+<h2 id="forward-request-information-with-a-proxy-or-load-balancer">使用代理或负载均衡器转发请求信息</h2>
+<p>如果应用部署在代理服务器或负载均衡器后面，则可能会将某些原始请求信息转发到请求标头中的应用。 此信息通常包括安全请求方案 (<code>https</code>)、主机和客户端 IP 地址。 应用不会自动读取这些请求标头以发现和使用原始请求信息。</p>
+<p>方案用于通过外部提供程序影响身份验证流的链接生成。 丢失安全方案 (<code>https</code>) 会导致应用生成不正确且不安全的重定向 URL。</p>
+<p>使用转发标头中间件以使应用可以使用原始请求信息来进行请求处理。</p>
+<p>有关更多信息，请参见 <a class="xref" href="../../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<h2 id="use-secretmanager-to-store-tokens-assigned-by-login-providers">使用 SecretManager 存储登录提供程序分配的令牌</h2>
+<p>社交登录提供程序在注册过程中分配“应用程序 ID”和“应用程序机密”。 确切的令牌名称因提供程序而异。 这些令牌代表应用用来访问其 API 的凭据。 令牌构成“机密”，可利用<a class="xref" href="../../app-secrets.html#secret-manager">机密管理器</a>将其链接到应用配置。 机密管理器是在配置文件（例如 appsettings.json）中存储令牌更安全替代方法。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>机密管理器仅用于开发目的。 可使用 <a class="xref" href="../../key-vault-configuration.html">Azure Key Vault 配置提供程序</a>存储和保护 Azure 测试和生产机密。</p>
+</div>
+<p>按照<a class="xref" href="../../app-secrets.html">在 ASP.NET Core 中进行开发期间安全存储应用机密</a>主题中的步骤进行操作，以便存储以下每个登录提供程序分配的令牌。</p>
+<h2 id="setup-login-providers-required-by-your-application">应用程序所需的安装登录提供程序</h2>
+<p>使用以下主题配置应用程序，以使用相应的提供程序：</p>
+<ul>
+<li><a class="xref" href="facebook-logins.html">Facebook</a> 相关说明</li>
+<li><a class="xref" href="twitter-logins.html">Twitter</a> 相关说明</li>
+<li><a class="xref" href="google-logins.html">Google</a> 相关说明</li>
+<li><a class="xref" href="microsoft-logins.html">Microsoft</a> 相关说明</li>
+<li><a class="xref" href="other-logins.html">其他提供程序</a>相关说明</li>
+</ul>
+<h2 id="multiple-authentication-providers">多个身份验证提供程序</h2>
+<p>如果应用需要多个提供程序，请在 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication">AddAuthentication</a> 后面链接提供程序扩展方法：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddMicrosoftAccount(microsoftOptions =&gt; { ... })
+    .AddGoogle(googleOptions =&gt; { ... })
+    .AddTwitter(twitterOptions =&gt; { ... })
+    .AddFacebook(facebookOptions =&gt; { ... });
+</code></pre>
+<h2 id="optionally-set-password">选择性地设置密码</h2>
+<p>使用外部登录提供程序注册，即表明还没有向应用注册密码。 这可让用户无需创建和记住站点密码，但也会使用户依赖外部登录提供程序。 如果外部登录提供程序不可用，则无法登录网站。</p>
+<p>使用外部提供程序在登录过程中设置的电子邮箱创建密码和登录：</p>
+<ul>
+<li>选择右上角的“Hello &lt;电子邮件别名&gt;”链接，导航到“管理”视图 。</li>
+</ul>
+<p><img src="index/_static/pass1a.png" alt="Web 应用程序“管理”视图"></p>
+<ul>
+<li>选择“创建”</li>
+</ul>
+<p><img src="index/_static/pass2a.png" alt="“设置密码”页"></p>
+<ul>
+<li>设置一个有效密码，可以用此密码和邮箱登录。</li>
+</ul>
+<h2 id="next-steps">后续步骤</h2>
+<ul>
+<li>请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/issues/10563">此 GitHub 问题</a>，了解有关如何自定义登录按钮的信息。</li>
+<li>本文介绍了外部身份验证，并说明了向 ASP.NET Core 应用添加外部登录所需的先决条件。</li>
+<li>引用特定于提供程序的页，为应用所需的提供程序配置登录。</li>
+<li>可能需要保留有关用户及其访问和刷新令牌的其他数据。 有关详细信息，请参阅 <a class="xref" href="additional-claims.html">在 ASP.NET Core 中保存外部提供程序的其他声明和令牌</a>。</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

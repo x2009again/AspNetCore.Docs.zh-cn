@@ -1,0 +1,668 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#20250;&#35805; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#20250;&#35805; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/app-state">
+<h1 id="session-and-state-management-in-aspnet-core">ASP.NET Core 中的会话和状态管理</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a>、<a href="https://twitter.com/serpent5">Kirk Larkin</a> 和 <a href="https://github.com/DianaLaRose">Diana LaRose</a></p>
+<p>HTTP 是无状态的协议。 默认情况下，HTTP 请求是不保留用户值的独立消息。 本文介绍了几种保留请求间用户数据的方法。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/app-state/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="state-management">状态管理</h2>
+<p>可以使用几种方法存储状态。 本主题稍后将对每个方法进行介绍。</p>
+<table>
+<thead>
+<tr>
+<th>存储方法</th>
+<th>存储机制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#cookies">Cookie</a></td>
+<td>HTTP cookie。 可能包括使用服务器端应用代码存储的数据。</td>
+</tr>
+<tr>
+<td><a href="#session-state">Session State</a></td>
+<td>HTTP cookie 和服务器端应用代码</td>
+</tr>
+<tr>
+<td><a href="#tempdata">TempData</a></td>
+<td>HTTP cookie 或会话状态</td>
+</tr>
+<tr>
+<td><a href="#query-strings">Query Strings</a></td>
+<td>HTTP 查询字符串</td>
+</tr>
+<tr>
+<td><a href="#hidden-fields">Hidden Fields</a></td>
+<td>HTTP 窗体字段</td>
+</tr>
+<tr>
+<td><a href="#httpcontextitems">HttpContext.Items</a></td>
+<td>服务器端应用代码</td>
+</tr>
+<tr>
+<td><a href="#cache">Cache</a></td>
+<td>服务器端应用代码</td>
+</tr>
+</tbody>
+</table>
+<h2 id="no-loccookies">Cookies</h2>
+<p>Cookie 存储请求之间的数据。 因为 cookie 是随每个请求发送的，所以它们的大小应该保持在最低限度。 理想情况下，仅标识符应存储在 cookie 中，而数据则由应用存储。 大多数浏览器 cookie 大小限制为 4096 个字节。 每个域仅有有限数量的 cookie 可用。</p>
+<p>由于 cookie 易被篡改，因此它们必须由服务器进行验证。 客户端上的 Cookie 可能被用户删除或者过期。 但是，cookie 通常是客户端上最持久的数据暂留形式。</p>
+<p>Cookie 通常用于个性化设置，其中的内容是为已知用户定制的。 大多数情况下，仅标识用户，但不对其进行身份验证。 cookie 可以存储用户名、帐户名或唯一的用户 ID（例如 GUID）。 cookie 可用于访问用户的个性化设置，例如首选的网站背景色。</p>
+<p>发布 cookie 和处理隐私问题时，请参阅<a href="https://ec.europa.eu/info/law/law-topic/data-protection">欧盟一般数据保护条例 (GDPR)</a>。 有关详细信息，请参阅 <a class="xref" href="../security/gdpr.html">ASP.NET Core 中的一般数据保护条例 (GDPR) 支持</a>。</p>
+<h2 id="session-state">会话状态</h2>
+<p>会话状态是在用户浏览 Web 应用时用来存储用户数据的 ASP.NET Core 方案。 会话状态使用应用维护的存储来保存客户端所有请求的数据。 会话数据由缓存提供支持，并被视为临时数据。 站点应在没有会话数据的情况下继续运行。 关键应用程序数据应存储在用户数据库中，并仅作为性能优化缓存在会话中。</p>
+<p><a href="xref:signalr/index">SignalR</a> 应用不支持会话，因为 <a class="xref" href="../signalr/hubs.html">SignalR 中心</a>可能独立于 HTTP 上下文执行。 例如，当中心打开的长轮询请求超出请求的 HTTP 上下文的生存期时，可能发生这种情况。</p>
+<p>ASP.NET Core 通过向客户端提供包含会话 ID 的 cookie 来维护会话状态。 cookie 会话 ID：</p>
+<ul>
+<li>会随每个请求发送到应用。</li>
+<li>由应用用于提取会话数据。</li>
+</ul>
+<p>会话状态具有以下行为：</p>
+<ul>
+<li>会话 cookie 特定于浏览器。 会话不会跨浏览器进行共享。</li>
+<li>浏览器会话结束时删除会话 cookie。</li>
+<li>如果收到过期的会话 cookie，则创建使用相同会话 cookie 的新会话。</li>
+<li>不会保留空会话。 会话中必须设置了至少一个值以保存所有请求的会话。 会话未保留时，为每个新的请求生成新会话 ID。</li>
+<li>应用在上次请求后保留会话的时间有限。 应用设置会话超时，或者使用 20 分钟的默认值。 在以下情况下，会话状态适合存储用户数据：
+<ul>
+<li>特定于某个特定会话。</li>
+<li>数据不需要跨会话永久存储。</li>
+</ul>
+</li>
+<li>会话数据在调用 &lt;xref:Microsoft.AspNetCore.Http.ISession.Clear%2A?displayProperty=nameWithType&gt; 实现或会话到期时删除。</li>
+<li>没有默认机制告知客户端浏览器已关闭或者客户端上的会话 cookie 被删除或过期的应用代码。</li>
+<li>默认情况下，会话状态 cookie 不标记为“基本”。 除非站点访问者允许跟踪，否则会话状态不起作用。 有关详细信息，请参阅 <a class="xref" href="../security/gdpr.html#tempdata-provider-and-session-state-cookies-arent-essential">ASP.NET Core 中一般数据保护条例 (GDPR) 支持</a>。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>请勿将敏感数据存储在会话状态中。 用户可能不会关闭浏览器或清除会话 cookie。 某些浏览器会保留浏览器窗口之间的有效会话 cookie。 会话可能不限于单个用户。 下一个用户可能继续使用同一会话 cookie 浏览应用。</p>
+</div>
+<p>内存中缓存提供程序在应用驻留的服务器内存中存储会话数据。 在服务器场方案中：</p>
+<ul>
+<li>使用粘性会话将每个会话加入到单独服务器上的特定应用实例。 默认情况下，<a href="https://azure.microsoft.com/services/app-service/">Azure 应用服务</a>使用<a href="/iis/extensions/planning-for-arr/using-the-application-request-routing-module">应用程序请求路由 (ARR)</a> 强制实施粘性会话。 然而，粘性会话可能会影响可伸缩性，并使 Web 应用更新变得复杂。 更好的方法是使用 Redis 或 SQL Server 分布式缓存，它们不需要粘性会话。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a>。</li>
+<li>会话 cookie 通过 &lt;xref:Microsoft.AspNetCore.DataProtection.IDataProtector&gt; 进行加密。 必须正确配置数据保护，以在每台计算机上读取会话 cookie。 有关详细信息，请参阅 <a class="xref" href="../security/data-protection/introduction.html">ASP.NET Core 数据保护</a> 和<a class="xref" href="../security/data-protection/implementation/key-storage-providers.html">密钥存储提供程序</a>。</li>
+</ul>
+<h3 id="configure-session-state">配置会话状态</h3>
+<p><a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Session/">Microsoft.AspNetCore.Session</a> 包：</p>
+<ul>
+<li>由框架隐式包含。</li>
+<li>提供用于管理会话状态的中间件。</li>
+</ul>
+<p>若要启用会话中间件，<code>Startup</code> 必须包含：</p>
+<ul>
+<li>任何 &lt;xref:Microsoft.Extensions.Caching.Distributed.IDistributedCache&gt; 内存缓存。 <code>IDistributedCache</code> 实现用作会话后备存储。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a>。</li>
+<li>对 <code>ConfigureServices</code> 中 &lt;xref:Microsoft.Extensions.DependencyInjection.SessionServiceCollectionExtensions.AddSession%2A&gt; 的调用。</li>
+<li>对 <code>Configure</code> 中 &lt;xref:Microsoft.AspNetCore.Builder.SessionMiddlewareExtensions.UseSession%2A&gt; 的调用。</li>
+</ul>
+<p>以下代码演示如何使用 <code>IDistributedCache</code> 的默认内存中实现设置内存中会话提供程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码设置较短的超时来简化测试。</p>
+<p>中间件的顺序很重要。  在 <code>UseRouting</code> 之后和 <code>UseEndpoints</code> 之前调用 <code>UseSession</code>。 请参阅<a class="xref" href="middleware/index.html#order">中间件排序</a>。</p>
+<p>配置会话状态后，<a href="xref:Microsoft.AspNetCore.Http.HttpContext.Session">HttpContext.Session</a> 可用。</p>
+<p>调用 <code>UseSession</code> 以前无法访问 <code>HttpContext.Session</code>。</p>
+<p>在应用已经开始写入到响应流之后，不能创建有新会话 cookie 的新会话。 此异常记录在 Web 服务器日志中但不显示在浏览器中。</p>
+<h3 id="load-session-state-asynchronously">以异步方式加载会话状态</h3>
+<p>只有当 &lt;xref:Microsoft.AspNetCore.Http.ISession.LoadAsync%2A?displayProperty=nameWithType&gt; 方法是先于 &lt;xref:Microsoft.AspNetCore.Http.ISession.TryGetValue%2A&gt;、&lt;xref:Microsoft.AspNetCore.Http.ISession.Set%2A&gt; 或 &lt;xref:Microsoft.AspNetCore.Http.ISession.Remove%2A&gt; 方法显式调用时，ASP.NET Core 中的默认会话提供程序才会从基础 &lt;xref:Microsoft.Extensions.Caching.Distributed.IDistributedCache&gt; 后备存储中异步加载会话记录。 如果未先调用 <code>LoadAsync</code>，则会同步加载基础会话记录，这可能对性能产生大规模影响。</p>
+<p>若要让应用强制执行此模式，请使用在 <code>LoadAsync</code> 方法没有先于 <code>TryGetValue</code>、<code>Set</code> 或 <code>Remove</code> 调用时抛出异常的版本来包装 &lt;xref:Microsoft.AspNetCore.Session.DistributedSessionStore&gt; 和 &lt;xref:Microsoft.AspNetCore.Session.DistributedSession&gt; 实现。 在服务容器中注册的已包装的版本。</p>
+<h3 id="session-options">会话选项</h3>
+<p>若要重写会话默认值，请使用 &lt;xref:Microsoft.AspNetCore.Builder.SessionOptions&gt;。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.Cookie&gt;</td>
+<td>确定用于创建 cookie 的设置。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.Name&gt; 默认为 &lt;xref:Microsoft.AspNetCore.Session.SessionDefaults.CookieName?displayProperty=nameWithType&gt; (<code>.AspNetCore.Session</code>)。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.Path&gt; 默认为 &lt;xref:Microsoft.AspNetCore.Session.SessionDefaults.CookiePath?displayProperty=nameWithType&gt; (<code>/</code>)。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.SameSite&gt; 默认为 &lt;xref:Microsoft.AspNetCore.Http.SameSiteMode.Lax?displayProperty=nameWithType&gt; (<code>1</code>)。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.HttpOnly&gt; 默认为 <code>true</code>。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.IsEssential&gt; 默认为 <code>false</code>。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.IdleTimeout&gt;</td>
+<td><code>IdleTimeout</code> 显示放弃其内容前，内容可以空闲多长时间。 每个会话访问都会重置超时。 此设置仅适用于会话内容，不适用于 cookie。 默认为 20 分钟。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.IOTimeout&gt;</td>
+<td>允许从存储加载会话或者将其提交回存储的最大时长。 此设置可能仅适用于异步操作。 可以使用 &lt;xref:System.Threading.Timeout.InfiniteTimeSpan&gt; 来禁用此超时。 默认值为 1 分钟。</td>
+</tr>
+</tbody>
+</table>
+<p>会话使用 cookie 跟踪和标识来自单个浏览器的请求。 默认情况下，此 cookie 名为 <code>.AspNetCore.Session</code>，并使用路径 <code>/</code>。 由于 cookie 默认值没有指定域，因此页面上的客户端脚本无法使用它（因为 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.HttpOnly&gt; 默认为 <code>true</code>）。</p>
+<p>若要重写 cookie 会话默认值，请使用 &lt;xref:Microsoft.AspNetCore.Builder.SessionOptions&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>应用使用 &lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.IdleTimeout&gt; 属性来确定在会话空闲多长时间后它在服务器缓存中的内容就会被放弃。 此属性独立于 cookie 到期时间。 通过<a href="xref:Microsoft.AspNetCore.Session.SessionMiddleware">会话中间件</a>传递的每个请求都会重置超时。</p>
+<p>会话状态为“非锁定”。 如果两个请求同时尝试修改同一会话的内容，则后一个请求替代前一个请求。 <code>Session</code> 是作为一个连贯会话实现的，这意味着所有内容都存储在一起。 两个请求试图修改不同的会话值时，后一个请求可能替代前一个做出的会话更改。</p>
+<h3 id="set-and-get-session-values">设置和获取会话值</h3>
+<p>会话状态是通过 Razor Pages &lt;xref:Microsoft.AspNetCore.Mvc.RazorPages.PageModel&gt; 类或包含 &lt;xref:Microsoft.AspNetCore.Http.HttpContext.Session?displayProperty=nameWithType&gt; 的 MVC &lt;xref:Microsoft.AspNetCore.Mvc.Controller&gt; 类进行访问。 此属性是 &lt;xref:Microsoft.AspNetCore.Http.ISession&gt; 实现。</p>
+<p><code>ISession</code> 实现提供用于设置和检索整数和字符串值的若干扩展方法。 扩展方法位于 &lt;xref:Microsoft.AspNetCore.Http&gt; 命名空间中。</p>
+<p><code>ISession</code> 扩展方法：</p>
+<ul>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.Get%2A">Get(ISession, String)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.GetInt32%2A">GetInt32(ISession, String)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.GetString%2A">GetString(ISession, String)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.SetInt32%2A">SetInt32(ISession, String, Int32)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.SetString%2A">SetString(ISession, String, String)</a></li>
+</ul>
+<p>以下示例在 Razor Pages 页中检索 <code>IndexModel.SessionKeyName</code> 键（示例应用中的 <code>_Name</code>）的会话值：</p>
+<pre><code class="lang-csharp">@page
+@using Microsoft.AspNetCore.Http
+@model IndexModel
+
+...
+
+Name: @HttpContext.Session.GetString(IndexModel.SessionKeyName)
+</code></pre>
+<p>以下示例显示如何设置和获取整数和字符串：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>必须对所有会话数据进行序列化以启用分布式缓存方案，即使是在使用内存中缓存的时候。 字符串和整数序列化程序是由 &lt;xref:Microsoft.AspNetCore.Http.ISession&gt; 的扩展方法提供。 用户必须使用另一种机制（例如 JSON）序列化复杂类型。</p>
+<p>使用以下示例代码序列化对象：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下示例演示如何使用 <code>SessionExtensions</code> 类设置和获取可序列化的对象：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="tempdata">TempData</h2>
+<p>ASP.NET Core 公开 Razor Pages <a href="xref:Microsoft.AspNetCore.Mvc.RazorPages.PageModel.TempData">TempData</a> 或控制器 &lt;xref:Microsoft.AspNetCore.Mvc.Controller.TempData&gt;。 在另一个请求读取数据之前，此属性将读取此数据。 <a href="xref:Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary.Keep*">Keep(String)</a> 和 <a href="xref:Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary.Peek*">Peek(string)</a> 方法可用于检查数据，而无需在请求结束时删除。 <a href="xref:Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary.Keep*">Keep</a> 将标记字典中的所有项以进行保留。 <code>TempData</code> 为：</p>
+<ul>
+<li>在多个请求需要数据的情况下对重定向很有用。</li>
+<li>使用 cookie 或会话状态通过 <code>TempData</code> 提供程序进行实现。</li>
+</ul>
+<h2 id="tempdata-samples">TempData 示例</h2>
+<p>考虑创建客户的以下页面：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下页面显示 <code>TempData[&quot;Message&quot;]</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的标记中，在请求结束时，不会删除 <code>TempData[&quot;Message&quot;]</code>，因为正在使用 <code>Peek</code>。 刷新页面将显示 <code>TempData[&quot;Message&quot;]</code> 的内容。</p>
+<p>以下标记类似于前面的代码，但使用 <code>Keep</code> 在请求结束时保留数据：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 IndexPeek 和 IndexKeep 页面之间导航不会删除 <code>TempData[&quot;Message&quot;]</code>。</p>
+<p>以下代码显示 <code>TempData[&quot;Message&quot;]</code>，但请求结束时，将删除 <code>TempData[&quot;Message&quot;]</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="tempdata-providers">TempData 提供程序</h3>
+<p>默认情况下使用基于 cookie 的 TempData 提供程序将 TempData 存储于 cookie。</p>
+<p>cookie 数据是先使用 &lt;xref:Microsoft.AspNetCore.DataProtection.IDataProtector&gt;（用 &lt;xref:Microsoft.AspNetCore.WebUtilities.Base64UrlTextEncoder&gt; 编码）进行加密，再进行区块处理。 由于加密和分块，最大 cookie 大小小于 <a href="http://www.faqs.org/rfcs/rfc2965.html">4096 个字节</a>。 未压缩 cookie 数据，因为压缩加密的数据会导致安全问题，如 <a href="https://wikipedia.org/wiki/CRIME_(security_exploit)">CRIME</a> 和 <a href="https://wikipedia.org/wiki/BREACH_(security_exploit)">BREACH</a> 攻击。 若要详细了解基于 cookie 的 TempData 提供程序，请参阅 &lt;xref:Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider&gt;。</p>
+<h3 id="choose-a-tempdata-provider">选择 TempData 提供程序</h3>
+<p>选择 TempData 提供程序涉及几个注意事项，例如：</p>
+<ul>
+<li>应用是否已使用会话状态？ 如果是，使用会话状态 TempData 提供程序对应用没有额外的成本（除了数据的大小）。</li>
+<li>应用是否只对相对较小的数据量（最多 500 个字节）使用 TempData？ 如果是，cookie TempData 提供程序将为每个携带 TempData 的请求增加较小的成本。 如果不是，会话状态 TempData 提供程序有助于在使用 TempData 前，避免在每个请求中来回切换大量数据。</li>
+<li>应用是否在多个服务器上的服务器场中运行？ 如果是，无需其他任何配置，即可在数据保护外使用 cookie TempData 提供程序（请参阅 <a class="xref" href="../security/data-protection/introduction.html">ASP.NET Core 数据保护</a>和<a class="xref" href="../security/data-protection/implementation/key-storage-providers.html">密钥存储提供程序</a>）。</li>
+</ul>
+<p>大多数 Web 客户端（如 Web 浏览器）针对每个 cookie 的最大大小和 cookie 总数强制实施限制。 使用 cookie TempData 提供程序时，请验证应用未超过<a href="http://www.faqs.org/rfcs/rfc2965.html">这些限制</a>。 考虑数据的总大小。 解释加密和分块导致的 cookie 大小增加。</p>
+<h3 id="configure-the-tempdata-provider">配置 TempData 提供程序</h3>
+<p>默认情况下启用基于 cookie 的 TempData 提供程序。</p>
+<p>若要启用基于会话的 TempData 提供程序，请使用 &lt;xref:Microsoft.Extensions.DependencyInjection.MvcViewFeaturesMvcBuilderExtensions.AddSessionStateTempDataProvider%2A&gt; 扩展方法。 只需要调用 <code>AddSessionStateTempDataProvider</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="query-strings">查询字符串</h2>
+<p>可以将有限的数据从一个请求传递到另一个请求，方法是将其添加到新请求的查询字符串中。 这有利于以一种持久的方式捕获状态，这种方式允许通过电子邮件或社交网络共享嵌入式状态的链接。 由于 URL 查询字符串是公共的，因此请勿对敏感数据使用查询字符串。</p>
+<p>除了意外共享之外，在查询字符串中包含数据还会使应用遭受<a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)">跨站点请求伪造 (CSRF)</a> 攻击。 任何保留的会话状态必须防止 CSRF 攻击。 有关详细信息，请参阅 <a class="xref" href="../security/anti-request-forgery.html">阻止跨站点请求伪造 (XSRF/CSRF) 攻击 ASP.NET Core</a>。</p>
+<h2 id="hidden-fields">隐藏字段</h2>
+<p>数据可以保存在隐藏的表单域中，并在下一个请求上回发。 这在多页窗体中很常见。 由于客户端可能篡改数据，因此应用必须始终重新验证存储在隐藏字段中的数据。</p>
+<h2 id="httpcontextitems">HttpContext.Items</h2>
+<p>&lt;xref:Microsoft.AspNetCore.Http.HttpContext.Items?displayProperty=nameWithType&gt; 集合用于在处理单个请求时存储数据。 处理请求后，放弃集合的内容。 通常使用 <code>Items</code> 集合允许组件或中间件在请求期间在不同时间点操作且没有直接传递参数的方法时进行通信。</p>
+<p>在下面示例中，<a class="xref" href="middleware/index.html">中间件</a>将 <code>isVerified</code> 添加到 <code>Items</code> 集合：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>对于只在单个应用中使用的中间件，固定 <code>string</code> 键是可以接受的。 应用间共享的中间件应使用唯一的对象键以避免键冲突。 以下示例演示如何使用中间件类中定义的唯一对象键：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>其他代码可以使用通过中间件类公开的键访问存储在 <code>HttpContext.Items</code> 中的值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法还有避免在代码中使用关键字符串的优势。</p>
+<h2 id="cache">缓存</h2>
+<p>缓存是存储和检索数据的有效方法。 应用可以控制缓存项的生存期。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/response.html">ASP.NET Core 中的响应缓存</a>。</p>
+<p>缓存数据未与特定请求、用户或会话相关联。 请不要缓存可能由其他用户请求检索的特定于用户的数据。</p>
+<p>若要缓存应用程序范围内的数据，请参阅 <a class="xref" href="../performance/caching/memory.html">ASP.NET Core 中的缓存内存</a>。</p>
+<h2 id="common-errors">常见错误</h2>
+<ul>
+<li><p>“在尝试激活‘Microsoft.AspNetCore.Session.DistributedSessionStore’时无法为类型‘Microsoft.Extensions.Caching.Distributed.IDistributedCache’解析服务。”</p>
+<p>这通常是由于不能配置至少一个 <code>IDistributedCache</code> 实现而造成的。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a> 和 <a class="xref" href="../performance/caching/memory.html">ASP.NET Core 中的缓存内存</a>。</p>
+</li>
+</ul>
+<p>如果会话中间件无法保留会话：</p>
+<ul>
+<li>中间件记录异常而请求继续正常进行。</li>
+<li>这会导致不可预知的行为。</li>
+</ul>
+<p>如果后备存储不可用，则会话中间件可能无法保留会话。 例如，用户将购物车存储在会话中。 用户将商品添加到购物车，但提交失败。 应用不知道有此失败，因此它向用户报告商品已添加到购物车，但事实并非如此。</p>
+<p>检查此类错误的建议方法是完成将应用写入到该会话后，调用 <code>await feature.Session.CommitAsync</code>。 如果后备存储不可用，则 &lt;xref:Microsoft.AspNetCore.Http.ISession.CommitAsync*&gt; 引发异常。 如果 <code>CommitAsync</code> 失败，应用可以处理异常。 在与数据存储不可用的相同的条件下，&lt;xref:Microsoft.AspNetCore.Http.ISession.LoadAsync*&gt; 引发异常。</p>
+<h2 id="no-locsignalr-and-session-state">SignalR 和会话状态</h2>
+<p>SignalR 应用不应使用会话状态来存储信息。 SignalR 应用可以将每个连接状态存储在中心的 <code>Context.Items</code> 中。 <!-- https://github.com/aspnet/SignalR/issues/2139 --></p>
+<h2 id="additional-resources">其他资源</h2>
+<p><a class="xref" href="../host-and-deploy/web-farm.html">在 Web 场中托管 ASP.NET Core</a></p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a>、<a href="https://ardalis.com/">Steve Smith</a>、<a href="https://github.com/DianaLaRose">Diana LaRose</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p>HTTP 是无状态的协议。 不采取其他步骤的情况下，HTTP 请求是不保留用户值或应用状态的独立消息。 本文介绍了几种保留请求间用户数据和应用状态的方法。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/app-state/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="state-management">状态管理</h2>
+<p>可以使用几种方法存储状态。 本主题稍后将对每个方法进行介绍。</p>
+<table>
+<thead>
+<tr>
+<th>存储方法</th>
+<th>存储机制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#cookies">Cookie</a></td>
+<td>HTTP cookie（可能包括使用服务器端应用代码存储的数据）</td>
+</tr>
+<tr>
+<td><a href="#session-state">Session State</a></td>
+<td>HTTP cookie 和服务器端应用代码</td>
+</tr>
+<tr>
+<td><a href="#tempdata">TempData</a></td>
+<td>HTTP cookie 或会话状态</td>
+</tr>
+<tr>
+<td><a href="#query-strings">Query Strings</a></td>
+<td>HTTP 查询字符串</td>
+</tr>
+<tr>
+<td><a href="#hidden-fields">Hidden Fields</a></td>
+<td>HTTP 窗体字段</td>
+</tr>
+<tr>
+<td><a href="#httpcontextitems">HttpContext.Items</a></td>
+<td>服务器端应用代码</td>
+</tr>
+<tr>
+<td><a href="#cache">Cache</a></td>
+<td>服务器端应用代码</td>
+</tr>
+<tr>
+<td><a href="#dependency-injection">Dependency Injection</a></td>
+<td>服务器端应用代码</td>
+</tr>
+</tbody>
+</table>
+<h2 id="no-loccookies">Cookies</h2>
+<p>Cookie 存储请求之间的数据。 因为 cookie 是随每个请求发送的，所以它们的大小应该保持在最低限度。 理想情况下，仅标识符应存储在 cookie 中，而数据则由应用存储。 大多数浏览器 cookie 大小限制为 4096 个字节。 每个域仅有有限数量的 cookie 可用。</p>
+<p>由于 cookie 易被篡改，因此它们必须由服务器进行验证。 客户端上的 Cookie 可能被用户删除或者过期。 但是，cookie 通常是客户端上最持久的数据暂留形式。</p>
+<p>Cookie 通常用于个性化设置，其中的内容是为已知用户定制的。 大多数情况下，仅标识用户，但不对其进行身份验证。 cookie 可以存储用户名、帐户名或唯一的用户 ID（例如 GUID）。 然后，可以使用 cookie 访问用户的个性化设置，例如首选的网站背景色。</p>
+<p>发布 cookie 和处理隐私问题时，请留意<a href="https://ec.europa.eu/info/law/law-topic/data-protection">欧盟一般数据保护条例 (GDPR)</a>。 有关详细信息，请参阅 <a class="xref" href="../security/gdpr.html">ASP.NET Core 中的一般数据保护条例 (GDPR) 支持</a>。</p>
+<h2 id="session-state">会话状态</h2>
+<p>会话状态是在用户浏览 Web 应用时用来存储用户数据的 ASP.NET Core 方案。 会话状态使用应用维护的存储来保存客户端所有请求的数据。 会话数据由缓存支持并被视为临时数据 - 站点应在没有会话数据的情况下继续运行。 关键应用程序数据应存储在用户数据库中，并仅作为性能优化缓存在会话中。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p><a href="xref:signalr/index">SignalR</a> 应用不支持会话，因为 <a class="xref" href="../signalr/hubs.html">SignalR 中心</a>可能独立于 HTTP 上下文执行。 例如，当中心打开的长轮询请求超出请求的 HTTP 上下文的生存期时，可能发生这种情况。</p>
+</div>
+<p>ASP.NET Core 通过向客户端提供包含会话 ID 的 cookie 来维护会话状态，该会话 ID 与每个请求一起发送到应用。 应用使用会话 ID 来获取会话数据。</p>
+<p>会话状态具有以下行为：</p>
+<ul>
+<li>由于会话 cookie 是特定于浏览器的，因此不能跨浏览器共享会话。</li>
+<li>浏览器会话结束时删除会话 cookie。</li>
+<li>如果收到过期的会话 cookie，则创建使用相同会话 cookie 的新会话。</li>
+<li>不会保留空会话 - 会话中必须设置了至少一个值以保存所有请求的会话。 会话未保留时，为每个新的请求生成新会话 ID。</li>
+<li>应用在上次请求后保留会话的时间有限。 应用设置会话超时，或者使用 20 分钟的默认值。 会话状态适用于存储特定于特定会话的用户数据，但该数据无需永久的会话存储。</li>
+<li>会话数据在调用 &lt;xref:Microsoft.AspNetCore.Http.ISession.Clear%2A?displayProperty=nameWithType&gt; 实现或会话到期时删除。</li>
+<li>没有默认机制告知客户端浏览器已关闭或者客户端上的会话 cookie 被删除或过期的应用代码。</li>
+<li>ASP.NET Core MVC 和 Razor Pages 模板包括对一般数据保护条例 (GDPR) 的支持。 默认情况下，会话状态 cookie 不标记为“基本”，因此，除非站点访问者允许跟踪，否则会话状态不起作用。 有关详细信息，请参阅 <a class="xref" href="../security/gdpr.html#tempdata-provider-and-session-state-cookies-arent-essential">ASP.NET Core 中一般数据保护条例 (GDPR) 支持</a>。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>请勿将敏感数据存储在会话状态中。 用户可能不会关闭浏览器或清除会话 cookie。 某些浏览器会保留浏览器窗口之间的有效会话 cookie。 会话可能不限于单个用户 — 下一个用户可能继续使用同一会话 cookie 浏览应用。</p>
+</div>
+<p>内存中缓存提供程序在应用驻留的服务器内存中存储会话数据。 在服务器场方案中：</p>
+<ul>
+<li>使用粘性会话将每个会话加入到单独服务器上的特定应用实例。 默认情况下，<a href="https://azure.microsoft.com/services/app-service/">Azure 应用服务</a>使用<a href="/iis/extensions/planning-for-arr/using-the-application-request-routing-module">应用程序请求路由 (ARR)</a> 强制实施粘性会话。 然而，粘性会话可能会影响可伸缩性，并使 Web 应用更新变得复杂。 更好的方法是使用 Redis 或 SQL Server 分布式缓存，它们不需要粘性会话。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a>。</li>
+<li>会话 cookie 通过 &lt;xref:Microsoft.AspNetCore.DataProtection.IDataProtector&gt; 进行加密。 必须正确配置数据保护，以在每台计算机上读取会话 cookie。 有关详细信息，请参阅 <a class="xref" href="../security/data-protection/introduction.html">ASP.NET Core 数据保护</a> 和<a class="xref" href="../security/data-protection/implementation/key-storage-providers.html">密钥存储提供程序</a>。</li>
+</ul>
+<h3 id="configure-session-state">配置会话状态</h3>
+<p><a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App metapackage</a> 中包含的 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Session/">Microsoft.AspNetCore.Session</a> 包提供中间件来管理会话状态。 若要启用会话中间件，<code>Startup</code> 必须包含：</p>
+<ul>
+<li>任何 &lt;xref:Microsoft.Extensions.Caching.Distributed.IDistributedCache&gt; 内存缓存。 <code>IDistributedCache</code> 实现用作会话后备存储。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a>。</li>
+<li>对 <code>ConfigureServices</code> 中 &lt;xref:Microsoft.Extensions.DependencyInjection.SessionServiceCollectionExtensions.AddSession%2A&gt; 的调用。</li>
+<li>对 <code>Configure</code> 中 &lt;xref:Microsoft.AspNetCore.Builder.SessionMiddlewareExtensions.UseSession%2A&gt; 的调用。</li>
+</ul>
+<p>以下代码演示如何使用 <code>IDistributedCache</code> 的默认内存中实现设置内存中会话提供程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>中间件的顺序很重要。 在前面的示例中，在 <code>UseMvc</code> 之后调用 <code>UseSession</code> 时会发生 <code>InvalidOperationException</code> 异常。 有关详细信息，请参阅<a class="xref" href="middleware/index.html#order">中间件排序</a>。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Http.HttpContext.Session?displayProperty=nameWithType&gt; 在会话状态配置后可用。</p>
+<p>调用 <code>UseSession</code> 以前无法访问 <code>HttpContext.Session</code>。</p>
+<p>在应用已经开始写入到响应流之后，不能创建有新会话 cookie 的新会话。 此异常记录在 Web 服务器日志中但不显示在浏览器中。</p>
+<h3 id="load-session-state-asynchronously">以异步方式加载会话状态</h3>
+<p>只有当 &lt;xref:Microsoft.AspNetCore.Http.ISession.LoadAsync%2A?displayProperty=nameWithType&gt; 方法是先于 &lt;xref:Microsoft.AspNetCore.Http.ISession.TryGetValue%2A&gt;、&lt;xref:Microsoft.AspNetCore.Http.ISession.Set%2A&gt; 或 &lt;xref:Microsoft.AspNetCore.Http.ISession.Remove%2A&gt; 方法显式调用时，ASP.NET Core 中的默认会话提供程序才会从基础 &lt;xref:Microsoft.Extensions.Caching.Distributed.IDistributedCache&gt; 后备存储中异步加载会话记录。 如果未先调用 <code>LoadAsync</code>，则会同步加载基础会话记录，这可能对性能产生大规模影响。</p>
+<p>若要让应用强制执行此模式，请使用在 <code>LoadAsync</code> 方法没有先于 <code>TryGetValue</code>、<code>Set</code> 或 <code>Remove</code> 调用时抛出异常的版本来包装 &lt;xref:Microsoft.AspNetCore.Session.DistributedSessionStore&gt; 和 &lt;xref:Microsoft.AspNetCore.Session.DistributedSession&gt; 实现。 在服务容器中注册的已包装的版本。</p>
+<h3 id="session-options">会话选项</h3>
+<p>若要重写会话默认值，请使用 &lt;xref:Microsoft.AspNetCore.Builder.SessionOptions&gt;。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.Cookie&gt;</td>
+<td>确定用于创建 cookie 的设置。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.Name&gt; 默认为 &lt;xref:Microsoft.AspNetCore.Session.SessionDefaults.CookieName?displayProperty=nameWithType&gt; (<code>.AspNetCore.Session</code>)。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.Path&gt; 默认为 &lt;xref:Microsoft.AspNetCore.Session.SessionDefaults.CookiePath?displayProperty=nameWithType&gt; (<code>/</code>)。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.SameSite&gt; 默认为 &lt;xref:Microsoft.AspNetCore.Http.SameSiteMode.Lax?displayProperty=nameWithType&gt; (<code>1</code>)。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.HttpOnly&gt; 默认为 <code>true</code>。 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.IsEssential&gt; 默认为 <code>false</code>。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.IdleTimeout&gt;</td>
+<td><code>IdleTimeout</code> 显示放弃其内容前，内容可以空闲多长时间。 每个会话访问都会重置超时。 此设置仅适用于会话内容，不适用于 cookie。 默认为 20 分钟。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.IOTimeout&gt;</td>
+<td>允许从存储加载会话或者将其提交回存储的最大时长。 此设置可能仅适用于异步操作。 可以使用 &lt;xref:System.Threading.Timeout.InfiniteTimeSpan&gt; 来禁用此超时。 默认值为 1 分钟。</td>
+</tr>
+</tbody>
+</table>
+<p>会话使用 cookie 跟踪和标识来自单个浏览器的请求。 默认情况下，此 cookie 名为 <code>.AspNetCore.Session</code>，并使用路径 <code>/</code>。 由于 cookie 默认值没有指定域，因此页面上的客户端脚本无法使用它（因为 &lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.HttpOnly&gt; 默认为 <code>true</code>）。</p>
+<p>若要重写 cookie 会话默认值，请使用 <code>SessionOptions</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>应用使用 &lt;xref:Microsoft.AspNetCore.Builder.SessionOptions.IdleTimeout&gt; 属性来确定在会话空闲多长时间后它在服务器缓存中的内容就会被放弃。 此属性独立于 cookie 到期时间。 通过<a href="xref:Microsoft.AspNetCore.Session.SessionMiddleware">会话中间件</a>传递的每个请求都会重置超时。</p>
+<p>会话状态为“非锁定”。 如果两个请求同时尝试修改同一会话的内容，则后一个请求替代前一个请求。 <code>Session</code> 是作为一个连贯会话实现的，这意味着所有内容都存储在一起。 两个请求试图修改不同的会话值时，后一个请求可能替代前一个做出的会话更改。</p>
+<h3 id="set-and-get-session-values">设置和获取会话值</h3>
+<p>会话状态是通过 Razor Pages &lt;xref:Microsoft.AspNetCore.Mvc.RazorPages.PageModel&gt; 类或包含 &lt;xref:Microsoft.AspNetCore.Http.HttpContext.Session?displayProperty=nameWithType&gt; 的 MVC &lt;xref:Microsoft.AspNetCore.Mvc.Controller&gt; 类进行访问。 此属性是 &lt;xref:Microsoft.AspNetCore.Http.ISession&gt; 实现。</p>
+<p><code>ISession</code> 实现提供用于设置和检索整数和字符串值的若干扩展方法。 当项目引用 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Http.Extensions/">Microsoft.AspNetCore.Http.Extensions</a> 包时，扩展方法位于 &lt;xref:Microsoft.AspNetCore.Http&gt; 命名空间中（添加 <code>using Microsoft.AspNetCore.Http;</code> 语句可以获取对扩展方法的访问权限）。 这两个包均包括在 <a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App 元包</a>中。</p>
+<p><code>ISession</code> 扩展方法：</p>
+<ul>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.Get%2A">Get(ISession, String)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.GetInt32%2A">GetInt32(ISession, String)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.GetString%2A">GetString(ISession, String)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.SetInt32%2A">SetInt32(ISession, String, Int32)</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.SessionExtensions.SetString%2A">SetString(ISession, String, String)</a></li>
+</ul>
+<p>以下示例在 Razor Pages 页中检索 <code>IndexModel.SessionKeyName</code> 键（示例应用中的 <code>_Name</code>）的会话值：</p>
+<pre><code class="lang-csharp">@page
+@using Microsoft.AspNetCore.Http
+@model IndexModel
+
+...
+
+Name: @HttpContext.Session.GetString(IndexModel.SessionKeyName)
+</code></pre>
+<p>以下示例显示如何设置和获取整数和字符串：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>必须对所有会话数据进行序列化以启用分布式缓存方案，即使是在使用内存中缓存的时候。 字符串和整数序列化程序是由 &lt;xref:Microsoft.AspNetCore.Http.ISession&gt; 的扩展方法提供。 用户必须使用另一种机制（例如 JSON）序列化复杂类型。</p>
+<p>添加以下扩展方法以设置和获取可序列化的对象：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下示例演示如何使用扩展方法设置和获取可序列化的对象：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="tempdata">TempData</h2>
+<p>ASP.NET Core 公开 Razor Pages <a href="xref:Microsoft.AspNetCore.Mvc.RazorPages.PageModel.TempData">TempData</a> 或控制器 &lt;xref:Microsoft.AspNetCore.Mvc.Controller.TempData&gt;。 在另一个请求读取数据之前，此属性将读取此数据。 <a href="xref:Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary.Keep*">Keep(String)</a> 和 <a href="xref:Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary.Peek*">Peek(string)</a> 方法可用于检查数据，而无需在请求结束时删除。 <a href="xref:Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataDictionary.Keep*">Keep()</a> 将标记字典中的所有项以进行保留。 当多个请求需要数据时，<code>TempData</code> 非常有助于进行重定向。 使用 cookie 或会话状态通过 <code>TempData</code> 提供程序实现 <code>TempData</code>。</p>
+<h2 id="tempdata-samples">TempData 示例</h2>
+<p>考虑创建客户的以下页面：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下页面显示 <code>TempData[&quot;Message&quot;]</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的标记中，在请求结束时，不会删除 <code>TempData[&quot;Message&quot;]</code>，因为正在使用 <code>Peek</code>。 刷新页面将显示 <code>TempData[&quot;Message&quot;]</code>。</p>
+<p>以下标记类似于前面的代码，但使用 <code>Keep</code> 在请求结束时保留数据：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 IndexPeek 和 IndexKeep 页面之间导航不会删除 <code>TempData[&quot;Message&quot;]</code>。</p>
+<p>以下代码显示 <code>TempData[&quot;Message&quot;]</code>，但请求结束时，将删除 <code>TempData[&quot;Message&quot;]</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="tempdata-providers">TempData 提供程序</h3>
+<p>默认情况下使用基于 cookie 的 TempData 提供程序将 TempData 存储于 cookie。</p>
+<p>cookie 数据是先使用 &lt;xref:Microsoft.AspNetCore.DataProtection.IDataProtector&gt;（用 &lt;xref:Microsoft.AspNetCore.WebUtilities.Base64UrlTextEncoder&gt; 编码）进行加密，再进行区块处理。 因为 cookie 进行了分块，所以 ASP.NET Core 1.x 中的单个 cookie 大小限制不适用。 未压缩 cookie 数据，因为压缩加密的数据会导致安全问题，如 <a href="https://wikipedia.org/wiki/CRIME_(security_exploit)">CRIME</a> 和 <a href="https://wikipedia.org/wiki/BREACH_(security_exploit)">BREACH</a> 攻击。 若要详细了解基于 cookie 的 TempData 提供程序，请参阅 &lt;xref:Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider&gt;。</p>
+<h3 id="choose-a-tempdata-provider">选择 TempData 提供程序</h3>
+<p>选择 TempData 提供程序涉及几个注意事项，例如：</p>
+<ol>
+<li>应用是否已使用会话状态？ 如果是，使用会话状态 TempData 提供程序对应用没有额外的成本（除了数据的大小）。</li>
+<li>应用是否只对相对较小的数据量（最多 500 个字节）使用 TempData？ 如果是，cookie TempData 提供程序将为每个携带 TempData 的请求增加较小的成本。 如果不是，会话状态 TempData 提供程序有助于在使用 TempData 前，避免在每个请求中来回切换大量数据。</li>
+<li>应用是否在多个服务器上的服务器场中运行？ 如果是，无需其他任何配置，即可在数据保护外使用 cookie TempData 提供程序（请参阅 <a class="xref" href="../security/data-protection/introduction.html">ASP.NET Core 数据保护</a>和<a class="xref" href="../security/data-protection/implementation/key-storage-providers.html">密钥存储提供程序</a>）。</li>
+</ol>
+<div class="NOTE">
+<h5>Note</h5>
+<p>大多数 Web 客户端（如 Web 浏览器）针对每个 cookie 的最大大小、cookie 总数（或两者）强制实施限制。 使用 cookie TempData 提供程序时，请验证应用未超过这些限制。 考虑数据的总大小。 解释加密和分块导致的 cookie 大小增加。</p>
+</div>
+<h3 id="configure-the-tempdata-provider">配置 TempData 提供程序</h3>
+<p>默认情况下启用基于 cookie 的 TempData 提供程序。</p>
+<p>若要启用基于会话的 TempData 提供程序，请使用 &lt;xref:Microsoft.Extensions.DependencyInjection.MvcViewFeaturesMvcBuilderExtensions.AddSessionStateTempDataProvider%2A&gt; 扩展方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>中间件的顺序很重要。 在前面的示例中，在 <code>UseMvc</code> 之后调用 <code>UseSession</code> 时会发生 <code>InvalidOperationException</code> 异常。 有关详细信息，请参阅<a class="xref" href="middleware/index.html#order">中间件排序</a>。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>如果面向 .NET Framework 并使用基于会话的 TempData 提供程序，请将 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Session/">Microsoft.AspNetCore.Session</a> 包添加到项目。</p>
+</div>
+<h2 id="query-strings">查询字符串</h2>
+<p>可以将有限的数据从一个请求传递到另一个请求，方法是将其添加到新请求的查询字符串中。 这有利于以一种持久的方式捕获状态，这种方式允许通过电子邮件或社交网络共享嵌入式状态的链接。 由于 URL 查询字符串是公共的，因此请勿对敏感数据使用查询字符串。</p>
+<p>除了意外的共享，在查询字符串中包含数据还会为<a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)">跨站点请求伪造 (CSRF)</a> 攻击创造机会，从而欺骗用户在通过身份验证时访问恶意网站。 然后，攻击者可以从应用中窃取用户数据，或者代表用户采取恶意操作。 任何保留的应用或会话状态必须防止 CSRF 攻击。 有关详细信息，请参阅 <a class="xref" href="../security/anti-request-forgery.html">阻止跨站点请求伪造 (XSRF/CSRF) 攻击 ASP.NET Core</a>。</p>
+<h2 id="hidden-fields">隐藏字段</h2>
+<p>数据可以保存在隐藏的表单域中，并在下一个请求上回发。 这在多页窗体中很常见。 由于客户端可能篡改数据，因此应用必须始终重新验证存储在隐藏字段中的数据。</p>
+<h2 id="httpcontextitems">HttpContext.Items</h2>
+<p>&lt;xref:Microsoft.AspNetCore.Http.HttpContext.Items?displayProperty=nameWithType&gt; 集合用于在处理单个请求时存储数据。 处理请求后，放弃集合的内容。 通常使用 <code>Items</code> 集合允许组件或中间件在请求期间在不同时间点操作且没有直接传递参数的方法时进行通信。</p>
+<p>在下面示例中，<a class="xref" href="middleware/index.html">中间件</a>将 <code>isVerified</code> 添加到 <code>Items</code> 集合。</p>
+<pre><code class="lang-csharp">app.Use(async (context, next) =&gt;
+{
+    // perform some verification
+    context.Items[&quot;isVerified&quot;] = true;
+    await next.Invoke();
+});
+</code></pre>
+<p>然后，在管道中，另一个中间件可以访问 <code>isVerified</code> 的值：</p>
+<pre><code class="lang-csharp">app.Run(async (context) =&gt;
+{
+    await context.Response.WriteAsync($&quot;Verified: {context.Items[&quot;isVerified&quot;]}&quot;);
+});
+</code></pre>
+<p>对于只供单个应用使用的中间件，<code>string</code> 键是可以接受的。 应用实例间共享的中间件应使用唯一的对象键以避免键冲突。 以下示例演示如何使用中间件类中定义的唯一对象键：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>其他代码可以使用通过中间件类公开的键访问存储在 <code>HttpContext.Items</code> 中的值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法还有避免在代码中使用关键字符串的优势。</p>
+<h2 id="cache">缓存</h2>
+<p>缓存是存储和检索数据的有效方法。 应用可以控制缓存项的生存期。</p>
+<p>缓存数据未与特定请求、用户或会话相关联。 <strong>请注意不要缓存可能由其他用户请求检索的特定于用户的数据。</strong></p>
+<p>有关详细信息，请参阅 <a class="xref" href="../performance/caching/response.html">ASP.NET Core 中的响应缓存</a>。</p>
+<h2 id="dependency-injection">依赖关系注入</h2>
+<p>使用<a class="xref" href="dependency-injection.html">依赖关系注入</a>可向所有用户提供数据：</p>
+<ol>
+<li><p>定义一项包含数据的服务。 例如，定义一个名为 <code>MyAppData</code> 的类：</p>
+<pre><code class="lang-csharp">public class MyAppData
+{
+    // Declare properties and methods
+}
+</code></pre>
+</li>
+<li><p>将服务类添加到 <code>Startup.ConfigureServices</code>：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSingleton&lt;MyAppData&gt;();
+}
+</code></pre>
+</li>
+<li><p>使用数据服务类：</p>
+<pre><code class="lang-csharp">public class IndexModel : PageModel
+{
+    public IndexModel(MyAppData myService)
+    {
+        // Do something with the service
+        //    Examples: Read data, store in a field or property
+    }
+}
+</code></pre>
+</li>
+</ol>
+<h2 id="common-errors">常见错误</h2>
+<ul>
+<li><p>“在尝试激活‘Microsoft.AspNetCore.Session.DistributedSessionStore’时无法为类型‘Microsoft.Extensions.Caching.Distributed.IDistributedCache’解析服务。”</p>
+<p>这通常是由于不能配置至少一个 <code>IDistributedCache</code> 实现而造成的。 有关详细信息，请参阅 <a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a> 和 <a class="xref" href="../performance/caching/memory.html">ASP.NET Core 中的缓存内存</a>。</p>
+</li>
+<li><p>在会话中间件保存会话失败的事件中（例如，如果后备存储不可用），中间件记录异常而请求继续正常进行。 这会导致不可预知的行为。</p>
+<p>例如，用户将购物车存储在会话中。 用户将商品添加到购物车，但提交失败。 应用不知道有此失败，因此它向用户报告商品已添加到购物车，但事实并非如此。</p>
+<p>检查此类错误的建议方法是完成将应用写入到该会话后，从应用代码调用 <code>await feature.Session.CommitAsync();</code>。 如果后备存储不可用，则 <code>CommitAsync</code> 引发异常。 如果 <code>CommitAsync</code> 失败，应用可以处理异常。 在与数据存储不可用的相同的条件下，<code>LoadAsync</code> 引发异常。</p>
+</li>
+</ul>
+<h2 id="no-locsignalr-and-session-state">SignalR 和会话状态</h2>
+<p>SignalR 应用不应使用会话状态来存储信息。 SignalR 应用可以将每个连接状态存储在中心的 <code>Context.Items</code> 中。 <!-- https://github.com/aspnet/SignalR/issues/2139 --></p>
+<h2 id="additional-resources">其他资源</h2>
+<p><a class="xref" href="../host-and-deploy/web-farm.html">在 Web 场中托管 ASP.NET Core</a></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

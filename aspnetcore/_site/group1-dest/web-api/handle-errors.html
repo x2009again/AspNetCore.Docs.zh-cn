@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22788;&#29702; ASP.NET Core Web API &#20013;&#30340;&#38169;&#35823; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22788;&#29702; ASP.NET Core Web API &#20013;&#30340;&#38169;&#35823; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="web-api/handle-errors">
+<h1 id="handle-errors-in-aspnet-core-web-apis">处理 ASP.NET Core Web API 中的错误</h1>
+
+<p>本文介绍如何处理和自定义 ASP.NET Core Web API 的错误处理。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/web-api/handle-errors/samples">查看或下载示例代码</a> (<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>)</p>
+<h2 id="developer-exception-page">开发人员异常页</h2>
+<p><a class="xref" href="../fundamentals/error-handling.html">开发人员异常页</a>是一种用于获取服务器错误详细堆栈跟踪的有用工具。 它使用 &lt;xref:Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware&gt; 来捕获 HTTP 管道中的同步和异步异常，并生成错误响应。 为了进行说明，请考虑以下控制器操作：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>运行以下 <code>curl</code> 命令以测试前面的操作：</p>
+<pre><code class="lang-bash">curl -i https://localhost:5001/weatherforecast/chicago
+</code></pre>
+<div range="&gt;= aspnetcore-3.0">
+<p>在 ASP.NET Core 3.0 及更高版本中，如果客户端不请求 HTML 格式的输出，则开发人员异常页将显示纯文本响应。 随即显示以下输出：</p>
+<pre><code class="lang-console">HTTP/1.1 500 Internal Server Error
+Transfer-Encoding: chunked
+Content-Type: text/plain
+Server: Microsoft-IIS/10.0
+X-Powered-By: ASP.NET
+Date: Fri, 27 Sep 2019 16:13:16 GMT
+
+System.ArgumentException: We don't offer a weather forecast for chicago. (Parameter 'city')
+   at WebApiSample.Controllers.WeatherForecastController.Get(String city) in C:\working_folder\aspnet\AspNetCore.Docs\aspnetcore\web-api\handle-errors\samples\3.x\Controllers\WeatherForecastController.cs:line 34
+   at lambda_method(Closure , Object , Object[] )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.Execute(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.&lt;InvokeActionMethodAsync&gt;g__Logged|12_1(ControllerActionInvoker invoker)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.&lt;InvokeNextActionFilterAsync&gt;g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State&amp; next, Scope&amp; scope, Object&amp; state, Boolean&amp; isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location where exception was thrown ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.&lt;InvokeFilterPipelineAsync&gt;g__Awaited|19_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.&lt;InvokeAsync&gt;g__Logged|17_1(ResourceInvoker invoker)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware.Invoke(HttpContext context)
+
+HEADERS
+=======
+Accept: */*
+Host: localhost:44312
+User-Agent: curl/7.55.1
+</code></pre>
+<p>要改为显示 HTML 格式的响应，请将 <code>Accept</code> HTTP 请求头设置为 <code>text/html</code> 媒体类型。 例如： 。</p>
+<pre><code class="lang-bash">curl -i -H &quot;Accept: text/html&quot; https://localhost:5001/weatherforecast/chicago
+</code></pre>
+<p>请考虑以下 HTTP 响应摘录：</p>
+</div>
+<div range="&lt;= aspnetcore-2.2">
+<p>在 ASP.NET Core 2.2 及更低版本中，开发人员异常页将显示 HTML 格式的响应。 例如，请考虑以下 HTTP 响应摘录：</p>
+</div>
+<pre><code class="lang-console">HTTP/1.1 500 Internal Server Error
+Transfer-Encoding: chunked
+Content-Type: text/html; charset=utf-8
+Server: Microsoft-IIS/10.0
+X-Powered-By: ASP.NET
+Date: Fri, 27 Sep 2019 16:55:37 GMT
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;utf-8&quot; /&gt;
+        &lt;title&gt;Internal Server Error&lt;/title&gt;
+        &lt;style&gt;
+            body {
+    font-family: 'Segoe UI', Tahoma, Arial, Helvetica, sans-serif;
+    font-size: .813em;
+    color: #222;
+    background-color: #fff;
+}
+</code></pre>
+<div range="&gt;= aspnetcore-3.0">
+<p>通过 Postman 等工具进行测试时，HTML 格式的响应会很有用。 以下屏幕截图显示了 Postman 中的纯文本和 HTML 格式的响应：</p>
+<p><img src="handle-errors/_static/developer-exception-page-postman.gif" alt="Postman 中的开发人员异常页测试"></p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>仅当应用程序在开发环境中运行时才启用开发人员异常页。 否则当应用程序在生产环境中运行时，详细的异常信息会向公众泄露 有关配置环境的详细信息，请参阅 <a class="xref" href="../fundamentals/environments.html">在 ASP.NET Core 中使用多个环境</a>。</p>
+</div>
+<h2 id="exception-handler">异常处理程序</h2>
+<p>在非开发环境中，可使用<a class="xref" href="../fundamentals/error-handling.html">异常处理中间件</a>来生成错误负载：</p>
+<ol>
+<li><p>在 <code>Startup.Configure</code> 中，调用 &lt;xref:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler%2A&gt; 以使用中间件：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+</li>
+<li><p>配置控制器操作以响应 <code>/error</code> 路由：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+</li>
+</ol>
+<p>前面的 <code>Error</code> 操作向客户端发送符合 <a href="https://tools.ietf.org/html/rfc7807">RFC 7807</a> 的负载。</p>
+<p>异常处理中间件还可以在本地开发环境中提供更详细的内容协商输出。 使用以下步骤在开发和生产环境中生成一致的负载格式：</p>
+<ol>
+<li><p>在 <code>Startup.Configure</code> 中，注册特定于环境的异常处理中间件实例：</p>
+<div range="&gt;= aspnetcore-3.0">
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseExceptionHandler(&quot;/error-local-development&quot;);
+    }
+    else
+    {
+        app.UseExceptionHandler(&quot;/error&quot;);
+    }
+}
+</code></pre>
+</div>
+<div range="&lt;= aspnetcore-2.2">
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseExceptionHandler(&quot;/error-local-development&quot;);
+    }
+    else
+    {
+        app.UseExceptionHandler(&quot;/error&quot;);
+    }
+}
+</code></pre>
+</div>
+<p>在上述代码中，通过以下方法注册了中间件：</p>
+<ul>
+<li>开发环境中 <code>/error-local-development</code> 的路由。</li>
+<li>非开发环境中 <code>/error</code> 的路由。</li>
+</ul>
+</li>
+<li><p>将属性路由应用于控制器操作：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+</li>
+</ol>
+<h2 id="use-exceptions-to-modify-the-response">使用异常来修改响应</h2>
+<p>可以从控制器之外修改响应的内容。 在 ASP.NET 4.x Web API 中，执行此操作的一种方法是使用 &lt;xref:System.Web.Http.HttpResponseException&gt; 类型。 ASP.NET Core 不包括等效类型。 可以使用以下步骤来添加对 <code>HttpResponseException</code> 的支持：</p>
+<ol>
+<li><p>创建名为 <code>HttpResponseException</code> 的已知异常类型：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>创建名为 <code>HttpResponseExceptionFilter</code> 的操作筛选器：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述筛选器中，将从最大整数值减去幻数10。 如果减去此数字，将允许其他筛选器在管道的最末尾运行。</p>
+</li>
+<li><p>在 <code>Startup.ConfigureServices</code> 中，将操作筛选器添加到筛选器集合：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.1">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+</li>
+</ol>
+<h2 id="validation-failure-error-response">验证失败错误响应</h2>
+<p>对于 Web API 控制器，如果模型验证失败，MVC 将使用 &lt;xref:Microsoft.AspNetCore.Mvc.ValidationProblemDetails&gt; 响应类型做出响应。 MVC 使用 &lt;xref:Microsoft.AspNetCore.Mvc.ApiBehaviorOptions.InvalidModelStateResponseFactory&gt; 的结果来构造验证失败的错误响应。 下面的示例使用工厂在 <code>Startup.ConfigureServices</code> 中将默认响应类型更改为 &lt;xref:Microsoft.AspNetCore.Mvc.SerializableError&gt;：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.1">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="client-error-response">客户端错误响应</h2>
+<p>错误结果  定义为具有 HTTP 状态代码 400 或更高的结果。 对于 Web API 控制器，MVC 会将错误结果转换为具有 &lt;xref:Microsoft.AspNetCore.Mvc.ProblemDetails&gt; 的结果。</p>
+<div range="= aspnetcore-2.1">
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>ASP.NET Core 2.1 生成一个基本符合 RFC 7807 的问题详细信息响应。 如果需要达到百分百的符合性，请将项目升级到 ASP.NET Core 2.2 或更高版本。</p>
+</div>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<p>可以通过以下方式之一配置错误响应：</p>
+<ol>
+<li><a href="#implement-problemdetailsfactory">实现 ProblemDetailsFactory</a></li>
+<li><a href="#use-apibehavioroptionsclienterrormapping">使用 ApiBehaviorOptions.ClientErrorMapping</a></li>
+</ol>
+<h3 id="implement-problemdetailsfactory">实现 <code>ProblemDetailsFactory</code></h3>
+<p>MVC 使用 &lt;xref:Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory?displayProperty=fullName&gt; 生成 &lt;xref:Microsoft.AspNetCore.Mvc.ProblemDetails&gt; 和 &lt;xref:Microsoft.AspNetCore.Mvc.ValidationProblemDetails&gt; 的所有实例。 这包括客户端错误响应、验证失败错误响应以及 &lt;xref:Microsoft.AspNetCore.Mvc.ControllerBase.Problem%2A?displayProperty=nameWithType&gt; 和 &lt;xref:Microsoft.AspNetCore.Mvc.ControllerBase.ValidationProblem%2A?displayProperty=nameWithType&gt; 帮助程序方法。</p>
+<p>若要自定义问题详细信息响应，请在 <code>Startup.ConfigureServices</code> 中注册 &lt;xref:Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory&gt; 的自定义实现：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection serviceCollection)
+{
+    services.AddControllers();
+    services.AddTransient&lt;ProblemDetailsFactory, CustomProblemDetailsFactory&gt;();
+}
+</code></pre>
+</div>
+<div range="= aspnetcore-2.2">
+<p>可以按照<a href="#use-apibehavioroptionsclienterrormapping">使用 ApiBehaviorOptions.ClientErrorMapping</a> 部分所述的方式配置错误响应。</p>
+</div>
+<div range="&gt;= aspnetcore-2.2">
+<h3 id="use-apibehavioroptionsclienterrormapping">使用 ApiBehaviorOptions.ClientErrorMapping</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.ApiBehaviorOptions.ClientErrorMapping%2A&gt; 属性配置 <code>ProblemDetails</code> 响应的内容。 例如，<code>Startup.ConfigureServices</code> 中的以下代码会更新 404 响应的 <code>type</code> 属性：</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

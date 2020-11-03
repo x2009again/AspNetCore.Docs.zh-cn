@@ -1,0 +1,1151 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#31532; 4 &#37096;&#20998;&#65292;&#23558;&#27169;&#22411;&#28155;&#21152;&#21040; ASP.NET Core MVC &#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#31532; 4 &#37096;&#20998;&#65292;&#23558;&#27169;&#22411;&#28155;&#21152;&#21040; ASP.NET Core MVC &#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/first-mvc-app/adding-model">
+<h1 id="part-4-add-a-model-to-an-aspnet-core-mvc-app">第 4 部分，将模型添加到 ASP.NET Core MVC 应用</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://github.com/tdykstra">Tom Dykstra</a></p>
+<p>在本部分中将添加用于管理数据库中的电影的类。 这些类将是 MVC 应用的“Model”部分 。</p>
+<p>可以结合 <a href="/ef/core">Entity Framework Core</a> (EF Core) 使用这些类来处理数据库。 EF Core 是对象关系映射 (ORM) 框架，可以简化需要编写的数据访问代码。</p>
+<p>要创建的模型类称为 POCO 类（源自“简单传统 CLR 对象”），因为它们与 EF Core 没有任何依赖关系   。 它们只定义将存储在数据库中的数据的属性。</p>
+<p>在本教程中，首先要编写模型类，然后 EF Core 将创建数据库。</p>
+<div range="&gt;= aspnetcore-3.0">
+<h2 id="add-a-data-model-class">添加数据模型类</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>右键单击 Models 文件夹，然后单击“添加” &gt; “类” 。 将文件命名为 Movie.cs。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>将名为 Movie.cs 的文件添加到“Models”文件夹 。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>右键单击 Models 文件夹，然后单击“添加” &gt; “新类” &gt; “空类”。   将文件命名为 Movie.cs。</p>
+</section>
+</div>
+
+<p>使用以下代码更新 Movie.cs 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Movie</code> 类包含一个 <code>Id</code> 字段，数据需要该字段作为主键。</p>
+<p><code>ReleaseDate</code> 上的 &lt;xref:System.ComponentModel.DataAnnotations.DataType&gt; 特性指定了数据的类型 (<code>Date</code>)。 通过此特性：</p>
+<ul>
+<li>用户无需在数据字段中输入时间信息。</li>
+<li>仅显示日期，而非时间信息。</li>
+</ul>
+<p><a href="/dotnet/api/system.componentmodel.dataannotations">DataAnnotations</a> 会在后续教程中介绍。</p>
+<h2 id="add-nuget-packages">添加 NuGet 包</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>从“工具”菜单中，选择“NuGet 包管理器”&gt;“包管理器控制台”(PMC)。</p>
+<p><img src="adding-model/_static/pmc.png" alt="PMC 菜单"></p>
+<p>在 PMC 中运行以下命令：</p>
+<pre><code class="lang-powershell">Install-Package Microsoft.EntityFrameworkCore.SqlServer
+</code></pre>
+<p>前面的命令添加 EF Core SQL Server 提供程序。 提供程序包将 EF Core 包作为依赖项进行安装。 在本教程后面的基架步骤中会自动安装其他包。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<p>运行以下 .NET Core CLI 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install --global dotnet-ef
+dotnet tool install --global dotnet-aspnet-codegenerator
+dotnet add package Microsoft.EntityFrameworkCore.SQLite
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.Extensions.Logging.Debug
+</code></pre>
+<p>上述命令添加：</p>
+<ul>
+<li><a class="xref" href="../../fundamentals/tools/dotnet-aspnet-codegenerator.html">aspnet-codegenerator 基架工具</a>。</li>
+<li>适用于 .NET Core CLI 的 Entity Framework Core 工具。</li>
+<li>EF Core SQLite 提供程序将 EF Core 包作为依赖项进行安装。</li>
+<li>基架需要的包：<code>Microsoft.VisualStudio.Web.CodeGeneration.Design</code> 和 <code>Microsoft.EntityFrameworkCore.SqlServer</code>。</li>
+</ul>
+<p>有关允许应用按环境配置其数据库上下文的多个环境配置指南，请参阅 <a class="xref" href="../../fundamentals/environments.html#environment-based-startup-class-and-methods">在 ASP.NET Core 中使用多个环境</a>。</p>
+<p>如果出现基架错误，请验证目标框架名字对象 (TFM) 是否与项目文件中的 NuGet 包版本相匹配。 例如，以下项目文件包含适用于 .NET Core 的版本 3.1 和所列的 NuGet 包：</p>
+<pre><code class="lang-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk.Web&quot;&gt;
+
+  &lt;PropertyGroup&gt;
+    &lt;TargetFramework&gt;netcoreapp3.1&lt;/TargetFramework&gt;
+  &lt;/PropertyGroup&gt;
+
+  &lt;ItemGroup&gt;
+    &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Identity.EntityFrameworkCore&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Identity.UI&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.EntityFrameworkCore.Design&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.EntityFrameworkCore.SqlServer&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.EntityFrameworkCore.Tools&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.VisualStudio.Web.CodeGeneration.Design&quot; Version=&quot;3.1.0&quot; /&gt;
+  &lt;/ItemGroup&gt;
+
+&lt;/Project&gt;
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>从“项目”菜单中选择“管理 NuGet 程序包” 。</p>
+<p>在右上方的“搜索”字段中，输入 <code>Microsoft.EntityFrameworkCore.SQLite</code> 并按回车键进行搜索。  搜索匹配的 NuGet 程序包，并按“添加”按钮。</p>
+<p><img src="../first-mvc-app-mac/adding-model/_static/add-nuget-packages.png" alt="添加 Entity Framework Core NuGet 包"></p>
+<p>“选择项目”对话框将显示，并已选中 <code>MvcMovie</code> 项目。 按“确认”按钮。</p>
+<p>“接受许可证”对话框将显示。 根据需要查看许可证，然后单击“接受”按钮。</p>
+<p>重复上面的步骤，以安装以下 NuGet 程序包：</p>
+<ul>
+<li><code>Microsoft.VisualStudio.Web.CodeGeneration.Design</code></li>
+<li><code>Microsoft.EntityFrameworkCore.SqlServer</code></li>
+<li><code>Microsoft.EntityFrameworkCore.Design</code></li>
+</ul>
+</section>
+</div>
+
+<p><a name="dc"></a></p>
+<h2 id="create-a-database-context-class">创建数据库上下文类</h2>
+<p>需要一个数据库上下文类来协调 <code>Movie</code> 模型的 EF Core 功能（创建、读取、更新和删除）。 数据库上下文派生自 <a href="/dotnet/api/microsoft.entityframeworkcore.dbcontext">Microsoft.EntityFrameworkCore.DbContext</a> 并指定要包含在数据模型中的实体。</p>
+<p>创建一个“Data”文件夹。</p>
+<p>使用以下代码添加 Data/MvcMovieContext.cs 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码为实体集创建 <a href="/dotnet/api/microsoft.entityframeworkcore.dbset-1">DbSet&lt;Movie&gt;</a> 属性。 在实体框架术语中，实体集通常与数据表相对应。 实体对应表中的行。</p>
+<p><a name="reg"></a></p>
+<h2 id="register-the-database-context">注册数据库上下文</h2>
+<p>ASP.NET Core 通过<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入 (DI)</a> 生成。 在应用程序启动过程中，必须向 DI 注册服务（如 EF Core DB 上下文）。 需要这些服务（如 Razor 页面）的组件通过构造函数参数提供相应服务。 本教程的后续部分介绍了用于获取 DB 上下文实例的构造函数代码。 本部分会将数据库上下文注册到 DI 容器。</p>
+<p>将以下 <code>using</code> 语句添加到 Startup.cs 顶部：</p>
+<pre><code class="lang-csharp">using MvcMovie.Data;
+using Microsoft.EntityFrameworkCore;
+</code></pre>
+<p>将以下突出显示的代码添加到 <code>Startup.ConfigureServices</code>：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio" role="tabpanel" data-tab="visual-studio">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></section>
+</div>
+
+<p>通过调用 <a href="/dotnet/api/microsoft.entityframeworkcore.dbcontextoptions">DbContextOptions</a> 对象中的一个方法将连接字符串名称传递到上下文。 进行本地开发时， <a class="xref" href="../../fundamentals/configuration/index.html">ASP.NET Core 配置系统</a> 在 <em>appsettings.json</em> 文件中读取数据库连接字符串。</p>
+<p><a name="cs"></a></p>
+<h2 id="add-a-database-connection-string">添加数据库连接字符串</h2>
+<p>将连接字符串添加到 appsettings.json 文件：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio" role="tabpanel" data-tab="visual-studio">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></section>
+</div>
+
+<p>生成项目以检查编译器错误。</p>
+<h2 id="scaffold-movie-pages">基架电影页面</h2>
+<p>使用基架工具为电影模型生成“创建”、“读取”、“更新”和“删除”(CRUD) 页面。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>在解决方案资源管理器中，右键单击“Controllers”文件夹 &gt;“添加”&gt;“新搭建基架的项目”。</p>
+<p><img src="adding-model/_static/add_controller21.png" alt="上述步骤的视图"></p>
+<p>在“添加基架”对话框中，选择“包含视图的 MVC 控制器(使用 Entity Framework)”&gt;“添加” 。</p>
+<p><img src="adding-model/_static/add_scaffold21.png" alt="“添加基架”对话框"></p>
+<p>填写“添加控制器”对话框：</p>
+<ul>
+<li>模型类：Movie (MvcMovie.Models)</li>
+<li>数据上下文类：MvcMovieContext (MvcMovie.Data)</li>
+</ul>
+<p><img src="adding-model/_static/dc3.png" alt="“添加数据”上下文"></p>
+<ul>
+<li>视图：将每个选项保持为默认选中状态</li>
+<li>控制器名称：保留默认的 MoviesController</li>
+<li>选择“添加”</li>
+</ul>
+<p>Visual Studio 将创建：</p>
+<ul>
+<li>电影控制器 (Controllers/MoviesController.cs)</li>
+<li>“创建”、“删除”、“详细信息”、“编辑”和“索引”页面的 Razor 视图文件 (Views/Movies/*.cshtml)</li>
+</ul>
+<p>自动创建这些文件称为“基架”。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>打开项目目录（包含 Program.cs、Startup.cs 和 .csproj 文件的目录）中的命令窗口。</p>
+</li>
+<li><p>在 Linux 上，导出基架工具路径：</p>
+<pre><code class="lang-console">export PATH=$HOME/.dotnet/tools:$PATH
+</code></pre>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -name MoviesController -m Movie -dc MvcMovieContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries
+</code></pre>
+<p>下表详细说明了 ASP.NET Core 代码生成器参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-m</td>
+<td>模型的名称。</td>
+</tr>
+<tr>
+<td>-dc</td>
+<td>数据上下文。</td>
+</tr>
+<tr>
+<td>-udl</td>
+<td>使用默认布局。</td>
+</tr>
+<tr>
+<td>--relativeFolderPath</td>
+<td>用于创建文件的相对输出文件夹路径。</td>
+</tr>
+<tr>
+<td>--useDefaultLayout</td>
+<td>应为视图使用默认布局。</td>
+</tr>
+<tr>
+<td>--referenceScriptLibraries</td>
+<td>向“编辑”和“创建”页面添加 <code>_ValidationScriptsPartial</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>h</code> 开关获取 <code>aspnet-codegenerator controller</code> 命令方面的帮助：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -h
+</code></pre>
+<p>有关详细信息，请查看 <a class="xref" href="../../fundamentals/tools/dotnet-aspnet-codegenerator.html">dotnet aspnet-codegenerator</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>打开项目目录（包含 Program.cs、Startup.cs 和 .csproj 文件的目录）中的命令窗口。</p>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -name MoviesController -m Movie -dc MvcMovieContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries
+</code></pre>
+<p>下表详细说明了 ASP.NET Core 代码生成器参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-m</td>
+<td>模型的名称。</td>
+</tr>
+<tr>
+<td>-dc</td>
+<td>数据上下文。</td>
+</tr>
+<tr>
+<td>-udl</td>
+<td>使用默认布局。</td>
+</tr>
+<tr>
+<td>--relativeFolderPath</td>
+<td>用于创建文件的相对输出文件夹路径。</td>
+</tr>
+<tr>
+<td>--useDefaultLayout</td>
+<td>应为视图使用默认布局。</td>
+</tr>
+<tr>
+<td>--referenceScriptLibraries</td>
+<td>向“编辑”和“创建”页面添加 <code>_ValidationScriptsPartial</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>h</code> 开关获取 <code>aspnet-codegenerator controller</code> 命令方面的帮助：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -h
+</code></pre>
+<p>有关详细信息，请查看 <a class="xref" href="../../fundamentals/tools/dotnet-aspnet-codegenerator.html">dotnet aspnet-codegenerator</a></p>
+</li>
+</ul>
+</section>
+</div>
+<!-- End of tabs                  -->
+<p>你还不能使用基架页面，因为该数据库不存在。 如果运行应用并单击“Movie App”链接，则会出现“无法打开数据库”或“无此类表：Movie”错误消息。</p>
+<p><a name="migration"></a></p>
+<h2 id="initial-migration">初始迁移</h2>
+<p>使用 EF Core <a class="xref" href="../../data/ef-mvc/migrations.html">迁移</a>功能来创建数据库。 迁移是可用于创建和更新数据库以匹配数据模型的一组工具。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-5">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>从“工具”菜单中，选择“NuGet 包管理器”&gt;“包管理器控制台”(PMC)。</p>
+<p>在 PMC 中，输入以下命令：</p>
+<pre><code class="lang-powershell">Add-Migration InitialCreate
+Update-Database
+</code></pre>
+<ul>
+<li><p><code>Add-Migration InitialCreate</code>：生成 Migrations/{timestamp}_InitialCreate.cs 迁移文件。 <code>InitialCreate</code> 参数是迁移名称。 可以使用任何名称，但是按照惯例，会选择可说明迁移的名称。 因为这是首次迁移，所以生成的类包含用于创建数据库架构的代码。 数据库架构基于在 <code>MvcMovieContext</code> 类中指定的模型。</p>
+</li>
+<li><p><code>Update-Database</code>：将数据库更新到上一个命令创建的最新迁移。 此命令在用于创建数据库的 Migrations/{time-stamp}_InitialCreate.cs 文件中运行 <code>Up</code> 方法。</p>
+<p>数据库更新命令生成以下警告：</p>
+<blockquote>
+<p>No type was specified for the decimal column 'Price' on entity type 'Movie'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values using 'HasColumnType()'.</p>
+</blockquote>
+<p>你可以忽略该警告，它将后面的教程中得到修复。</p>
+</li>
+</ul>
+<p>有关 EF Core 的 PMC 工具的详细信息，请参阅 <a href="/ef/core/miscellaneous/cli/powershell">EF Core 工具引用 - Visual Studio 中的 PMC</a>。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<p>如果尚未 <code>dotnet ef</code> 安装，请将其安装为全局工具：</p>
+<pre><code class="lang-dotnetcli">  dotnet tool install --global dotnet-ef
+</code></pre>
+<p>有关 EF Core 的 CLI 的详细信息，请参阅 <a href="/ef/core/miscellaneous/cli/dotnet">.Net CLI 的 EF Core 工具引用</a>。</p>
+
+<p>运行以下 .NET Core CLI 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet ef migrations add InitialCreate
+dotnet ef database update
+</code></pre>
+<ul>
+<li><p><code>ef migrations add InitialCreate</code>：生成 Migrations/{timestamp}_InitialCreate.cs 迁移文件。 <code>InitialCreate</code> 参数是迁移名称。 可以使用任何名称，但是按照惯例，会选择可说明迁移的名称。 因为这是首次迁移，所以生成的类包含用于创建数据库架构的代码。 数据库架构基于在 <code>MvcMovieContext</code> 类中（位于 Data/MvcMovieContext.cs 文件中）中指定的模型。</p>
+</li>
+<li><p><code>ef database update</code>：将数据库更新到上一个命令创建的最新迁移。 此命令在用于创建数据库的 Migrations/{time-stamp}_InitialCreate.cs 文件中运行 <code>Up</code> 方法。</p>
+</li>
+</ul>
+</section>
+</div>
+<h3 id="the-initialcreate-class">InitialCreate 类</h3>
+<p>检查 Migrations/{timestamp}_InitialCreate.cs 迁移文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Up</code> 方法创建 Movie 表，并将 <code>Id</code> 配置为主键。 <code>Down</code> 方法可还原 <code>Up</code> 迁移所做的架构更改。</p>
+<p><a name="test"></a></p>
+<h2 id="test-the-app">测试应用</h2>
+<ul>
+<li><p>运行应用并单击“Movie App”链接。</p>
+<p>如果遇到类似于以下情况的异常：</p>
+</li>
+</ul>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-6">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-6_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<pre><code class="lang-console">SqlException: Cannot open database &quot;MvcMovieContext-1&quot; requested by the login. The login failed.
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-6_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-console">SqliteException: SQLite Error 1: 'no such table: Movie'.
+</code></pre>
+</section>
+</div>
+
+<p>可能缺失<a href="#migration">迁移步骤</a>。</p>
+<ul>
+<li><p>测试“创建”页。 输入并提交数据。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>可能无法在 <code>Price</code> 字段中输入十进制逗号。 若要使 <a href="https://jqueryvalidation.org/">jQuery 验证</a>支持使用逗号（“,”）表示小数点的非英语区域设置，以及支持非美国英语日期格式，应用必须进行全球化。 有关全球化的说明，请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/issues/4076#issuecomment-326590420">此 GitHub 问题</a>。</p>
+</div>
+</li>
+<li><p>测试“编辑”、“详细信息”和“删除”页  。</p>
+</li>
+</ul>
+<h2 id="dependency-injection-in-the-controller">控制器中的依赖项注入</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-7">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-7_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>打开 Controllers/MoviesController.cs 文件并检查构造函数：</p>
+<!-- l.. Make copy of Movies controller (or use the old one as I did in the 3.0 upgrade) because we comment out the initial index method and update it later  -->
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>构造函数使用<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>将数据库上下文 (<code>MvcMovieContext</code>) 注入到控制器中。 数据库上下文将在控制器中的每个 <a href="https://wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a> 方法中使用。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-7_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>构造函数使用<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>将数据库上下文 (<code>MvcMovieContext</code>) 注入到控制器中。 数据库上下文将在控制器中的每个 <a href="https://wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a> 方法中使用。</p>
+<h3 id="use-sqlite-for-development-sql-server-for-production">将 SQLite 用于开发，将 SQL Server 用于生产</h3>
+<p>选择 SQLite 后，模板生成的代码便可用于开发。 下面的代码演示如何将 &lt;xref:Microsoft.AspNetCore.Hosting.IWebHostEnvironment&gt; 注入到 Startup 中。 注入 <code>IWebHostEnvironment</code>，以便 <code>ConfigureServices</code> 可以在开发中使用 SQLite 并在生产中使用 SQL Server。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></section>
+</div>
+<!-- end of tabs --->
+<p><a name="strongly-typed-models-keyword-label"></a>
+<a name="strongly-typed-models-and-the--keyword"></a></p>
+<h2 id="strongly-typed-models-and-the-model-keyword">强类型模型和 @model 关键词</h2>
+<p>在本教程之前的内容中，已经介绍了控制器如何使用 <code>ViewData</code> 字典将数据或对象传递给视图。 <code>ViewData</code> 字典是一个动态对象，提供了将信息传递给视图的方便的后期绑定方法。</p>
+<p>MVC 还提供将强类型模型对象传递给视图的功能。 此强类型方法启用编译时代码检查。 基架机制通过 <code>MoviesController</code> 类和视图使用了此方法（即传递强类型模型）。</p>
+<p>检查 Controllers/MoviesController.cs 文件中生成的 <code>Details</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>id</code> 参数通常作为路由数据传递。 例如 <code>https://localhost:5001/movies/details/1</code> 的设置如下：</p>
+<ul>
+<li>控制器被设置为 <code>movies</code> 控制器（第一个 URL 段）。</li>
+<li>操作被设置为 <code>details</code>（第二个 URL 段）。</li>
+<li>ID 被设置为 1（最后一个 URL 段）。</li>
+</ul>
+<p>还可以使用查询字符串传入 <code>id</code>，如下所示：</p>
+<p><code>https://localhost:5001/movies/details?id=1</code></p>
+<p>在未提供 ID 值的情况下，<code>id</code> 参数可定义为<a href="/dotnet/csharp/programming-guide/nullable-types/index">可以为 null 的类型</a> (<code>int?</code>)。</p>
+<p><a href="/dotnet/articles/csharp/programming-guide/statements-expressions-operators/lambda-expressions">Lambda 表达式</a>会被传入 <code>FirstOrDefaultAsync</code> 以选择与路由数据或查询字符串值相匹配的电影实体。</p>
+<pre><code class="lang-csharp">var movie = await _context.Movie
+    .FirstOrDefaultAsync(m =&gt; m.Id == id);
+</code></pre>
+<p>如果找到了电影，<code>Movie</code> 模型的实例则会被传递到 <code>Details</code> 视图：</p>
+<pre><code class="lang-csharp">return View(movie);
+</code></pre>
+<p>检查 Views/Movies/Details.cshtml 文件的内容：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>视图文件顶部的 <code>@model</code> 语句可指定视图期望的对象类型。 创建影片控制器时，将包含以下 <code>@model</code> 语句：</p>
+<pre><code class="lang-cshtml">@model MvcMovie.Models.Movie
+</code></pre>
+<p>此 <code>@model</code> 指令允许访问控制器传递给视图的影片。 <code>Model</code> 对象为强类型对象。 例如，在 Details.cshtml 视图中，代码通过强类型的 <code>Model</code> 对象将每个电影字段传递给 <code>DisplayNameFor</code> 和 <code>DisplayFor</code>HTML 帮助程序。 <code>Create</code> 和 <code>Edit</code> 方法以及视图也传递一个 <code>Movie</code> 模型对象。</p>
+<p>检查电影控制器中的 Index.cshtml 视图和 <code>Index</code> 方法。 请注意代码在调用 <code>View</code> 方法时是如何创建 <code>List</code> 对象的。 代码将此 <code>Movies</code> 列表从 <code>Index</code> 操作方法传递给视图：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建影片控制器后，基架将以下 <code>@model</code> 语句包含在 Index.cshtml 文件的顶部：</p>
+<!-- Copy Index.cshtml to IndexOriginal.cshtml -->
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>@model</code> 指令使你能够使用强类型的 <code>Model</code> 对象访问控制器传递给视图的电影列表。 例如，在 Index.cshtml 视图中，代码使用 <code>foreach</code> 语句通过强类型 <code>Model</code> 对象对电影进行循环遍历：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>因为 <code>Model</code> 对象为强类型（作为 <code>IEnumerable&lt;Movie&gt;</code> 对象），因此循环中的每个项都被类型化为 <code>Movie</code>。 除其他优点之外，这意味着可对代码进行编译时检查。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../mvc/views/tag-helpers/intro.html">标记帮助程序</a></li>
+<li><a class="xref" href="../../fundamentals/localization.html">全球化和本地化</a></li>
+</ul>
+<div class="step-by-step">
+<p><a href="adding-view.html">上一篇：添加视图</a>
+<a href="working-with-sql.html">下一篇：使用 SQL</a></p>
+</div>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<h2 id="add-a-data-model-class">添加数据模型类</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-8">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-8_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-8_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-8_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-8_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-8_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>右键单击 Models 文件夹，然后单击“添加” &gt; “类” 。 将类命名“Movie”。</p>
+<p>向 <code>Movie</code> 类添加以下属性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Movie</code> 类包含：</p>
+<ul>
+<li><p>数据库需要 <code>Id</code> 字段以获取主键。</p>
+</li>
+<li><p><code>[DataType(DataType.Date)]</code>：<a href="/dotnet/api/microsoft.aspnetcore.mvc.dataannotations.internal.datatypeattributeadapter">DataType</a> 属性指定数据的类型 (<code>Date</code>)。 通过此特性：</p>
+<ul>
+<li>用户无需在数据字段中输入时间信息。</li>
+<li>仅显示日期，而非时间信息。</li>
+</ul>
+</li>
+</ul>
+<p><a href="/dotnet/api/system.componentmodel.dataannotations">DataAnnotations</a> 会在后续教程中介绍。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-8_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li>将类添加到名为“Movie.cs”的“Models”文件夹。</li>
+</ul>
+<p>向 <code>Movie</code> 类添加以下属性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Movie</code> 类包含：</p>
+<ul>
+<li><p>数据库需要 <code>Id</code> 字段以获取主键。</p>
+</li>
+<li><p><code>[DataType(DataType.Date)]</code>：<a href="/dotnet/api/microsoft.aspnetcore.mvc.dataannotations.internal.datatypeattributeadapter">DataType</a> 属性指定数据的类型 (<code>Date</code>)。 通过此特性：</p>
+<ul>
+<li>用户无需在数据字段中输入时间信息。</li>
+<li>仅显示日期，而非时间信息。</li>
+</ul>
+</li>
+</ul>
+<p><a href="/dotnet/api/system.componentmodel.dataannotations">DataAnnotations</a> 会在后续教程中介绍。</p>
+<div range="&gt;= aspnetcore-3.0">
+<p><a name="dc"></a></p>
+<p>创建一个“Data”文件夹  。</p>
+<p>将以下 <code>MvcMovieContext</code> 类添加到“Data”文件夹  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码为实体集创建 <code>DbSet</code> 属性。 在 Entity Framework 中，实体集通常与数据表相对应，具体实体与表中的行相对应。</p>
+<p><a name="cs"></a></p>
+<h3 id="add-a-database-connection-string">添加数据库连接字符串</h3>
+<p>将连接字符串添加到 appsettings.json 文件  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="add-nuget-packages-and-ef-tools">添加 NuGet 包和 EF 工具</h3>
+<p>运行以下 .NET Core CLI 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install --global dotnet-ef
+dotnet tool install --global dotnet-aspnet-codegenerator
+dotnet add package Microsoft.EntityFrameworkCore.SQLite
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.Extensions.Logging.Debug
+</code></pre>
+<p>上述命令添加：</p>
+<ul>
+<li><a class="xref" href="../../fundamentals/tools/dotnet-aspnet-codegenerator.html">aspnet-codegenerator 基架工具</a>。</li>
+<li>适用于 .NET Core CLI 的 Entity Framework Core 工具。</li>
+<li>EF Core SQLite 提供程序将 EF Core 包作为依赖项进行安装。</li>
+<li>基架需要的包：<code>Microsoft.VisualStudio.Web.CodeGeneration.Design</code> 和 <code>Microsoft.EntityFrameworkCore.SqlServer</code>。</li>
+</ul>
+<p>有关允许应用按环境配置其数据库上下文的多个环境配置指南，请参阅 <a class="xref" href="../../fundamentals/environments.html#environment-based-startup-class-and-methods">在 ASP.NET Core 中使用多个环境</a>。</p>
+<p>如果出现基架错误，请验证目标框架名字对象 (TFM) 是否与项目文件中的 NuGet 包版本相匹配。 例如，以下项目文件包含适用于 .NET Core 的版本 3.1 和所列的 NuGet 包：</p>
+<pre><code class="lang-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk.Web&quot;&gt;
+
+  &lt;PropertyGroup&gt;
+    &lt;TargetFramework&gt;netcoreapp3.1&lt;/TargetFramework&gt;
+  &lt;/PropertyGroup&gt;
+
+  &lt;ItemGroup&gt;
+    &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Identity.EntityFrameworkCore&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Identity.UI&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.EntityFrameworkCore.Design&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.EntityFrameworkCore.SqlServer&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.EntityFrameworkCore.Tools&quot; Version=&quot;3.1.0&quot; /&gt;
+    &lt;PackageReference Include=&quot;Microsoft.VisualStudio.Web.CodeGeneration.Design&quot; Version=&quot;3.1.0&quot; /&gt;
+  &lt;/ItemGroup&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p><a name="reg"></a></p>
+<h3 id="register-the-database-context">注册数据库上下文</h3>
+<p>将以下 <code>using</code> 语句添加到 Startup.cs 顶部  ：</p>
+<pre><code class="lang-csharp">using MvcMovie.Data;
+using Microsoft.EntityFrameworkCore;
+</code></pre>
+<p>使用 <code>Startup.ConfigureServices</code> 中的<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>容器注册数据库上下文。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成项目以检查编译器错误。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>将以下 <code>MvcMovieContext</code> 类添加到“模型”文件夹  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码为实体集创建 <code>DbSet</code> 属性。 在 Entity Framework 中，实体集通常与数据表相对应，具体实体与表中的行相对应。</p>
+<p><a name="cs"></a></p>
+<h3 id="add-a-database-connection-string">添加数据库连接字符串</h3>
+<p>将连接字符串添加到 appsettings.json 文件  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="add-required-nuget-packages">添加所需的 NuGet 包</h3>
+<p>运行以下 .NET Core CLI 命令，以将 SQLite 和 CodeGeneration.Design 添加到项目中：</p>
+<pre><code class="lang-dotnetcli">dotnet add package Microsoft.EntityFrameworkCore.SQLite
+dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+</code></pre>
+<p><code>Microsoft.VisualStudio.Web.CodeGeneration.Design</code> 包对基架是必需的。</p>
+<p><a name="reg"></a></p>
+<h3 id="register-the-database-context">注册数据库上下文</h3>
+<p>将以下 <code>using</code> 语句添加到 Startup.cs 顶部  ：</p>
+<pre><code class="lang-csharp">using MvcMovie.Models;
+using Microsoft.EntityFrameworkCore;
+</code></pre>
+<p>使用 <code>Startup.ConfigureServices</code> 中的<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>容器注册数据库上下文。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成项目以检查错误。</p>
+</div>
+</section>
+</div>
+<h2 id="scaffold-the-movie-model">搭建“电影”模型的基架</h2>
+<p>在此部分，将搭建“电影”模型的基架。 确切地说，基架工具将生成页面，用于对“电影”模型执行创建、读取、更新和删除 (CRUD) 操作。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-9">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-9_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-9_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-9_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-9_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-9_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-9_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-9_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>在解决方案资源管理器中，右键单击“Controllers”文件夹 &gt;“添加”&gt;“新搭建基架的项目”。</p>
+<p><img src="adding-model/_static/add_controller21.png" alt="上述步骤的视图"></p>
+<p>在“添加基架”对话框中，选择“包含视图的 MVC 控制器(使用 Entity Framework)”&gt;“添加” 。</p>
+<p><img src="adding-model/_static/add_scaffold21.png" alt="“添加基架”对话框"></p>
+<p>填写“添加控制器”对话框：</p>
+<ul>
+<li>模型类：Movie (MvcMovie.Models)</li>
+<li>数据上下文类：选择 + 图标并添加默认的 MvcMovie.Models.MvcMovieContext</li>
+</ul>
+<p><img src="adding-model/_static/dc.png" alt="“添加数据”上下文"></p>
+<ul>
+<li>视图：将每个选项保持为默认选中状态</li>
+<li>控制器名称：保留默认的 MoviesController</li>
+<li>选择“添加”</li>
+</ul>
+<p><img src="adding-model/_static/add_controller2.png" alt="“添加控制器”对话框"></p>
+<p>Visual Studio 将创建：</p>
+<ul>
+<li>Entity Framework Core <a class="xref" href="../../data/ef-mvc/intro.html#create-the-database-context">数据库上下文类</a> (Data/MvcMovieContext.cs)</li>
+<li>电影控制器 (Controllers/MoviesController.cs)</li>
+<li>“创建”、“删除”、“详细信息”、“编辑”和“索引”页面的 Razor 视图文件 (Views/Movies/*.cshtml)</li>
+</ul>
+<p>自动创建数据库上下文和 <a href="https://wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a>（创建、读取、更新和删除）操作方法和视图的过程称为“搭建基架”。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-9_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<!--  Until https://github.com/aspnet/Scaffolding/issues/582 is fixed windows needs backslash or the namespace is namespace RazorPagesMovie.Pages_Movies rather than namespace RazorPagesMovie.Pages.Movies
+-->
+<ul>
+<li><p>打开项目目录（包含 Program.cs、Startup.cs 和 .csproj 文件的目录）中的命令窗口。</p>
+</li>
+<li><p>安装基架工具：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install --global dotnet-aspnet-codegenerator
+</code></pre>
+</li>
+<li><p>在 Linux 上，导出基架工具路径：</p>
+<pre><code class="lang-console">  export PATH=$HOME/.dotnet/tools:$PATH
+</code></pre>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -name MoviesController -m Movie -dc MvcMovieContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries
+</code></pre>
+</li>
+</ul>
+<p>下表详细说明了 ASP.NET Core 代码生成器参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-m</td>
+<td>模型的名称。</td>
+</tr>
+<tr>
+<td>-dc</td>
+<td>数据上下文。</td>
+</tr>
+<tr>
+<td>-udl</td>
+<td>使用默认布局。</td>
+</tr>
+<tr>
+<td>--relativeFolderPath</td>
+<td>用于创建文件的相对输出文件夹路径。</td>
+</tr>
+<tr>
+<td>--useDefaultLayout</td>
+<td>应为视图使用默认布局。</td>
+</tr>
+<tr>
+<td>--referenceScriptLibraries</td>
+<td>向“编辑”和“创建”页面添加 <code>_ValidationScriptsPartial</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>h</code> 开关获取 <code>aspnet-codegenerator controller</code> 命令方面的帮助：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -h
+</code></pre>
+<p>有关详细信息，请查看 <a class="xref" href="../../fundamentals/tools/dotnet-aspnet-codegenerator.html">dotnet aspnet-codegenerator</a></p>
+<!-- Mac -------------------------->
+</section>
+<section id="tabpanel_CeZOj-G++Q-9_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>打开项目目录（包含 Program.cs、Startup.cs 和 .csproj 文件的目录）中的命令窗口。</p>
+</li>
+<li><p>安装基架工具：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install --global dotnet-aspnet-codegenerator
+</code></pre>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -name MoviesController -m Movie -dc MvcMovieContext --relativeFolderPath Controllers --useDefaultLayout --referenceScriptLibraries
+</code></pre>
+</li>
+</ul>
+<p>下表详细说明了 ASP.NET Core 代码生成器参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-m</td>
+<td>模型的名称。</td>
+</tr>
+<tr>
+<td>-dc</td>
+<td>数据上下文。</td>
+</tr>
+<tr>
+<td>-udl</td>
+<td>使用默认布局。</td>
+</tr>
+<tr>
+<td>--relativeFolderPath</td>
+<td>用于创建文件的相对输出文件夹路径。</td>
+</tr>
+<tr>
+<td>--useDefaultLayout</td>
+<td>应为视图使用默认布局。</td>
+</tr>
+<tr>
+<td>--referenceScriptLibraries</td>
+<td>向“编辑”和“创建”页面添加 <code>_ValidationScriptsPartial</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>h</code> 开关获取 <code>aspnet-codegenerator controller</code> 命令方面的帮助：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -h
+</code></pre>
+<p>有关详细信息，请查看 <a class="xref" href="../../fundamentals/tools/dotnet-aspnet-codegenerator.html">dotnet aspnet-codegenerator</a></p>
+</section>
+</div>
+<!-- End of VS tabs                  -->
+<p>如果运行应用并单击“Mvc 电影”链接，则会出现以下类似的错误：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-10">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-10_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-10_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-10_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-10_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-10_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<pre><code>An unhandled exception occurred while processing the request.
+
+SqlException: Cannot open database &quot;MvcMovieContext-&lt;GUID removed&gt;&quot; requested by the login. The login failed.
+Login failed for user 'Rick'.
+
+System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-10_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<pre><code>An unhandled exception occurred while processing the request.
+SqliteException: SQLite Error 1: 'no such table: Movie'.
+Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(int rc, sqlite3 db)
+
+</code></pre>
+</section>
+</div>
+
+<p>你需要创建数据库，并且使用 EF Core <a class="xref" href="../../data/ef-mvc/migrations.html">迁移</a>功能来执行此操作。 通过迁移可创建与数据模型匹配的数据库，并在数据模型更改时更新数据库架构。</p>
+<p><a name="pmc"></a></p>
+<h2 id="initial-migration">初始迁移</h2>
+<p>在本节中，将完成以下任务：</p>
+<ul>
+<li>添加初始迁移。</li>
+<li>使用初始迁移来更新数据库。</li>
+</ul>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-11">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-11_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-11_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-11_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-11_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-11_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ol>
+<li><p>从“工具”菜单中，选择“NuGet 包管理器”&gt;“包管理器控制台”(PMC)。</p>
+<p><img src="adding-model/_static/pmc.png" alt="PMC 菜单"></p>
+</li>
+<li><p>在 PMC 中，输入以下命令：</p>
+<pre><code class="lang-powershell">Add-Migration Initial
+Update-Database
+</code></pre>
+<p><code>Add-Migration</code> 命令生成用于创建初始数据库架构的代码。</p>
+<p>数据库架构基于在 <code>MvcMovieContext</code> 类中指定的模型。 <code>Initial</code> 参数是迁移名称。 可以使用任何名称，但是按照惯例，会使用可说明迁移的名称。 有关详细信息，请参阅 <a class="xref" href="../../data/ef-mvc/migrations.html">教程：使用迁移功能 - ASP.NET MVC 和 EF Core</a>。</p>
+<p><code>Update-Database</code> 命令在用于创建数据库的 Migrations/{time-stamp}_InitialCreate.cs 文件中运行 <code>Up</code> 方法。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-11_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<p>如果尚未 <code>dotnet ef</code> 安装，请将其安装为全局工具：</p>
+<pre><code class="lang-dotnetcli">  dotnet tool install --global dotnet-ef
+</code></pre>
+<p>有关 EF Core 的 CLI 的详细信息，请参阅 <a href="/ef/core/miscellaneous/cli/dotnet">.Net CLI 的 EF Core 工具引用</a>。</p>
+
+<p>运行以下 .NET Core CLI 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet ef migrations add InitialCreate
+dotnet ef database update
+</code></pre>
+
+<p><code>ef migrations add InitialCreate</code> 命令生成用于创建初始数据库架构的代码。</p>
+<p>数据库架构基于在 <code>MvcMovieContext</code> 类中（位于 Data/MvcMovieContext.cs 文件中）中指定的模型。 <code>InitialCreate</code> 参数是迁移名称。 可以使用任何名称，但是按照惯例，会选择可说明迁移的名称。</p>
+</section>
+</div>
+<h2 id="examine-the-context-registered-with-dependency-injection">检查通过依赖关系注入注册的上下文</h2>
+<p>ASP.NET Core 通过<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入 (DI)</a> 生成。 服务（例如 EF Core 数据库上下文）在应用程序启动期间通过 DI 注册。 需要这些服务（如 Razor 页面）的组件通过构造函数参数提供相应服务。 本教程的后续部分介绍了用于获取 DB 上下文实例的构造函数代码。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-12">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-12_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-12_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-12_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-12_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-12_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>基架工具自动创建数据库上下文并将其注册到 DI 容器。</p>
+<p>我们来研究以下 <code>Startup.ConfigureServices</code> 方法。 基架添加了突出显示的行：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MvcMovieContext</code> 为 <code>Movie</code> 模型协调 EF Core 功能（创建、读取、更新、删除等）。 数据上下文 (<code>MvcMovieContext</code>) 派生自 <a href="/dotnet/api/microsoft.entityframeworkcore.dbcontext">Microsoft.EntityFrameworkCore.DbContext</a>。 数据上下文指定数据模型中包含哪些实体：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码为实体集创建 <a href="/dotnet/api/microsoft.entityframeworkcore.dbset-1">DbSet&lt;Movie&gt;</a> 属性。 在实体框架术语中，实体集通常与数据表相对应。 实体对应表中的行。</p>
+<p>通过调用 <a href="/dotnet/api/microsoft.entityframeworkcore.dbcontextoptions">DbContextOptions</a> 对象中的一个方法将连接字符串名称传递到上下文。 进行本地开发时， <a class="xref" href="../../fundamentals/configuration/index.html">ASP.NET Core 配置系统</a> 在 <em>appsettings.json</em> 文件中读取数据库连接字符串。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-12_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>创建了数据库上下文并将其注册到了 DI 容器。</p>
+</section>
+</div>
+
+<p><a name="test"></a></p>
+<h3 id="test-the-app">测试应用</h3>
+<ul>
+<li>运行应用并将 <code>/Movies</code> 追加到浏览器中的 URL (<code>http://localhost:port/movies</code>)。</li>
+</ul>
+<p>如果收到如下所示数据库异常：</p>
+<pre><code class="lang-console">SqlException: Cannot open database &quot;MvcMovieContext-GUID&quot; requested by the login. The login failed.
+Login failed for user 'User-name'.
+</code></pre>
+<p>缺少<a href="#pmc">迁移步骤</a>。</p>
+<ul>
+<li><p>测试“创建”链接。 输入并提交数据。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>可能无法在 <code>Price</code> 字段中输入十进制逗号。 若要使 <a href="https://jqueryvalidation.org/">jQuery 验证</a>支持使用逗号（“,”）表示小数点的非英语区域设置，以及支持非美国英语日期格式，应用必须进行全球化。 有关全球化的说明，请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/issues/4076#issuecomment-326590420">此 GitHub 问题</a>。</p>
+</div>
+</li>
+<li><p>测试“编辑”、“详细信息”和“删除”链接。</p>
+</li>
+</ul>
+<p>检查 <code>Startup</code> 类：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上面突出显示的代码显示了要添加到<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>容器的电影数据库上下文：</p>
+<ul>
+<li><code>services.AddDbContext&lt;MvcMovieContext&gt;(options =&gt;</code> 指定要使用的数据库和连接字符串。</li>
+<li><code>=&gt;</code> 是 <a href="/dotnet/articles/csharp/language-reference/operators/lambda-operator">lambda 运算符</a></li>
+</ul>
+<p>打开 Controllers/MoviesController.cs 文件并检查构造函数：</p>
+<!-- l.. Make copy of Movies controller because we comment out the initial index method and update it later  -->
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>构造函数使用<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>将数据库上下文 (<code>MvcMovieContext</code>) 注入到控制器中。 数据库上下文将在控制器中的每个 <a href="https://wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a> 方法中使用。</p>
+<p><a name="strongly-typed-models-keyword-label"></a>
+<a name="strongly-typed-models-and-the--keyword"></a></p>
+<h2 id="strongly-typed-models-and-the-model-keyword">强类型模型和 @model 关键词</h2>
+<p>在本教程之前的内容中，已经介绍了控制器如何使用 <code>ViewData</code> 字典将数据或对象传递给视图。 <code>ViewData</code> 字典是一个动态对象，提供了将信息传递给视图的方便的后期绑定方法。</p>
+<p>MVC 还提供将强类型模型对象传递给视图的功能。 凭借此强类型方法可更好地对代码进行编译时检查。 基架机制在创建方法和视图时，通过 <code>MoviesController</code> 类和视图使用了此方法（即传递强类型模型）。</p>
+<p>检查 Controllers/MoviesController.cs 文件中生成的 <code>Details</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>id</code> 参数通常作为路由数据传递。 例如 <code>https://localhost:5001/movies/details/1</code> 的设置如下：</p>
+<ul>
+<li>控制器被设置为 <code>movies</code> 控制器（第一个 URL 段）。</li>
+<li>操作被设置为 <code>details</code>（第二个 URL 段）。</li>
+<li>ID 被设置为 1（最后一个 URL 段）。</li>
+</ul>
+<p>还可以使用查询字符串传入 <code>id</code>，如下所示：</p>
+<p><code>https://localhost:5001/movies/details?id=1</code></p>
+<p>在未提供 ID 值的情况下，<code>id</code> 参数可定义为<a href="/dotnet/csharp/programming-guide/nullable-types/index">可以为 null 的类型</a> (<code>int?</code>)。</p>
+<p><a href="/dotnet/articles/csharp/programming-guide/statements-expressions-operators/lambda-expressions">Lambda 表达式</a>会被传入 <code>FirstOrDefaultAsync</code> 以选择与路由数据或查询字符串值相匹配的电影实体。</p>
+<pre><code class="lang-csharp">var movie = await _context.Movie
+    .FirstOrDefaultAsync(m =&gt; m.Id == id);
+</code></pre>
+<p>如果找到了电影，<code>Movie</code> 模型的实例则会被传递到 <code>Details</code> 视图：</p>
+<pre><code class="lang-csharp">return View(movie);
+</code></pre>
+<p>检查 Views/Movies/Details.cshtml 文件的内容：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过将 <code>@model</code> 语句包括在视图文件的顶端，可以指定视图期望的对象类型。 创建电影控制器时，会自动在 Details.cshtml 文件的顶端包括以下 <code>@model</code> 语句：</p>
+<pre><code class="lang-cshtml">@model MvcMovie.Models.Movie
+</code></pre>
+<p>此 <code>@model</code> 指令使你能够使用强类型的 <code>Model</code> 对象访问控制器传递给视图的电影。 例如，在 Details.cshtml 视图中，代码通过强类型的 <code>Model</code> 对象将每个电影字段传递给 <code>DisplayNameFor</code> 和 <code>DisplayFor</code>HTML 帮助程序。 <code>Create</code> 和 <code>Edit</code> 方法以及视图也传递一个 <code>Movie</code> 模型对象。</p>
+<p>检查电影控制器中的 Index.cshtml 视图和 <code>Index</code> 方法。 请注意代码在调用 <code>View</code> 方法时是如何创建 <code>List</code> 对象的。 代码将此 <code>Movies</code> 列表从 <code>Index</code> 操作方法传递给视图：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建电影控制器时，基架会自动在 Index.cshtml 文件的顶端包含以下 <code>@model</code> 语句：</p>
+<!-- Copy Index.cshtml to IndexOriginal.cshtml -->
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>@model</code> 指令使你能够使用强类型的 <code>Model</code> 对象访问控制器传递给视图的电影列表。 例如，在 Index.cshtml 视图中，代码使用 <code>foreach</code> 语句通过强类型 <code>Model</code> 对象对电影进行循环遍历：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>因为 <code>Model</code> 对象为强类型（作为 <code>IEnumerable&lt;Movie&gt;</code> 对象），因此循环中的每个项都被类型化为 <code>Movie</code>。 除其他优点之外，这意味着可对代码进行编译时检查：</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../mvc/views/tag-helpers/intro.html">标记帮助程序</a></li>
+<li><a class="xref" href="../../fundamentals/localization.html">全球化和本地化</a></li>
+</ul>
+<div class="step-by-step">
+<p><a href="adding-view.html">上一篇：添加视图</a>
+<a href="working-with-sql.html">下一篇：使用数据库</a></p>
+</div>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

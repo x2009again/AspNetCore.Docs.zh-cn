@@ -1,0 +1,253 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#32423;&#32852;&#20540;&#21644;&#21442;&#25968; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#32423;&#32852;&#20540;&#21644;&#21442;&#25968; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/components/cascading-values-and-parameters">
+<h1 id="aspnet-core-no-locblazor-cascading-values-and-parameters">ASP.NET Core Blazor 级联值和参数</h1>
+
+<p>作者：<a href="https://github.com/guardrex">Luke Latham</a> 和 <a href="https://github.com/danroth27">Daniel Roth</a></p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/common/samples/">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<p>在某些情况下，使用<a class="xref" href="index.html#component-parameters">组件参数</a>将数据从祖先组件流向子代组件不太方便，尤其是在有多个组件层时。 级联值和参数提供了一种方便的方法，使祖先组件为其所有子代组件提供值，从而解决了此问题。 级联值和参数还提供了一种协调组件的方法。</p>
+<h3 id="theme-example">主题示例</h3>
+<p>在示例应用的以下示例中，<code>ThemeInfo</code> 类指定了要沿组件层次结构向下传递的主题信息，以便应用中给定部分内的所有按钮共享相同样式。</p>
+<p><code>UIThemeClasses/ThemeInfo.cs</code>：</p>
+<pre><code class="lang-csharp">public class ThemeInfo
+{
+    public string ButtonClass { get; set; }
+}
+</code></pre>
+<p>祖先组件可以使用级联值组件提供级联值。 &lt;xref:Microsoft.AspNetCore.Components.CascadingValue%601&gt; 组件包装组件层次结构的子树，并向该子树内的所有组件提供单个值。</p>
+<p>例如，示例应用将应用布局之一中的主题信息 (<code>ThemeInfo</code>) 指定为组成 <code>@Body</code> 属性布局正文的所有组件的级联参数。 在布局组件中为 <code>ButtonClass</code> 分配了 <code>btn-success</code> 的值。 任何子代组件都可以通过 <code>ThemeInfo</code> 级联对象使用此属性。</p>
+<p><code>CascadingValuesParametersLayout</code> 组件：</p>
+<pre><code class="lang-razor">@inherits LayoutComponentBase
+@using BlazorSample.UIThemeClasses
+
+&lt;div class=&quot;container-fluid&quot;&gt;
+    &lt;div class=&quot;row&quot;&gt;
+        &lt;div class=&quot;col-sm-3&quot;&gt;
+            &lt;NavMenu /&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;col-sm-9&quot;&gt;
+            &lt;CascadingValue Value=&quot;theme&quot;&gt;
+                &lt;div class=&quot;content px-4&quot;&gt;
+                    @Body
+                &lt;/div&gt;
+            &lt;/CascadingValue&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+@code {
+    private ThemeInfo theme = new ThemeInfo { ButtonClass = &quot;btn-success&quot; };
+}
+</code></pre>
+<p>为了使用级联值，组件使用 <a href="xref:Microsoft.AspNetCore.Components.CascadingParameterAttribute"><code>[CascadingParameter]</code></a> 特性来声明级联参数。 级联值按类型绑定到级联参数。</p>
+<p>在示例应用中，<code>CascadingValuesParametersTheme</code> 组件将 <code>ThemeInfo</code> 级联值绑定到级联参数。 该参数用于为组件显示的按钮之一设置 CSS 类。</p>
+<p><code>CascadingValuesParametersTheme</code> 组件：</p>
+<pre><code class="lang-razor">@page &quot;/cascadingvaluesparameterstheme&quot;
+@layout CascadingValuesParametersLayout
+@using BlazorSample.UIThemeClasses
+
+&lt;h1&gt;Cascading Values &amp; Parameters&lt;/h1&gt;
+
+&lt;p&gt;Current count: @currentCount&lt;/p&gt;
+
+&lt;p&gt;
+    &lt;button class=&quot;btn&quot; @onclick=&quot;IncrementCount&quot;&gt;
+        Increment Counter (Unthemed)
+    &lt;/button&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+    &lt;button class=&quot;btn @ThemeInfo.ButtonClass&quot; @onclick=&quot;IncrementCount&quot;&gt;
+        Increment Counter (Themed)
+    &lt;/button&gt;
+&lt;/p&gt;
+
+@code {
+    private int currentCount = 0;
+
+    [CascadingParameter]
+    protected ThemeInfo ThemeInfo { get; set; }
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}
+</code></pre>
+<p>若要在同一子树内级联多个相同类型的值，请向每个 &lt;xref:Microsoft.AspNetCore.Components.CascadingValue%601&gt; 组件及其相应的 <a href="xref:Microsoft.AspNetCore.Components.CascadingParameterAttribute"><code>[CascadingParameter]</code></a> 特性提供唯一的 &lt;xref:Microsoft.AspNetCore.Components.CascadingValue%601.Name%2A&gt; 字符串。 在下面的示例中，两个 &lt;xref:Microsoft.AspNetCore.Components.CascadingValue%601&gt; 组件按名称级联 <code>MyCascadingType</code> 的不同实例：</p>
+<pre><code class="lang-razor">&lt;CascadingValue Value=&quot;@parentCascadeParameter1&quot; Name=&quot;CascadeParam1&quot;&gt;
+    &lt;CascadingValue Value=&quot;@ParentCascadeParameter2&quot; Name=&quot;CascadeParam2&quot;&gt;
+        ...
+    &lt;/CascadingValue&gt;
+&lt;/CascadingValue&gt;
+
+@code {
+    private MyCascadingType parentCascadeParameter1;
+
+    [Parameter]
+    public MyCascadingType ParentCascadeParameter2 { get; set; }
+
+    ...
+}
+</code></pre>
+<p>在子代组件中，级联参数按名称从祖先组件中相应的级联值接收值：</p>
+<pre><code class="lang-razor">...
+
+@code {
+    [CascadingParameter(Name = &quot;CascadeParam1&quot;)]
+    protected MyCascadingType ChildCascadeParameter1 { get; set; }
+    
+    [CascadingParameter(Name = &quot;CascadeParam2&quot;)]
+    protected MyCascadingType ChildCascadeParameter2 { get; set; }
+}
+</code></pre>
+<h3 id="tabset-example">TabSet 示例</h3>
+<p>级联参数还允许组件跨组件层次结构进行协作。 例如，请考虑示例应用中的以下 <code>TabSet</code> 示例。</p>
+<p>该示例应用包含一个选项卡实现的 <code>ITab</code> 接口：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>CascadingValuesParametersTabSet</code> 组件使用 <code>TabSet</code> 组件，其中包含多个 <code>Tab</code> 组件：</p>
+<pre><code class="lang-razor">@page &quot;/CascadingValuesParametersTabSet&quot;
+
+&lt;TabSet&gt;
+    &lt;Tab Title=&quot;First tab&quot;&gt;
+        &lt;h4&gt;Greetings from the first tab!&lt;/h4&gt;
+
+        &lt;label&gt;
+            &lt;input type=&quot;checkbox&quot; @bind=&quot;showThirdTab&quot; /&gt;
+            Toggle third tab
+        &lt;/label&gt;
+    &lt;/Tab&gt;
+    &lt;Tab Title=&quot;Second tab&quot;&gt;
+        &lt;h4&gt;The second tab says Hello World!&lt;/h4&gt;
+    &lt;/Tab&gt;
+
+    @if (showThirdTab)
+    {
+        &lt;Tab Title=&quot;Third tab&quot;&gt;
+            &lt;h4&gt;Welcome to the disappearing third tab!&lt;/h4&gt;
+            &lt;p&gt;Toggle this tab from the first tab.&lt;/p&gt;
+        &lt;/Tab&gt;
+    }
+&lt;/TabSet&gt;
+
+@code {
+    private bool showThirdTab;
+}
+</code></pre>
+<p>子 <code>Tab</code> 组件不会作为参数显式传递给 <code>TabSet</code>。 子 <code>Tab</code> 组件是 <code>TabSet</code> 的子内容的一部分。 但 <code>TabSet</code> 仍需要了解每个 <code>Tab</code> 组件，以便它可以呈现标头和活动选项卡。若要在不需要额外代码的情况下启用此协调，<code>TabSet</code> 组件可以将自身作为级联值提供，然后由子代 <code>Tab</code> 组件选取。</p>
+<p><code>TabSet</code> 组件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>子代 <code>Tab</code> 组件将包含的 <code>TabSet</code> 作为级联参数捕获，因此 <code>Tab</code> 组件会将其自身添加到 <code>TabSet</code> 并在处于活动状态的选项卡上进行协调。</p>
+<p><code>Tab</code> 组件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

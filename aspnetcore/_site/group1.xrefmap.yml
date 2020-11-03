@@ -1,0 +1,1279 @@
+### YamlMime:XRefMap
+sorted: true
+tags: []
+references:
+- uid: aspnetcore-1.1
+  name: ASP.NET Core 1.1 的新增功能
+  href: group1-dest/release-notes/aspnetcore-1.1.html
+- uid: aspnetcore-2.0
+  name: ASP.NET Core 2.0 中的新增功能
+  href: group1-dest/release-notes/aspnetcore-2.0.html
+- uid: aspnetcore-2.1
+  name: ASP.NET Core 2.1 的新增功能
+  href: group1-dest/release-notes/aspnetcore-2.1.html
+- uid: aspnetcore-2.2
+  name: ASP.NET Core 2.2 的新增功能
+  href: group1-dest/release-notes/aspnetcore-2.2.html
+- uid: aspnetcore-3.0
+  name: ASP.NET Core 3.0 的新增功能
+  href: group1-dest/release-notes/aspnetcore-3.0.html
+- uid: aspnetcore-3.1
+  name: ASP.NET Core 3.1 的新增功能
+  href: group1-dest/release-notes/aspnetcore-3.1.html
+- uid: azure/devops/cicd
+  name: 持续集成和持续部署 - 通过 ASP.NET Core 和 Azure 实现 DevOps
+  href: group1-dest/azure/devops/cicd.html
+- uid: azure/devops/deploy-to-app-service
+  name: 将应用部署到应用服务 - 使用 ASP.NET Core 和 Azure 实施 DevOps
+  href: group1-dest/azure/devops/deploying-to-app-service.html
+- uid: azure/devops/index
+  name: 通过 ASP.NET Core 和 Azure 实现 DevOps
+  href: group1-dest/azure/devops/index.html
+- uid: azure/devops/monitor
+  name: 监视和调试 - 通过 ASP.NET Core 和 Azure 实现 DevOps
+  href: group1-dest/azure/devops/monitoring.html
+- uid: azure/devops/next-steps
+  name: 后续步骤 - 通过 ASP.NET Core 和 Azure 实现 DevOps
+  href: group1-dest/azure/devops/next-steps.html
+- uid: azure/devops/tools-and-downloads
+  name: 工具和下载 - 通过 ASP.NET Core 和 Azure 实现 DevOps
+  href: group1-dest/azure/devops/tools-and-downloads.html
+- uid: blazor/advanced-scenarios
+  name: ASP.NET Core Blazor 高级方案
+  href: group1-dest/blazor/advanced-scenarios.html
+- uid: blazor/blazor-server-ef-core
+  name: 具有 Entity Framework Core (EFCore) 的 ASP.NET Core Blazor Server
+  href: group1-dest/blazor/blazor-server-ef-core.html
+- uid: blazor/call-dotnet-from-javascript
+  name: 从 ASP.NET Core Blazor 中的 JavaScript 函数调用 .NET 方法
+  href: group1-dest/blazor/call-dotnet-from-javascript.html
+- uid: blazor/call-javascript-from-dotnet
+  name: 在 ASP.NET Core Blazor 中从 .NET 方法调用 JavaScript 函数
+  href: group1-dest/blazor/call-javascript-from-dotnet.html
+- uid: blazor/call-web-api
+  name: 从 ASP.NET Core Blazor WebAssembly 调用 Web API
+  href: group1-dest/blazor/call-web-api.html
+- uid: blazor/components/cascading-values-and-parameters
+  name: ASP.NET Core Blazor 级联值和参数
+  href: group1-dest/blazor/components/cascading-values-and-parameters.html
+- uid: blazor/components/class-libraries
+  name: ASP.NET Core Razor 组件类库
+  href: group1-dest/blazor/components/class-libraries.html
+- uid: blazor/components/data-binding
+  name: ASP.NET Core Blazor 数据绑定
+  href: group1-dest/blazor/components/data-binding.html
+- uid: blazor/components/event-handling
+  name: ASP.NET Core Blazor 事件处理
+  href: group1-dest/blazor/components/event-handling.html
+- uid: blazor/components/index
+  name: 创建和使用 ASP.NET Core Razor 组件
+  href: group1-dest/blazor/components/index.html
+- uid: blazor/components/integrate-components-into-razor-pages-and-mvc-apps
+  name: 将 ASP.NET Core Razor 组件集成到 Razor Pages 和 MVC 应用
+  href: group1-dest/blazor/components/integrate-components.html
+- uid: blazor/components/lifecycle
+  name: ASP.NET Core Blazor 生命周期
+  href: group1-dest/blazor/components/lifecycle.html
+- uid: blazor/components/templated-components
+  name: ASP.NET Core Blazor 模板化组件
+  href: group1-dest/blazor/components/templated-components.html
+- uid: blazor/components/virtualization
+  name: ASP.NET Core Blazor 组件虚拟化
+  href: group1-dest/blazor/components/virtualization.html
+- uid: blazor/debug
+  name: 调试 ASP.NET Core Blazor WebAssembly
+  href: group1-dest/blazor/debug.html
+- uid: blazor/file-uploads
+  name: ASP.NET Core Blazor 文件上传
+  href: group1-dest/blazor/file-uploads.html
+- uid: blazor/forms-validation
+  name: ASP.NET Core Blazor 窗体和验证
+  href: group1-dest/blazor/forms-validation.html
+- uid: blazor/fundamentals/additional-scenarios
+  name: ASP.NET Core Blazor 托管模型配置
+  href: group1-dest/blazor/fundamentals/additional-scenarios.html
+- uid: blazor/fundamentals/configuration
+  name: ASP.NET Core Blazor 配置
+  href: group1-dest/blazor/fundamentals/configuration.html
+- uid: blazor/fundamentals/dependency-injection
+  name: ASP.NET Core Blazor 依赖关系注入
+  href: group1-dest/blazor/fundamentals/dependency-injection.html
+- uid: blazor/fundamentals/environments
+  name: ASP.NET Core Blazor 环境
+  href: group1-dest/blazor/fundamentals/environments.html
+- uid: blazor/fundamentals/handle-errors
+  name: 处理 ASP.NET Core Blazor 应用中的错误
+  href: group1-dest/blazor/fundamentals/handle-errors.html
+- uid: blazor/fundamentals/logging
+  name: ASP.NET Core Blazor 日志记录
+  href: group1-dest/blazor/fundamentals/logging.html
+- uid: blazor/fundamentals/routing
+  name: ASP.NET Core Blazor 路由
+  href: group1-dest/blazor/fundamentals/routing.html
+- uid: blazor/globalization-localization
+  name: ASP.NET Core Blazor 全球化和本地化
+  href: group1-dest/blazor/globalization-localization.html
+- uid: blazor/host-and-deploy/configure-linker
+  name: 配置 ASP.NET Core Blazor 链接器
+  href: group1-dest/blazor/host-and-deploy/configure-linker.html
+- uid: blazor/host-and-deploy/configure-trimmer
+  name: 配置适用于 ASP.NET Core Blazor 的裁边器
+  href: group1-dest/blazor/host-and-deploy/configure-trimmer.html
+- uid: blazor/host-and-deploy/index
+  name: 托管和部署 ASP.NET Core Blazor
+  href: group1-dest/blazor/host-and-deploy/index.html
+- uid: blazor/host-and-deploy/server
+  name: 托管和部署 ASP.NET Core Blazor Server
+  href: group1-dest/blazor/host-and-deploy/server.html
+- uid: blazor/host-and-deploy/webassembly
+  name: 托管和部署 ASP.NET Core Blazor WebAssembly
+  href: group1-dest/blazor/host-and-deploy/webassembly.html
+- uid: blazor/hosting-models
+  name: ASP.NET Core Blazor 托管模型
+  href: group1-dest/blazor/hosting-models.html
+- uid: blazor/index
+  name: ASP.NET Core Blazor 简介
+  href: group1-dest/blazor/index.html
+- uid: blazor/layouts
+  name: ASP.NET Core Blazor 布局
+  href: group1-dest/blazor/layouts.html
+- uid: blazor/progressive-web-app
+  name: 利用 ASP.NET Core Blazor WebAssembly 生成渐进式 Web 应用程序
+  href: group1-dest/blazor/progressive-web-app.html
+- uid: blazor/security/content-security-policy
+  name: 为 ASP.NET Core Blazor 强制实施内容安全策略
+  href: group1-dest/blazor/security/content-security-policy.html
+- uid: blazor/security/index
+  name: ASP.NET Core Blazor 身份验证和授权
+  href: group1-dest/blazor/security/index.html
+- uid: blazor/security/server/additional-scenarios
+  name: ASP.NET Core Blazor Server 其他安全方案
+  href: group1-dest/blazor/security/server/additional-scenarios.html
+- uid: blazor/security/server/index
+  name: 保护 ASP.NET Core Blazor Server应用
+  href: group1-dest/blazor/security/server/index.html
+- uid: blazor/security/server/threat-mitigation
+  name: ASP.NET Core Blazor Server 的威胁缓解指南
+  href: group1-dest/blazor/security/server/threat-mitigation.html
+- uid: blazor/security/webassembly/aad-groups-roles
+  name: ASP.NET Core Blazor WebAssembly 与 Azure Active Directory 组和角色
+  href: group1-dest/blazor/security/webassembly/azure-active-directory-groups-and-roles.html
+- uid: blazor/security/webassembly/additional-scenarios
+  name: ASP.NET Core Blazor WebAssembly 其他安全方案
+  href: group1-dest/blazor/security/webassembly/additional-scenarios.html
+- uid: blazor/security/webassembly/hosted-with-azure-active-directory
+  name: 使用 Azure Active Directory 保护 ASP.NET Core Blazor WebAssembly 托管应用
+  href: group1-dest/blazor/security/webassembly/hosted-with-azure-active-directory.html
+- uid: blazor/security/webassembly/hosted-with-azure-active-directory-b2c
+  name: 使用 Azure Active Directory B2C 保护 ASP.NET Core Blazor WebAssembly 托管应用
+  href: group1-dest/blazor/security/webassembly/hosted-with-azure-active-directory-b2c.html
+- uid: blazor/security/webassembly/hosted-with-identity-server
+  name: 使用 Identity 服务器保护托管 ASP.NET Core Blazor WebAssembly 应用
+  href: group1-dest/blazor/security/webassembly/hosted-with-identity-server.html
+- uid: blazor/security/webassembly/index
+  name: 保护 ASP.NET Core Blazor WebAssembly
+  href: group1-dest/blazor/security/webassembly/index.html
+- uid: blazor/security/webassembly/standalone-with-authentication-library
+  name: 使用身份验证库保护 ASP.NET Core Blazor WebAssembly 独立应用
+  href: group1-dest/blazor/security/webassembly/standalone-with-authentication-library.html
+- uid: blazor/security/webassembly/standalone-with-azure-active-directory
+  name: 使用 Azure Active Directory 保护 ASP.NET Core Blazor WebAssembly 独立应用
+  href: group1-dest/blazor/security/webassembly/standalone-with-azure-active-directory.html
+- uid: blazor/security/webassembly/standalone-with-azure-active-directory-b2c
+  name: 使用 Azure Active Directory B2C 保护 ASP.NET Core Blazor WebAssembly 独立应用
+  href: group1-dest/blazor/security/webassembly/standalone-with-azure-active-directory-b2c.html
+- uid: blazor/security/webassembly/standalone-with-microsoft-accounts
+  name: 使用 Microsoft 帐户保护 ASP.NET Core Blazor WebAssembly 独立应用
+  href: group1-dest/blazor/security/webassembly/standalone-with-microsoft-accounts.html
+- uid: blazor/state-management
+  name: ASP.NET Core Blazor 状态管理
+  href: group1-dest/blazor/state-management.html
+- uid: blazor/supported-platforms
+  name: ASP.NET Core Blazor 支持的平台
+  href: group1-dest/blazor/supported-platforms.html
+- uid: blazor/templates
+  name: ASP.NET Core Blazor 模板
+  href: group1-dest/blazor/templates.html
+- uid: blazor/test
+  name: 在 ASP.NET Core Blazor 中测试组件
+  href: group1-dest/blazor/test.html
+- uid: blazor/tooling
+  name: 用于 ASP.NET Core Blazor 的工具
+  href: group1-dest/blazor/tooling.html
+- uid: blazor/webassembly-lazy-load-assemblies
+  name: 在 ASP.NET Core Blazor WebAssembly 中延迟加载程序集
+  href: group1-dest/blazor/webassembly-lazy-load-assemblies.html
+- uid: blazor/webassembly-performance-best-practices
+  name: ASP.NET Core Blazor WebAssembly 性能最佳做法
+  href: group1-dest/blazor/webassembly-performance-best-practices.html
+- uid: client-side/bundling-and-minification
+  name: ASP.NET Core 中的捆绑和缩小静态资产
+  href: group1-dest/client-side/bundling-and-minification.html
+- uid: client-side/libman/index
+  name: 通过 LibMan 在 ASP.NET Core 中获取客户端库
+  href: group1-dest/client-side/libman/index.html
+- uid: client-side/libman/libman-cli
+  name: 将 LibMan CLI 与 ASP.NET Core 结合使用
+  href: group1-dest/client-side/libman/libman-cli.html
+- uid: client-side/libman/libman-vs
+  name: 在 Visual Studio 中将 LibMan 与 ASP.NET Core 配合使用
+  href: group1-dest/client-side/libman/libman-vs.html
+- uid: client-side/spa-services
+  name: 使用 JavaScript Services 在 ASP.NET Core 中创建单页应用程序
+  href: group1-dest/client-side/spa-services.html
+- uid: client-side/using-browserlink
+  name: ASP.NET Core 中的浏览器链接
+  href: group1-dest/client-side/using-browserlink.html
+- uid: client-side/using-grunt
+  name: 在 ASP.NET Core 中使用 Grunt
+  href: group1-dest/client-side/using-grunt.html
+- uid: data/ef-mvc/advanced
+  name: 教程：了解高级方案 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/advanced.html
+- uid: data/ef-mvc/complex-data-model
+  name: 教程：创建复杂数据模型 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/complex-data-model.html
+- uid: data/ef-mvc/concurrency
+  name: 教程：处理并发 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/concurrency.html
+- uid: data/ef-mvc/crud
+  name: 教程：实现 CRUD 功能 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/crud.html
+- uid: data/ef-mvc/index
+  name: ASP.NET Core MVC 和 EF Core - 教程系列
+  href: group1-dest/data/ef-mvc/index.html
+- uid: data/ef-mvc/inheritance
+  name: 教程：实现继承 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/inheritance.html
+- uid: data/ef-mvc/intro
+  name: 教程：在 ASP.NET MVC Web 应用中使用 EF Core 入门
+  href: group1-dest/data/ef-mvc/intro.html
+- uid: data/ef-mvc/migrations
+  name: 教程：使用迁移功能 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/migrations.html
+- uid: data/ef-mvc/read-related-data
+  name: 教程：读取相关数据 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/read-related-data.html
+- uid: data/ef-mvc/sort-filter-page
+  name: 教程：添加排序、筛选和分页 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/sort-filter-page.html
+- uid: data/ef-mvc/update-related-data
+  name: 教程：更新相关数据 - ASP.NET MVC 和 EF Core
+  href: group1-dest/data/ef-mvc/update-related-data.html
+- uid: data/ef-rp/complex-data-model
+  name: 第 5 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 数据模型
+  href: group1-dest/data/ef-rp/complex-data-model.html
+- uid: data/ef-rp/concurrency
+  name: 第 8 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 并发
+  href: group1-dest/data/ef-rp/concurrency.html
+- uid: data/ef-rp/crud
+  name: 第 2 部分，ASP.NET Core 中的 Razor 页面和 EF Core - CRUD
+  href: group1-dest/data/ef-rp/crud.html
+- uid: data/ef-rp/intro
+  name: ASP.NET Core 中的 Razor Pages 和 Entity Framework Core - 第 1 个教程（共 8 个）
+  href: group1-dest/data/ef-rp/intro.html
+- uid: data/ef-rp/migrations
+  name: 第 4 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 迁移
+  href: group1-dest/data/ef-rp/migrations.html
+- uid: data/ef-rp/read-related-data
+  name: 第 6 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 读取相关数据
+  href: group1-dest/data/ef-rp/read-related-data.html
+- uid: data/ef-rp/sort-filter-page
+  name: 第 3 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 排序、筛选、分页
+  href: group1-dest/data/ef-rp/sort-filter-page.html
+- uid: data/ef-rp/update-related-data
+  name: 第 7 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 更新相关数据
+  href: group1-dest/data/ef-rp/update-related-data.html
+- uid: data/entity-framework-6
+  name: ASP.NET Core 和 Entity Framework 6
+  href: group1-dest/data/entity-framework-6.html
+- uid: fundamentals/app-state
+  name: ASP.NET Core 中的会话
+  href: group1-dest/fundamentals/app-state.html
+- uid: fundamentals/change-tokens
+  name: 使用 ASP.NET Core 中的更改令牌检测更改
+  href: group1-dest/fundamentals/change-tokens.html
+- uid: fundamentals/choose-between-aspnet-and-aspnetcore
+  name: 在 ASP.NET 4.x 和 ASP.NET Core 之间进行选择
+  href: group1-dest/fundamentals/choose-aspnet-framework.html
+- uid: fundamentals/configuration/index
+  name: ASP.NET Core 中的配置
+  href: group1-dest/fundamentals/configuration/index.html
+- uid: fundamentals/configuration/options
+  name: ASP.NET Core 中的选项模式
+  href: group1-dest/fundamentals/configuration/options.html
+- uid: fundamentals/configuration/platform-specific-configuration
+  name: 在 ASP.NET Core 中使用承载启动程序集
+  href: group1-dest/fundamentals/host/platform-specific-configuration.html
+- uid: fundamentals/dependency-injection
+  name: ASP.NET Core 依赖注入
+  href: group1-dest/fundamentals/dependency-injection.html
+- uid: fundamentals/environments
+  name: 在 ASP.NET Core 中使用多个环境
+  href: group1-dest/fundamentals/environments.html
+- uid: fundamentals/error-handling
+  name: 处理 ASP.NET Core 中的错误
+  href: group1-dest/fundamentals/error-handling.html
+- uid: fundamentals/file-providers
+  name: ASP.NET Core 中的文件提供程序
+  href: group1-dest/fundamentals/file-providers.html
+- uid: fundamentals/host/generic-host
+  name: ASP.NET Core 中的 .NET 通用主机
+  href: group1-dest/fundamentals/host/generic-host.html
+- uid: fundamentals/host/hosted-services
+  name: 在 ASP.NET Core 中使用托管服务实现后台任务
+  href: group1-dest/fundamentals/host/hosted-services.html
+- uid: fundamentals/host/web-host
+  name: ASP.NET Core Web 主机
+  href: group1-dest/fundamentals/host/web-host.html
+- uid: fundamentals/httpcontext
+  name: 在 ASP.NET Core 中访问 HttpContext
+  href: group1-dest/fundamentals/http-context.html
+- uid: fundamentals/http-requests
+  name: 在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求
+  href: group1-dest/fundamentals/http-requests.html
+- uid: fundamentals/index
+  name: ASP.NET Core 基础知识
+  href: group1-dest/fundamentals/index.html
+- uid: fundamentals/localization
+  name: ASP.NET Core 全球化和本地化
+  href: group1-dest/fundamentals/localization.html
+- uid: fundamentals/localization-extensibility
+  name: 本地化可扩展性
+  href: group1-dest/fundamentals/localization-extensibility.html
+- uid: fundamentals/logging/index
+  name: .NET Core 和 ASP.NET Core 中的日志记录
+  href: group1-dest/fundamentals/logging/index.html
+- uid: fundamentals/logging/loggermessage
+  name: 在 ASP.NET Core 中使用 LoggerMessage 的高性能日志记录
+  href: group1-dest/fundamentals/logging/loggermessage.html
+- uid: fundamentals/metapackage
+  name: ASP.NET Core 2.0 的 Microsoft.AspNetCore.All 元包
+  href: group1-dest/fundamentals/metapackage.html
+- uid: fundamentals/metapackage-app
+  name: ASP.NET Core 的 Microsoft.AspNetCore.App 元包
+  href: group1-dest/fundamentals/metapackage-app.html
+- uid: fundamentals/middleware/extensibility
+  name: ASP.NET Core 中基于工厂的中间件激活
+  href: group1-dest/fundamentals/middleware/extensibility.html
+- uid: fundamentals/middleware/extensibility-third-party-container
+  name: 使用 ASP.NET Core 中的第三方容器激活中间件
+  href: group1-dest/fundamentals/middleware/extensibility-third-party-container.html
+- uid: fundamentals/middleware/index
+  name: ASP.NET Core 中间件
+  href: group1-dest/fundamentals/middleware/index.html
+- uid: fundamentals/middleware/request-response
+  name: ASP.NET Core 中的请求和响应操作
+  href: group1-dest/fundamentals/middleware/request-response.html
+- uid: fundamentals/middleware/write
+  name: 写入自定义 ASP.NET Core 中间件
+  href: group1-dest/fundamentals/middleware/write.html
+- uid: fundamentals/owin
+  name: ASP.NET Core 中 .NET 的开放 Web 接口 (OWIN)
+  href: group1-dest/fundamentals/owin.html
+- uid: fundamentals/portable-object-localization
+  name: 在 ASP.NET Core 中配置可移植对象本地化
+  href: group1-dest/fundamentals/portable-object-localization.html
+- uid: fundamentals/request-features
+  name: ASP.NET Core 中的请求功能
+  href: group1-dest/fundamentals/request-features.html
+- uid: fundamentals/routing
+  name: ASP.NET Core 中的路由
+  href: group1-dest/fundamentals/routing.html
+- uid: fundamentals/servers/httpsys
+  name: ASP.NET Core 中的 HTTP.sys Web 服务器实现
+  href: group1-dest/fundamentals/servers/httpsys.html
+- uid: fundamentals/servers/index
+  name: ASP.NET Core 中的 Web 服务器实现
+  href: group1-dest/fundamentals/servers/index.html
+- uid: fundamentals/servers/kestrel
+  name: ASP.NET Core 中的 Kestrel Web 服务器实现
+  href: group1-dest/fundamentals/servers/kestrel.html
+- uid: fundamentals/startup
+  name: ASP.NET Core 中的应用启动
+  href: group1-dest/fundamentals/startup.html
+- uid: fundamentals/static-files
+  name: ASP.NET Core 中的静态文件
+  href: group1-dest/fundamentals/static-files.html
+- uid: fundamentals/target-aspnetcore
+  name: 使用类库中的 ASP.NET Core API
+  href: group1-dest/fundamentals/target-aspnetcore.html
+- uid: fundamentals/tools/dotnet-aspnet-codegenerator
+  name: dotnet aspnet-codegenerator 命令
+  href: group1-dest/fundamentals/tools/dotnet-aspnet-codegenerator.html
+- uid: fundamentals/troubleshoot-aspnet-core-localization
+  name: 对 ASP.NET Core 本地化进行故障排除
+  href: group1-dest/fundamentals/troubleshoot-aspnet-core-localization.html
+- uid: fundamentals/url-rewriting
+  name: ASP.NET Core 中的 URL 重写中间件
+  href: group1-dest/fundamentals/url-rewriting.html
+- uid: fundamentals/websockets
+  name: ASP.NET Core 中的 WebSocket 支持
+  href: group1-dest/fundamentals/websockets.html
+- uid: getting-started
+  name: ASP.NET Core 入门
+  href: group1-dest/getting-started/index.html
+- uid: grpc/aspnetcore
+  name: 使用 ASP.NET Core 的 gRPC 服务
+  href: group1-dest/grpc/aspnetcore.html
+- uid: grpc/authn-and-authz
+  name: gRPC for ASP.NET Core 中的身份验证和授权
+  href: group1-dest/grpc/authn-and-authz.html
+- uid: grpc/basics
+  name: 使用 C# 的 gRPC 服务
+  href: group1-dest/grpc/basics.html
+- uid: grpc/browser
+  name: 在浏览器应用中使用 gRPC
+  href: group1-dest/grpc/browser.html
+- uid: grpc/client
+  name: 使用 .NET 客户端调用 gRPC 服务
+  href: group1-dest/grpc/client.html
+- uid: grpc/clientfactory
+  name: .NET Core 中的 gRPC 客户端工厂集成
+  href: group1-dest/grpc/clientfactory.html
+- uid: grpc/comparison
+  name: 比较 gRPC 服务和 HTTP API
+  href: group1-dest/grpc/comparison.html
+- uid: grpc/configuration
+  name: 适用于 .NET 的 gRPC 配置
+  href: group1-dest/grpc/configuration.html
+- uid: grpc/deadlines-cancellation
+  name: 具有截止时间和取消功能的可靠的 gRPC 服务
+  href: group1-dest/grpc/deadlines-cancellation.html
+- uid: grpc/diagnostics
+  name: .NET 上 gRPC 中的日志记录和诊断
+  href: group1-dest/grpc/diagnostics.html
+- uid: grpc/dotnet-grpc
+  name: 通过 dotnet-grpc 管理 Protobuf 参考
+  href: group1-dest/grpc/dotnet-grpc.html
+- uid: grpc/httpapi
+  name: 从 gRPC 创建 JSON Web API
+  href: group1-dest/grpc/httpapi.html
+- uid: grpc/index
+  name: .NET Core 上的 gRPC 的简介
+  href: group1-dest/grpc/index.html
+- uid: grpc/interprocess
+  name: 使用 gRPC 进行进程间通信
+  href: group1-dest/grpc/interprocess.html
+- uid: grpc/migration
+  name: 将 gRPC 服务从 C-core 迁移到 ASP.NET Core
+  href: group1-dest/grpc/migration.html
+- uid: grpc/performance
+  name: GRPC 性能最佳做法
+  href: group1-dest/grpc/performance.html
+- uid: grpc/protobuf
+  name: 为 .NET 应用创建 Protobuf 消息
+  href: group1-dest/grpc/protobuf.html
+- uid: grpc/security
+  name: 适用于 ASP.NET Core 的 gRPC 的安全注意事项
+  href: group1-dest/grpc/security.html
+- uid: grpc/services
+  name: 创建 gRPC 服务和方法
+  href: group1-dest/grpc/services.html
+- uid: grpc/test-tools
+  name: 在 ASP.NET Core 中使用 gRPCurl 来测试 gRPC 服务
+  href: group1-dest/grpc/test-tools.html
+- uid: grpc/troubleshoot
+  name: 对 .NET Core 上的 gRPC 进行故障排除
+  href: group1-dest/grpc/troubleshoot.html
+- uid: grpc/versioning
+  name: 版本控制 gRPC 服务
+  href: group1-dest/grpc/versioning.html
+- uid: grpc/wcf
+  name: 为何要将 WCF 迁移到 ASP.NET Core gRPC
+  href: group1-dest/grpc/why-migrate-wcf-to-dotnet-grpc.html
+- uid: host-and-deploy/aspnet-core-module
+  name: ASP.NET Core 模块
+  href: group1-dest/host-and-deploy/aspnet-core-module.html
+- uid: host-and-deploy/azure-apps/azure-continuous-deployment
+  name: 使用 Visual Studio 和 Git 将 ASP.NET Core 持续部署到 Azure
+  href: group1-dest/host-and-deploy/azure-apps/azure-continuous-deployment.html
+- uid: host-and-deploy/azure-apps/index
+  name: 将 ASP.NET Core 应用部署到 Azure 应用服务
+  href: group1-dest/host-and-deploy/azure-apps/index.html
+- uid: host-and-deploy/azure-iis-errors-reference
+  name: Azure 应用服务和 IIS 上 ASP.NET Core 的常见错误参考
+  href: group1-dest/host-and-deploy/azure-iis-errors-reference.html
+- uid: host-and-deploy/directory-structure
+  name: ASP.NET Core 目录结构
+  href: group1-dest/host-and-deploy/directory-structure.html
+- uid: host-and-deploy/docker/building-net-docker-images
+  name: ASP.NET Core 的 Docker 映像
+  href: group1-dest/host-and-deploy/docker/building-net-docker-images.html
+- uid: host-and-deploy/docker/index
+  name: 在 Docker 容器中托管 ASP.NET Core
+  href: group1-dest/host-and-deploy/docker/index.html
+- uid: host-and-deploy/docker/visual-studio-tools-for-docker
+  name: 带有 ASP.NET Core 的 Visual Studio 容器工具
+  href: group1-dest/host-and-deploy/docker/visual-studio-tools-for-docker.html
+- uid: host-and-deploy/health-checks
+  name: ASP.NET Core 中的运行状况检查
+  href: group1-dest/host-and-deploy/health-checks.html
+- uid: host-and-deploy/iis/advanced
+  name: 高级配置
+  href: group1-dest/host-and-deploy/iis/advanced.html
+- uid: host-and-deploy/iis/app-offline
+  name: 应用脱机文件 (app_offline.htm)
+  href: group1-dest/host-and-deploy/app-offline.html
+- uid: host-and-deploy/iis/development-time-iis-support
+  name: Visual Studio 中针对 ASP.NET Core 的开发时 IIS 支持
+  href: group1-dest/host-and-deploy/iis/development-time-iis-support.html
+- uid: host-and-deploy/iis/hosting-bundle
+  name: 托管捆绑包
+  href: group1-dest/host-and-deploy/iis/hosting-bundle.html
+- uid: host-and-deploy/iis/index
+  name: 使用 IIS 在 Windows 上托管 ASP.NET Core
+  href: group1-dest/host-and-deploy/iis/index.html
+- uid: host-and-deploy/iis/in-process-hosting
+  name: 使用 IIS 和 ASP.NET Core 进行进程内托管
+  href: group1-dest/host-and-deploy/iis/in-process-hosting.html
+- uid: host-and-deploy/iis/logging-and-diagnostics
+  name: ASP.NET Core 模块的日志创建和重定向
+  href: group1-dest/host-and-deploy/iis/logging-and-diagnostics.html
+- uid: host-and-deploy/iis/modules
+  name: IIS 模块与 ASP.NET Core
+  href: group1-dest/host-and-deploy/iis/modules.html
+- uid: host-and-deploy/iis/out-of-process-hosting
+  name: 使用 IIS 和 ASP.NET Core 进行进程外托管
+  href: group1-dest/host-and-deploy/iis/out-of-process-hosting.html
+- uid: host-and-deploy/iis/protocols
+  name: 在 IIS 中将 ASP.NET Core 和 HTTP/2 结合使用
+  href: group1-dest/host-and-deploy/iis/protocols.html
+- uid: host-and-deploy/iis/transform-webconfig
+  name: 转换 web.config
+  href: group1-dest/host-and-deploy/iis/transform-webconfig.html
+- uid: host-and-deploy/iis/web-config
+  name: web.config 文件
+  href: group1-dest/host-and-deploy/iis/web-config.html
+- uid: host-and-deploy/index
+  name: 托管和部署 ASP.NET Core
+  href: group1-dest/host-and-deploy/index.html
+- uid: host-and-deploy/linux-apache
+  name: 使用 Apache 在 Linux 上托管 ASP.NET Core
+  href: group1-dest/host-and-deploy/linux-apache.html
+- uid: host-and-deploy/linux-nginx
+  name: 使用 Nginx 在 Linux 上托管 ASP.NET Core
+  href: group1-dest/host-and-deploy/linux-nginx.html
+- uid: host-and-deploy/proxy-load-balancer
+  name: 配置 ASP.NET Core 以使用代理服务器和负载均衡器
+  href: group1-dest/host-and-deploy/proxy-load-balancer.html
+- uid: host-and-deploy/visual-studio-publish-profiles
+  name: 用于 ASP.NET Core 应用部署的 Visual Studio 发布配置文件 (.pubxml)
+  href: group1-dest/host-and-deploy/visual-studio-publish-profiles.html
+- uid: host-and-deploy/web-farm
+  name: 在 Web 场中托管 ASP.NET Core
+  href: group1-dest/host-and-deploy/web-farm.html
+- uid: host-and-deploy/windows-service
+  name: 在 Windows 服务中托管 ASP.NET Core
+  href: group1-dest/host-and-deploy/windows-service.html
+- uid: index
+  name: ASP.NET Core 简介
+  href: group1-dest/introduction-to-aspnet-core.html
+- uid: migration/1x-to-2x/identity-2x
+  name: 将身份验证和升级 Identity 到 ASP.NET Core 2。0
+  href: group1-dest/migration/1x-to-2x/identity-2x.html
+- uid: migration/1x-to-2x/index
+  name: 从 ASP.NET Core 1.x 迁移到 2.0
+  href: group1-dest/migration/1x-to-2x/index.html
+- uid: migration/20_21
+  name: 从 ASP.NET Core 2.0 迁移到 2.1
+  href: group1-dest/migration/20_21.html
+- uid: migration/21-to-22
+  name: 从 ASP.NET Core 2.1 迁移到 2.2
+  href: group1-dest/migration/21-to-22.html
+- uid: migration/22-to-30
+  name: 从 ASP.NET Core 2.2 迁移到3。0
+  href: group1-dest/migration/22-to-30.html
+- uid: migration/30-to-31
+  name: 从 ASP.NET Core 3.0 迁移到3。1
+  href: group1-dest/migration/30-to-31.html
+- uid: migration/31-to-50
+  name: 从 ASP.NET Core 3.1 迁移到5。0
+  href: group1-dest/migration/31-to-50.html
+- uid: migration/claimsprincipal-current
+  name: 从 ClaimsPrincipal 迁移
+  href: group1-dest/migration/claimsprincipal-current.html
+- uid: migration/configuration
+  name: 将配置迁移到 ASP.NET Core
+  href: group1-dest/migration/configuration.html
+- uid: migration/http-modules
+  name: 将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件
+  href: group1-dest/migration/http-modules.html
+- uid: migration/identity
+  name: 迁移身份验证和 Identity ASP.NET Core
+  href: group1-dest/migration/identity.html
+- uid: migration/logging-nonaspnetcore
+  name: 从 Microsoft 进行迁移。日志记录2.1 到2.2 或3。0
+  href: group1-dest/migration/Logging-nonaspnetcore.html
+- uid: migration/mvc
+  name: 了解如何从 ASP.NET MVC 迁移到 ASP.NET Core MVC
+  href: group1-dest/migration/mvc.html
+- uid: migration/mvc2
+  name: 从 ASP.NET 迁移到 ASP.NET Core 2.0
+  href: group1-dest/migration/proper-to-2x/mvc2.html
+- uid: migration/proper-to-2x/index
+  name: 从 ASP.NET 迁移到 ASP.NET Core
+  href: group1-dest/migration/proper-to-2x/index.html
+- uid: migration/proper-to-2x/membership-to-core-identity
+  name: 从 ASP.NET 成员身份验证迁移到 ASP.NET Core 2。0 Identity
+  href: group1-dest/migration/proper-to-2x/membership-to-core-identity.html
+- uid: migration/webapi
+  name: 从 ASP.NET Web API 迁移到 ASP.NET Core
+  href: group1-dest/migration/webapi.html
+- uid: mobile/index
+  name: 使用 ASP.NET Core 的移动开发
+  href: group1-dest/mobile/index.html
+- uid: mobile/native-mobile-backend
+  name: 使用 ASP.NET Core 为本机移动应用创建后端服务
+  href: group1-dest/mobile/native-mobile-backend.html
+- uid: mvc/advanced/custom-model-binding
+  name: ASP.NET Core 中的自定义模型绑定
+  href: group1-dest/mvc/advanced/custom-model-binding.html
+- uid: mvc/compatibility-version
+  name: ASP.NET Core MVC 的兼容性版本
+  href: group1-dest/mvc/compatibility-version.html
+- uid: mvc/controllers/actions
+  name: 在 ASP.NET Core MVC 中使用控制器处理请求
+  href: group1-dest/mvc/controllers/actions.html
+- uid: mvc/controllers/application-model
+  name: 使用 ASP.NET Core 中的应用程序模型
+  href: group1-dest/mvc/controllers/application-model.html
+- uid: mvc/controllers/areas
+  name: ASP.NET Core 中的区域
+  href: group1-dest/mvc/controllers/areas.html
+- uid: mvc/controllers/dependency-injection
+  name: 在 ASP.NET Core 中将依赖项注入到控制器
+  href: group1-dest/mvc/controllers/dependency-injection.html
+- uid: mvc/controllers/filters
+  name: ASP.NET Core 中的筛选器
+  href: group1-dest/mvc/controllers/filters.html
+- uid: mvc/controllers/routing
+  name: 在 ASP.NET Core 中路由到控制器操作
+  href: group1-dest/mvc/controllers/routing.html
+- uid: mvc/controllers/testing
+  name: ASP.NET Core 中的测试控制器逻辑
+  href: group1-dest/mvc/controllers/testing.html
+- uid: mvc/extensibility/app-parts
+  name: Razor与 ASP.NET Core 中的应用程序部件共享控制器、视图和页面等
+  href: group1-dest/mvc/advanced/app-parts.html
+- uid: mvc/models/file-uploads
+  name: 在 ASP.NET Core 中上传文件
+  href: group1-dest/mvc/models/file-uploads.html
+- uid: mvc/models/model-binding
+  name: ASP.NET Core 中的模型绑定
+  href: group1-dest/mvc/models/model-binding.html
+- uid: mvc/models/validation
+  name: ASP.NET Core MVC 中的模型验证
+  href: group1-dest/mvc/models/validation.html
+- uid: mvc/overview
+  name: ASP.NET Core MVC 概述
+  href: group1-dest/mvc/overview.html
+- uid: mvc/views/dependency-injection
+  name: 在 ASP.NET Core 中将依赖项注入到视图
+  href: group1-dest/mvc/views/dependency-injection.html
+- uid: mvc/views/layout
+  name: ASP.NET Core 中的布局
+  href: group1-dest/mvc/views/layout.html
+- uid: mvc/views/overview
+  name: ASP.NET Core MVC 中的视图
+  href: group1-dest/mvc/views/overview.html
+- uid: mvc/views/partial
+  name: ASP.NET Core 中的分部视图
+  href: group1-dest/mvc/views/partial.html
+- uid: mvc/views/razor
+  name: razor 语法参考 ASP.NET Core
+  href: group1-dest/mvc/views/razor.html
+- uid: mvc/views/tag-helpers/authoring
+  name: 在 ASP.NET Core 中创作标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/authoring.html
+- uid: mvc/views/tag-helpers/builtin-th/anchor-tag-helper
+  name: ASP.NET Core 中的定位点标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/anchor-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/cache-tag-helper
+  name: ASP.NET Core MVC 中的缓存标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/cache-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/component-tag-helper
+  name: ASP.NET Core 中的组件标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/component-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/distributed-cache-tag-helper
+  name: ASP.NET Core 中的分布式缓存标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/distributed-cache-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/environment-tag-helper
+  name: ASP.NET Core 中的环境标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/environment-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/image-tag-helper
+  name: ASP.NET Core 中的图像标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/image-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/Index
+  name: ASP.NET Core 内置标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/index.html
+- uid: mvc/views/tag-helpers/builtin-th/link-tag-helper
+  name: ASP.NET Core 中的链接标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/link-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/partial-tag-helper
+  name: ASP.NET Core 中的部分标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/partial-tag-helper.html
+- uid: mvc/views/tag-helpers/builtin-th/script-tag-helper
+  name: ASP.NET Core 中的脚本标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/built-in/script-tag-helper.html
+- uid: mvc/views/tag-helpers/intro
+  name: ASP.NET Core 中的标记帮助程序
+  href: group1-dest/mvc/views/tag-helpers/intro.html
+- uid: mvc/views/tag-helpers/th-components
+  name: ASP.NET Core 中的标记帮助程序组件
+  href: group1-dest/mvc/views/tag-helpers/th-components.html
+- uid: mvc/views/view-compilation
+  name: Razor ASP.NET Core 中的文件编译
+  href: group1-dest/mvc/views/view-compilation.html
+- uid: mvc/views/view-components
+  name: ASP.NET Core 中的视图组件
+  href: group1-dest/mvc/views/view-components.html
+- uid: mvc/views/working-with-forms
+  name: ASP.NET Core 表单中的标记帮助程序
+  href: group1-dest/mvc/views/working-with-forms.html
+- uid: performance/caching/distributed
+  name: ASP.NET Core 中的分布式缓存
+  href: group1-dest/performance/caching/distributed.html
+- uid: performance/caching/memory
+  name: ASP.NET Core 中的缓存内存
+  href: group1-dest/performance/caching/memory.html
+- uid: performance/caching/middleware
+  name: ASP.NET Core 中的响应缓存中间件
+  href: group1-dest/performance/caching/middleware.html
+- uid: performance/caching/response
+  name: ASP.NET Core 中的响应缓存
+  href: group1-dest/performance/caching/response.html
+- uid: performance/diagnostic-tools
+  name: 性能诊断工具
+  href: group1-dest/performance/diagnostic-tools.html
+- uid: performance/memory
+  name: ASP.NET Core 中的内存管理和模式
+  href: group1-dest/performance/memory.html
+- uid: performance/ObjectPool
+  name: 在 ASP.NET Core 中使用 ObjectPool 进行对象重用
+  href: group1-dest/performance/ObjectPool.html
+- uid: performance/performance-best-practices
+  name: ASP.NET Core 性能最佳做法
+  href: group1-dest/performance/performance-best-practices.html
+- uid: performance/response-compression
+  name: ASP.NET Core 中的响应压缩
+  href: group1-dest/performance/response-compression.html
+- uid: razor-pages/filter
+  name: ASP.NET Core 中的 Razor Pages 的筛选方法
+  href: group1-dest/razor-pages/filter.html
+- uid: razor-pages/index
+  name: ASP.NET Core 中的 Razor Pages 介绍
+  href: group1-dest/razor-pages/index.html
+- uid: razor-pages/razor-pages-conventions
+  name: ASP.NET Core 中的 Razor Pages 路由和应用约定
+  href: group1-dest/razor-pages/razor-pages-conventions.html
+- uid: razor-pages/sdk
+  name: ASP.NET Core Razor SDK
+  href: group1-dest/razor-pages/sdk.html
+- uid: razor-pages/ui-class
+  name: ASP.NET Core 的类库中的可重用 Razor UI
+  href: group1-dest/razor-pages/ui-class.html
+- uid: razor-pages/web-sdk
+  name: ASP.NET Core Web SDK
+  href: group1-dest/razor-pages/web-sdk.html
+- uid: security/anti-request-forgery
+  name: 阻止跨站点请求伪造 (XSRF/CSRF) 攻击 ASP.NET Core
+  href: group1-dest/security/anti-request-forgery.html
+- uid: security/app-secrets
+  name: ASP.NET Core 中的开发中安全存储应用机密
+  href: group1-dest/security/app-secrets.html
+- uid: security/authentication/2fa
+  name: 在 ASP.NET Core 中通过 SMS 进行双因素身份验证
+  href: group1-dest/security/authentication/2fa.html
+- uid: security/authentication/accconfirm
+  name: ASP.NET Core 中的帐户确认和密码恢复
+  href: group1-dest/security/authentication/accconfirm.html
+- uid: security/authentication/add-user-data
+  name: 在 ASP.NET Core 项目中添加、下载和删除用户数据 Identity
+  href: group1-dest/security/authentication/add-user-data.html
+- uid: security/authentication/azure-active-directory/index
+  name: Microsoft 标识平台和 Azure Active Directory 与 ASP.NET Core
+  href: group1-dest/security/authentication/azure-active-directory/index.html
+- uid: security/authentication/azure-ad-b2c
+  name: ASP.NET Core 中的 Azure Active Directory B2C 的云身份验证
+  href: group1-dest/security/authentication/azure-ad-b2c.html
+- uid: security/authentication/certauth
+  name: 在 ASP.NET Core 中配置证书身份验证
+  href: group1-dest/security/authentication/certauth.html
+- uid: security/authentication/community
+  name: 适用于 ASP.NET Core 的社区操作系统身份验证选项
+  href: group1-dest/security/authentication/community.html
+- uid: security/authentication/cookie
+  name: cookie不使用身份验证ASP.NET Core Identity
+  href: group1-dest/security/authentication/cookie.html
+- uid: security/authentication/customize_identity_model
+  name: Identity ASP.NET Core 中的模型自定义
+  href: group1-dest/security/authentication/customize-identity-model.html
+- uid: security/authentication/facebook-logins
+  name: ASP.NET Core 中的 Facebook 外部登录设置
+  href: group1-dest/security/authentication/social/facebook-logins.html
+- uid: security/authentication/google-logins
+  name: ASP.NET Core 中的 Google 外部登录设置
+  href: group1-dest/security/authentication/social/google-logins.html
+- uid: security/authentication/identity
+  name: ASP.NET Core 简介 Identity
+  href: group1-dest/security/authentication/identity.html
+- uid: security/authentication/identity/spa
+  name: ASP.NET Core 上的单页面应用的身份验证简介
+  href: group1-dest/security/authentication/identity-api-authorization.html
+- uid: security/authentication/identity-configuration
+  name: 配置 ASP.NET Core Identity
+  href: group1-dest/security/authentication/identity-configuration.html
+- uid: security/authentication/identity-custom-storage-providers
+  name: 自定义存储提供程序 ASP.NET Core Identity
+  href: group1-dest/security/authentication/identity-custom-storage-providers.html
+- uid: security/authentication/identity-enable-qrcodes
+  name: 为 ASP.NET Core 中的 TOTP 验证器应用启用 QR 代码生成
+  href: group1-dest/security/authentication/identity-enable-qrcodes.html
+- uid: security/authentication/index
+  name: ASP.NET Core 身份验证概述
+  href: group1-dest/security/authentication/index.html
+- uid: security/authentication/individual
+  name: 基于通过单独用户帐户创建的 ASP.NET Core 项目的项目
+  href: group1-dest/security/authentication/individual.html
+- uid: security/authentication/mfa
+  name: ASP.NET Core 中的多重身份验证
+  href: group1-dest/security/authentication/mfa.html
+- uid: security/authentication/microsoft-logins
+  name: Microsoft 帐户外部登录设置与 ASP.NET Core
+  href: group1-dest/security/authentication/social/microsoft-logins.html
+- uid: security/authentication/otherlogins
+  name: 外部 OAuth 身份验证提供程序
+  href: group1-dest/security/authentication/social/other-logins.html
+- uid: security/authentication/policyschemes
+  name: ASP.NET Core 中的策略方案
+  href: group1-dest/security/authentication/policyschemes.html
+- uid: security/authentication/samples
+  name: ASP.NET Core 的身份验证示例
+  href: group1-dest/security/authentication/samples.html
+- uid: security/authentication/scaffold-identity
+  name: IdentityASP.NET Core 项目中的基架
+  href: group1-dest/security/authentication/scaffold-identity.html
+- uid: security/authentication/social/additional-claims
+  name: 在 ASP.NET Core 中保存外部提供程序的其他声明和令牌
+  href: group1-dest/security/authentication/social/additional-claims.html
+- uid: security/authentication/social/index
+  name: ASP.NET Core 中的 Facebook、Google 和外部提供程序身份验证
+  href: group1-dest/security/authentication/social/index.html
+- uid: security/authentication/social/social-without-identity
+  name: Facebook、Google 和外部提供程序身份验证 ASP.NET Core Identity
+  href: group1-dest/security/authentication/social/social-without-identity.html
+- uid: security/authentication/twitter-logins
+  name: 具有 ASP.NET Core 的 Twitter 外部登录设置
+  href: group1-dest/security/authentication/social/twitter-logins.html
+- uid: security/authentication/windowsauth
+  name: 在 ASP.NET Core 中配置 Windows 身份验证
+  href: group1-dest/security/authentication/windowsauth.html
+- uid: security/authentication/ws-federation
+  name: 通过 ASP.NET Core 中的 WS-Federation 对用户进行身份验证
+  href: group1-dest/security/authentication/ws-federation.html
+- uid: security/authorization/authorizationmiddlewareresulthandler
+  name: 自定义 AuthorizationMiddleware 的行为
+  href: group1-dest/security/authorization/customizingauthorizationmiddlewareresponse.html
+- uid: security/authorization/claims
+  name: ASP.NET Core 中的基于声明的授权
+  href: group1-dest/security/authorization/claims.html
+- uid: security/authorization/dependencyinjection
+  name: ASP.NET Core 中的要求处理程序中的依赖项注入
+  href: group1-dest/security/authorization/dependencyinjection.html
+- uid: security/authorization/iauthorizationpolicyprovider
+  name: ASP.NET Core 中的自定义授权策略提供程序
+  href: group1-dest/security/authorization/iauthorizationpolicyprovider.html
+- uid: security/authorization/introduction
+  name: ASP.NET Core 中的授权简介
+  href: group1-dest/security/authorization/introduction.html
+- uid: security/authorization/limitingidentitybyscheme
+  name: 使用 ASP.NET Core 中的特定方案授权
+  href: group1-dest/security/authorization/limitingidentitybyscheme.html
+- uid: security/authorization/policies
+  name: ASP.NET Core 中基于策略的授权
+  href: group1-dest/security/authorization/policies.html
+- uid: security/authorization/razor-pages-authorization
+  name: Razor 页面中的授权约定 ASP.NET Core
+  href: group1-dest/security/authorization/razor-pages-authorization.html
+- uid: security/authorization/resourcebased
+  name: ASP.NET Core 中基于资源的授权
+  href: group1-dest/security/authorization/resourcebased.html
+- uid: security/authorization/roles
+  name: ASP.NET Core 中的基于角色的授权
+  href: group1-dest/security/authorization/roles.html
+- uid: security/authorization/secure-data
+  name: 使用授权保护的用户数据创建 ASP.NET Core 应用
+  href: group1-dest/security/authorization/secure-data.html
+- uid: security/authorization/simple
+  name: ASP.NET Core 中的简单授权
+  href: group1-dest/security/authorization/simple.html
+- uid: security/authorization/views
+  name: ASP.NET Core MVC 中基于视图的授权
+  href: group1-dest/security/authorization/views.html
+- uid: security/cookie-sharing
+  name: cookie在 ASP.NET 应用之间共享身份验证
+  href: group1-dest/security/cookie-sharing.html
+- uid: security/cors
+  name: " (CORS) 启用跨域请求 ASP.NET Core"
+  href: group1-dest/security/cors.html
+- uid: security/cross-site-scripting
+  name: 阻止跨站点脚本 (XSS) 在 ASP.NET Core
+  href: group1-dest/security/cross-site-scripting.html
+- uid: security/data-protection/compatibility/index
+  name: ASP.NET Core 中的兼容性
+  href: group1-dest/security/data-protection/compatibility/index.html
+- uid: security/data-protection/compatibility/replacing-machinekey
+  name: 替换 ASP.NET Core 中的 ASP.NET machineKey
+  href: group1-dest/security/data-protection/compatibility/replacing-machinekey.html
+- uid: security/data-protection/configuration/default-settings
+  name: ASP.NET Core 中的数据保护密钥管理和生存期信息
+  href: group1-dest/security/data-protection/configuration/default-settings.html
+- uid: security/data-protection/configuration/index
+  name: ASP.NET Core 中的数据保护配置
+  href: group1-dest/security/data-protection/configuration/index.html
+- uid: security/data-protection/configuration/machine-wide-policy
+  name: ASP.NET Core 中的数据保护计算机范围内的策略支持
+  href: group1-dest/security/data-protection/configuration/machine-wide-policy.html
+- uid: security/data-protection/configuration/non-di-scenarios
+  name: ASP.NET Core 中数据保护的非 DI 感知情境
+  href: group1-dest/security/data-protection/configuration/non-di-scenarios.html
+- uid: security/data-protection/configuration/overview
+  name: 配置 ASP.NET Core 数据保护
+  href: group1-dest/security/data-protection/configuration/overview.html
+- uid: security/data-protection/consumer-apis/dangerous-unprotect
+  name: 取消保护已在 ASP.NET Core 中吊销其密钥的负载
+  href: group1-dest/security/data-protection/consumer-apis/dangerous-unprotect.html
+- uid: security/data-protection/consumer-apis/limited-lifetime-payloads
+  name: 在 ASP.NET Core 中限制受保护负载的生存期
+  href: group1-dest/security/data-protection/consumer-apis/limited-lifetime-payloads.html
+- uid: security/data-protection/consumer-apis/overview
+  name: ASP.NET Core 的使用者 Api 概述
+  href: group1-dest/security/data-protection/consumer-apis/overview.html
+- uid: security/data-protection/consumer-apis/password-hashing
+  name: ASP.NET Core 中的哈希密码
+  href: group1-dest/security/data-protection/consumer-apis/password-hashing.html
+- uid: security/data-protection/consumer-apis/purpose-strings
+  name: ASP.NET Core 中的用途字符串
+  href: group1-dest/security/data-protection/consumer-apis/purpose-strings.html
+- uid: security/data-protection/consumer-apis/purpose-strings-multitenancy
+  name: ASP.NET Core 中的用途层次结构和多租户
+  href: group1-dest/security/data-protection/consumer-apis/purpose-strings-multitenancy.html
+- uid: security/data-protection/extensibility/core-crypto
+  name: ASP.NET Core 中的核心加密扩展性
+  href: group1-dest/security/data-protection/extensibility/core-crypto.html
+- uid: security/data-protection/extensibility/index
+  name: ASP.NET Core 数据保护扩展性 API
+  href: group1-dest/security/data-protection/extensibility/index.html
+- uid: security/data-protection/extensibility/key-management
+  name: ASP.NET Core 中的密钥管理扩展性
+  href: group1-dest/security/data-protection/extensibility/key-management.html
+- uid: security/data-protection/extensibility/misc-apis
+  name: 数据保护 Api 的其他 ASP.NET Core
+  href: group1-dest/security/data-protection/extensibility/misc-apis.html
+- uid: security/data-protection/implementation/authenticated-encryption-details
+  name: ASP.NET Core 中经过身份验证的加密详细信息
+  href: group1-dest/security/data-protection/implementation/authenticated-encryption-details.html
+- uid: security/data-protection/implementation/context-headers
+  name: ASP.NET Core 中的上下文标题
+  href: group1-dest/security/data-protection/implementation/context-headers.html
+- uid: security/data-protection/implementation/index
+  name: ASP.NET Core 数据保护实现
+  href: group1-dest/security/data-protection/implementation/index.html
+- uid: security/data-protection/implementation/key-encryption-at-rest
+  name: Windows 和 Azure 中的静态密钥加密使用 ASP.NET Core
+  href: group1-dest/security/data-protection/implementation/key-encryption-at-rest.html
+- uid: security/data-protection/implementation/key-immutability
+  name: ASP.NET Core 中的密钥永久性和密钥设置
+  href: group1-dest/security/data-protection/implementation/key-immutability.html
+- uid: security/data-protection/implementation/key-management
+  name: ASP.NET Core 中的密钥管理
+  href: group1-dest/security/data-protection/implementation/key-management.html
+- uid: security/data-protection/implementation/key-storage-ephemeral
+  name: ASP.NET Core 中的临时数据保护提供程序
+  href: group1-dest/security/data-protection/implementation/key-storage-ephemeral.html
+- uid: security/data-protection/implementation/key-storage-format
+  name: ASP.NET Core 中的密钥存储格式
+  href: group1-dest/security/data-protection/implementation/key-storage-format.html
+- uid: security/data-protection/implementation/key-storage-providers
+  name: ASP.NET Core 中的密钥存储提供程序
+  href: group1-dest/security/data-protection/implementation/key-storage-providers.html
+- uid: security/data-protection/implementation/subkeyderivation
+  name: ASP.NET Core 中的子项派生和已验证的加密
+  href: group1-dest/security/data-protection/implementation/subkeyderivation.html
+- uid: security/data-protection/introduction
+  name: ASP.NET Core 数据保护
+  href: group1-dest/security/data-protection/introduction.html
+- uid: security/data-protection/using-data-protection
+  name: ASP.NET Core 中的数据保护 Api 入门
+  href: group1-dest/security/data-protection/using-data-protection.html
+- uid: security/docker-compose-https
+  name: 使用 docker 组合通过 HTTPS 在容器中托管 ASP.NET Core 映像
+  href: group1-dest/security/docker-compose-https.html
+- uid: security/docker-https
+  name: 通过 HTTPS 在 Docker 上宿主 ASP.NET Core 映像
+  href: group1-dest/security/docker-https.html
+- uid: security/enforcing-ssl
+  name: 在 ASP.NET Core 强制实施 HTTPS
+  href: group1-dest/security/enforcing-ssl.html
+- uid: security/gdpr
+  name: ASP.NET Core 中一般数据保护条例 (GDPR) 支持
+  href: group1-dest/security/gdpr.html
+- uid: security/index
+  name: ASP.NET Core 安全性概述
+  href: group1-dest/security/index.html
+- uid: security/ip-safelist
+  name: ASP.NET Core 的客户端 IP 安全安全
+  href: group1-dest/security/ip-safelist.html
+- uid: security/key-vault-configuration
+  name: ASP.NET Core 中的 Azure Key Vault 配置提供程序
+  href: group1-dest/security/key-vault-configuration.html
+- uid: security/preventing-open-redirects
+  name: 阻止 ASP.NET Core 中的开放重定向攻击
+  href: group1-dest/security/preventing-open-redirects.html
+- uid: security/samesite
+  name: 使用 cookie ASP.NET Core 中的 SameSite
+  href: group1-dest/security/samesite.html
+- uid: security/samesite/mvc21
+  name: ASP.NET Core 2.1 MVC SameSite cookie 示例
+  href: group1-dest/security/samesite/mvc21.html
+- uid: security/samesite/rp21
+  name: ASP.NET Core 2.1 Razor Pages SameSite cookie 示例
+  href: group1-dest/security/samesite/rp21.html
+- uid: security/samesite/rp31
+  name: ASP.NET Core 3.1 Razor Pages SameSite cookie 示例
+  href: group1-dest/security/samesite/rp31.html
+- uid: signalr/api-design
+  name: SignalR API 设计注意事项
+  href: group1-dest/signalr/api-design.html
+- uid: signalr/authn-and-authz
+  name: ASP.NET Core 中的身份验证和授权 SignalR
+  href: group1-dest/signalr/authn-and-authz.html
+- uid: signalr/background-services
+  name: SignalR在后台服务中托管 ASP.NET Core
+  href: group1-dest/signalr/background-services.html
+- uid: signalr/client-features
+  name: ASP.NET Core SignalR 客户端
+  href: group1-dest/signalr/client-features.html
+- uid: signalr/configuration
+  name: ASP.NET Core SignalR 配置
+  href: group1-dest/signalr/configuration.html
+- uid: signalr/diagnostics
+  name: ASP.NET Core 中的日志记录和诊断 SignalR
+  href: group1-dest/signalr/diagnostics.html
+- uid: signalr/dotnet-client
+  name: ASP.NET Core SignalR .Net 客户端
+  href: group1-dest/signalr/dotnet-client.html
+- uid: signalr/groups
+  name: 在中管理用户和组 SignalR
+  href: group1-dest/signalr/groups.html
+- uid: signalr/hubcontext
+  name: SignalR HubContext
+  href: group1-dest/signalr/hubcontext.html
+- uid: signalr/hub-filters
+  name: 在 ASP.NET Core 中使用集线器筛选器 SignalR
+  href: group1-dest/signalr/hub-filters.html
+- uid: signalr/hubs
+  name: 在 ASP.NET Core 中使用中心 SignalR
+  href: group1-dest/signalr/hubs.html
+- uid: signalr/introduction
+  name: ASP.NET Core SignalR 简介
+  href: group1-dest/signalr/introduction.html
+- uid: signalr/java-client
+  name: ASP.NET Core SignalR Java 客户端
+  href: group1-dest/signalr/java-client.html
+- uid: signalr/javascript-client
+  name: ASP.NET Core SignalR JavaScript 客户端
+  href: group1-dest/signalr/javascript-client.html
+- uid: signalr/messagepackhubprotocol
+  name: 使用中的 MessagePack Hub 协议 SignalR 进行 ASP.NET Core
+  href: group1-dest/signalr/messagepackhubprotocol.html
+- uid: signalr/publish-to-azure-web-app
+  name: SignalR将 ASP.NET Core 应用程序发布到 Azure App Service
+  href: group1-dest/signalr/publish-to-azure-web-app.html
+- uid: signalr/redis-backplane
+  name: 用于 ASP.NET Core 横向扩展的 Redis 底板 SignalR
+  href: group1-dest/signalr/redis-backplane.html
+- uid: signalr/scale
+  name: ASP.NET Core SignalR 生产承载和扩展
+  href: group1-dest/signalr/scale.html
+- uid: signalr/security
+  name: ASP.NET Core 中的安全注意事项 SignalR
+  href: group1-dest/signalr/security.html
+- uid: signalr/streaming
+  name: 使用 ASP.NET Core 中的流式处理 SignalR
+  href: group1-dest/signalr/streaming.html
+- uid: signalr/supported-platforms
+  name: ASP.NET Core SignalR 支持的平台
+  href: group1-dest/signalr/supported-platforms.html
+- uid: signalr/troubleshoot
+  name: ASP.NET Core SignalR 连接故障排除
+  href: group1-dest/signalr/troubleshoot.html
+- uid: signalr/version-differences
+  name: SignalR和 ASP.NET Core 之间的差异SignalR
+  href: group1-dest/signalr/version-differences.html
+- uid: spa/angular
+  name: 通过 ASP.NET Core 使用 Angular 项目模板
+  href: group1-dest/client-side/spa/angular.html
+- uid: spa/react
+  name: 通过 ASP.NET Core 使用 React 项目模板
+  href: group1-dest/client-side/spa/react.html
+- uid: spa/react-with-redux
+  name: 通过 ASP.NET Core 使用带 Redux 的 React 项目模板
+  href: group1-dest/client-side/spa/react-with-redux.html
+- uid: test/integration-tests
+  name: ASP.NET Core 中的集成测试
+  href: group1-dest/test/integration-tests.html
+- uid: test/loadtests
+  name: ASP.NET Core 负载/压力测试
+  href: group1-dest/test/load-tests.html
+- uid: test/middleware
+  name: 测试 ASP.NET Core 中间件
+  href: group1-dest/test/middleware.html
+- uid: test/razor-pages-tests
+  name: ASP.NET Core 中的 Razor Pages 单元测试
+  href: group1-dest/test/razor-pages-tests.html
+- uid: test/troubleshoot
+  name: ASP.NET Core 项目故障排除和调试
+  href: group1-dest/test/troubleshoot.html
+- uid: test/troubleshoot-azure-iis
+  name: 对 Azure 应用服务和 IIS 上的 ASP.NET Core 进行故障排除
+  href: group1-dest/test/troubleshoot-azure-iis.html
+- uid: tutorials/build-a-blazor-app
+  name: 生成 Blazor 待办事项列表应用
+  href: group1-dest/tutorials/build-a-blazor-app.html
+- uid: tutorials/dotnet-watch
+  name: 使用文件观察程序开发 ASP.NET Core 应用
+  href: group1-dest/tutorials/dotnet-watch.html
+- uid: tutorials/first-mongo-app
+  name: 使用 ASP.NET Core 和 MongoDB 创建 Web API
+  href: group1-dest/tutorials/first-mongo-app.html
+- uid: tutorials/first-mvc-app/adding-controller
+  name: 第 2 部分，将控制器添加到 ASP.NET Core MVC 应用
+  href: group1-dest/tutorials/first-mvc-app/adding-controller.html
+- uid: tutorials/first-mvc-app/adding-model
+  name: 第 4 部分，将模型添加到 ASP.NET Core MVC 应用
+  href: group1-dest/tutorials/first-mvc-app/adding-model.html
+- uid: tutorials/first-mvc-app/adding-view
+  name: 第 3 部分，将视图添加到 ASP.NET Core MVC 应用
+  href: group1-dest/tutorials/first-mvc-app/adding-view.html
+- uid: tutorials/first-mvc-app/controller-methods-views
+  name: 第 6 部分，ASP.NET Core 中的控制器方法和视图
+  href: group1-dest/tutorials/first-mvc-app/controller-methods-views.html
+- uid: tutorials/first-mvc-app/details
+  name: 第 10 部分，检查 ASP.NET Core 应用的 Details 和 Delete 方法
+  href: group1-dest/tutorials/first-mvc-app/details.html
+- uid: tutorials/first-mvc-app/index
+  name: 使用 ASP.NET Core MVC 创建 Web 应用
+  href: group1-dest/tutorials/first-mvc-app/index.html
+- uid: tutorials/first-mvc-app/new-field
+  name: 第 8 部分，将新字段添加到 ASP.NET Core MVC 应用
+  href: group1-dest/tutorials/first-mvc-app/new-field.html
+- uid: tutorials/first-mvc-app/search
+  name: 第 7 部分，将搜索添加到 ASP.NET Core MVC 应用
+  href: group1-dest/tutorials/first-mvc-app/search.html
+- uid: tutorials/first-mvc-app/start-mvc
+  name: ASP.NET Core MVC 入门
+  href: group1-dest/tutorials/first-mvc-app/start-mvc.html
+- uid: tutorials/first-mvc-app/validation
+  name: 第 9 部分，将验证添加到 ASP.NET Core MVC 应用
+  href: group1-dest/tutorials/first-mvc-app/validation.html
+- uid: tutorials/first-mvc-app/working-with-sql
+  name: 第 5 部分，在 ASP.NET Core MVC 应用中使用数据库
+  href: group1-dest/tutorials/first-mvc-app/working-with-sql.html
+- uid: tutorials/first-web-api
+  name: 教程：使用 ASP.NET Core 创建 Web API
+  href: group1-dest/tutorials/first-web-api.html
+- uid: tutorials/get-started-with-nswag
+  name: NSwag 和 ASP.NET Core 入门
+  href: group1-dest/tutorials/getting-started-with-NSwag.html
+- uid: tutorials/get-started-with-swashbuckle
+  name: Swashbuckle 和 ASP.NET Core 入门
+  href: group1-dest/tutorials/getting-started-with-swashbuckle.html
+- uid: tutorials/grpc/grpc-start
+  name: 在 ASP.NET Core 中创建 .NET Core gRPC 客户端和服务器
+  href: group1-dest/tutorials/grpc/grpc-start.html
+- uid: tutorials/publish-to-azure-api-management-using-vs
+  name: 使用 Visual Studio 将 ASP.NET Core Web API 发布到 Azure API 管理
+  href: group1-dest/tutorials/publish-to-azure-api-management-using-vs.html
+- uid: tutorials/publish-to-azure-webapp-using-vs
+  name: 使用 Visual Studio 将 ASP.NET Core 应用发布到 Azure
+  href: group1-dest/tutorials/publish-to-azure-webapp-using-vs.html
+- uid: tutorials/publish-to-azure-webapp-using-vscode
+  name: 使用 Visual Studio Code 将 ASP.NET Core 应用发布到 Azure
+  href: group1-dest/tutorials/publish-to-azure-webapp-using-vscode.html
+- uid: tutorials/publish-to-iis
+  name: 将 ASP.NET Core 应用发布到 IIS
+  href: group1-dest/tutorials/publish-to-iis.html
+- uid: tutorials/razor-pages/da1
+  name: 第 5 部分，在 ASP.NET Core 应用中更新生成的页面
+  href: group1-dest/tutorials/razor-pages/da1.html
+- uid: tutorials/razor-pages/index
+  name: 教程：使用 ASP.NET Core 创建 Razor Pages Web 应用
+  href: group1-dest/tutorials/razor-pages/index.html
+- uid: tutorials/razor-pages/model
+  name: 第 2 部分，在 ASP.NET Core 中向 Razor 页面应用添加模型
+  href: group1-dest/tutorials/razor-pages/model.html
+- uid: tutorials/razor-pages/new-field
+  name: 第 7 部分，将新字段添加到 ASP.NET Core 中的 Razor 页面
+  href: group1-dest/tutorials/razor-pages/new-field.html
+- uid: tutorials/razor-pages/page
+  name: 第 3 部分，ASP.NET Core 中已搭建基架的 Razor 页面
+  href: group1-dest/tutorials/razor-pages/page.html
+- uid: tutorials/razor-pages/razor-pages-start
+  name: 教程：在 ASP.NET Core 中开始使用 Razor Pages
+  href: group1-dest/tutorials/razor-pages/razor-pages-start.html
+- uid: tutorials/razor-pages/search
+  name: 第 6 部分，将搜索添加到 ASP.NET Core Razor 页面
+  href: group1-dest/tutorials/razor-pages/search.html
+- uid: tutorials/razor-pages/sql
+  name: 第 4 部分，使用数据库和 ASP.NET Core
+  href: group1-dest/tutorials/razor-pages/sql.html
+- uid: tutorials/razor-pages/validation
+  name: 第 8 部分，将验证添加到 ASP.NET Core Razor 页面
+  href: group1-dest/tutorials/razor-pages/validation.html
+- uid: tutorials/signalr
+  name: ASP.NET Core SignalR 入门
+  href: group1-dest/tutorials/signalr.html
+- uid: tutorials/signalr-blazor-webassembly
+  name: 结合使用 ASP.NET Core SignalR 和 Blazor WebAssembly
+  href: group1-dest/tutorials/signalr-blazor-webassembly.html
+- uid: tutorials/signalr-typescript-webpack
+  name: 配合使用 ASP.NET Core SignalR 和 TypeScript 以及 Webpack
+  href: group1-dest/tutorials/signalr-typescript-webpack.html
+- uid: tutorials/web-api-help-pages-using-swagger
+  name: 带有 Swagger/OpenAPI 的 ASP.NET Core Web API 帮助页
+  href: group1-dest/tutorials/web-api-help-pages-using-swagger.html
+- uid: tutorials/web-api-javascript
+  name: 教程：使用 JavaScript 调用 ASP.NET Core Web API
+  href: group1-dest/tutorials/web-api-javascript.html
+- uid: web-api/action-return-types
+  name: ASP.NET Core Web API 中控制器操作的返回类型
+  href: group1-dest/web-api/action-return-types.html
+- uid: web-api/advanced/analyzers
+  name: 使用 Web API 分析器
+  href: group1-dest/web-api/advanced/analyzers.html
+- uid: web-api/advanced/conventions
+  name: 使用 Web API 约定
+  href: group1-dest/web-api/advanced/conventions.html
+- uid: web-api/advanced/custom-formatters
+  name: ASP.NET Core Web API 中的自定义格式化程序
+  href: group1-dest/web-api/advanced/custom-formatters.html
+- uid: web-api/advanced/formatting
+  name: 设置 ASP.NET Core Web API 中响应数据的格式
+  href: group1-dest/web-api/advanced/formatting.html
+- uid: web-api/handle-errors
+  name: 处理 ASP.NET Core Web API 中的错误
+  href: group1-dest/web-api/handle-errors.html
+- uid: web-api/http-repl
+  name: 使用 HTTP REPL 测试 Web API
+  href: group1-dest/web-api/http-repl.html
+- uid: web-api/index
+  name: 使用 ASP.NET Core 创建 Web API
+  href: group1-dest/web-api/index.html
+- uid: web-api/jsonpatch
+  name: ASP.NET Core Web API 中的 JSON 修补程序
+  href: group1-dest/web-api/jsonpatch.html
+- uid: web-api/Microsoft.dotnet-openapi
+  name: 使用 OpenAPI 开发 ASP.NET Core 应用
+  href: group1-dest/web-api/Microsoft.dotnet-openapi.html

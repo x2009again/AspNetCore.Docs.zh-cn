@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; Facebook &#22806;&#37096;&#30331;&#24405;&#35774;&#32622; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; Facebook &#22806;&#37096;&#30331;&#24405;&#35774;&#32622; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/facebook-logins">
+<h1 id="facebook-external-login-setup-in-aspnet-core">ASP.NET Core 中的 Facebook 外部登录设置</h1>
+
+<p>作者：<a href="https://github.com/01binary">Valeriy Novytskyy</a> 和 <a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<!-- per @rick-anderson and scott addie, don't update images. Remove images and point the customer to the FB set up page. FB needs to maintain  instructions to get key and secret.
+-->
+<p>本教程中的代码示例演示如何使用户能够使用在 <a class="xref" href="index.html">前一页</a>上创建的示例 ASP.NET Core 3.0 项目登录其 Facebook 帐户。 首先，我们要按照 <a href="https://developers.facebook.com">官方步骤</a>创建 FACEBOOK 应用 ID。</p>
+<h2 id="create-the-app-in-facebook">在 Facebook 中创建应用</h2>
+<ul>
+<li><p>将 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Facebook">AspNetCore</a> NuGet 包添加到项目。</p>
+</li>
+<li><p>导航到 <a href="https://developers.facebook.com/apps/">Facebook 开发人员应用</a> 页面并登录。 如果还没有 Facebook 帐户，请使用登录页上的 &quot; <strong>注册 Facebook</strong> &quot; 链接创建一个。  获得 Facebook 帐户后，请按照说明注册为 Facebook 开发人员。</p>
+</li>
+<li><p>从 &quot; <strong>我的应用</strong> &quot; 菜单中，选择 &quot; <strong>创建应用</strong> &quot; 以创建新的应用 ID。</p>
+<p><img src="index/_static/FBMyApps.png" alt="Facebook for 开发人员门户在 Microsoft Edge 中打开"></p>
+</li>
+<li><p>填写表单，然后点击 &quot; <strong>创建应用 ID</strong> &quot; 按钮。</p>
+<p><img src="index/_static/FBNewAppId.png" alt="创建新的应用 ID 窗体"></p>
+</li>
+<li><p>在 &quot;新建应用&quot; 卡中，选择 &quot; <strong>添加产品</strong> &quot;。  在 <strong>Facebook 登录</strong> 卡上，单击 &quot; <strong>设置</strong> &quot;</p>
+<p><img src="index/_static/FBProductSetup.png" alt="产品设置页"></p>
+</li>
+<li><p><strong>快速入门</strong> 向导会启动，并 <strong>选择一个平台</strong> 作为第一页。 现在，通过单击左下方菜单中的 &quot; <strong>FaceBook 登录****设置</strong> &quot; 链接，绕过向导：</p>
+<p><img src="index/_static/FBSkipQuickStart.png" alt="跳过快速入门"></p>
+</li>
+<li><p>将显示 &quot; <strong>客户端 OAuth 设置</strong> &quot; 页：</p>
+<p><img src="index/_static/FBOAuthSetup.png" alt="&quot;客户端 OAuth 设置&quot; 页"></p>
+</li>
+<li><p>输入附加到 &quot; <strong>有效的 OAuth 重定向 uri</strong> &quot; 字段中的 <em>/SIGNIN-FACEBOOK</em> 的开发 URI (例如： <code>https://localhost:44320/signin-facebook</code>) 。 稍后在本教程中配置的 Facebook 身份验证将自动处理 <em>/signin-facebook</em> 路由中的请求以实现 OAuth 流。</p>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>URI <em>/signin-facebook</em> 设置为 facebook 身份验证提供程序的默认回调。 通过<a href="/dotnet/api/microsoft.aspnetcore.authentication.facebook.facebookoptions">FacebookOptions</a>类的继承的<a href="/dotnet/api/microsoft.aspnetcore.authentication.remoteauthenticationoptions.callbackpath">RemoteAuthenticationOptions. CallbackPath</a>属性配置 Facebook 身份验证中间件时，可以更改默认的回叫 URI。</p>
+</div>
+<ul>
+<li><p>单击 <strong>“保存更改”</strong> 。</p>
+</li>
+<li><p>单击 <strong>Settings</strong>  &gt;  左侧导航栏中的 &quot;设置&quot; &quot; <strong>基本</strong> &quot; 链接。</p>
+<p>在此页上，请记下 <code>App ID</code> 和 <code>App Secret</code> 。 在下一部分中，你将同时添加到 ASP.NET Core 应用程序：</p>
+</li>
+<li><p>部署站点时，需要重新访问 <strong>Facebook 登录</strong> 设置页面并注册新的公共 URI。</p>
+</li>
+</ul>
+<h2 id="store-the-facebook-app-id-and-secret">存储 Facebook 应用 ID 和机密</h2>
+<p>用 <a class="xref" href="../../app-secrets.html">机密管理器</a>存储敏感设置，如 FACEBOOK 应用 ID 和机密值。 对于本示例，请使用以下步骤：</p>
+<ol>
+<li><p>按照 <a class="xref" href="../../app-secrets.html#enable-secret-storage">启用密钥存储</a>中的说明初始化密钥存储的项目。</p>
+</li>
+<li><p>将敏感设置存储在本地密钥存储中，并提供机密密钥 <code>Authentication:Facebook:AppId</code> 和 <code>Authentication:Facebook:AppSecret</code> ：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;Authentication:Facebook:AppId&quot; &quot;&lt;app-id&gt;&quot;
+dotnet user-secrets set &quot;Authentication:Facebook:AppSecret&quot; &quot;&lt;app-secret&gt;&quot;
+</code></pre>
+</li>
+</ol>
+<p>所有平台上的环境变量分层键都不支持 <code>:</code> 分隔符。 <code>__</code>（双下划线）：</p>
+<ul>
+<li>受所有平台支持。 例如，<a href="https://linuxhint.com/bash-environment-variables/">Bash</a> 不支持 <code>:</code> 分隔符，但支持 <code>__</code>。</li>
+<li>自动替换为 <code>:</code></li>
+</ul>
+<h2 id="configure-facebook-authentication">配置 Facebook 身份验证</h2>
+<p>将 Facebook 服务添加到 <code>ConfigureServices</code> <em>Startup.cs</em> 文件的方法中：</p>
+<pre><code class="lang-csharp">services.AddAuthentication().AddFacebook(facebookOptions =&gt;
+{
+    facebookOptions.AppId = Configuration[&quot;Authentication:Facebook:AppId&quot;];
+    facebookOptions.AppSecret = Configuration[&quot;Authentication:Facebook:AppSecret&quot;];
+});
+</code></pre>
+<!--Don't update this for 2.2, use the 2.2 version -->
+<p><a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication#Microsoft_Extensions_DependencyInjection_AuthenticationServiceCollectionExtensions_AddAuthentication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_">AddAuthentication （字符串）</a>重载设置<a href="/dotnet/api/microsoft.aspnetcore.authentication.authenticationoptions.defaultscheme">DefaultScheme</a>属性。 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication#Microsoft_Extensions_DependencyInjection_AuthenticationServiceCollectionExtensions_AddAuthentication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Microsoft_AspNetCore_Authentication_AuthenticationOptions__">AddAuthentication （Action&lt;AuthenticationOptions&gt;）</a>重载允许配置身份验证选项，这些选项可用于为不同目的设置默认的身份验证方案。 对的后续调用 <code>AddAuthentication</code> 重写以前配置的<a href="/dotnet/api/microsoft.aspnetcore.builder.authenticationoptions">AuthenticationOptions</a>属性。</p>
+<p>对于注册身份验证处理程序的<a href="/dotnet/api/microsoft.aspnetcore.authentication.authenticationbuilder">AuthenticationBuilder</a>扩展方法，每个身份验证方案只能调用一次。 存在允许配置方案属性、方案名称和显示名称的重载。</p>
+<h2 id="sign-in-with-facebook">用 Facebook 登录</h2>
+<ul>
+<li>运行应用并选择 <strong>&quot;登录&quot;</strong> 。</li>
+<li>在 &quot; <strong>使用其他服务进行登录</strong> &quot; 下，选择 Facebook。</li>
+<li>你将重定向到 <strong>Facebook</strong> 进行身份验证。</li>
+<li>输入 Facebook 凭据。</li>
+<li>你将重定向回到你的网站，你可以在其中设置电子邮件。</li>
+</ul>
+<p>你现在已使用 Facebook 凭据登录：</p>
+<p><a name="react"></a></p>
+<h2 id="react-to-cancel-authorize-external-sign-in">响应取消授权外部登录</h2>
+<p>&lt;xref:Microsoft.AspNetCore.Authentication.RemoteAuthenticationOptions.AccessDeniedPath&gt; 当用户未批准请求的授权请求时，可以提供用户代理的重定向路径。</p>
+<p>下面的代码将设置 <code>AccessDeniedPath</code> 为 <code>&quot;/AccessDeniedPathInfo&quot;</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>建议 <code>AccessDeniedPath</code> 页面包含以下信息：</p>
+<ul>
+<li>远程身份验证已取消。</li>
+<li>此应用需要身份验证。</li>
+<li>若要再次尝试登录，请选择 &quot;登录&quot; 链接。</li>
+</ul>
+<h3 id="test-accessdeniedpath">测试 AccessDeniedPath</h3>
+<ul>
+<li>导航到 <a href="https://www.facebook.com/">facebook.com</a></li>
+<li>如果已登录，则必须注销。</li>
+<li>运行应用并选择 &quot;Facebook 登录&quot;。</li>
+<li>选择 &quot; <strong>暂时 Not</strong> &quot;。 你将重定向到指定的 <code>AccessDeniedPath</code> 页面。</li>
+</ul>
+<!-- End of React  -->
+<h2 id="forward-request-information-with-a-proxy-or-load-balancer">使用代理或负载均衡器转发请求信息</h2>
+<p>如果应用部署在代理服务器或负载均衡器后面，则可能会将某些原始请求信息转发到请求标头中的应用。 此信息通常包括安全请求方案 (<code>https</code>)、主机和客户端 IP 地址。 应用不会自动读取这些请求标头以发现和使用原始请求信息。</p>
+<p>方案用于通过外部提供程序影响身份验证流的链接生成。 丢失安全方案 (<code>https</code>) 会导致应用生成不正确且不安全的重定向 URL。</p>
+<p>使用转发标头中间件以使应用可以使用原始请求信息来进行请求处理。</p>
+<p>有关更多信息，请参见 <a class="xref" href="../../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<h2 id="multiple-authentication-providers">多个身份验证提供程序</h2>
+<p>如果应用需要多个提供程序，请在 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication">AddAuthentication</a> 后面链接提供程序扩展方法：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddMicrosoftAccount(microsoftOptions =&gt; { ... })
+    .AddGoogle(googleOptions =&gt; { ... })
+    .AddTwitter(twitterOptions =&gt; { ... })
+    .AddFacebook(facebookOptions =&gt; { ... });
+</code></pre>
+
+<p>有关 Facebook 身份验证支持的配置选项的详细信息，请参阅 <a href="/dotnet/api/microsoft.aspnetcore.builder.facebookoptions">FacebookOptions</a> API 参考。 配置选项可用于：</p>
+<ul>
+<li>请求有关用户的其他信息。</li>
+<li>添加查询字符串参数以自定义登录体验。</li>
+</ul>
+<h2 id="troubleshooting">疑难解答</h2>
+<ul>
+<li><strong>仅 ASP.NET Core 2.x：</strong> 如果 Identity 未通过调用进行 <code>services.AddIdentity</code> 配置 <code>ConfigureServices</code> ，尝试进行身份验证会导致 <em>ArgumentException：必须提供 &quot;SignInScheme&quot; 选项</em> 。 本教程中使用的项目模板可确保完成此操作。</li>
+<li>如果尚未通过应用初始迁移来创建站点数据库，则在处理请求错误时，将会出现 <em>数据库操作失败</em> 的情况。 点击 &quot; <strong>应用迁移</strong> &quot; 以创建数据库，然后单击 &quot;刷新&quot; 以继续出现错误。</li>
+</ul>
+<h2 id="next-steps">后续步骤</h2>
+<ul>
+<li><p>本文演示了如何通过 Facebook 进行身份验证。 您可以遵循类似的方法向 <a class="xref" href="index.html">前一页</a>上列出的其他提供程序进行身份验证。</p>
+</li>
+<li><p>将网站发布到 Azure web 应用后，应 <code>AppSecret</code> 在 Facebook 开发人员门户中重置。</p>
+</li>
+<li><p><code>Authentication:Facebook:AppId</code> <code>Authentication:Facebook:AppSecret</code> 在 Azure 门户中将和设置为应用程序设置。 配置系统设置为从环境变量读取密钥。</p>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

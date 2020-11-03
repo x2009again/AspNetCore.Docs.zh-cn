@@ -1,0 +1,834 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; Identity &#26381;&#21153;&#22120;&#20445;&#25252;&#25176;&#31649; ASP.NET Core Blazor WebAssembly &#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; Identity &#26381;&#21153;&#22120;&#20445;&#25252;&#25176;&#31649; ASP.NET Core Blazor WebAssembly &#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/security/webassembly/hosted-with-identity-server">
+<h1 id="secure-an-aspnet-core-no-locblazor-webassembly-hosted-app-with-no-locidentity-server">使用 Identity 服务器保护 ASP.NET Core Blazor WebAssembly 托管应用</h1>
+
+<p>作者：<a href="https://github.com/javiercn">Javier Calvarro Nelson</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p>本文介绍如何创建<a class="xref" href="../../hosting-models.html#blazor-webassembly">托管的 Blazor WebAssembly 应用</a>，该应用使用 <a href="https://identityserver.io/">IdentityServer</a> 以对用户和 API 调用进行身份验证。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>若要将独立或托管 Blazor WebAssembly 应用配置为使用现有的外部 Identity 服务器实例，请按照 <a class="xref" href="standalone-with-authentication-library.html">使用身份验证库保护 ASP.NET Core Blazor WebAssembly 独立应用</a> 中的指南操作。</p>
+</div>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code+netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code+netcore-cli" data-tab="visual-studio-code+netcore-cli" tabindex="-1">Visual Studio Code/.NET Core CLI</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>新建具有身份验证机制的 Blazor WebAssembly 项目：</p>
+<ol>
+<li><p>在“新建 ASP.NET Core Web 应用”对话框中选择“Blazor WebAssembly应用”模板后，选择“身份验证”下的“更改”。</p>
+</li>
+<li><p>通过“存储应用内的用户帐户”选项选择“单个用户帐户”，以使用 ASP.NET Core 的 <a class="xref" href="../../../security/authentication/identity.html">Identity</a> 系统存储应用内的用户。</p>
+</li>
+<li><p>在“高级”部分中选中“托管的 ASP.NET Core”复选框 。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code+netcore-cli" role="tabpanel" data-tab="visual-studio-code+netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>若要在空文件夹中新建具有身份验证机制的 Blazor WebAssembly 项目，则通过 <code>-au|--auth</code> 选项指定 <code>Individual</code> 身份验证机制，以使用 ASP.NET Core 的 <a class="xref" href="../../../security/authentication/identity.html">Identity</a> 系统存储应用内的用户：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorwasm -au Individual -ho -o {APP NAME}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{APP NAME}</code></td>
+<td><code>BlazorSample</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>-o|--output</code> 选项指定的输出位置将创建一个项目文件夹（如果该文件夹不存在）并成为应用程序名称的一部分。</p>
+<p>有关详细信息，请参阅 .NET Core 指南中的 <a href="/dotnet/core/tools/dotnet-new"><code>dotnet new</code></a> 命令。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>新建具有身份验证机制的 Blazor WebAssembly 项目：</p>
+<ol>
+<li><p>在“配置新的 Blazor WebAssembly应用”步骤中，从“身份验证”下拉列表中选择“个人身份验证(应用内)”。</p>
+</li>
+<li><p>此应用是使用 ASP.NET Core <a class="xref" href="../../../security/authentication/identity.html">Identity</a> 为应用中存储的个人用户创建的。</p>
+</li>
+<li><p>选中“托管的 ASP.NET Core”复选框。</p>
+</li>
+</ol>
+</section>
+</div>
+<h2 id="server-app-configuration"><code>Server</code> 应用配置</h2>
+<p>以下部分介绍了在包括身份验证支持的情况下对项目添加的内容。</p>
+<h3 id="startup-class">Startup 类</h3>
+<p><code>Startup</code> 类包含以下添加项。</p>
+<ul>
+<li><p>在 <code>Startup.ConfigureServices</code>中：</p>
+<ul>
+<li><p>ASP.NET Core Identity:</p>
+<pre><code class="lang-csharp">services.AddDbContext&lt;ApplicationDbContext&gt;(options =&gt;
+    options.UseSqlite(
+        Configuration.GetConnectionString(&quot;DefaultConnection&quot;)));
+
+services.AddDefaultIdentity&lt;ApplicationUser&gt;(options =&gt; 
+        options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;();
+</code></pre>
+</li>
+<li><p>包含附加 &lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServerBuilderConfigurationExtensions.AddApiAuthorization%2A&gt; 帮助器方法的 IdentityServer，该方法在 IdentityServer 之上设置默认 ASP.NET Core 约定：</p>
+<pre><code class="lang-csharp">services.AddIdentityServer()
+    .AddApiAuthorization&lt;ApplicationUser, ApplicationDbContext&gt;();
+</code></pre>
+</li>
+<li><p>包含附加 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationBuilderExtensions.AddIdentityServerJwt%2A&gt; 帮助器方法的身份验证，该方法将应用配置为验证由 IdentityServer 生成的 JWT 令牌：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddIdentityServerJwt();
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>在 <code>Startup.Configure</code>中：</p>
+<ul>
+<li><p>IdentityServer 中间件公开 OpenID Connect (OIDC) 终结点：</p>
+<pre><code class="lang-csharp">app.UseIdentityServer();
+</code></pre>
+</li>
+<li><p>身份验证中间件负责验证请求凭据并在请求上下文中设置用户：</p>
+<pre><code class="lang-csharp">app.UseAuthentication();
+</code></pre>
+</li>
+<li><p>授权中间件支持授权功能：</p>
+<pre><code class="lang-csharp">app.UseAuthentication();
+app.UseAuthorization();
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="addapiauthorization">AddApiAuthorization</h3>
+<p>&lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServerBuilderConfigurationExtensions.AddApiAuthorization%2A&gt; 帮助器方法配置 <a href="https://identityserver.io/">IdentityServer</a> 用于 ASP.NET Core 方案。 IdentityServer 是一个功能强大且可扩展的框架，用于处理应用安全问题。 IdentityServer 公开大多数情况下不必要的复杂性。 因此，提供了一组约定和配置选项作为良好的起点。 一旦身份验证需要更改，就可使用 IdentityServer 的完整功能自定义身份验证以满足应用的要求。</p>
+<h3 id="addno-locidentityserverjwt">AddIdentityServerJwt</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationBuilderExtensions.AddIdentityServerJwt%2A&gt; 帮助器方法将应用的策略方案配置为默认身份验证处理程序。 该策略配置为允许 Identity 处理路由到 Identity URL 空间 <code>/Identity</code> 中任何子路径的所有请求。 &lt;xref:Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler&gt; 处理所有其他请求。 此外，此方法还可以：</p>
+<ul>
+<li>向具有默认 <code>{APPLICATION NAME}API</code> 范围的 IdentityServer 注册 <code>{APPLICATION NAME}API</code> API 资源。</li>
+<li>配置 JWT 持有者令牌中间件以验证 IdentityServer 为应用颁发的令牌。</li>
+</ul>
+<h3 id="weatherforecastcontroller">WeatherForecastController</h3>
+<p>在 <code>WeatherForecastController</code> (<code>Controllers/WeatherForecastController.cs</code>) 中，<a href="xref:Microsoft.AspNetCore.Authorization.AuthorizeAttribute"><code>[Authorize]</code></a> 特性应用于该类。 该属性指示用户必须根据默认策略获得授权才能访问资源。 默认授权策略配置为使用默认身份验证方案，由 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationBuilderExtensions.AddIdentityServerJwt%2A&gt; 设置。 帮助器方法将 &lt;xref:Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerHandler&gt; 配置为对应用的请求的默认处理程序。</p>
+<h3 id="applicationdbcontext">ApplicationDbContext</h3>
+<p>在 <code>ApplicationDbContext</code> (<code>Data/ApplicationDbContext.cs</code>) 中，&lt;xref:Microsoft.EntityFrameworkCore.DbContext&gt; 扩展 &lt;xref:Microsoft.AspNetCore.ApiAuthorization.IdentityServer.ApiAuthorizationDbContext%601&gt; 以包括 IdentityServer 的架构。 &lt;xref:Microsoft.AspNetCore.ApiAuthorization.IdentityServer.ApiAuthorizationDbContext%601&gt; 派生自 &lt;xref:Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext&gt;。</p>
+<p>要获取对数据库架构的完全控制，请从其中一个可用的 Identity &lt;xref:Microsoft.EntityFrameworkCore.DbContext&gt; 类继承，并通过在 &lt;xref:Microsoft.EntityFrameworkCore.DbContext.OnModelCreating%2A&gt; 方法中调用 <code>builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value)</code> 来配置上下文以包括 Identity 架构。</p>
+<h3 id="oidcconfigurationcontroller">OidcConfigurationController</h3>
+<p>在 <code>OidcConfigurationController</code> (<code>Controllers/OidcConfigurationController.cs</code>) 中，客户端终结点预配为提供 OIDC 参数。</p>
+<h3 id="app-settings">应用设置</h3>
+<p>在项目根目录的应用设置文件 (<code>appsettings.json</code>) 中，<code>IdentityServer</code> 部分描述已配置的客户端列表。 下例中存在一个客户端。 客户端名称对应于应用名称，并通过约定映射到 OAuth <code>ClientId</code> 参数。 配置文件指示正在配置的应用类型。 配置文件在内部用于促进简化服务器配置过程的约定。 <!-- There are several profiles available, as explained in the [Application profiles](#application-profiles) section. --></p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Clients&quot;: {
+    &quot;{APP ASSEMBLY}.Client&quot;: {
+      &quot;Profile&quot;: &quot;IdentityServerSPA&quot;
+    }
+  }
+}
+</code></pre>
+<p>占位符 <code>{APP ASSEMBLY}</code> 是应用的程序集名称（例如 <code>BlazorSample.Client</code>）。</p>
+<h2 id="client-app-configuration"><code>Client</code> 应用配置</h2>
+<h3 id="authentication-package">身份验证包</h3>
+<p>创建应用以使用个人用户帐户 (<code>Individual</code>) 时，该应用会在其项目文件中自动接收 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 包的包引用。 此包提供了一组基元，可帮助应用验证用户身份并获取令牌以调用受保护的 API。</p>
+<p>如果向应用添加身份验证，请手动将包添加到应用的项目文件中：</p>
+<pre><code class="lang-xml">&lt;PackageReference 
+  Include=&quot;Microsoft.AspNetCore.Components.WebAssembly.Authentication&quot; 
+  Version=&quot;{VERSION}&quot; /&gt;
+</code></pre>
+<p>对于占位符 <code>{VERSION}</code>，可在包的版本历史记录（位于 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication">NuGet.org</a>）中找到与应用的共享框架版本匹配的最新稳定版本的包。</p>
+<h3 id="httpclient-configuration"><code>HttpClient</code> 配置</h3>
+<p>在 <code>Program.Main</code> (<code>Program.cs</code>) 中，命名的 &lt;xref:System.Net.Http.HttpClient&gt; (<code>HostIS.ServerAPI</code>) 配置为提供 &lt;xref:System.Net.Http.HttpClient&gt; 实例，以在向服务器 API 发出请求时包含访问令牌：</p>
+<pre><code class="lang-csharp">builder.Services.AddHttpClient(&quot;HostIS.ServerAPI&quot;, 
+        client =&gt; client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+    .AddHttpMessageHandler&lt;BaseAddressAuthorizationMessageHandler&gt;();
+
+builder.Services.AddScoped(sp =&gt; sp.GetRequiredService&lt;IHttpClientFactory&gt;()
+    .CreateClient(&quot;HostIS.ServerAPI&quot;));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>若要将 Blazor WebAssembly 应用配置为使用不属于托管 Blazor 解决方案的现有 Identity 服务器实例，请将 &lt;xref:System.Net.Http.HttpClient&gt; 基址注册从 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment.BaseAddress?displayProperty=nameWithType&gt; (<code>builder.HostEnvironment.BaseAddress</code>) 更改为服务器应用的 API 授权终结点 URL。</p>
+</div>
+<h3 id="api-authorization-support">API 身份验证支持</h3>
+<p>使用 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 包中提供的扩展方法在服务容器中加入用户身份验证支持。 此方法设置应用所需的服务以与现有授权系统交互。</p>
+<pre><code class="lang-csharp">builder.Services.AddApiAuthorization();
+</code></pre>
+<p>默认情况下，应用的配置按约定从 <code>_configuration/{client-id}</code> 加载。 按照约定，客户端 ID 设置为应用的程序集名称。 可以通过使用选项调用重载来更改此 URL 以指向单独的终结点。</p>
+<h3 id="imports-file">导入文件</h3>
+<p>整个应用通过 <code>_Imports.razor</code> 文件提供 &lt;xref:Microsoft.AspNetCore.Components.Authorization?displayProperty=fullName&gt; 命名空间：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="index-page">索引页</h3>
+<p>索引页 (<code>wwwroot/index.html</code>) 包含一个脚本，用于在 JavaScript 中定义 <code>AuthenticationService</code>。 <code>AuthenticationService</code> 处理 OIDC 协议的低级别详细信息。 应用从内部调用脚本中定义的方法以执行身份验证操作。</p>
+<pre><code class="lang-html">&lt;script src=&quot;_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/
+    AuthenticationService.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<h3 id="app-component">应用组件</h3>
+<p><code>App</code> 组件 (<code>App.razor</code>) 类似于 Blazor Server 应用中的 <code>App</code> 组件：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState&gt; 组件管理向应用的其余部分公开 &lt;xref:Microsoft.AspNetCore.Components.Authorization.AuthenticationState&gt;。</li>
+<li>&lt;xref:Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView&gt; 组件确保当前用户有权访问给定页面或以其他方式呈现 <code>RedirectToLogin</code> 组件。</li>
+<li><code>RedirectToLogin</code> 组件管理将未经授权的用户重定向到登录页。</li>
+</ul>
+<pre><code class="lang-razor">&lt;CascadingAuthenticationState&gt;
+    &lt;Router AppAssembly=&quot;@typeof(Program).Assembly&quot;&gt;
+        &lt;Found Context=&quot;routeData&quot;&gt;
+            &lt;AuthorizeRouteView RouteData=&quot;@routeData&quot; 
+                DefaultLayout=&quot;@typeof(MainLayout)&quot;&gt;
+                &lt;NotAuthorized&gt;
+                    @if (!context.User.Identity.IsAuthenticated)
+                    {
+                        &lt;RedirectToLogin /&gt;
+                    }
+                    else
+                    {
+                        &lt;p&gt;
+                            You are not authorized to access 
+                            this resource.
+                        &lt;/p&gt;
+                    }
+                &lt;/NotAuthorized&gt;
+            &lt;/AuthorizeRouteView&gt;
+        &lt;/Found&gt;
+        &lt;NotFound&gt;
+            &lt;LayoutView Layout=&quot;@typeof(MainLayout)&quot;&gt;
+                &lt;p&gt;Sorry, there's nothing at this address.&lt;/p&gt;
+            &lt;/LayoutView&gt;
+        &lt;/NotFound&gt;
+    &lt;/Router&gt;
+&lt;/CascadingAuthenticationState&gt;
+</code></pre>
+<h3 id="redirecttologin-component">RedirectToLogin 组件</h3>
+<p><code>RedirectToLogin</code> 组件 (<code>Shared/RedirectToLogin.razor</code>)：</p>
+<ul>
+<li>管理将未经授权的用户重定向到登录页。</li>
+<li>保留用户尝试访问的当前 URL，以便在身份验证成功时可以将其返回到该页。</li>
+</ul>
+<pre><code class="lang-razor">@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo(
+            $&quot;authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}&quot;);
+    }
+}
+</code></pre>
+<h3 id="logindisplay-component">LoginDisplay 组件</h3>
+<p><code>LoginDisplay</code> 组件 (<code>Shared/LoginDisplay.razor</code>) 在 <code>MainLayout</code> 组件 (<code>Shared/MainLayout.razor</code>) 中呈现并管理以下行为：</p>
+<ul>
+<li>对于经过身份验证的用户：
+<ul>
+<li>显示当前用户名。</li>
+<li>提供指向 ASP.NET Core Identity 中的用户配置文件页面的链接。</li>
+<li>提供用于注销应用的按钮。</li>
+</ul>
+</li>
+<li>对于匿名用户：
+<ul>
+<li>提供用于注册的选项。</li>
+<li>提供用于登录的选项。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="lang-razor">@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+&lt;AuthorizeView&gt;
+    &lt;Authorized&gt;
+        &lt;a href=&quot;authentication/profile&quot;&gt;Hello, @context.User.Identity.Name!&lt;/a&gt;
+        &lt;button class=&quot;nav-link btn btn-link&quot; @onclick=&quot;BeginSignOut&quot;&gt;
+            Log out
+        &lt;/button&gt;
+    &lt;/Authorized&gt;
+    &lt;NotAuthorized&gt;
+        &lt;a href=&quot;authentication/register&quot;&gt;Register&lt;/a&gt;
+        &lt;a href=&quot;authentication/login&quot;&gt;Log in&lt;/a&gt;
+    &lt;/NotAuthorized&gt;
+&lt;/AuthorizeView&gt;
+
+@code {
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo(&quot;authentication/logout&quot;);
+    }
+}
+</code></pre>
+<h3 id="authentication-component">身份验证组件</h3>
+<p><code>Authentication</code> 组件 (<code>Pages/Authentication.razor</code>) 生成的页面定义了处理各种身份验证阶段所需的路由。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticatorView&gt; 组件：</p>
+<ul>
+<li>由 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication/"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 包提供。</li>
+<li>管理在每个身份验证阶段执行适当的操作。</li>
+</ul>
+<pre><code class="lang-razor">@page &quot;/authentication/{action}&quot;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+&lt;RemoteAuthenticatorView Action=&quot;@Action&quot; /&gt;
+
+@code {
+    [Parameter]
+    public string Action { get; set; }
+}
+</code></pre>
+<h3 id="fetchdata-component">FetchData 组件</h3>
+<p><code>FetchData</code> 组件显示如何：</p>
+<ul>
+<li>预配访问令牌。</li>
+<li>使用访问令牌调用 Server 应用中受保护的资源 API。</li>
+</ul>
+<p><a class="xref" href="../../../mvc/views/razor.html#attribute"><code>@attribute [Authorize]</code></a> 指令向 Blazor WebAssembly 授权系统表明，用户必须获得授权才能访问此组件。 如果 <code>Client</code> 应用中存在该属性，则在没有正确凭据的情况下，不会阻止调用服务器上的 API。 <code>Server</code> 应用还必须在相应的终结点上使用 <code>[Authorize]</code> 才能适当地保护这些终结点。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.IAccessTokenProvider.RequestAccessToken%2A?displayProperty=nameWithType&gt; 负责请求可添加到请求中的访问令牌，以调用 API。 如果该令牌已缓存，或者该服务在没有用户交互的情况下能够预配新的访问令牌，则令牌请求会成功。 否则，令牌请求会失败，并出现 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException&gt;，这是在 <a href="/dotnet/csharp/language-reference/keywords/try-catch"><code>try-catch</code></a> 语句中捕获的。</p>
+<p>为了获得要包含在请求中的实际令牌，应用必须通过调用 <a href="xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenResult.TryGetToken%2A"><code>tokenResult.TryGetToken(out var token)</code></a> 来检查请求是否成功。</p>
+<p>如果请求成功，将使用访问令牌填充令牌变量。 此标记的 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessToken.Value?displayProperty=nameWithType&gt; 属性会公开要包含在 <code>Authorization</code> 请求标头中的文本字符串。</p>
+<p>如果请求失败，因为在没有用户交互的情况下无法预配令牌，令牌结果将包含重定向 URL。 导航到此 URL 后，用户将进入登录页，并在身份验证成功后返回到当前页面。</p>
+<pre><code class="lang-razor">@page &quot;/fetchdata&quot;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using {APP NAMESPACE}.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+
+...
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            forecasts = await Http.GetFromJsonAsync&lt;WeatherForecast[]&gt;(&quot;WeatherForecast&quot;);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}
+</code></pre>
+<h2 id="run-the-app">运行应用</h2>
+<p>从服务器项目运行应用。 使用 Visual Studio 时，请执行以下任一操作：</p>
+<ul>
+<li>在工具栏中将“启动项目”下拉列表设置为“服务器 API 应用”，然后选择“运行”按钮。</li>
+<li>在“解决方案资源管理器”中选择服务器项目，然后选择工具栏中的“运行”按钮，或从“调试”菜单启动应用  。</li>
+</ul>
+<h2 id="name-and-role-claim-with-api-authorization">具有 API 授权的名称和角色声明</h2>
+<h3 id="custom-user-factory">自定义用户工厂</h3>
+<p>在 <code>Client</code> 应用中，创建自定义用户工厂。 Identity 服务器在一个 <code>role</code> 声明中发送多个角色作为 JSON 数组。 单个角色在该声明中作为单个字符串值进行发送。 工厂为每个用户的角色创建单个 <code>role</code> 声明。</p>
+<p><code>CustomUserFactory.cs</code>:</p>
+<pre><code class="lang-csharp">using System.Linq;
+using System.Security.Claims;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
+
+public class CustomUserFactory
+    : AccountClaimsPrincipalFactory&lt;RemoteUserAccount&gt;
+{
+    public CustomUserFactory(IAccessTokenProviderAccessor accessor)
+        : base(accessor)
+    {
+    }
+
+    public async override ValueTask&lt;ClaimsPrincipal&gt; CreateUserAsync(
+        RemoteUserAccount account,
+        RemoteAuthenticationUserOptions options)
+    {
+        var user = await base.CreateUserAsync(account, options);
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var identity = (ClaimsIdentity)user.Identity;
+            var roleClaims = identity.FindAll(identity.RoleClaimType).ToArray();
+
+            if (roleClaims != null &amp;&amp; roleClaims.Any())
+            {
+                foreach (var existingClaim in roleClaims)
+                {
+                    identity.RemoveClaim(existingClaim);
+                }
+
+                var rolesElem = account.AdditionalProperties[identity.RoleClaimType];
+
+                if (rolesElem is JsonElement roles)
+                {
+                    if (roles.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var role in roles.EnumerateArray())
+                        {
+                            identity.AddClaim(new Claim(options.RoleClaim, role.GetString()));
+                        }
+                    }
+                    else
+                    {
+                        identity.AddClaim(new Claim(options.RoleClaim, roles.GetString()));
+                    }
+                }
+            }
+        }
+
+        return user;
+    }
+}
+</code></pre>
+<p>在 <code>Client</code> 应用中，在 <code>Program.Main</code> (<code>Program.cs</code>) 中注册工厂：</p>
+<pre><code class="lang-csharp">builder.Services.AddApiAuthorization()
+    .AddAccountClaimsPrincipalFactory&lt;CustomUserFactory&gt;();
+</code></pre>
+<p>在 <code>Server</code> 应用中，调用 Identity 生成器上的 &lt;xref:Microsoft.AspNetCore.Identity.IdentityBuilder.AddRoles*&gt;，添加与角色相关的服务：</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Identity;
+
+...
+
+services.AddDefaultIdentity&lt;ApplicationUser&gt;(options =&gt; 
+    options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles&lt;IdentityRole&gt;()
+    .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;();
+</code></pre>
+<h3 id="configure-no-locidentity-server">配置 Identity 服务器</h3>
+<p>使用以下方法之一：</p>
+<ul>
+<li><a href="#api-authorization-options">API 身份验证选项</a></li>
+<li><a href="#profile-service">配置文件服务</a></li>
+</ul>
+<h4 id="api-authorization-options">API 身份验证选项</h4>
+<p>在 <code>Server</code> 应用中：</p>
+<ul>
+<li>配置 Identity 服务器，将 <code>name</code> 和 <code>role</code> 声明放入 ID 令牌和访问令牌中。</li>
+<li>阻止 JWT 令牌处理程序中角色的默认映射。</li>
+</ul>
+<pre><code class="lang-csharp">using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+
+...
+
+services.AddIdentityServer()
+    .AddApiAuthorization&lt;ApplicationUser, ApplicationDbContext&gt;(options =&gt; {
+        options.IdentityResources[&quot;openid&quot;].UserClaims.Add(&quot;name&quot;);
+        options.ApiResources.Single().UserClaims.Add(&quot;name&quot;);
+        options.IdentityResources[&quot;openid&quot;].UserClaims.Add(&quot;role&quot;);
+        options.ApiResources.Single().UserClaims.Add(&quot;role&quot;);
+    });
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove(&quot;role&quot;);
+</code></pre>
+<h4 id="profile-service">配置文件服务</h4>
+<p>在 <code>Server</code> 应用中，创建 <code>ProfileService</code> 实现。</p>
+<p><code>ProfileService.cs</code>:</p>
+<pre><code class="lang-csharp">using IdentityModel;
+using IdentityServer4.Models;
+using IdentityServer4.Services;
+using System.Threading.Tasks;
+
+public class ProfileService : IProfileService
+{
+    public ProfileService()
+    {
+    }
+
+    public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+    {
+        var nameClaim = context.Subject.FindAll(JwtClaimTypes.Name);
+        context.IssuedClaims.AddRange(nameClaim);
+
+        var roleClaims = context.Subject.FindAll(JwtClaimTypes.Role);
+        context.IssuedClaims.AddRange(roleClaims);
+
+        await Task.CompletedTask;
+    }
+
+    public async Task IsActiveAsync(IsActiveContext context)
+    {
+        await Task.CompletedTask;
+    }
+}
+</code></pre>
+<p>在 <code>Server</code> 应用中，在 <code>Startup.ConfigureServices</code> 中注册配置文件服务：</p>
+<pre><code class="lang-csharp">using IdentityServer4.Services;
+
+...
+
+services.AddTransient&lt;IProfileService, ProfileService&gt;();
+</code></pre>
+<h3 id="use-authorization-mechanisms">使用授权机制</h3>
+<p>在 <code>Client</code> 应用中，组件授权方法此时可以正常工作。 组件中的任何授权机制都可以使用角色来授权用户：</p>
+<ul>
+<li><p><a class="xref" href="../index.html#authorizeview-component"><code>AuthorizeView</code> 组件</a>（例如：<code>&lt;AuthorizeView Roles=&quot;admin&quot;&gt;</code>）</p>
+</li>
+<li><p><a class="xref" href="../index.html#authorize-attribute"><code>[Authorize]</code> 属性指令</a> (&lt;xref:Microsoft.AspNetCore.Authorization.AuthorizeAttribute&gt;)（例如 <code>@attribute [Authorize(Roles = &quot;admin&quot;)]</code>）</p>
+</li>
+<li><p><a class="xref" href="../index.html#procedural-logic">过程逻辑</a>（例如 <code>if (user.IsInRole(&quot;admin&quot;)) { ... }</code>）</p>
+<p>支持多个角色测试：</p>
+<pre><code class="lang-csharp">if (user.IsInRole(&quot;admin&quot;) &amp;&amp; user.IsInRole(&quot;developer&quot;))
+{
+    ...
+}
+</code></pre>
+</li>
+</ul>
+<p><code>User.Identity.Name</code> 在 <code>Client</code> 应用中进行填充，并带有用户的用户名，这通常是他们的登录电子邮件地址。</p>
+<h2 id="usermanager-and-signinmanager">UserManager 和提供</h2>
+<p>在服务器应用需要时设置用户标识符声明类型：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Identity.UserManager%601&gt;或 &lt;xref:Microsoft.AspNetCore.Identity.SignInManager%601&gt; 在 API 终结点中。</li>
+<li>&lt;xref:Microsoft.AspNetCore.Identity.IdentityUser&gt;详细信息，如用户的姓名、电子邮件地址或锁定结束时间。</li>
+</ul>
+<p>在 <code>Startup.ConfigureServices</code>中：</p>
+<pre><code class="lang-csharp">using System.Security.Claims;
+
+...
+
+services.Configure&lt;IdentityOptions&gt;(options =&gt; 
+    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier);
+</code></pre>
+<p><code>WeatherForecastController</code> &lt;xref:Microsoft.AspNetCore.Identity.IdentityUser%601.UserName&gt; 调用方法时，以下记录 <code>Get</code> ：</p>
+<pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using {APP NAMESPACE}.Server.Models;
+using {APP NAMESPACE}.Shared;
+
+namespace {APP NAMESPACE}.Server.Controllers
+{
+    [Authorize]
+    [ApiController]
+    [Route(&quot;[controller]&quot;)]
+    public class WeatherForecastController : ControllerBase
+    {
+        private readonly UserManager&lt;ApplicationUser&gt; userManager;
+
+        private static readonly string[] Summaries = new[]
+        {
+            &quot;Freezing&quot;, &quot;Bracing&quot;, &quot;Chilly&quot;, &quot;Cool&quot;, &quot;Mild&quot;, &quot;Warm&quot;, 
+            &quot;Balmy&quot;, &quot;Hot&quot;, &quot;Sweltering&quot;, &quot;Scorching&quot;
+        };
+
+        private readonly ILogger&lt;WeatherForecastController&gt; logger;
+
+        public WeatherForecastController(ILogger&lt;WeatherForecastController&gt; logger, 
+            UserManager&lt;ApplicationUser&gt; userManager)
+        {
+            this.logger = logger;
+            this.userManager = userManager;
+        }
+
+        [HttpGet]
+        public async Task&lt;IEnumerable&lt;WeatherForecast&gt;&gt; Get()
+        {
+            var rng = new Random();
+
+            var user = await userManager.GetUserAsync(User);
+
+            if (user != null)
+            {
+                logger.LogInformation($&quot;User.Identity.Name: {user.UserName}&quot;);
+            }
+
+            return Enumerable.Range(1, 5).Select(index =&gt; new WeatherForecast
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            })
+            .ToArray();
+        }
+    }
+}
+</code></pre>
+<h2 id="host-in-azure-app-service-with-a-custom-domain">使用自定义域托管在 Azure 应用服务中</h2>
+<p>以下指南介绍如何通过 Identity 服务器，使用自定义域将托管的 Blazor WebAssembly 应用部署到 <a href="https://azure.microsoft.com/services/app-service/">Azure 应用服务</a>。</p>
+<p>对于这种托管方案，请勿将相同的证书用于 <a href="https://docs.identityserver.io/en/latest/topics/crypto.html#token-signing-and-validation">Identity 服务器的令牌签名密钥</a>以及站点与浏览器的 HTTPS 安全通信：</p>
+<ul>
+<li>针对这两个要求使用不同的证书是一种很好的安全做法，因为这样能隔离不同用途的私钥。</li>
+<li>用于与浏览器进行通信的 TLS 证书是独立管理的，不会影响 Identity 服务器的令牌签名。</li>
+<li>当 <a href="https://azure.microsoft.com/services/key-vault/">Azure Key Vault</a> 向应用服务应用提供用于绑定自定义域的证书时，Identity 服务器无法从 Azure Key Vault 获取相同的证书来进行令牌签名。 尽管可以将 Identity 服务器配置为使用来自物理路径的相同 TLS 证书，但将安全证书置于源代码管理中是一种不太好的做法，在大多数情况下都应尽量避免此类行为。</li>
+</ul>
+<p>接下来的指南将在 Azure Key Vault 中创建一个仅用于 Identity 服务器令牌签名的自签名证书。 Identity 服务器配置通过应用的 <code>My</code> &gt; <code>CurrentUser</code> 证书存储使用密钥保管库证书。 其他用于自定义域 HTTPS 流量的证书是与 Identity 服务器签名证书分开创建和配置的。</p>
+<p>若要将应用、Azure 应用服务和 Azure Key Vault 配置为使用自定义域和 HTTPS 进行托管，请执行以下操作：</p>
+<ol>
+<li><p>创建计划级别不低于 <code>Basic B1</code> 的<a href="/azure/app-service/overview-hosting-plans">应用服务计划</a>。 应用服务需要 <code>Basic B1</code> 或更高的服务层级才能使用自定义域。</p>
+</li>
+<li><p>使用组织控制的站点的完全限定的域名 (FQDN) 的公用名（例如 <code>www.contoso.com</code>）为站点的安全浏览器通信（HTTPS 协议）创建 PFX 证书。 通过以下几项内容创建证书：</p>
+<ul>
+<li>密钥使用
+<ul>
+<li>数字签名验证 (<code>digitalSignature</code>)</li>
+<li>密钥加密 (<code>keyEncipherment</code>)</li>
+</ul>
+</li>
+<li>增强/扩展的密钥使用
+<ul>
+<li>客户端身份验证 (1.3.6.1.5.5.7.3.2)</li>
+<li>服务器身份验证 (1.3.6.1.5.5.7.3.1)</li>
+</ul>
+</li>
+</ul>
+<p>若要创建证书，请使用以下方法之一或任何其他合适的工具或在线服务：</p>
+<ul>
+<li><a href="/azure/key-vault/certificates/quick-create-portal#add-a-certificate-to-key-vault">Azure Key Vault</a></li>
+<li><a href="/windows/desktop/seccrypto/makecert">Windows 上的 MakeCert</a></li>
+<li><a href="https://www.openssl.org">OpenSSL</a></li>
+</ul>
+<p>记下密码，稍后将证书导入 Azure Key Vault 时会用到该密码。</p>
+<p>有关 Azure Key Vault 证书的详细信息，请参阅 <a href="/azure/key-vault/certificates/">Azure Key Vault：</a>证书”。</p>
+</li>
+<li><p>创建新的 Azure Key Vault 或使用 Azure 订阅中现有的密钥保管库。</p>
+</li>
+<li><p>在密钥保管库的“证书”区域中，导入 PFX 站点证书。 记录证书的指纹，稍后在应用的配置过程中会用到它。</p>
+</li>
+<li><p>在 Azure Key Vault 中，生成新的自签名证书以用于 Identity 服务器令牌签名。 给出证书的“证书名称”以及“使用者” 。 “使用者”指定为 <code>CN={COMMON NAME}</code>，其中 <code>{COMMON NAME}</code> 占位符是证书的公用名。 公用名可以是任意字母数字字符串。 例如 <code>CN=IdentityServerSigning</code> 就是一个有效的证书“使用者”。 使用默认的高级策略配置设置。 记录证书的指纹，稍后在应用的配置过程中会用到它。</p>
+</li>
+<li><p>导航到 Azure 门户中的 Azure 应用服务，并使用以下配置创建新的应用服务：</p>
+<ul>
+<li>将“发布”设置为 <code>Code</code>。</li>
+<li>将“运行时堆栈”设置为应用的运行时。</li>
+<li>对于“Sku 和大小”，请确认应用服务层级不低于 <code>Basic B1</code>。  应用服务需要 <code>Basic B1</code> 或更高的服务层级才能使用自定义域。</li>
+</ul>
+</li>
+<li><p>在 Azure 创建应用服务后，请打开应用的“配置”并添加一个新的应用程序设置，该设置指定之前记录的证书指纹。 应用设置密钥为 <code>WEBSITE_LOAD_CERTIFICATES</code>。 使用逗号分隔应用设置值中的证书指纹，如下面的示例所示：</p>
+<ul>
+<li>键：<code>WEBSITE_LOAD_CERTIFICATES</code></li>
+<li>值：<code>57443A552A46DB...D55E28D412B943565,29F43A772CB6AF...1D04F0C67F85FB0B1</code></li>
+</ul>
+<p>在 Azure 门户中，可通过两个步骤保存应用设置：保存 <code>WEBSITE_LOAD_CERTIFICATES</code> 键-值设置，然后选择边栏选项卡顶部的“保存”按钮。</p>
+</li>
+<li><p>选择应用的“TLS/SSL 设置”。 选择“私钥证书(.pfx)”。 完成两次“导入 Key Vault 证书”流程，导入用于 HTTPS 通信的站点证书以及站点的自签名 Identity 服务器令牌签名证书。</p>
+</li>
+<li><p>导航到“自定义域”边栏选项卡。 在域注册机构的网站上，使用 IP 地址和自定义域验证 ID 来配置域 。 域配置通常包括：</p>
+<ul>
+<li>一个 A 记录，主机为 <code>@</code>，以及来自 Azure 门户的 IP 地址值 。</li>
+<li>一个 TXT 记录，主机为 <code>asuid</code>，以及由 Azure 生成且由 Azure 门户提供的验证 ID 的值 。</li>
+</ul>
+<p>请确保将更改正确地保存到域注册机构的网站上。 部分注册机构网站需要执行两个步骤来保存域记录：先单独保存一条或多条记录，然后使用单独的按钮更新域的注册。</p>
+</li>
+<li><p>返回到 Azure 门户中的“自定义域”边栏选项卡。 选择“添加自定义域”。 选择“A 记录”选项。 提供域并选择“验证”。 如果域记录正确并跨 Internet 传播，则门户允许选择“添加自定义域”按钮。</p>
+<p>域注册机构处理域注册更改后，可能需要几天的时间才能让更改在 Internet 域名服务器 (DNS) 之间传播。 如果域记录在三个工作日内未更新，请确认是否已通过域注册机构正确设置记录，并与其客户支持部门联系。</p>
+</li>
+<li><p>在“自定义域”边栏选项卡中，域的“SSL STATE”被标记为 <code>Not Secure</code> 。 选择“添加绑定”链接。 从密钥保管库中选择站点 HTTPS 证书以绑定自定义域。</p>
+</li>
+<li><p>在 Visual Studio 中，打开 Server 项目的应用设置文件（<code>appsettings.json</code> 或 <code>appsettings.Production.json</code>）。 在 Identity 服务器配置中，添加以下 <code>Key</code> 部分。 为 <code>Name</code> 密钥指定自签名证书使用者。 在以下示例中，密钥保管库中分配的证书公用名为 <code>IdentityServerSigning</code>，它生成的使用者为 <code>CN=IdentityServerSigning</code>：</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+
+  ...
+
+  &quot;Key&quot;: {
+    &quot;Type&quot;: &quot;Store&quot;,
+    &quot;StoreName&quot;: &quot;My&quot;,
+    &quot;StoreLocation&quot;: &quot;CurrentUser&quot;,
+    &quot;Name&quot;: &quot;CN=IdentityServerSigning&quot;
+  }
+},
+</code></pre>
+</li>
+<li><p>在 Visual Studio 中，创建用于“Server”项目的 Azure 应用服务<a class="xref" href="../../../host-and-deploy/visual-studio-publish-profiles.html#publish-profiles">发布配置文件</a>。 在菜单栏中，依次选择：“生成” &gt; “发布” &gt; “新建” &gt; “Azure” &gt; “Azure 应用服务”（Windows 或 Linux）    。 Visual Studio 连接到 Azure 订阅后，可以按资源类型来设置 Azure 资源的视图 。 在“Web 应用”列表中导航，查找应用的应用服务并将其选中。 选择“完成”  。</p>
+</li>
+<li><p>当 Visual Studio 返回到“发布”窗口时，会自动检测密钥保管库和 SQL Server 数据库服务依赖关系。</p>
+<p>对于密钥保管库服务，不需要对默认设置进行配置更改。</p>
+<p>为了进行测试，应用的本地 <a href="https://www.sqlite.org/index.html">SQLite</a> 数据库（默认情况下由 Blazor 模板配置）可以与应用一起部署，而无需进行其他配置。 本文不讨论在生产环境中为 Identity 服务器配置其他数据库的情况。 有关详细信息，请参阅以下文档集中的数据库资源：</p>
+<ul>
+<li><a href="/azure/app-service/">应用服务</a></li>
+<li><a href="https://identityserver4.readthedocs.io/en/latest/">Identity 服务器</a></li>
+</ul>
+</li>
+<li><p>在窗口顶部的部署配置文件名称下，选择“编辑”链接。 将“目标 URL”更改为站点的自定义域 URL（例如 <code>https://www.contoso.com</code>）。 保存设置。</p>
+</li>
+<li><p>发布应用。 Visual Studio 将打开一个浏览器窗口，并请求其自定义域所对应的站点。</p>
+</li>
+</ol>
+<p>Azure 文档包含有关在应用服务中通过 TLS 绑定使用 Azure 服务和自定义域的其他详细信息，包括有关使用 CNAME 记录而不是 A 记录的信息。 有关更多信息，请参见以下资源：</p>
+<ul>
+<li><a href="/azure/app-service/">应用服务文档</a></li>
+<li><a href="/azure/app-service/app-service-web-tutorial-custom-domain">教程：将现有的自定义 DNS 名称映射到 Azure 应用服务</a></li>
+<li><a href="/azure/app-service/configure-ssl-bindings">在 Azure 应用服务中使用 TLS/SSL 绑定保护自定义 DNS 名称</a></li>
+<li><a href="/azure/key-vault/">Azure Key Vault</a></li>
+</ul>
+<p>在 Azure 门户中的应用、应用配置或 Azure 服务发生更改后，建议使用新的私密或隐匿浏览器窗口运行每个应用测试。 在测试站点时，即使站点的配置是正确的，前一个测试运行中的延迟 cookie 仍然可能导致身份验证失败或授权失败。 若要详细了解如何将 Visual Studio 配置为针对每个测试运行打开新的私密或隐匿浏览器窗口，请参阅 <a href="#cookies-and-site-data">Cookie 和站点数据</a>部分。</p>
+<p>如果在 Azure 门户中更改了应用服务配置，则更新通常会快速生效，但不会立即生效。 有时，必须等待一小段时间来让应用服务重新启动，配置更改才能生效。</p>
+<p>若要对证书加载问题进行故障排除，请在 Azure 门户 <a href="https://github.com/projectkudu/kudu/wiki/Accessing-the-kudu-service">Kudu</a> PowerShell 命令外壳中执行以下命令。 该命令提供应用可在 <code>My</code> &gt; <code>CurrentUser</code> 证书存储中访问的证书列表。 调试应用时，输出包括非常有用的证书使用者和指纹：</p>
+<pre><code class="lang-powershell">Get-ChildItem -path Cert:\CurrentUser\My -Recurse | Format-List DnsNameList, Subject, Thumbprint, EnhancedKeyUsageList
+</code></pre>
+<h2 id="troubleshoot">疑难解答</h2>
+<h3 id="cookies-and-site-data">Cookie 和站点数据</h3>
+<p>Cookie 和站点数据在经过应用更新后仍可保持不变，并且会干扰测试和故障排除。 在更改应用代码、更改提供程序的用户帐户或更改提供程序的应用配置时，请清除以下内容：</p>
+<ul>
+<li>用户登录 Cookie</li>
+<li>应用 Cookie</li>
+<li>缓存和存储的站点数据</li>
+</ul>
+<p>防止存留的 Cookie 和站点数据干扰测试和故障排除的一种方法是：</p>
+<ul>
+<li>配置浏览器
+<ul>
+<li>使用浏览器测试是否可以配置为在每次关闭浏览器时删除所有 Cookie 和站点数据。</li>
+<li>对于应用、测试用户或提供程序配置的任何更改，请确保浏览器是手动关闭的或由 IDE 关闭的。</li>
+</ul>
+</li>
+<li>在 Visual Studio 中使用自定义命令以 incognito 或 private 模式打开浏览器：
+<ul>
+<li>通过 Visual Studio 的“运行”按钮打开“浏览工具”对话框 。</li>
+<li>选择“添加”按钮。</li>
+<li>在“程序”字段中提供浏览器的路径。 以下可执行路径是适用于 Windows 10 的典型安装位置。 如果浏览器安装在其他位置，或者未使用 Windows 10，请提供浏览器可执行文件的路径。
+<ul>
+<li>Microsoft Edge：<code>C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe</code></li>
+<li>Google Chrome：<code>C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</code></li>
+<li>Mozilla Firefox：<code>C:\Program Files\Mozilla Firefox\firefox.exe</code></li>
+</ul>
+</li>
+<li>在“参数”字段中，提供浏览器用来在 incognito 或 private 模式下执行打开操作的命令行选项。 某些浏览器需要应用的 URL。
+<ul>
+<li>Microsoft Edge：请使用 <code>-inprivate</code>。</li>
+<li>Google Chrome：使用 <code>--incognito --new-window {URL}</code>，其中占位符 <code>{URL}</code> 是要打开的 URL（例如，<code>https://localhost:5001</code>）。</li>
+<li>Mozilla Firefox：使用 <code>-private -url {URL}</code>，其中占位符 <code>{URL}</code> 是要打开的 URL（例如，<code>https://localhost:5001</code>）。</li>
+</ul>
+</li>
+<li>在“友好名称”字段中提供名称。 例如 <code>Firefox Auth Testing</code>。</li>
+<li>选择“确定”按钮。</li>
+<li>若要避免在每次迭代使用应用进行测试时必须选择浏览器配置文件，请使用“设置为默认值”按钮将配置文件设置为默认值。</li>
+<li>对于应用、测试用户或提供程序配置的任何更改，请确保浏览器是由 IDE 关闭的。</li>
+</ul>
+</li>
+</ul>
+<h3 id="run-the-server-app">运行 Server 应用</h3>
+<p>在对托管的 Blazor 应用进行测试和故障排除时，请确保从 <code>Server</code> 项目运行应用。 例如，在 Visual Studio 中，确认在用以下任一方法启动应用之前，解决方案资源管理器中突出显示了 Server 项目：</p>
+<ul>
+<li>选择“运行”按钮。</li>
+<li>从菜单栏中，依次使用“调试” &gt; “开始调试” 。</li>
+<li>按 F5 <kbd></kbd>。</li>
+</ul>
+<h3 id="inspect-the-content-of-a-json-web-token-jwt">检查 JSON Web 令牌 (JWT) 的内容</h3>
+<p>若要对 JSON Web 令牌 (JWT) 进行解码，请使用 Microsoft 的 <a href="https://jwt.ms/">jwt.ms</a> 工具。 UI 中的值永远不会离开浏览器。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../../security/authentication/identity-api-authorization.html#deploy-to-production">部署到 Azure 应用服务</a></li>
+<li><a href="/azure/app-service/configure-ssl-certificate#import-a-certificate-from-key-vault">导入来自 Key Vault 的证书（Azure 文档）</a></li>
+<li><a class="xref" href="additional-scenarios.html">ASP.NET Core Blazor WebAssembly 其他安全方案</a></li>
+<li><a class="xref" href="additional-scenarios.html#unauthenticated-or-unauthorized-web-api-requests-in-an-app-with-a-secure-default-client">使用安全默认客户端的应用中未经身份验证或未经授权的 Web API 请求</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

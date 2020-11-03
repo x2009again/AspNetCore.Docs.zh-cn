@@ -1,0 +1,521 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#22522;&#30784;&#30693;&#35782; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#22522;&#30784;&#30693;&#35782; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/index">
+<h1 id="aspnet-core-fundamentals">ASP.NET Core 基础知识</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>本文概述了了解如何开发 ASP.NET Core 应用的关键主题。</p>
+<h2 id="the-startup-class">Startup 类</h2>
+<p><code>Startup</code> 类位于：</p>
+<ul>
+<li>已配置应用所需的服务。</li>
+<li>应用的请求处理管道定义为一系列中间件组件。</li>
+</ul>
+<p>下面是 <code>Startup</code> 类示例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关详细信息，请参阅 <a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a>。</p>
+<h2 id="dependency-injection-services">依赖关系注入（服务）</h2>
+<p>ASP.NET Core 有内置的依赖关系注入 (DI) 框架，可在应用中提供配置的服务。 例如，日志记录组件就是一项服务。</p>
+<p>将配置（或注册）服务的代码添加到 <code>Startup.ConfigureServices</code> 方法中。 例如：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通常使用构造函数注入从 DI 解析服务。 通过构造函数注入，有一个类声明请求的类型或接口的构造函数参数。 DI 框架在运行时提供此服务的实例。</p>
+<p>以下示例使用构造函数注入从 DI 解析 <code>RazorPagesMovieContext</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果内置控制反转 (IoC) 容器不能满足应用的所有需求，可以改用第三方 IoC。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="dependency-injection.html">ASP.NET Core 依赖注入</a>。</p>
+<h2 id="middleware">中间件</h2>
+<p>请求处理管道由一系列中间件组件组成。 每个组件在 <code>HttpContext</code> 上执行操作，调用管道中的下一个中间件或终止请求。</p>
+<p>按照惯例，通过在 <code>Startup.Configure</code> 方法中调用 <code>Use...</code> 扩展方法，向管道添加中间件组件。 例如，要启用静态文件的呈现，请调用 <code>UseStaticFiles</code>。</p>
+<p>以下示例配置了请求处理管道：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>ASP.NET Core 包含一组丰富的内置中间件。 也可编写自定义中间件组件。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="middleware/index.html">ASP.NET Core 中间件</a>。</p>
+<h2 id="host">主机</h2>
+<p>ASP.NET Core 应用在启动时构建主机。 主机封装应用的所有资源，例如：</p>
+<ul>
+<li>HTTP 服务器实现</li>
+<li>中间件组件</li>
+<li>Logging</li>
+<li>依赖关系注入 (DI) 服务</li>
+<li>Configuration</li>
+</ul>
+<p>有两个不同的主机：</p>
+<ul>
+<li>.NET 通用主机</li>
+<li>ASP.NET Core Web 主机</li>
+</ul>
+<p>建议使用 .NET 通用主机。 ASP.NET Core Web 主机仅用于支持后向兼容性。</p>
+<p>以下示例将创建 .NET 通用主机：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>CreateDefaultBuilder</code> 和 <code>ConfigureWebHostDefaults</code> 方法为主机配置一组默认选项，例如：</p>
+<ul>
+<li>将 <a href="#servers">Kestrel</a> 用作 Web 服务器并启用 IIS 集成。</li>
+<li>从 appsettings.json、appsettings.[EnvironmentName].json、环境变量、命令行参数和其他配置源中加载配置 。</li>
+<li>将日志记录输出发送到控制台并调试提供程序。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="host/generic-host.html">ASP.NET Core 中的 .NET 通用主机</a>。</p>
+<h3 id="non-web-scenarios">非 Web 方案</h3>
+<p>其他类型的应用可通过通用主机使用横切框架扩展，例如日志记录、依赖项注入 (DI)、配置和应用生命周期管理。 有关详细信息，请参阅 <a class="xref" href="host/generic-host.html">ASP.NET Core 中的 .NET 通用主机</a> 和 <a class="xref" href="host/hosted-services.html">在 ASP.NET Core 中使用托管服务实现后台任务</a>。</p>
+<h2 id="servers">服务器</h2>
+<p>ASP.NET Core 应用使用 HTTP 服务器实现侦听 HTTP 请求。 服务器对应用的请求在表面上呈现为一组由 <code>HttpContext</code> 组成的<a class="xref" href="request-features.html">请求功能</a>。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_windows" role="tab" aria-controls="tabpanel_CeZOj-G++Q_windows" data-tab="windows" tabindex="0" aria-selected="true">Windows</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_macos" role="tab" aria-controls="tabpanel_CeZOj-G++Q_macos" data-tab="macos" tabindex="-1">macOS</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_linux" role="tab" aria-controls="tabpanel_CeZOj-G++Q_linux" data-tab="linux" tabindex="-1">Linux</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_windows" role="tabpanel" data-tab="windows">
+
+<p>ASP.NET Core 提供以下服务器实现：</p>
+<ul>
+<li>Kestrel 是跨平台 Web 服务器。 Kestrel 通常使用 <a href="https://www.iis.net/">IIS</a> 在反向代理配置中运行。 在 ASP.NET Core 2.0 或更高版本中，Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。</li>
+<li>IIS HTTP 服务器适用于使用 IIS 的 Windows。 借助此服务器，ASP.NET Core 应用和 IIS 在同一进程中运行。</li>
+<li>HTTP.sys是适用于不与 IIS 一起使用的 Windows 的服务器。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_macos" role="tabpanel" data-tab="macos" aria-hidden="true" hidden="hidden">
+
+<p>ASP.NET Core 提供 Kestrel 跨平台服务器实现。 在 ASP.NET Core 2.0 或更高版本中，Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。 Kestrel 通常使用 <a href="https://nginx.org">Nginx</a> 或 <a href="https://httpd.apache.org/">Apache</a> 在反向代理配置中运行。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_linux" role="tabpanel" data-tab="linux" aria-hidden="true" hidden="hidden">
+
+<p>ASP.NET Core 提供 Kestrel 跨平台服务器实现。 在 ASP.NET Core 2.0 或更高版本中，Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。 Kestrel 通常使用 <a href="https://nginx.org">Nginx</a> 或 <a href="https://httpd.apache.org/">Apache</a> 在反向代理配置中运行。</p>
+</section>
+</div>
+
+<p>有关详细信息，请参阅 <a class="xref" href="servers/index.html">ASP.NET Core 中的 Web 服务器实现</a>。</p>
+<h2 id="configuration">Configuration</h2>
+<p>ASP.NET Core 提供了配置框架，可以从配置提供程序的有序集中将设置作为名称/值对。 可将内置配置提供程序用于各种源，例如 .json 文件、.xml 文件、环境变量和命令行参数 。 可编写自定义配置提供程序以支持其他源。</p>
+<p><a class="xref" href="configuration/index.html#default">默认情况下</a>，ASP.NET Core 应用配置为从 <em>appsettings.json</em>、环境变量和命令行等读取内容。 加载应用配置后，来自环境变量的值将替代来自 <em>appsettings.json</em> 的值。</p>
+<p>读取相关配置值的首选方法是使用<a class="xref" href="configuration/options.html">选项模式</a>。 有关详细信息，请参阅<a class="xref" href="configuration/index.html#optpat">使用选项模式绑定分层配置数据</a>。</p>
+<p>为了管理密码等机密配置数据，ASP.NET Core 提供了<a class="xref" href="../security/app-secrets.html#secret-manager">机密管理器</a>。 对于生产机密，建议使用 <a class="xref" href="../security/key-vault-configuration.html">Azure 密钥保管库</a>。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="configuration/index.html">ASP.NET Core 中的配置</a>。</p>
+<h2 id="environments">环境</h2>
+<p>执行环境（例如 <code>Development</code>、<code>Staging</code> 和 <code>Production</code>）是 ASP.NET Core 中的高级概念。 通过设置 <code>ASPNETCORE_ENVIRONMENT</code> 环境变量来指定应用的运行环境。 ASP.NET Core 在应用启动时读取该环境变量，并将该值存储在 <code>IWebHostEnvironment</code> 实现中。 通过依赖关系注入 (DI)，可以在应用中任何位置实现此操作。</p>
+<p>使用以下示例配置应用，应用在 <code>Development</code> 环境中运行时将提供详细错误信息：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关详细信息，请参阅 <a class="xref" href="environments.html">在 ASP.NET Core 中使用多个环境</a>。</p>
+<h2 id="logging">Logging</h2>
+<p>ASP.NET Core 支持适用于各种内置和第三方日志记录提供程序的日志记录 API。 可用的提供程序包括：</p>
+<ul>
+<li>控制台</li>
+<li>调试</li>
+<li>Windows 事件跟踪</li>
+<li>Windows 事件日志</li>
+<li>TraceSource</li>
+<li>Azure 应用服务</li>
+<li>Azure Application Insights</li>
+</ul>
+<p>若要创建服务，请从依赖关系注入 (DI) 解析 &lt;xref:Microsoft.Extensions.Logging.ILogger%601&gt; 服务，并调用 &lt;xref:Microsoft.Extensions.Logging.LoggerExtensions.LogInformation*&gt; 等日志记录方法。 例如：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>LogInformation</code> 等日志记录方法支持任意数量的字段。 这些字段通常用于构造消息 <code>string</code>，但某些日志记录提供程序会将它们作为独立字段发送到数据存储。 此功能使日志提供程序可以实现<a href="https://softwareengineering.stackexchange.com/questions/312197/benefits-of-structured-logging-vs-basic-logging">语义日志记录，也称为结构化日志记录</a>。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="logging/index.html">.NET Core 和 ASP.NET Core 中的日志记录</a>。</p>
+<h2 id="routing">路由</h2>
+<p>路由是映射到处理程序的 URL 模式。 处理程序通常是 Razor 页面、MVC 控制器中的操作方法或中间件。 借助 ASP.NET Core 路由，可以控制应用使用的 URL。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="routing.html">ASP.NET Core 中的路由</a>。</p>
+<h2 id="error-handling">错误处理</h2>
+<p>ASP.NET Core 具有用于处理错误的内置功能，例如：</p>
+<ul>
+<li>开发人员异常页</li>
+<li>自定义错误页</li>
+<li>静态状态代码页</li>
+<li>启动异常处理</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="error-handling.html">处理 ASP.NET Core 中的错误</a>。</p>
+<h2 id="make-http-requests">发出 HTTP 请求</h2>
+<p><code>IHttpClientFactory</code> 的实现可用于创建 <code>HttpClient</code> 实例。 工厂可以：</p>
+<ul>
+<li>提供一个中心位置，用于命名和配置逻辑 <code>HttpClient</code> 实例。 例如，注册并配置 <em>github</em> 客户端以访问 GitHub。 注册并配置默认客户端以实现其他目的。</li>
+<li>支持多个委托处理程序的注册和链接，以生成出站请求中间件管道。 此模式类似于 ASP.NET Core 的入站中间件管道。 此模式提供了一种用于管理 HTTP 请求相关问题的机制，包括缓存、错误处理、序列化以及日志记录。</li>
+<li>与 Polly 集成，这是用于瞬时故障处理的常用第三方库。</li>
+<li>管理基础 <code>HttpClientHandler</code> 实例的池和生存期，避免手动管理 <code>HttpClient</code> 生存期时可能出现的常见 DNS 问题。</li>
+<li>通过 &lt;xref:Microsoft.Extensions.Logging.ILogger&gt; 添加可配置的日志记录体验，用于记录通过工厂创建的客户端发送的所有请求。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="http-requests.html">在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求</a>。</p>
+<h2 id="content-root">内容根</h2>
+<p>内容根目录是指向以下内容的基路径：</p>
+<ul>
+<li>托管应用的可执行文件 (.exe)。</li>
+<li>构成应用程序的已编译程序集 (.dll)。</li>
+<li>应用使用的内容文件，例如：
+<ul>
+<li>Razor 文件（.cshtml、.razor）</li>
+<li>配置文件（.json、.xml）</li>
+<li>数据文件 (.db)</li>
+</ul>
+</li>
+<li><a href="#web-root">Web 根目录</a>，通常是 wwwroot 文件夹。</li>
+</ul>
+<p>在开发中，内容根目录默认为项目的根目录。 此目录还是应用内容文件和 <a href="#web-root">Web 根目录</a>的基路径。 在<a href="#host">构建主机</a>时设置路径，可指定不同的内容根目录。 有关详细信息，请参阅<a class="xref" href="host/generic-host.html#contentroot">内容根</a>。</p>
+<h2 id="web-root">Web 根</h2>
+<p>Web 根目录是公用静态资源文件的基路径，例如：</p>
+<ul>
+<li>样式表 (.css)</li>
+<li>JavaScript (.js)</li>
+<li>图像（.png、.jpg）</li>
+</ul>
+<p>默认情况下，静态文件仅从 Web 根目录及其子目录提供。 Web 根目录路径默认为 <em>{content root}/wwwroot</em>。 在<a href="#host">构建主机</a>时设置路径，可指定不同的 Web 根目录。 有关详细信息，请参阅 <a class="xref" href="host/generic-host.html#webroot">Web 根目录</a>。</p>
+<p>防止使用项目文件中的 <a href="/visualstudio/msbuild/common-msbuild-project-items#content">&lt;Content&gt; 项目项</a>在 wwwroot 中发布文件。 下面的示例会阻止在 wwwroot/local 及其子目录中发布内容：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;Content Update=&quot;wwwroot\local\**\*.*&quot; CopyToPublishDirectory=&quot;Never&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>在 Razor .cshtml 文件中，波形符-斜线 (<code>~/</code>) 指向 Web 根。 以 <code>~/</code> 开头的路径称为虚拟路径。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="static-files.html">ASP.NET Core 中的静态文件</a>。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>本文概述了了解如何开发 ASP.NET Core 应用的关键主题。</p>
+<h2 id="the-startup-class">Startup 类</h2>
+<p><code>Startup</code> 类位于：</p>
+<ul>
+<li>已配置应用所需的服务。</li>
+<li>已定义请求处理管道。</li>
+</ul>
+<p>服务是应用使用的组件。 例如，日志记录组件就是一项服务。 将配置（或注册）服务的代码添加到 <code>Startup.ConfigureServices</code> 方法中。</p>
+<p>请求处理管道由一系列中间件组件组成。 例如，中间件可能处理对静态文件的请求或将 HTTP 请求重定向到 HTTPS。 每个中间件在 <code>HttpContext</code> 上执行异步操作，然后调用管道中的下一个中间件或终止请求。 将配置请求处理管道的代码添加到 <code>Startup.Configure</code> 方法中。</p>
+<p>下面是 <code>Startup</code> 类示例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关详细信息，请参阅 <a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a>。</p>
+<h2 id="dependency-injection-services">依赖关系注入（服务）</h2>
+<p>ASP.NET Core 有内置的依赖关系注入 (DI) 框架，可使配置的服务适用于应用的类。 在类中获取服务实例的一种方法是使用所需类型的参数创建构造函数。 参数可以是服务类型或接口。 DI 系统在运行时提供服务。</p>
+<p>下面是使用 DI 获取 Entity Framework Core 上下文对象的类。 突出显示的行是构造函数注入的示例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>虽然 DI 是内置的，但旨在允许插入第三方控制反转 (IoC) 容器（根据需要）。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="dependency-injection.html">ASP.NET Core 依赖注入</a>。</p>
+<h2 id="middleware">中间件</h2>
+<p>请求处理管道由一系列中间件组件组成。 每个组件在 <code>HttpContext</code> 上执行异步操作，然后调用管道中的下一个中间件或终止请求。</p>
+<p>按照惯例，通过在 <code>Startup.Configure</code> 方法中调用其 <code>Use...</code> 扩展方法，向管道添加中间件组件。 例如，要启用静态文件的呈现，请调用 <code>UseStaticFiles</code>。</p>
+<p>以下示例中突出显示的代码配置请求处理管道：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>ASP.NET Core 包含一组丰富的内置中间件，并且你也可以编写自定义中间件。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="middleware/index.html">ASP.NET Core 中间件</a>。</p>
+<h2 id="host">主机</h2>
+<p>ASP.NET Core 应用在启动时构建主机。 主机是封装所有应用资源的对象，例如：</p>
+<ul>
+<li>HTTP 服务器实现</li>
+<li>中间件组件</li>
+<li>Logging</li>
+<li>DI</li>
+<li>Configuration</li>
+</ul>
+<p>一个对象中包含所有应用的相互依赖资源的主要原因是生存期管理：控制应用启动和正常关闭。</p>
+<p>提供两个主机：Web 主机和通用主机。 在 ASP.NET Core 2.x 上，通用主机仅用于非 Web 方案。</p>
+<p>要创建主机的代码位于 <code>Program.Main</code> 中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>CreateDefaultBuilder</code> 方法配置具有常用选项的主机，如下所示：</p>
+<ul>
+<li>将 <a href="#servers">Kestrel</a> 用作 Web 服务器并启用 IIS 集成。</li>
+<li>从 appsettings.json、appsettings.[EnvironmentName].json、环境变量、命令行参数和其他配置源中加载配置 。</li>
+<li>将日志记录输出发送到控制台并调试提供程序。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="host/web-host.html">ASP.NET Core Web 主机</a>。</p>
+<h3 id="non-web-scenarios">非 Web 方案</h3>
+<p>其他类型的应用可通过通用主机使用横切框架扩展，例如日志记录、依赖项注入 (DI)、配置和应用生命周期管理。 有关详细信息，请参阅 <a class="xref" href="host/generic-host.html">ASP.NET Core 中的 .NET 通用主机</a> 和 <a class="xref" href="host/hosted-services.html">在 ASP.NET Core 中使用托管服务实现后台任务</a>。</p>
+<h2 id="servers">服务器</h2>
+<p>ASP.NET Core 应用使用 HTTP 服务器实现侦听 HTTP 请求。 服务器对应用的请求在表面上呈现为一组由 <code>HttpContext</code> 组成的<a class="xref" href="request-features.html">请求功能</a>。</p>
+</div>
+<div range="= aspnetcore-2.2">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_windows" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_windows" data-tab="windows" tabindex="0" aria-selected="true">Windows</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_macos" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_macos" data-tab="macos" tabindex="-1">macOS</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_linux" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_linux" data-tab="linux" tabindex="-1">Linux</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_windows" role="tabpanel" data-tab="windows">
+<p>ASP.NET Core 提供以下服务器实现：</p>
+<ul>
+<li>Kestrel 是跨平台 Web 服务器。 Kestrel 通常使用 <a href="https://www.iis.net/">IIS</a> 在反向代理配置中运行。 Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。</li>
+<li>IIS HTTP 服务器是适用于使用 IIS 的 Windows 的服务器。 借助此服务器，ASP.NET Core 应用和 IIS 在同一进程中运行。</li>
+<li>HTTP.sys是适用于不与 IIS 一起使用的 Windows 的服务器。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_macos" role="tabpanel" data-tab="macos" aria-hidden="true" hidden="hidden">
+<p>ASP.NET Core 提供 Kestrel 跨平台服务器实现。 Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。 Kestrel 通常使用 <a href="https://nginx.org">Nginx</a> 或 <a href="https://httpd.apache.org/">Apache</a> 在反向代理配置中运行。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_linux" role="tabpanel" data-tab="linux" aria-hidden="true" hidden="hidden">
+<p>ASP.NET Core 提供 Kestrel 跨平台服务器实现。 Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。 Kestrel 通常使用 <a href="https://nginx.org">Nginx</a> 或 <a href="https://httpd.apache.org/">Apache</a> 在反向代理配置中运行。</p>
+</section>
+</div>
+</div>
+<div range="&lt; aspnetcore-2.2">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_windows" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_windows" data-tab="windows" tabindex="0" aria-selected="true">Windows</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_macos" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_macos" data-tab="macos" tabindex="-1">macOS</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_linux" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_linux" data-tab="linux" tabindex="-1">Linux</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_windows" role="tabpanel" data-tab="windows">
+<p>ASP.NET Core 提供以下服务器实现：</p>
+<ul>
+<li>Kestrel 是跨平台 Web 服务器。 Kestrel 通常使用 <a href="https://www.iis.net/">IIS</a> 在反向代理配置中运行。 Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。</li>
+<li>HTTP.sys是适用于不与 IIS 一起使用的 Windows 的服务器。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_macos" role="tabpanel" data-tab="macos" aria-hidden="true" hidden="hidden">
+<p>ASP.NET Core 提供 Kestrel 跨平台服务器实现。 Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。 Kestrel 通常使用 <a href="https://nginx.org">Nginx</a> 或 <a href="https://httpd.apache.org/">Apache</a> 在反向代理配置中运行。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_linux" role="tabpanel" data-tab="linux" aria-hidden="true" hidden="hidden">
+<p>ASP.NET Core 提供 Kestrel 跨平台服务器实现。 Kestrel 可作为面向公众的边缘服务器运行，直接向 Internet 公开。 Kestrel 通常使用 <a href="https://nginx.org">Nginx</a> 或 <a href="https://httpd.apache.org/">Apache</a> 在反向代理配置中运行。</p>
+</section>
+</div>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>有关详细信息，请参阅 <a class="xref" href="servers/index.html">ASP.NET Core 中的 Web 服务器实现</a>。</p>
+<h2 id="configuration">Configuration</h2>
+<p>ASP.NET Core 提供了配置框架，可以从配置提供程序的有序集中将设置作为名称/值对。 有适用于各种源的内置配置提供程序，例如 .json 文件、.xml 文件、环境变量和命令行参数 。 此外可以编写自定义配置提供程序。</p>
+<p>例如，可以指定配置来自 appsettings.json 和环境变量。 然后，当请求 ConnectionString 的值时，框架首先在 appsettings.json 文件中查找 。 如果也在环境变量中找到了值，那么来自环境变量的值将优先使用。</p>
+<p>为了管理密码等机密配置数据，ASP.NET Core 提供了<a class="xref" href="../security/app-secrets.html">机密管理器工具</a>。 对于生产机密，建议使用 <a class="xref" href="../security/key-vault-configuration.html">Azure 密钥保管库</a>。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="configuration/index.html">ASP.NET Core 中的配置</a>。</p>
+<h2 id="options">选项</h2>
+<p>在可能的情况下，ASP.NET Core 按照选项模式来存储和检索配置值。 选项模式使用类来表示相关设置的组。</p>
+<p>例如，以下代码可以设置 WebSocket 选项：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关详细信息，请参阅 <a class="xref" href="configuration/options.html">ASP.NET Core 中的选项模式</a>。</p>
+<h2 id="environments">环境</h2>
+<p>执行环境（例如“开发”、“暂存”和“生产”）是 ASP.NET Core 中的高级概念  。 可以通过设置 <code>ASPNETCORE_ENVIRONMENT</code> 环境变量来指定运行应用的环境。 ASP.NET Core 在应用启动时读取该环境变量，并将该值存储在 <code>IHostingEnvironment</code> 实现中。 可通过 DI 在应用的任何位置使用环境对象。</p>
+<p>以下来自 <code>Startup</code> 类的示例代码将应用配置为仅在开发过程中运行时提供详细的错误信息：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关详细信息，请参阅 <a class="xref" href="environments.html">在 ASP.NET Core 中使用多个环境</a>。</p>
+<h2 id="logging">Logging</h2>
+<p>ASP.NET Core 支持适用于各种内置和第三方日志记录提供程序的日志记录 API。 可用的提供程序包括：</p>
+<ul>
+<li>控制台</li>
+<li>调试</li>
+<li>Windows 事件跟踪</li>
+<li>Windows 事件日志</li>
+<li>TraceSource</li>
+<li>Azure 应用服务</li>
+<li>Azure Application Insights</li>
+</ul>
+<p>通过从 DI 获取 <code>ILogger</code> 对象并调用日志方法，从应用代码中的任何位置写入日志。</p>
+<p>下面是使用 <code>ILogger</code> 对象的示例代码，其中突出显示了构造函数注入和日志记录方法调用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过 <code>ILogger</code> 接口，可将任意数量的字段传递给日志提供程序。 字段通常用于构造消息字符串，但提供程序还可将其作为单独的字段发送到数据存储。 此功能使日志提供程序可以实现<a href="https://softwareengineering.stackexchange.com/questions/312197/benefits-of-structured-logging-vs-basic-logging">语义日志记录，也称为结构化日志记录</a>。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="logging/index.html">.NET Core 和 ASP.NET Core 中的日志记录</a>。</p>
+<h2 id="routing">路由</h2>
+<p>路由是映射到处理程序的 URL 模式。 处理程序通常是 Razor 页面、MVC 控制器中的操作方法或中间件。 借助 ASP.NET Core 路由，可以控制应用使用的 URL。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="routing.html">ASP.NET Core 中的路由</a>。</p>
+<h2 id="error-handling">错误处理</h2>
+<p>ASP.NET Core 具有用于处理错误的内置功能，例如：</p>
+<ul>
+<li>开发人员异常页</li>
+<li>自定义错误页</li>
+<li>静态状态代码页</li>
+<li>启动异常处理</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="error-handling.html">处理 ASP.NET Core 中的错误</a>。</p>
+<h2 id="make-http-requests">发出 HTTP 请求</h2>
+<p><code>IHttpClientFactory</code> 的实现可用于创建 <code>HttpClient</code> 实例。 工厂可以：</p>
+<ul>
+<li>提供一个中心位置，用于命名和配置逻辑 <code>HttpClient</code> 实例。 例如，可以注册 github 客户端，并将它配置为访问 GitHub。 可以注册一个默认客户端用于其他用途。</li>
+<li>支持多个委托处理程序的注册和链接，以生成出站请求中间件管道。 此模式类似于 ASP.NET Core 中的入站中间件管道。 此模式提供了一种用于管理围绕 HTTP 请求的横切关注点的机制，包括缓存、错误处理、序列化以及日志记录。</li>
+<li>与 Polly 集成，这是用于瞬时故障处理的常用第三方库。</li>
+<li>管理基础 <code>HttpClientHandler</code> 实例的池和生存期，避免在手动管理 <code>HttpClient</code> 生存期时出现常见的 DNS 问题。</li>
+<li>（通过 <code>ILogger</code>）添加可配置的记录体验，以处理工厂创建的客户端发送的所有请求。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="http-requests.html">在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求</a>。</p>
+<h2 id="content-root">内容根</h2>
+<p>内容根是指向以下内容的基本路径：</p>
+<ul>
+<li>托管应用程序的可执行文件 (.exe)。</li>
+<li>构成应用程序的已编译程序集 (.dll)。</li>
+<li>应用使用的非代码内容文件，例如：
+<ul>
+<li>Razor 文件（.cshtml、.razor）</li>
+<li>配置文件（.json、.xml）</li>
+<li>数据文件 (.db)</li>
+</ul>
+</li>
+<li><a href="#web-root">Web 根目录</a>，通常是已发布的 wwwroot 文件夹。</li>
+</ul>
+<p>在开发过程中：</p>
+<ul>
+<li>内容根默认为项目的根目录。</li>
+<li>项目的根目录用于创建：
+<ul>
+<li>项目根目录中应用的非代码内容文件的路径。</li>
+<li><a href="#web-root">Web 根目录</a>，通常是项目根目录中的 wwwroot 文件夹。</li>
+</ul>
+</li>
+</ul>
+<p>在<a href="#host">构建主机</a>时，可以指定备用内容根路径。 有关详细信息，请参阅 <a class="xref" href="host/web-host.html#content-root">ASP.NET Core Web 主机</a>。</p>
+<h2 id="web-root">Web 根</h2>
+<p>Web 根目录是公共、非代码、静态资源文件的基本路径，例如：</p>
+<ul>
+<li>样式表 (.css)</li>
+<li>JavaScript (.js)</li>
+<li>图像（.png、.jpg）</li>
+</ul>
+<p>默认情况下，静态文件仅从 Web 根目录（及子目录）提供。</p>
+<p>Web 根路径默认为 {content root}/wwwroot，但<a href="#host">构建主机</a>时可以指定其他 Web 根路径。 有关详细信息，请参阅 <a class="xref" href="host/web-host.html#web-root">Web 根目录</a>。</p>
+<p>防止使用项目文件中的 <a href="/visualstudio/msbuild/common-msbuild-project-items#content">&lt;Content&gt; 项目项</a>在 wwwroot 中发布文件。 下面的示例会阻止在 wwwroot/local 目录和子目录中发布内容：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;Content Update=&quot;wwwroot\local\**\*.*&quot; CopyToPublishDirectory=&quot;Never&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>在 Razor (.cshtml) 文件中，波浪号斜杠 (<code>~/</code>) 指向 Web 根目录。 以 <code>~/</code> 开头的路径称为虚拟路径。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="static-files.html">ASP.NET Core 中的静态文件</a>。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

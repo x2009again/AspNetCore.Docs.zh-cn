@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#30340;&#20351;&#29992;&#32773; Api &#27010;&#36848; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#30340;&#20351;&#29992;&#32773; Api &#27010;&#36848; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/data-protection/consumer-apis/overview">
+<h1 id="consumer-apis-overview-for-aspnet-core">ASP.NET Core 的使用者 Api 概述</h1>
+
+<p><code>IDataProtectionProvider</code>和 <code>IDataProtector</code> 接口是使用者使用数据保护系统的基本接口。 它们位于 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.DataProtection.Abstractions/">AspNetCore</a> 文件包中。</p>
+<h2 id="idataprotectionprovider">IDataProtectionProvider</h2>
+<p>提供程序接口表示数据保护系统的根。 它不能直接用于保护或取消保护数据。 相反，使用者必须通过调用来获取对的引用 <code>IDataProtector</code> <code>IDataProtectionProvider.CreateProtector(purpose)</code> ，其中目的是描述预期使用者用例的字符串。 有关此参数意向的详细信息以及如何选择适当的值，请参阅 <a class="xref" href="purpose-strings.html">目的字符串</a> 。</p>
+<h2 id="idataprotector">IDataProtector</h2>
+<p>通过调用来返回保护程序接口，该接口是 <code>CreateProtector</code> 使用者可用于执行保护和取消保护操作的接口。</p>
+<p>若要保护数据片段，请将数据传递给 <code>Protect</code> 方法。 基本接口定义一个方法，该方法可将 byte [] 转换为 byte [] &gt; byte []，但还有一个重载 (提供作为扩展方法的重载) 用于转换字符串 &gt; 字符串。 这两种方法提供的安全性完全相同;开发人员应选择最适合其用例的任何重载。 无论选择哪种重载，protected 方法返回的值现在都受保护， (到加密和篡改防) ，应用程序可以将其发送到不受信任的客户端。</p>
+<p>若要取消对以前受保护的数据片段的保护，请将受保护的数据传递给 <code>Unprotect</code> 方法。  (有基于字节 [] 的和基于字符串的重载，以便为开发人员提供便利。 ) 如果受保护的负载是通过对此相同的之前调用生成的 <code>Protect</code> <code>IDataProtector</code> ，则该 <code>Unprotect</code> 方法将返回未受保护的原始有效负载。 如果受保护的负载已被篡改或由不同的生成 <code>IDataProtector</code> ，则该 <code>Unprotect</code> 方法将引发 system.security.cryptography.cryptographicexception。</p>
+<p>相同和不同的概念将 <code>IDataProtector</code> 返回到目的概念。 如果两个 <code>IDataProtector</code> 实例是从同一根生成的 <code>IDataProtectionProvider</code> ，而是通过对的调用中的不同目的字符串生成的 <code>IDataProtectionProvider.CreateProtector</code> ，则它们被视为 <a class="xref" href="purpose-strings.html">不同的保护</a>程序，而一个将无法取消保护由另一个生成的负载。</p>
+<h2 id="consuming-these-interfaces">使用这些接口</h2>
+<p>对于支持 DI 的组件，预期的用法是组件 <code>IDataProtectionProvider</code> 在其构造函数中采用参数，而 DI 系统在实例化组件时自动提供此服务。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>某些应用程序 (如控制台应用程序或 ASP.NET 4.x 应用程序) 可能不是 DI 可识别的，因此无法使用此处所述的机制。 对于这些方案，请参阅 <a class="xref" href="../configuration/non-di-scenarios.html">非 DI 感知方案</a> 文档，详细了解如何获取提供程序的实例， <code>IDataProtection</code> 而无需通过 DI。</p>
+</div>
+<p>下面的示例演示三个概念：</p>
+<ol>
+<li><p><a class="xref" href="../configuration/overview.html">将数据保护系统添加</a> 到服务容器中，</p>
+</li>
+<li><p>使用 DI 接收的实例 <code>IDataProtectionProvider</code> ，然后</p>
+</li>
+<li><p>从创建 <code>IDataProtector</code> <code>IDataProtectionProvider</code> ，并使用它来保护和取消保护数据。</p>
+</li>
+</ol>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>包 AspNetCore 包含一个扩展方法 <code>IServiceProvider.GetDataProtector</code> ，作为开发人员的便利。 它封装为一个操作， <code>IDataProtectionProvider</code> 从服务提供程序中检索并调用 <code>IDataProtectionProvider.CreateProtector</code> 。 下面的示例演示了其用法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>和的 <code>IDataProtectionProvider</code> 实例 <code>IDataProtector</code> 对于多个调用方是线程安全的。 它的目的是，在组件通过调用获取对的引用后 <code>IDataProtector</code> <code>CreateProtector</code> ，它会将该引用用于多次调用 <code>Protect</code> 和 <code>Unprotect</code> 。 <code>Unprotect</code>如果无法验证或解密受保护的有效负载，则对的调用将引发 system.security.cryptography.cryptographicexception。 某些组件可能希望在取消保护操作期间忽略错误;读取身份验证的组件 cookie 可能会处理此错误，并将该请求视为 cookie 根本不会失败，而不是完全导致请求失败。 需要此行为的组件应专门捕获 System.security.cryptography.cryptographicexception，而不是抑制所有异常。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

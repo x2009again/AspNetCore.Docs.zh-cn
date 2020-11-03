@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#20351;&#29992; gRPCurl &#26469;&#27979;&#35797; gRPC &#26381;&#21153; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#20351;&#29992; gRPCurl &#26469;&#27979;&#35797; gRPC &#26381;&#21153; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/test-tools">
+<h1 id="test-grpc-services-with-grpcurl-in-aspnet-core">在 ASP.NET Core 中使用 gRPCurl 来测试 gRPC 服务</h1>
+
+<p>作者：<a href="https://twitter.com/jamesnk">James Newton-King</a></p>
+<p>此工具适用于 gRPC，让开发人员可以在不生成客户端应用的情况下测试服务：</p>
+<ul>
+<li><a href="https://github.com/fullstorydev/grpcurl">gRPCurl</a> 是一种命令行工具，可提供与 gRPC 服务的交互。</li>
+<li><a href="https://github.com/fullstorydev/grpcui">gRPCui</a> 基于 gRPCurl，并为 gRPC 添加了交互式 Web UI，类似于 Postman 和 Swagger UI 等工具。</li>
+</ul>
+<p>本文介绍如何提供这种交互：</p>
+<ul>
+<li>下载并安装 gRPCurl 和 gRPCui。</li>
+<li>使用 gRPC ASP.NET Core 应用设置 gRPC 反射。</li>
+<li>使用 <code>grpcurl</code> 发现和测试 gRPC 服务。</li>
+<li>使用 <code>grpcui</code> 通过浏览器与 gRPC 服务交互。</li>
+</ul>
+<h2 id="about-grpcurl">关于 gRPCurl</h2>
+<p>gRPCurl 是由 gRPC 社区创建的命令行工具。 其功能包括：</p>
+<ul>
+<li>调用 gRPC 服务，包括流式服务。</li>
+<li>使用 <a href="https://github.com/grpc/grpc/blob/master/doc/server-reflection.md">gRPC 反射</a>进行服务发现。</li>
+<li>列出并描述 gRPC 服务。</li>
+<li>适用于安全 (TLS) 和不安全（纯文本）服务器。</li>
+</ul>
+<p>有关下载和安装 <code>grpcurl</code> 的信息，请参阅 <a href="https://github.com/fullstorydev/grpcurl#installation">gRPCurl GitHub 主页</a>。</p>
+<p><img src="test-tools/static/grpcurl.png" alt="gRPCurl 命令行"></p>
+<h2 id="set-up-grpc-reflection">设置 gRPC 反射</h2>
+<p><code>grpcurl</code> 必须了解服务的 Protobuf 协定，然后才能调用它们。 有两种方法可以实现此目的：</p>
+<ul>
+<li>在服务器上设置 <a href="https://github.com/grpc/grpc/blob/master/doc/server-reflection.md">gRPC 反射</a>。 gRPCurl 会自动发现服务协定。</li>
+<li>在 gRPCurl 的命令行参数中指定 <code>.proto</code> 文件。</li>
+</ul>
+<p>结合使用 gRPCurl 和 gRPC 反射会更加轻松。 gRPC 反射向应用添加了新的 gRPC 服务，客户端可以调用该服务来发现服务。</p>
+<p>gRPC ASP.NET Core 包含 <a href="https://www.nuget.org/packages/Grpc.AspNetCore.Server.Reflection"><code>Grpc.AspNetCore.Server.Reflection</code></a> 包，因此具有对 gRPC 反射的内置支持。 在应用中配置反射：</p>
+<ul>
+<li>添加 <code>Grpc.AspNetCore.Server.Reflection</code> 包引用。</li>
+<li>在 <code>Startup.cs</code> 中注册反射：
+<ul>
+<li><code>AddGrpcReflection</code> 用于注册启用反射的服务。</li>
+<li><code>MapGrpcReflectionService</code> 用于添加反射服务终结点。</li>
+</ul>
+</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>设置 gRPC 反射后：</p>
+<ul>
+<li>gRPC 反射服务将添加到服务器应用。</li>
+<li>支持 gRPC 反射的客户端应用可以调用反射服务来发现服务器托管的服务。</li>
+<li>仍从客户端调用 gRPC 服务。 反射只支持服务发现，不会绕过服务器端安全设置。 受<a class="xref" href="authn-and-authz.html">身份验证和授权</a>保护的终结点需要调用方传递凭据才能成功调用终结点。</li>
+</ul>
+<h2 id="use-grpcurl">使用 <code>grpcurl</code></h2>
+<p><code>-help</code> 参数说明 <code>grpcurl</code> 命令行选项：</p>
+<pre><code class="lang-console">$ grpcurl -help
+</code></pre>
+<h3 id="discover-services">发现服务</h3>
+<p>使用 <code>describe</code> 谓词来查看服务器定义的服务：</p>
+<pre><code class="lang-console">$ grpcurl localhost:5001 describe
+greet.Greeter is a service:
+service Greeter {
+  rpc SayHello ( .greet.HelloRequest ) returns ( .greet.HelloReply );
+  rpc SayHellos ( .greet.HelloRequest ) returns ( stream .greet.HelloReply );
+}
+grpc.reflection.v1alpha.ServerReflection is a service:
+service ServerReflection {
+  rpc ServerReflectionInfo ( stream .grpc.reflection.v1alpha.ServerReflectionRequest ) returns ( stream .grpc.reflection.v1alpha.ServerReflectionResponse );
+}
+</code></pre>
+<p>上面的示例：</p>
+<ul>
+<li>在服务器 <code>localhost:5001</code> 上运行 <code>describe</code> 谓词。</li>
+<li>打印 gRPC 反射返回的服务和方法。
+<ul>
+<li><code>Greeter</code> 是应用实现的服务。</li>
+<li><code>ServerReflection</code> 是由<code>Grpc.AspNetCore.Server.Reflection</code> 包添加的服务。</li>
+</ul>
+</li>
+</ul>
+<p>结合 <code>describe</code> 与服务、方法或消息名称，以查看其详细信息：</p>
+<pre><code class="lang-powershell">$ grpcurl localhost:5001 describe greet.HelloRequest
+greet.HelloRequest is a message:
+message HelloRequest {
+  string name = 1;
+}
+</code></pre>
+<h3 id="call-grpc-services">调用 gRPC 服务</h3>
+<p>指定服务和方法名称以及表示请求消息的 JSON 参数，以调用 gRPC 服务。 将 JSON 转换为 Protobuf 并发送到服务。</p>
+<pre><code class="lang-console">$ grpcurl -d '{ \&quot;name\&quot;: \&quot;World\&quot; }' localhost:5001 greet.Greeter/SayHello
+{
+  &quot;message&quot;: &quot;Hello World&quot;
+}
+</code></pre>
+<p>在上面的示例中：</p>
+<ul>
+<li><code>-d</code> 参数使用 JSON 来指定请求消息。 此参数必须位于服务器地址和方法名称之前。</li>
+<li>调用 <code>greeter.Greeter</code> 服务上的 <code>SayHello</code> 方法。</li>
+<li>以 JSON 的形式打印响应消息。</li>
+</ul>
+<h2 id="about-grpcui">关于 gRPCui</h2>
+<p>gRPCui 是 gRPC 的交互式 Web UI。 它基于 gRPCurl，并提供一个 GUI 来发现和测试 gRPC 服务，类似于 Postman 或 Swagger UI 等 HTTP 工具。</p>
+<p>有关下载和安装 <code>grpcui</code> 的信息，请参阅 <a href="https://github.com/fullstorydev/grpcui#installation">gRPCui GitHub 主页</a>。</p>
+<h2 id="using-grpcui">使用 <code>grpcui</code></h2>
+<p>使用要与之交互的服务器地址作为参数来运行 <code>grpcui</code>：</p>
+<pre><code class="lang-powershell">$ grpcui localhost:5001
+gRPC Web UI available at http://127.0.0.1:55038/
+</code></pre>
+<p>该工具将启动一个带有交互式 Web UI 的浏览器窗口。 使用 gRPC 反射自动发现 gRPC 服务。</p>
+<p><img src="test-tools/static/grpcui.png" alt="gRPCui Web UI"></p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://github.com/fullstorydev/grpcurl">gRPCurl GitHub 主页</a></li>
+<li><a href="https://github.com/fullstorydev/grpcui">gRPCui GitHub 主页</a></li>
+<li><a href="https://www.nuget.org/packages/Grpc.AspNetCore.Server.Reflection"><code>Grpc.AspNetCore.Server.Reflection</code></a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

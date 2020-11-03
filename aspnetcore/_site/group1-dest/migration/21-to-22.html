@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20174; ASP.NET Core 2.1 &#36801;&#31227;&#21040; 2.2 </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20174; ASP.NET Core 2.1 &#36801;&#31227;&#21040; 2.2 ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="migration/21-to-22">
+<h1 id="migrate-from-aspnet-core-21-to-22">从 ASP.NET Core 2.1 迁移到 2.2</h1>
+
+<p>作者：<a href="https://github.com/scottaddie">Scott Addie</a></p>
+<p>本文介绍如何将现有 ASP.NET Core 2.1 项目更新为 ASP.NET Core 2.2。</p>
+<h2 id="prerequisites">先决条件</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+<ul>
+<li>带有 ASP.NET 和 Web 开发工作负荷的 <a href="https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&amp;utm_source=docs.microsoft.com&amp;utm_campaign=inline+link&amp;utm_content=download+vs2019">Visual Studio 2019</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果使用 Visual Studio 2017，请参阅 <a href="https://github.com/dotnet/sdk/issues/3124">dotnet/sdk 问题 #3124</a>，以了解无法与 Visual Studio 一起使用的 .NET Core SDK 版本的信息。</p>
+</div>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可在任何平台（macOS、Linux 或 Windows）上或在任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://visualstudio.microsoft.com/downloads/">Visual Studio for Mac 版本 8.0 或更高版本</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+</section>
+</div>
+<h2 id="update-target-framework-moniker-tfm">更新目标框架名字对象 (TFM)</h2>
+<p>面向 .NET Core 的项目需使用 .NET Core 2.2 版或更高版本的 <a href="/dotnet/standard/frameworks">TFM</a>。 在项目文件中，通过 <code>netcoreapp2.2</code> 更新 <code>&lt;TargetFramework&gt;</code> 节点的内部文本：</p>
+<pre><code class="lang-xml">&lt;TargetFramework&gt;netcoreapp2.2&lt;/TargetFramework&gt;
+</code></pre>
+<p>面向 .NET Framework 的项目需继续使用 .NET Framework 4.6.1 版或更高版本的 TFM：</p>
+<pre><code class="lang-xml">&lt;TargetFramework&gt;net461&lt;/TargetFramework&gt;
+</code></pre>
+<h2 id="adopt-the-iis-in-process-hosting-model">采用 IIS 进程内托管模型</h2>
+<p>若要采用 <a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">IIS 进程内托管模型</a>，请将值为 <code>InProcess</code> 的 <code>&lt;AspNetCoreHostingModel&gt;</code> 属性添加到项目文件中的 <code>&lt;PropertyGroup&gt;</code>：</p>
+<pre><code class="lang-xml">&lt;AspNetCoreHostingModel&gt;InProcess&lt;/AspNetCoreHostingModel&gt;
+</code></pre>
+<p>面向 .NET Framework 的 ASP.NET Core 应用不支持进程内托管模型。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#hosting-models">ASP.NET Core 模块</a>。</p>
+<h2 id="update-a-custom-webconfig-file">更新自定义 web.config 文件</h2>
+<p>对于项目根中使用自定义 web.config 文件的项目，要生成发布的 web.config 文件，请执行以下操作  ：</p>
+<ul>
+<li>在添加 ASP.NET Core 模块 (<code>name=&quot;aspNetCore&quot;</code>) 的 <code>&lt;handlers&gt;</code> 项中，将 <code>modules</code> 属性值从 <code>AspNetCoreModule</code> 更改为 <code>AspNetCoreModuleV2</code>。</li>
+<li>在 <code>&lt;aspNetCore&gt;</code> 元素中，添加托管模型特性 (<code>hostingModel=&quot;InProcess&quot;</code>)。</li>
+</ul>
+<p>有关详细信息和 web.config 文件的示例，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#configuration-with-webconfig">ASP.NET Core 模块</a> 。</p>
+<h2 id="update-package-references">更新包引用</h2>
+<p>如果面向 .NET Core，则在项目文件中删除元包引用的 <code>Version</code> 特性。 包含 <code>Version</code> 特性会导致出现以下警告：</p>
+<pre><code class="lang-console">A PackageReference to 'Microsoft.AspNetCore.App' specified a Version of `2.2.0`. Specifying the version of this package is not recommended. For more information, see https://aka.ms/sdkimplicitrefs
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../fundamentals/metapackage-app.html">ASP.NET Core 的 Microsoft.AspNetCore.App 元包</a>。</p>
+<p>元包引用应类似于以下 <code>&lt;PackageReference /&gt;</code> 节点：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;PackageReference Include=&quot;Microsoft.AspNetCore.App&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>如果面向 .NET Framework，请将每个包引用的 <code>Version</code> 特性更新为 2.2.0 或更高版本。 以下是面向 .NET Framework 的典型 ASP.NET Core 2.2 项目中的包引用：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;PackageReference Include=&quot;Microsoft.AspNetCore&quot; Version=&quot;2.2.0&quot; /&gt;
+  &lt;PackageReference Include=&quot;Microsoft.AspNetCore.CookiePolicy&quot; Version=&quot;2.2.0&quot; /&gt;
+  &lt;PackageReference Include=&quot;Microsoft.AspNetCore.HttpsPolicy&quot; Version=&quot;2.2.0&quot; /&gt;
+  &lt;PackageReference Include=&quot;Microsoft.AspNetCore.Mvc&quot; Version=&quot;2.2.0&quot; /&gt;
+  &lt;PackageReference Include=&quot;Microsoft.AspNetCore.StaticFiles&quot; Version=&quot;2.2.0&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>如果引用 AspNetCore，则为。 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Razor.Design/"> Razor设计</a> 包，将其 <code>Version</code> 属性更新为2.2.0 或更高版本。 否则，会导致出现以下错误：</p>
+<pre><code class="lang-console">Detected package downgrade: Microsoft.AspNetCore.Razor.Design from 2.2.0 to 2.1.2. Reference the package directly from the project to select a different version.
+</code></pre>
+<h2 id="update-net-core-sdk-version-in-globaljson">在 global.json 中更新 .NET Core SDK 版本</h2>
+<p>如果解决方案依靠 <a href="/dotnet/core/tools/global-json">global.json</a> 文件来定向于特定 .NET Core SDK 版本，请将其 <code>version</code> 属性更新为计算机上安装的 2.2 版本：</p>
+<pre><code class="lang-json">{
+  &quot;sdk&quot;: {
+    &quot;version&quot;: &quot;2.2.100&quot;
+  }
+}
+</code></pre>
+<h2 id="update-launch-settings">更新启动设置</h2>
+<p>如果使用 Visual Studio Code，请更新项目的启动设置文件 (.vscode/launch.json)  。 <code>program</code> 路径应引用新 TFM：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="update-kestrel-configuration">更新 Kestrel 配置</h2>
+<p>如果应用通过调用 <code>Program</code> 类 <a class="xref" href="../fundamentals/host/web-host.html#set-up-a-host">CreateWebHostBuilder 方法</a> 中的 <code>CreateDefaultBuilder</code> 来调用 &lt;xref:Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions.UseKestrel*&gt;，请调用 <code>ConfigureKestrel</code> 而非 <code>UseKestrel</code> 来配置 Kestrel 服务器，以避免与 <a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">IIS 进程内托管模型</a>发生冲突：</p>
+<pre><code class="lang-csharp">public static IWebHostBuilder CreateWebHostBuilder(string[] args) =&gt;
+    WebHost.CreateDefaultBuilder(args)
+        .UseStartup&lt;Startup&gt;()
+        .ConfigureKestrel((context, options) =&gt;
+        {
+            // Set properties and call methods on options
+        });
+</code></pre>
+<p>如果应用不调用 <code>CreateDefaultBuilder</code> 并在 <code>Program</code> 类中手动生成主机，请在调用 <code>ConfigureKestrel</code>之前调用 &lt;xref:Microsoft.AspNetCore.Hosting.WebHostBuilderKestrelExtensions.UseKestrel*&gt;  ：</p>
+<pre><code class="lang-csharp">public static void Main(string[] args)
+{
+    var host = new WebHostBuilder()
+        .UseContentRoot(Directory.GetCurrentDirectory())
+        .UseKestrel()
+        .UseIISIntegration()
+        .UseStartup&lt;Startup&gt;()
+        .ConfigureKestrel((context, options) =&gt;
+        {
+            // Set properties and call methods on options
+        })
+        .Build();
+
+    host.Run();
+}
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../fundamentals/servers/kestrel.html#how-to-use-kestrel-in-aspnet-core-apps">ASP.NET Core 中的 Kestrel Web 服务器实现</a>。</p>
+<h2 id="update-compatibility-version">更新兼容性版本</h2>
+<p>将 <code>Startup.ConfigureServices</code> 中的兼容性版本更新为 <code>Version_2_2</code>：</p>
+<pre><code class="lang-csharp">services.AddMvc()
+        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+</code></pre>
+<h2 id="update-cors-policy">更新 CORS 策略</h2>
+<p>在 ASP.NET Core 2.2 中，如果策略允许任何来源并允许凭据，则 CORS 中间件会使用通配符源 (<code>*</code>) 进行响应。 如果指定通配符源 (<code>*</code>)，则不支持凭据，并且浏览器将不允许 CORS 请求。 有关详细信息，包括如何在客户端解决此问题的选项，请参阅 <a href="https://developer.mozilla.org/docs/Web/HTTP/CORS/Errors/CORSNotSupportingCredentials">MDN Web 文档</a>。</p>
+<p>若要在服务器上解决此问题，请执行下列操作之一：</p>
+<ul>
+<li>修改 CORS 策略以不再允许凭据。 也就是说，在配置策略时，删除对 &lt;xref:Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicyBuilder.AllowCredentials*&gt; 的调用。</li>
+<li>如果 CORS 请求需要提供凭据才能成功，请修改策略以指定允许的主机。 例如，请使用 <code>builder.WithOrigins(&quot;https://api.example1.com&quot;, &quot;https://example2.com&quot;)</code> 而不是使用 &lt;xref:Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicyBuilder.AllowAnyOrigin*&gt;。</li>
+</ul>
+<h2 id="update-docker-images">更新 Docker 映像</h2>
+<p>下表显示了 Docker 映像标记更改：</p>
+<table>
+<thead>
+<tr>
+<th>2.1</th>
+<th>2.2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>microsoft/dotnet:2.1-aspnetcore-runtime</code></td>
+<td><code>mcr.microsoft.com/dotnet/core/aspnet:2.2</code></td>
+</tr>
+<tr>
+<td><code>microsoft/dotnet:2.1-sdk</code></td>
+<td><code>mcr.microsoft.com/dotnet/core/sdk:2.2</code></td>
+</tr>
+</tbody>
+</table>
+<p>将 Dockerfile 中的 <code>FROM</code> 行更改为使用上表的 2.2 列中的新映像标记  。</p>
+<h2 id="build-manually-in-visual-studio-when-using-iis-in-process-hosting">使用 IIS 进程内托管时，在 Visual Studio 中手动生成</h2>
+<p>Visual Studio 的“在浏览器请求时自动生成”体验无法与  。 使用进程内托管时，必须手动重新生成项目。 我们已计划对 Visual Studio 的未来版本改进此体验。</p>
+<h2 id="update-logging-code">更新日志记录代码</h2>
+<p>建议的日志记录配置代码未从 2.1 更改为 2.2，但在 2.1 中仍然有效的某些 1.x 编码模式在 2.2 中不再适用。</p>
+<p>如果应用在 <code>Startup</code> 类中执行日志记录提供程序初始化、筛选和配置加载，请将该代码移动到 <code>Program.Main</code>：</p>
+<ul>
+<li><p>提供程序初始化：</p>
+<p>1.x 示例：</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+{
+    loggerFactory.AddConsole();
+}
+</code></pre>
+<p>2.2 示例：</p>
+<pre><code class="lang-csharp">
+public static void Main(string[] args)
+{
+    var webHost = new WebHostBuilder()
+        // ...
+        .ConfigureLogging((hostingContext, logging) =&gt;
+        {
+            logging.AddConsole();
+        })
+        // ...
+}
+</code></pre>
+</li>
+<li><p>筛选：</p>
+<p>1.x 示例：</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+{
+    loggerFactory.AddConsole(LogLevel.Information);
+    // or
+    loggerFactory.AddConsole((category, level) =&gt; 
+        category == &quot;A&quot; || level == LogLevel.Critical);
+}
+</code></pre>
+<p>2.2 示例：</p>
+<pre><code class="lang-csharp">public static void Main(string[] args)
+{
+    var webHost = new WebHostBuilder()
+        // ...
+        .ConfigureLogging((hostingContext, logging) =&gt;
+        {
+            logging.AddConsole()
+                   .AddFilter&lt;ConsoleLoggerProvider&gt;
+                       (category: null, level: LogLevel.Information)
+                   // or
+                   .AddFilter&lt;ConsoleLoggerProvider&gt;
+                       ((category, level) =&gt; category == &quot;A&quot; ||
+                           level == LogLevel.Critical)
+            );
+        })
+        // ...
+}
+</code></pre>
+</li>
+<li><p>配置加载：</p>
+<p>1.x 示例：</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+{
+    loggerFactory.AddConsole(Configuration);
+}
+</code></pre>
+<p>2.2 示例：</p>
+<pre><code class="lang-csharp">public static void Main(string[] args)
+{
+    var webHost = new WebHostBuilder()
+        // ...
+        .ConfigureLogging((hostingContext, logging) =&gt;
+        {
+            logging.AddConfiguration(hostingContext.Configuration.GetSection(&quot;Logging&quot;));
+            logging.AddConsole();
+        })
+        // ...
+}
+</code></pre>
+</li>
+</ul>
+<p>有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html">.NET Core 和 ASP.NET Core 中的日志记录</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../mvc/compatibility-version.html">ASP.NET Core MVC 的兼容性版本</a></li>
+<li><a class="xref" href="../fundamentals/metapackage-app.html">ASP.NET Core 的 Microsoft.AspNetCore.App 元包</a></li>
+<li><a href="/dotnet/core/tools/csproj#implicit-package-references">隐式包引用</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

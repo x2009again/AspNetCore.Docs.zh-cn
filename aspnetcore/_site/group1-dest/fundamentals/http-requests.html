@@ -1,0 +1,1022 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#20351;&#29992; IHttpClientFactory &#21457;&#20986; HTTP &#35831;&#27714; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#20351;&#29992; IHttpClientFactory &#21457;&#20986; HTTP &#35831;&#27714; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/http-requests">
+<h1 id="make-http-requests-using-ihttpclientfactory-in-aspnet-core">在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://github.com/glennc">Glenn Condron</a>、<a href="https://github.com/rynowak">Ryan Nowak</a>、<a href="https://github.com/stevejgordon">Steve Gordon</a>、<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://github.com/serpent5">Kirk Larkin</a></p>
+<p>可以注册 &lt;xref:System.Net.Http.IHttpClientFactory&gt; 并将其用于配置和创建应用中的 &lt;xref:System.Net.Http.HttpClient&gt; 实例。 <code>IHttpClientFactory</code> 的优势如下：</p>
+<ul>
+<li>提供一个中心位置，用于命名和配置逻辑 <code>HttpClient</code> 实例。 例如，可注册和配置名为 github 的客户端，使其访问 <a href="https://github.com/">GitHub</a>。 可以注册一个默认客户端用于一般性访问。</li>
+<li>通过 <code>HttpClient</code> 中的委托处理程序来编码出站中间件的概念。 提供基于 Polly 的中间件的扩展，以利用 <code>HttpClient</code> 中的委托处理程序。</li>
+<li>管理基础 <code>HttpClientMessageHandler</code> 实例的池和生存期。 自动管理可避免手动管理 <code>HttpClient</code> 生存期时出现的常见 DNS（域名系统）问题。</li>
+<li>（通过 <code>ILogger</code>）添加可配置的记录体验，以处理工厂创建的客户端发送的所有请求。</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/http-requests/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+<p>此主题版本中的示例代码使用 &lt;xref:System.Text.Json&gt; 来对 HTTP 响应中返回的 JSON 内容进行反序列化。 对于使用 <code>Json.NET</code> 和 <code>ReadAsAsync&lt;T&gt;</code> 的示例，请使用版本选择器选择此主题的 2.x 版本。</p>
+<h2 id="consumption-patterns">消耗模式</h2>
+<p>在应用中可以通过以下多种方式使用 <code>IHttpClientFactory</code>：</p>
+<ul>
+<li><a href="#basic-usage">基本用法</a></li>
+<li><a href="#named-clients">命名客户端</a></li>
+<li><a href="#typed-clients">类型化客户端</a></li>
+<li><a href="#generated-clients">生成的客户端</a></li>
+</ul>
+<p>最佳方法取决于应用要求。</p>
+<h3 id="basic-usage">基本用法</h3>
+<p>可以通过调用 <code>AddHttpClient</code> 来注册 <code>IHttpClientFactory</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以使用<a class="xref" href="dependency-injection.html">依赖项注入 (DI)</a> 来请求 <code>IHttpClientFactory</code>。 以下代码使用 <code>IHttpClientFactory</code> 来创建 <code>HttpClient</code> 实例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>像前面的示例一样，使用 <code>IHttpClientFactory</code> 是重构现有应用的好方法。 这不会影响 <code>HttpClient</code> 的使用方式。 在现有应用中创建 <code>HttpClient</code> 实例的位置，使用对 &lt;xref:System.Net.Http.IHttpClientFactory.CreateClient*&gt; 的调用替换这些匹配项。</p>
+<h3 id="named-clients">命名客户端</h3>
+<p>在以下情况下，命名客户端是一个不错的选择：</p>
+<ul>
+<li>应用需要 <code>HttpClient</code> 的许多不同用法。</li>
+<li>许多 <code>HttpClient</code> 具有不同的配置。</li>
+</ul>
+<p>可以在 <code>Startup.ConfigureServices</code> 中注册时指定命名 <code>HttpClient</code> 的配置：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，客户端配置如下：</p>
+<ul>
+<li>基址为 <code>https://api.github.com/</code>。</li>
+<li>使用 GitHub API 需要的两个标头。</li>
+</ul>
+<h4 id="createclient">CreateClient</h4>
+<p>每次调用 &lt;xref:System.Net.Http.IHttpClientFactory.CreateClient*&gt; 时：</p>
+<ul>
+<li>创建 <code>HttpClient</code> 的新实例。</li>
+<li>调用配置操作。</li>
+</ul>
+<p>要创建命名客户端，请将其名称传递到 <code>CreateClient</code> 中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，请求不需要指定主机名。 代码可以仅传递路径，因为采用了为客户端配置的基址。</p>
+<h3 id="typed-clients">类型化客户端</h3>
+<p>类型化客户端：</p>
+<ul>
+<li>提供与命名客户端一样的功能，不需要将字符串用作密钥。</li>
+<li>在使用客户端时提供 IntelliSense 和编译器帮助。</li>
+<li>提供单个位置来配置特定 <code>HttpClient</code> 并与其进行交互。 例如，可以使用单个类型化客户端：
+<ul>
+<li>对于单个后端终结点。</li>
+<li>封装处理终结点的所有逻辑。</li>
+</ul>
+</li>
+<li>使用 DI 且可以被注入到应用中需要的位置。</li>
+</ul>
+<p>类型化客户端在构造函数中接受 <code>HttpClient</code> 参数：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>若要查看翻译为非英语语言的代码注释，请在 <a href="https://github.com/MicrosoftDocs/feedback/issues/2515">此 GitHub 讨论问题</a>中告诉我们。</p>
+
+<p>在上述代码中：</p>
+<ul>
+<li>配置转移到了类型化客户端中。</li>
+<li><code>HttpClient</code> 对象公开为公共属性。</li>
+</ul>
+<p>可以创建特定于 API 的方法来公开 <code>HttpClient</code> 功能。 例如，创建 <code>GetAspNetDocsIssues</code> 方法来封装代码以检索未解决的问题。</p>
+<p>以下代码调用 <code>Startup.ConfigureServices</code> 中的 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient*&gt; 来注册类型化客户端类：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 DI 将类型客户端注册为暂时客户端。 在上述代码中，<code>AddHttpClient</code> 将 <code>GitHubService</code> 注册为暂时性服务。 此注册使用工厂方法执行以下操作：</p>
+<ol>
+<li>创建 <code>HttpClient</code> 的实例。</li>
+<li>创建 <code>GitHubService</code> 的实例，将 <code>HttpClient</code> 的实例传入其构造函数。</li>
+</ol>
+<p>可以直接插入或使用类型化客户端：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以在 <code>Startup.ConfigureServices</code> 中注册时指定类型化客户端的配置，而不是在类型化客户端的构造函数中指定：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以将 <code>HttpClient</code> 封装在类型化客户端中， 定义一个在内部调用 <code>HttpClient</code> 实例的方法，而不是将其公开为属性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，<code>HttpClient</code> 存储在私有字段中。 通过公共 <code>GetRepos</code> 方法访问 <code>HttpClient</code>。</p>
+<h3 id="generated-clients">生成的客户端</h3>
+<p><code>IHttpClientFactory</code> 可结合第三方库（例如 <a href="https://github.com/paulcbetts/refit">Refit</a>）使用。 Refit 是.NET 的 REST 库。 它将 REST API 转换为实时接口。 <code>RestService</code> 动态生成该接口的实现，使用 <code>HttpClient</code> 进行外部 HTTP 调用。</p>
+<p>定义了接口和答复来代表外部 API 及其响应：</p>
+<pre><code class="lang-csharp">public interface IHelloClient
+{
+    [Get(&quot;/helloworld&quot;)]
+    Task&lt;Reply&gt; GetMessageAsync();
+}
+
+public class Reply
+{
+    public string Message { get; set; }
+}
+</code></pre>
+<p>可以添加类型化客户端，使用 Refit 生成实现：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddHttpClient(&quot;hello&quot;, c =&gt;
+    {
+        c.BaseAddress = new Uri(&quot;http://localhost:5000&quot;);
+    })
+    .AddTypedClient(c =&gt; Refit.RestService.For&lt;IHelloClient&gt;(c));
+
+    services.AddControllers();
+}
+</code></pre>
+<p>可以在必要时使用定义的接口，以及由 DI 和 Refit 提供的实现：</p>
+<pre><code class="lang-csharp">[ApiController]
+public class ValuesController : ControllerBase
+{
+    private readonly IHelloClient _client;
+
+    public ValuesController(IHelloClient client)
+    {
+        _client = client;
+    }
+
+    [HttpGet(&quot;/&quot;)]
+    public async Task&lt;ActionResult&lt;Reply&gt;&gt; Index()
+    {
+        return await _client.GetMessageAsync();
+    }
+}
+</code></pre>
+<h2 id="make-post-put-and-delete-requests">发出 POST、PUT 和 DELETE 请求</h2>
+<p>在前面的示例中，所有 HTTP 请求均使用 GET HTTP 谓词。 <code>HttpClient</code> 还支持其他 HTTP 谓词，其中包括：</p>
+<ul>
+<li>POST</li>
+<li>PUT</li>
+<li>删除</li>
+<li>PATCH</li>
+</ul>
+<p>有关受支持的 HTTP 谓词的完整列表，请参阅 &lt;xref:System.Net.Http.HttpMethod&gt;。</p>
+<p>下面的示例演示如何发出 HTTP POST 请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，<code>CreateItemAsync</code> 方法：</p>
+<ul>
+<li>使用 <code>System.Text.Json</code> 将 <code>TodoItem</code> 参数序列化为 JSON。 这将使用 &lt;xref:System.Text.Json.JsonSerializerOptions&gt; 的实例来配置序列化过程。</li>
+<li>创建 &lt;xref:System.Net.Http.StringContent&gt; 的实例，以打包序列化的 JSON 以便在 HTTP 请求的正文中发送。</li>
+<li>调用 &lt;xref:System.Net.Http.HttpClient.PostAsync%2A&gt; 将 JSON 内容发送到指定的 URL。 这是添加到 <a href="xref:System.Net.Http.HttpClient.BaseAddress">HttpClient.BaseAddress</a> 的相对 URL。</li>
+<li>如果响应状态代码不指示成功，则调用 &lt;xref:System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode%2A&gt; 引发异常。</li>
+</ul>
+<p><code>HttpClient</code> 还支持其他类型的内容。 例如，&lt;xref:System.Net.Http.MultipartContent&gt; 和 &lt;xref:System.Net.Http.StreamContent&gt;。 有关受支持的内容的完整列表，请参阅 &lt;xref:System.Net.Http.HttpContent&gt;。</p>
+<p>下面的示例演示了一个 HTTP PUT 请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码与 POST 示例非常相似。 <code>SaveItemAsync</code> 方法调用 &lt;xref:System.Net.Http.HttpClient.PutAsync%2A&gt; 而不是 <code>PostAsync</code>。</p>
+<p>下面的示例演示了一个 HTTP DELETE 请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，<code>DeleteItemAsync</code> 方法调用 &lt;xref:System.Net.Http.HttpClient.DeleteAsync%2A&gt;。 由于 HTTP DELETE 请求通常不包含正文，因此 <code>DeleteAsync</code> 方法不提供接受 <code>HttpContent</code> 实例的重载。</p>
+<p>要详细了解如何将不同的 HTTP 谓词用于 <code>HttpClient</code>，请参阅 &lt;xref:System.Net.Http.HttpClient&gt;。</p>
+<h2 id="outgoing-request-middleware">出站请求中间件</h2>
+<p><code>HttpClient</code> 具有委托处理程序的概念，这些委托处理程序可以链接在一起，处理出站 HTTP 请求。 <code>IHttpClientFactory</code>：</p>
+<ul>
+<li><p>简化定义应用于各命名客户端的处理程序。</p>
+</li>
+<li><p>支持注册和链接多个处理程序，以生成出站请求中间件管道。 每个处理程序都可以在出站请求前后执行工作。 此模式：</p>
+<ul>
+<li><p>类似于 ASP.NET Core 中的入站中间件管道。</p>
+</li>
+<li><p>提供一种机制来管理有关 HTTP 请求的横切关注点，例如：</p>
+<ul>
+<li>缓存</li>
+<li>错误处理</li>
+<li>序列化</li>
+<li>日志记录</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>创建委托处理程序：</p>
+<ul>
+<li>派生自 &lt;xref:System.Net.Http.DelegatingHandler&gt;。</li>
+<li>重写 &lt;xref:System.Net.Http.DelegatingHandler.SendAsync*&gt;。 在将请求传递至管道中的下一个处理程序之前执行代码：</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码检查请求中是否存在 <code>X-API-KEY</code> 标头。 如果缺失 <code>X-API-KEY</code>，则返回 &lt;xref:System.Net.HttpStatusCode.BadRequest&gt;。</p>
+<p>可使用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddHttpMessageHandler*?displayProperty=fullName&gt; 将多个处理程序添加到 <code>HttpClient</code> 的配置中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中通过 DI 注册了 <code>ValidateHeaderHandler</code>。 <code>IHttpClientFactory</code> 为每个处理程序创建单独的 DI 作用域。 处理程序可依赖于任何作用域的服务。 处理程序依赖的服务会在处置处理程序时得到处置。</p>
+<p>注册后可以调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddHttpMessageHandler*&gt;，传入标头的类型。</p>
+<p>可以按处理程序应该执行的顺序注册多个处理程序。 每个处理程序都会覆盖下一个处理程序，直到最终 <code>HttpClientHandler</code> 执行请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用以下方法之一将每个请求状态与消息处理程序共享：</p>
+<ul>
+<li>使用 <a href="xref:System.Net.Http.HttpRequestMessage.Properties">HttpRequestMessage.Properties</a> 将数据传递到处理程序中。</li>
+<li>使用 &lt;xref:Microsoft.AspNetCore.Http.IHttpContextAccessor&gt; 访问当前请求。</li>
+<li>创建自定义 &lt;xref:System.Threading.AsyncLocal`1&gt; 存储对象以传递数据。</li>
+</ul>
+<h2 id="use-polly-based-handlers">使用基于 Polly 的处理程序</h2>
+<p><code>IHttpClientFactory</code> 与第三方库 <a href="https://github.com/App-vNext/Polly">Polly</a> 集成。 Polly 是适用于 .NET 的全面恢复和临时故障处理库。 开发人员通过它可以表达策略，例如以流畅且线程安全的方式处理重试、断路器、超时、Bulkhead 隔离和回退。</p>
+<p>提供了扩展方法，以实现将 Polly 策略用于配置的 <code>HttpClient</code> 实例。 Polly 扩展支持将基于 Polly 的处理程序添加到客户端。 Polly 需要 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Http.Polly/">Microsoft.Extensions.Http.Polly</a> NuGet 包。</p>
+<h3 id="handle-transient-faults">处理临时故障</h3>
+<p>错误通常在暂时执行外部 HTTP 调用时发生。 &lt;xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddTransientHttpErrorPolicy*&gt; 允许定义一个策略来处理暂时性错误。 使用 <code>AddTransientHttpErrorPolicy</code> 配置的策略处理以下响应：</p>
+<ul>
+<li>&lt;xref:System.Net.Http.HttpRequestException&gt;</li>
+<li>HTTP 5xx</li>
+<li>HTTP 408</li>
+</ul>
+<p><code>AddTransientHttpErrorPolicy</code> 提供对 <code>PolicyBuilder</code> 对象的访问权限，该对象配置为处理表示可能的临时故障的错误：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码中定义了 <code>WaitAndRetryAsync</code> 策略。 请求失败后最多可以重试三次，每次尝试间隔 600 ms。</p>
+<h3 id="dynamically-select-policies">动态选择策略</h3>
+<p>提供了扩展方法来添加基于 Polly 的处理程序，例如 &lt;xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddPolicyHandler*&gt;。 以下 <code>AddPolicyHandler</code> 重载检查请求以确定要应用的策略：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，如果出站请求为 HTTP GET，则应用 10 秒超时。 其他所有 HTTP 方法应用 30 秒超时。</p>
+<h3 id="add-multiple-polly-handlers">添加多个 Polly 处理程序</h3>
+<p>这对嵌套 Polly 策略很常见：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上面的示例中：</p>
+<ul>
+<li>添加了两个处理程序。</li>
+<li>第一个处理程序使用 &lt;xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddTransientHttpErrorPolicy*&gt; 添加重试策略。 若请求失败，最多可重试三次。</li>
+<li>第二个 <code>AddTransientHttpErrorPolicy</code> 调用添加断路器策略。 如果尝试连续失败了 5 次，则会阻止后续外部请求 30 秒。 断路器策略处于监控状态。 通过此客户端进行的所有调用都共享同样的线路状态。</li>
+</ul>
+<h3 id="add-policies-from-the-polly-registry">从 Polly 注册表添加策略</h3>
+<p>管理常用策略的一种方法是一次性定义它们并使用 <code>PolicyRegistry</code> 注册它们。</p>
+<p>在以下代码中：</p>
+<ul>
+<li>添加了“常规”和“长”策略。</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.PollyHttpClientBuilderExtensions.AddPolicyHandlerFromRegistry*&gt; 从注册表中添加“常规”和“长”策略。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关 <code>IHttpClientFactory</code> 和 Polly 集成的详细信息，请参阅 <a href="https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory">Polly Wiki</a>。</p>
+<h2 id="httpclient-and-lifetime-management">HttpClient 和生存期管理</h2>
+<p>每次对 <code>IHttpClientFactory</code> 调用 <code>CreateClient</code> 都会返回一个新 <code>HttpClient</code> 实例。 每个命名客户端都创建一个 &lt;xref:System.Net.Http.HttpMessageHandler&gt;。 工厂管理 <code>HttpMessageHandler</code> 实例的生存期。</p>
+<p><code>IHttpClientFactory</code> 将工厂创建的 <code>HttpMessageHandler</code> 实例汇集到池中，以减少资源消耗。 新建 <code>HttpClient</code> 实例时，可能会重用池中的 <code>HttpMessageHandler</code> 实例（如果生存期尚未到期的话）。</p>
+<p>由于每个处理程序通常管理自己的基础 HTTP 连接，因此需要池化处理程序。 创建超出必要数量的处理程序可能会导致连接延迟。 部分处理程序还保持连接无期限地打开，这样可以防止处理程序对 DNS（域名系统）更改作出反应。</p>
+<p>处理程序的默认生存期为两分钟。 可在每个命名客户端上重写默认值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>HttpClient</code> 实例通常可视为无需处置的 .NET 对象。 处置既取消传出请求，又保证在调用 &lt;xref:System.IDisposable.Dispose*&gt; 后无法使用给定的 <code>HttpClient</code> 实例。 <code>IHttpClientFactory</code> 跟踪和处置 <code>HttpClient</code> 实例使用的资源。</p>
+<p>保持各个 <code>HttpClient</code> 实例长时间处于活动状态是在 <code>IHttpClientFactory</code> 推出前使用的常见模式。 迁移到 <code>IHttpClientFactory</code> 后，就无需再使用此模式。</p>
+<h3 id="alternatives-to-ihttpclientfactory">IHttpClientFactory 的替代项</h3>
+<p>通过在启用了 DI 的应用中使用 <code>IHttpClientFactory</code>，可避免：</p>
+<ul>
+<li>通过共用 <code>HttpMessageHandler</code> 实例，解决资源耗尽问题。</li>
+<li>通过定期循环 <code>HttpMessageHandler</code> 实例，解决 DNS 过时问题。</li>
+</ul>
+<p>此外，还有其他方法使用生命周期长的 &lt;xref:System.Net.Http.SocketsHttpHandler&gt; 实例来解决上述问题。</p>
+<ul>
+<li>在应用启动时创建 <code>SocketsHttpHandler</code> 的实例，并在应用的整个生命周期中使用它。</li>
+<li>根据 DNS 刷新时间，将 &lt;xref:System.Net.Http.SocketsHttpHandler.PooledConnectionLifetime&gt; 配置为适当的值。</li>
+<li>根据需要，使用 <code>new HttpClient(handler, disposeHandler: false)</code> 创建 <code>HttpClient</code> 实例。</li>
+</ul>
+<p>上述方法使用 <code>IHttpClientFactory</code> 解决问题的类似方式解决资源管理问题。</p>
+<ul>
+<li><code>SocketsHttpHandler</code> 在 <code>HttpClient</code> 实例之间共享连接。 此共享可防止套接字耗尽。</li>
+<li><code>SocketsHttpHandler</code> 会根据 <code>PooledConnectionLifetime</code> 循环连接，避免出现 DNS 过时问题。</li>
+</ul>
+<h3 id="no-loccookies">Cookies</h3>
+<p>共用 <code>HttpMessageHandler</code> 实例将导致共享 <code>CookieContainer</code> 对象。 意外的 <code>CookieContainer</code> 对象共享通常会导致错误的代码。 对于需要 cookie 的应用，请考虑执行以下任一操作：</p>
+<ul>
+<li>禁用自动 cookie 处理</li>
+<li>避免 <code>IHttpClientFactory</code></li>
+</ul>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler*&gt; 以禁用自动 cookie 处理：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="logging">Logging</h2>
+<p>通过 <code>IHttpClientFactory</code> 创建的客户端记录所有请求的日志消息。 在日志记录配置中启用合适的信息级别可以查看默认日志消息。 仅在跟踪级别包含附加日志记录（例如请求标头的日志记录）。</p>
+<p>用于每个客户端的日志类别包含客户端名称。 例如，名为 MyNamedClient 的客户端记录类别为“System.Net.Http.HttpClient.MyNamedClient.LogicalHandler”的消息。 后缀为 LogicalHandler 的消息在请求处理程序管道外部发生。 在请求时，在管道中的任何其他处理程序处理请求之前记录消息。 在响应时，在任何其他管道处理程序接收响应之后记录消息。</p>
+<p>日志记录还在请求处理程序管道内部发生。 在 MyNamedClient 示例中，这些消息的日志类别为“System.Net.Http.HttpClient.MyNamedClient.ClientHandler”。 在请求时，在所有其他处理程序运行后，以及刚好要发出请求之前记录消息。 在响应时，此日志记录包含响应在通过处理程序管道被传递回去之前的状态。</p>
+<p>在管道内外启用日志记录，可以检查其他管道处理程序做出的更改。 这可能包含对请求标头的更改，或者对响应状态代码的更改。</p>
+<p>通过在日志类别中包含客户端名称，可以对特定的命名客户端筛选日志。</p>
+<h2 id="configure-the-httpmessagehandler">配置 HttpMessageHandler</h2>
+<p>控制客户端使用的内部 <code>HttpMessageHandler</code> 的配置是有必要的。</p>
+<p>在添加命名客户端或类型化客户端时，会返回 <code>IHttpClientBuilder</code>。 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler*&gt; 扩展方法可以用于定义委托。 委托用于创建和配置客户端使用的主要 <code>HttpMessageHandler</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="use-ihttpclientfactory-in-a-console-app">在控制台应用中使用 IHttpClientFactory</h2>
+<p>在控制台中，将以下包引用添加到项目中：</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/Microsoft.Extensions.Hosting">Microsoft.Extensions.Hosting</a></li>
+<li><a href="https://www.nuget.org/packages/Microsoft.Extensions.Http">Microsoft.Extensions.Http</a></li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>&lt;xref:System.Net.Http.IHttpClientFactory&gt; 已在<a class="xref" href="host/generic-host.html">泛型主机的</a>服务容器中注册。</li>
+<li><code>MyService</code> 从服务创建客户端工厂实例，用于创建 <code>HttpClient</code>。 <code>HttpClient</code> 用于检索网页。</li>
+<li><code>Main</code> 可创建作用域来执行服务的 <code>GetPage</code> 方法，并将网页内容的前 500 个字符写入控制台。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="header-propagation-middleware">标头传播中间件</h2>
+<p>标头传播是一个 ASP.NET Core 中间件，可将 HTTP 标头从传入请求传播到传出 HTTP 客户端请求。 使用标头传播：</p>
+<ul>
+<li><p>引用 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.HeaderPropagation">Microsoft.AspNetCore.HeaderPropagation</a> 包。</p>
+</li>
+<li><p>在 <code>Startup</code> 中配置中间件和 <code>HttpClient</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>客户端在出站请求中包含配置的标头：</p>
+<pre><code class="lang-csharp">var client = clientFactory.CreateClient(&quot;MyForwardingClient&quot;);
+var response = client.GetAsync(...);
+</code></pre>
+</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests">使用 HttpClientFactory 来实现复原 HTTP 请求</a></li>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly">通过 HttpClientFactory 和 Polly 策略实现使用指数退避算法的 HTTP 调用重试</a></li>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/implement-circuit-breaker-pattern">实现断路器模式</a></li>
+<li><a href="/dotnet/standard/serialization/system-text-json-how-to">如何在 .NET 中对 JSON 数据进行序列化和反序列化</a></li>
+</ul>
+</div>
+<div range="= aspnetcore-2.2">
+<p>作者：<a href="https://github.com/glennc">Glenn Condron</a><a href="https://github.com/rynowak">Ryan Nowak</a> 和 <a href="https://github.com/stevejgordon">Steve Gordon</a></p>
+<p>可以注册 &lt;xref:System.Net.Http.IHttpClientFactory&gt; 并将其用于配置和创建应用中的 &lt;xref:System.Net.Http.HttpClient&gt; 实例。 这能带来以下好处：</p>
+<ul>
+<li>提供一个中心位置，用于命名和配置逻辑 <code>HttpClient</code> 实例。 例如，可注册和配置 github 客户端，使其访问 <a href="https://github.com/">GitHub</a>。 可以注册一个默认客户端用于其他用途。</li>
+<li>通过委托 <code>HttpClient</code> 中的处理程序整理出站中间件的概念，并提供适用于基于 Polly 的中间件的扩展来利用概念。</li>
+<li>管理基础 <code>HttpClientMessageHandler</code> 实例的池和生存期，避免在手动管理 <code>HttpClient</code> 生存期时出现常见的 DNS 问题。</li>
+<li>（通过 <code>ILogger</code>）添加可配置的记录体验，以处理工厂创建的客户端发送的所有请求。</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/http-requests/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="consumption-patterns">消耗模式</h2>
+<p>在应用中可以通过以下多种方式使用 <code>IHttpClientFactory</code>：</p>
+<ul>
+<li><a href="#basic-usage">基本用法</a></li>
+<li><a href="#named-clients">命名客户端</a></li>
+<li><a href="#typed-clients">类型化客户端</a></li>
+<li><a href="#generated-clients">生成的客户端</a></li>
+</ul>
+<p>它们之间不存在严格的优先级。 最佳方法取决于应用的约束条件。</p>
+<h3 id="basic-usage">基本用法</h3>
+<p>在 <code>Startup.ConfigureServices</code> 方法中，通过在 <code>IServiceCollection</code> 上调用 <code>AddHttpClient</code> 扩展方法可以注册 <code>IHttpClientFactory</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>注册后，在可以使用<a class="xref" href="dependency-injection.html">依赖关系注入 (DI)</a> 注入服务的任何位置，代码都能接受 <code>IHttpClientFactory</code>。 <code>IHttpClientFactory</code> 可用于创建 <code>HttpClient</code> 实例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以这种方式使用 <code>IHttpClientFactory</code> 适合重构现有应用。 这不会影响 <code>HttpClient</code> 的使用方式。 在当前创建 <code>HttpClient</code> 实例的位置，使用对 &lt;xref:System.Net.Http.IHttpClientFactory.CreateClient*&gt; 的调用替换这些匹配项。</p>
+<h3 id="named-clients">命名客户端</h3>
+<p>如果应用需要有许多不同的 <code>HttpClient</code> 用法（每种用法的配置都不同），可以视情况使用命名客户端。 可以在 <code>HttpClient</code> 中注册时指定命名 <code>Startup.ConfigureServices</code> 的配置。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上面的代码调用 <code>AddHttpClient</code>，同时提供名称“github”。 此客户端应用了一些默认配置，也就是需要基址和两个标头来使用 GitHub API。</p>
+<p>每次调用 <code>CreateClient</code> 时，都会创建 <code>HttpClient</code> 的新实例，并调用配置操作。</p>
+<p>要使用命名客户端，可将字符串参数传递到 <code>CreateClient</code>。 指定要创建的客户端的名称：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，请求不需要指定主机名。 可以仅传递路径，因为采用了为客户端配置的基址。</p>
+<h3 id="typed-clients">类型化客户端</h3>
+<p>类型化客户端：</p>
+<ul>
+<li>提供与命名客户端一样的功能，不需要将字符串用作密钥。</li>
+<li>在使用客户端时提供 IntelliSense 和编译器帮助。</li>
+<li>提供单个位置来配置特定 <code>HttpClient</code> 并与其进行交互。 例如，单个类型化客户端可能用于单个后端终结点，并封装此终结点的所有处理逻辑。</li>
+<li>使用 DI 且可以被注入到应用中需要的位置。</li>
+</ul>
+<p>类型化客户端在构造函数中接受 <code>HttpClient</code> 参数：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，配置转移到了类型化客户端中。 <code>HttpClient</code> 对象公开为公共属性。 可以定义公开 <code>HttpClient</code> 功能的特定于 API 的方法。 <code>GetAspNetDocsIssues</code> 方法从 GitHub 存储库封装查询和分析最新待解决问题所需的代码。</p>
+<p>要注册类型化客户端，可在 <code>Startup.ConfigureServices</code> 中使用通用的 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient*&gt; 扩展方法，指定类型化客户端类：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 DI 将类型客户端注册为暂时客户端。 可以直接插入或使用类型化客户端：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>根据你的喜好，可以在 <code>Startup.ConfigureServices</code> 中注册时指定类型化客户端的配置，而不是在类型化客户端的构造函数中指定：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以将 <code>HttpClient</code> 完全封装在类型化客户端中。 不是将它公开为属性，而是可以提供公共方法，用于在内部调用 <code>HttpClient</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，<code>HttpClient</code> 存储未私有字段。 进行外部调用的所有访问都经由 <code>GetRepos</code> 方法。</p>
+<h3 id="generated-clients">生成的客户端</h3>
+<p><code>IHttpClientFactory</code> 可结合其他第三方库（例如 <a href="https://github.com/paulcbetts/refit">Refit</a>）使用。 Refit 是.NET 的 REST 库。 它将 REST API 转换为实时接口。 <code>RestService</code> 动态生成该接口的实现，使用 <code>HttpClient</code> 进行外部 HTTP 调用。</p>
+<p>定义了接口和答复来代表外部 API 及其响应：</p>
+<pre><code class="lang-csharp">public interface IHelloClient
+{
+    [Get(&quot;/helloworld&quot;)]
+    Task&lt;Reply&gt; GetMessageAsync();
+}
+
+public class Reply
+{
+    public string Message { get; set; }
+}
+</code></pre>
+<p>可以添加类型化客户端，使用 Refit 生成实现：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddHttpClient(&quot;hello&quot;, c =&gt;
+    {
+        c.BaseAddress = new Uri(&quot;https://localhost:5001&quot;);
+    })
+    .AddTypedClient(c =&gt; Refit.RestService.For&lt;IHelloClient&gt;(c));
+
+    services.AddMvc();
+}
+</code></pre>
+<p>可以在必要时使用定义的接口，以及由 DI 和 Refit 提供的实现：</p>
+<pre><code class="lang-csharp">[ApiController]
+public class ValuesController : ControllerBase
+{
+    private readonly IHelloClient _client;
+
+    public ValuesController(IHelloClient client)
+    {
+        _client = client;
+    }
+
+    [HttpGet(&quot;/&quot;)]
+    public async Task&lt;ActionResult&lt;Reply&gt;&gt; Index()
+    {
+        return await _client.GetMessageAsync();
+    }
+}
+</code></pre>
+<h2 id="outgoing-request-middleware">出站请求中间件</h2>
+<p><code>HttpClient</code> 已经具有委托处理程序的概念，这些委托处理程序可以链接在一起，处理出站 HTTP 请求。 <code>IHttpClientFactory</code> 可以轻松定义处理程序并应用于每个命名客户端。 它支持注册和链接多个处理程序，以生成出站请求中间件管道。 每个处理程序都可以在出站请求前后执行工作。 此模式类似于 ASP.NET Core 中的入站中间件管道。 此模式提供了一种用于管理围绕 HTTP 请求的横切关注点的机制，包括缓存、错误处理、序列化以及日志记录。</p>
+<p>要创建处理程序，请定义一个派生自 &lt;xref:System.Net.Http.DelegatingHandler&gt; 的类。 重写 <code>SendAsync</code> 方法，在将请求传递至管道中的下一个处理程序之前执行代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码定义了基本处理程序。 它检查请求中是否包含 <code>X-API-KEY</code> 头。 如果标头缺失，它可以避免 HTTP 调用，并返回合适的响应。</p>
+<p>在注册期间可将一个或多个标头添加到 <code>HttpClient</code> 的配置中。 此任务通过 &lt;xref:Microsoft.Extensions.DependencyInjection.IHttpClientBuilder&gt; 上的扩展方法完成。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中通过 DI 注册了 <code>ValidateHeaderHandler</code>。 <code>IHttpClientFactory</code> 为每个处理程序创建单独的 DI 作用域。 处理程序可依赖于任何作用域的服务。 处理程序依赖的服务会在处置处理程序时得到处置。</p>
+<p>注册后可以调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddHttpMessageHandler*&gt;，传入标头的类型。</p>
+<p>可以按处理程序应该执行的顺序注册多个处理程序。 每个处理程序都会覆盖下一个处理程序，直到最终 <code>HttpClientHandler</code> 执行请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用以下方法之一将每个请求状态与消息处理程序共享：</p>
+<ul>
+<li>使用 <code>HttpRequestMessage.Properties</code> 将数据传递到处理程序。</li>
+<li>使用 <code>IHttpContextAccessor</code> 访问当前请求。</li>
+<li>创建自定义 <code>AsyncLocal</code> 存储对象以传递数据。</li>
+</ul>
+<h2 id="use-polly-based-handlers">使用基于 Polly 的处理程序</h2>
+<p><code>IHttpClientFactory</code> 与一个名为 <a href="https://github.com/App-vNext/Polly">Polly</a> 的热门第三方库集成。 Polly 是适用于 .NET 的全面恢复和临时故障处理库。 开发人员通过它可以表达策略，例如以流畅且线程安全的方式处理重试、断路器、超时、Bulkhead 隔离和回退。</p>
+<p>提供了扩展方法，以实现将 Polly 策略用于配置的 <code>HttpClient</code> 实例。 Polly 扩展：</p>
+<ul>
+<li>支持将基于 Polly 的处理程序添加到客户端。</li>
+<li>安装了 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Http.Polly/">Microsoft.Extensions.Http.Polly</a> NuGet 包后可使用该扩展。 ASP.NET Core 共享框架中不包括该包。</li>
+</ul>
+<h3 id="handle-transient-faults">处理临时故障</h3>
+<p>大多数常见错误在暂时执行外部 HTTP 调用时发生。 包含了一种简便的扩展方法，该方法名为 <code>AddTransientHttpErrorPolicy</code>，允许定义策略来处理临时故障。 使用这种扩展方法配置的策略可以处理 <code>HttpRequestException</code>、HTTP 5xx 响应以及 HTTP 408 响应。</p>
+<p><code>AddTransientHttpErrorPolicy</code> 扩展可在 <code>Startup.ConfigureServices</code> 内使用。 该扩展可以提供 <code>PolicyBuilder</code> 对象的访问权限，该对象配置为处理表示可能的临时故障的错误：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码中定义了 <code>WaitAndRetryAsync</code> 策略。 请求失败后最多可以重试三次，每次尝试间隔 600 ms。</p>
+<h3 id="dynamically-select-policies">动态选择策略</h3>
+<p>存在其他扩展方法，可以用于添加基于 Polly 的处理程序。 这类扩展的其中一个是 <code>AddPolicyHandler</code>，它具备多个重载。 一个重载允许在定义要应用的策略时检查该请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，如果出站请求为 HTTP GET，则应用 10 秒超时。 其他所有 HTTP 方法应用 30 秒超时。</p>
+<h3 id="add-multiple-polly-handlers">添加多个 Polly 处理程序</h3>
+<p>通过嵌套 Polly 策略来增强功能是很常见的：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述示例中，添加两个处理程序。 第一个使用 <code>AddTransientHttpErrorPolicy</code> 扩展添加重试策略。 若请求失败，最多可重试三次。 第二个调用 <code>AddTransientHttpErrorPolicy</code> 添加断路器策略。 如果尝试连续失败了五次，则会阻止后续外部请求 30 秒。 断路器策略处于监控状态。 通过此客户端进行的所有调用都共享同样的线路状态。</p>
+<h3 id="add-policies-from-the-polly-registry">从 Polly 注册表添加策略</h3>
+<p>管理常用策略的一种方法是一次性定义它们并使用 <code>PolicyRegistry</code> 注册它们。 提供了一种扩展方法，可以使用注册表中的策略添加处理程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上面的代码中，两个策略在 <code>PolicyRegistry</code> 添加到 <code>ServiceCollection</code> 中时进行注册。 若要使用注册表中的策略，请使用 <code>AddPolicyHandlerFromRegistry</code> 方法，同时传递要应用的策略的名称。</p>
+<p>要进一步了解 <code>IHttpClientFactory</code> 和 Polly 集成，请参考 <a href="https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory">Polly Wiki</a>。</p>
+<h2 id="httpclient-and-lifetime-management">HttpClient 和生存期管理</h2>
+<p>每次对 <code>IHttpClientFactory</code> 调用 <code>CreateClient</code> 都会返回一个新 <code>HttpClient</code> 实例。 每个命名的客户端都具有一个 &lt;xref:System.Net.Http.HttpMessageHandler&gt;。 工厂管理 <code>HttpMessageHandler</code> 实例的生存期。</p>
+<p><code>IHttpClientFactory</code> 将工厂创建的 <code>HttpMessageHandler</code> 实例汇集到池中，以减少资源消耗。 新建 <code>HttpClient</code> 实例时，可能会重用池中的 <code>HttpMessageHandler</code> 实例（如果生存期尚未到期的话）。</p>
+<p>由于每个处理程序通常管理自己的基础 HTTP 连接，因此需要池化处理程序。 创建超出必要数量的处理程序可能会导致连接延迟。 部分处理程序还保持连接无期限地打开，这样可以防止处理程序对 DNS 更改作出反应。</p>
+<p>处理程序的默认生存期为两分钟。 可在每个命名客户端上重写默认值。 要重写该值，请在创建客户端时在返回的 <code>IHttpClientBuilder</code> 上调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.SetHandlerLifetime*&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>无需处置客户端。 处置既取消传出请求，又保证在调用 &lt;xref:System.IDisposable.Dispose*&gt; 后无法使用给定的 <code>HttpClient</code> 实例。 <code>IHttpClientFactory</code> 跟踪和处置 <code>HttpClient</code> 实例使用的资源。 <code>HttpClient</code> 实例通常可视为无需处置的 .NET 对象。</p>
+<p>保持各个 <code>HttpClient</code> 实例长时间处于活动状态是在 <code>IHttpClientFactory</code> 推出前使用的常见模式。 迁移到 <code>IHttpClientFactory</code> 后，就无需再使用此模式。</p>
+<h3 id="alternatives-to-ihttpclientfactory">IHttpClientFactory 的替代项</h3>
+<p>通过在启用了 DI 的应用中使用 <code>IHttpClientFactory</code>，可避免：</p>
+<ul>
+<li>通过共用 <code>HttpMessageHandler</code> 实例，解决资源耗尽问题。</li>
+<li>通过定期循环 <code>HttpMessageHandler</code> 实例，解决 DNS 过时问题。</li>
+</ul>
+<p>此外，还有其他方法使用生命周期长的 &lt;xref:System.Net.Http.SocketsHttpHandler&gt; 实例来解决上述问题。</p>
+<ul>
+<li>在应用启动时创建 <code>SocketsHttpHandler</code> 的实例，并在应用的整个生命周期中使用它。</li>
+<li>根据 DNS 刷新时间，将 &lt;xref:System.Net.Http.SocketsHttpHandler.PooledConnectionLifetime&gt; 配置为适当的值。</li>
+<li>根据需要，使用 <code>new HttpClient(handler, disposeHandler: false)</code> 创建 <code>HttpClient</code> 实例。</li>
+</ul>
+<p>上述方法使用 <code>IHttpClientFactory</code> 解决问题的类似方式解决资源管理问题。</p>
+<ul>
+<li><code>SocketsHttpHandler</code> 在 <code>HttpClient</code> 实例之间共享连接。 此共享可防止套接字耗尽。</li>
+<li><code>SocketsHttpHandler</code> 会根据 <code>PooledConnectionLifetime</code> 循环连接，避免出现 DNS 过时问题。</li>
+</ul>
+<h3 id="no-loccookies">Cookies</h3>
+<p>共用 <code>HttpMessageHandler</code> 实例将导致共享 <code>CookieContainer</code> 对象。 意外的 <code>CookieContainer</code> 对象共享通常会导致错误的代码。 对于需要 cookie 的应用，请考虑执行以下任一操作：</p>
+<ul>
+<li>禁用自动 cookie 处理</li>
+<li>避免 <code>IHttpClientFactory</code></li>
+</ul>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler*&gt; 以禁用自动 cookie 处理：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="logging">Logging</h2>
+<p>通过 <code>IHttpClientFactory</code> 创建的客户端记录所有请求的日志消息。 在日志记录配置中启用合适的信息级别可以查看默认日志消息。 仅在跟踪级别包含附加日志记录（例如请求标头的日志记录）。</p>
+<p>用于每个客户端的日志类别包含客户端名称。 例如，名为“MyNamedClient”的客户端使用 <code>System.Net.Http.HttpClient.MyNamedClient.LogicalHandler</code> 类别来记录消息。 后缀为 LogicalHandler 的消息在请求处理程序管道外部发生。 在请求时，在管道中的任何其他处理程序处理请求之前记录消息。 在响应时，在任何其他管道处理程序接收响应之后记录消息。</p>
+<p>日志记录还在请求处理程序管道内部发生。 在“MyNamedClient”示例中，这些消息是针对日志类别 <code>System.Net.Http.HttpClient.MyNamedClient.ClientHandler</code> 进行记录。 在请求时，在所有其他处理程序运行后，以及刚好在通过网络发出请求之前记录消息。 在响应时，此日志记录包含响应在通过处理程序管道被传递回去之前的状态。</p>
+<p>在管道内外启用日志记录，可以检查其他管道处理程序做出的更改。 例如，其中可能包含对请求标头的更改，或者对响应状态代码的更改。</p>
+<p>通过在日志类别中包含客户端名称，可以在必要时对特定的命名客户端筛选日志。</p>
+<h2 id="configure-the-httpmessagehandler">配置 HttpMessageHandler</h2>
+<p>控制客户端使用的内部 <code>HttpMessageHandler</code> 的配置是有必要的。</p>
+<p>在添加命名客户端或类型化客户端时，会返回 <code>IHttpClientBuilder</code>。 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler*&gt; 扩展方法可以用于定义委托。 委托用于创建和配置客户端使用的主要 <code>HttpMessageHandler</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="use-ihttpclientfactory-in-a-console-app">在控制台应用中使用 IHttpClientFactory</h2>
+<p>在控制台中，将以下包引用添加到项目中：</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/Microsoft.Extensions.Hosting">Microsoft.Extensions.Hosting</a></li>
+<li><a href="https://www.nuget.org/packages/Microsoft.Extensions.Http">Microsoft.Extensions.Http</a></li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>&lt;xref:System.Net.Http.IHttpClientFactory&gt; 已在<a class="xref" href="host/generic-host.html">泛型主机的</a>服务容器中注册。</li>
+<li><code>MyService</code> 从服务创建客户端工厂实例，用于创建 <code>HttpClient</code>。 <code>HttpClient</code> 用于检索网页。</li>
+<li><code>Main</code> 可创建作用域来执行服务的 <code>GetPage</code> 方法，并将网页内容的前 500 个字符写入控制台。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests">使用 HttpClientFactory 来实现复原 HTTP 请求</a></li>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly">通过 HttpClientFactory 和 Polly 策略实现使用指数退避算法的 HTTP 调用重试</a></li>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/implement-circuit-breaker-pattern">实现断路器模式</a></li>
+</ul>
+</div>
+<div range="= aspnetcore-2.1">
+<p>作者：<a href="https://github.com/glennc">Glenn Condron</a><a href="https://github.com/rynowak">Ryan Nowak</a> 和 <a href="https://github.com/stevejgordon">Steve Gordon</a></p>
+<p>可以注册 &lt;xref:System.Net.Http.IHttpClientFactory&gt; 并将其用于配置和创建应用中的 &lt;xref:System.Net.Http.HttpClient&gt; 实例。 这能带来以下好处：</p>
+<ul>
+<li>提供一个中心位置，用于命名和配置逻辑 <code>HttpClient</code> 实例。 例如，可注册和配置 github 客户端，使其访问 <a href="https://github.com/">GitHub</a>。 可以注册一个默认客户端用于其他用途。</li>
+<li>通过委托 <code>HttpClient</code> 中的处理程序整理出站中间件的概念，并提供适用于基于 Polly 的中间件的扩展来利用概念。</li>
+<li>管理基础 <code>HttpClientMessageHandler</code> 实例的池和生存期，避免在手动管理 <code>HttpClient</code> 生存期时出现常见的 DNS 问题。</li>
+<li>（通过 <code>ILogger</code>）添加可配置的记录体验，以处理工厂创建的客户端发送的所有请求。</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/http-requests/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="prerequisites">先决条件</h2>
+<p>面向.NET Framework 的项目要求安装 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Http/">Microsoft.Extensions.Http</a> NuGet 包。 面向 .NET Core 且引用 <a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App 元包</a>的项目已经包括 <code>Microsoft.Extensions.Http</code> 包。</p>
+<h2 id="consumption-patterns">消耗模式</h2>
+<p>在应用中可以通过以下多种方式使用 <code>IHttpClientFactory</code>：</p>
+<ul>
+<li><a href="#basic-usage">基本用法</a></li>
+<li><a href="#named-clients">命名客户端</a></li>
+<li><a href="#typed-clients">类型化客户端</a></li>
+<li><a href="#generated-clients">生成的客户端</a></li>
+</ul>
+<p>它们之间不存在严格的优先级。 最佳方法取决于应用的约束条件。</p>
+<h3 id="basic-usage">基本用法</h3>
+<p>在 <code>Startup.ConfigureServices</code> 方法中，通过在 <code>IServiceCollection</code> 上调用 <code>AddHttpClient</code> 扩展方法可以注册 <code>IHttpClientFactory</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>注册后，在可以使用<a class="xref" href="dependency-injection.html">依赖关系注入 (DI)</a> 注入服务的任何位置，代码都能接受 <code>IHttpClientFactory</code>。 <code>IHttpClientFactory</code> 可用于创建 <code>HttpClient</code> 实例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以这种方式使用 <code>IHttpClientFactory</code> 适合重构现有应用。 这不会影响 <code>HttpClient</code> 的使用方式。 在当前创建 <code>HttpClient</code> 实例的位置，使用对 &lt;xref:System.Net.Http.IHttpClientFactory.CreateClient*&gt; 的调用替换这些匹配项。</p>
+<h3 id="named-clients">命名客户端</h3>
+<p>如果应用需要有许多不同的 <code>HttpClient</code> 用法（每种用法的配置都不同），可以视情况使用命名客户端。 可以在 <code>HttpClient</code> 中注册时指定命名 <code>Startup.ConfigureServices</code> 的配置。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上面的代码调用 <code>AddHttpClient</code>，同时提供名称“github”。 此客户端应用了一些默认配置，也就是需要基址和两个标头来使用 GitHub API。</p>
+<p>每次调用 <code>CreateClient</code> 时，都会创建 <code>HttpClient</code> 的新实例，并调用配置操作。</p>
+<p>要使用命名客户端，可将字符串参数传递到 <code>CreateClient</code>。 指定要创建的客户端的名称：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，请求不需要指定主机名。 可以仅传递路径，因为采用了为客户端配置的基址。</p>
+<h3 id="typed-clients">类型化客户端</h3>
+<p>类型化客户端：</p>
+<ul>
+<li>提供与命名客户端一样的功能，不需要将字符串用作密钥。</li>
+<li>在使用客户端时提供 IntelliSense 和编译器帮助。</li>
+<li>提供单个位置来配置特定 <code>HttpClient</code> 并与其进行交互。 例如，单个类型化客户端可能用于单个后端终结点，并封装此终结点的所有处理逻辑。</li>
+<li>使用 DI 且可以被注入到应用中需要的位置。</li>
+</ul>
+<p>类型化客户端在构造函数中接受 <code>HttpClient</code> 参数：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，配置转移到了类型化客户端中。 <code>HttpClient</code> 对象公开为公共属性。 可以定义公开 <code>HttpClient</code> 功能的特定于 API 的方法。 <code>GetAspNetDocsIssues</code> 方法从 GitHub 存储库封装查询和分析最新待解决问题所需的代码。</p>
+<p>要注册类型化客户端，可在 <code>Startup.ConfigureServices</code> 中使用通用的 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient*&gt; 扩展方法，指定类型化客户端类：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 DI 将类型客户端注册为暂时客户端。 可以直接插入或使用类型化客户端：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>根据你的喜好，可以在 <code>Startup.ConfigureServices</code> 中注册时指定类型化客户端的配置，而不是在类型化客户端的构造函数中指定：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以将 <code>HttpClient</code> 完全封装在类型化客户端中。 不是将它公开为属性，而是可以提供公共方法，用于在内部调用 <code>HttpClient</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，<code>HttpClient</code> 存储未私有字段。 进行外部调用的所有访问都经由 <code>GetRepos</code> 方法。</p>
+<h3 id="generated-clients">生成的客户端</h3>
+<p><code>IHttpClientFactory</code> 可结合其他第三方库（例如 <a href="https://github.com/paulcbetts/refit">Refit</a>）使用。 Refit 是.NET 的 REST 库。 它将 REST API 转换为实时接口。 <code>RestService</code> 动态生成该接口的实现，使用 <code>HttpClient</code> 进行外部 HTTP 调用。</p>
+<p>定义了接口和答复来代表外部 API 及其响应：</p>
+<pre><code class="lang-csharp">public interface IHelloClient
+{
+    [Get(&quot;/helloworld&quot;)]
+    Task&lt;Reply&gt; GetMessageAsync();
+}
+
+public class Reply
+{
+    public string Message { get; set; }
+}
+</code></pre>
+<p>可以添加类型化客户端，使用 Refit 生成实现：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddHttpClient(&quot;hello&quot;, c =&gt;
+    {
+        c.BaseAddress = new Uri(&quot;http://localhost:5000&quot;);
+    })
+    .AddTypedClient(c =&gt; Refit.RestService.For&lt;IHelloClient&gt;(c));
+
+    services.AddMvc();
+}
+</code></pre>
+<p>可以在必要时使用定义的接口，以及由 DI 和 Refit 提供的实现：</p>
+<pre><code class="lang-csharp">[ApiController]
+public class ValuesController : ControllerBase
+{
+    private readonly IHelloClient _client;
+
+    public ValuesController(IHelloClient client)
+    {
+        _client = client;
+    }
+
+    [HttpGet(&quot;/&quot;)]
+    public async Task&lt;ActionResult&lt;Reply&gt;&gt; Index()
+    {
+        return await _client.GetMessageAsync();
+    }
+}
+</code></pre>
+<h2 id="outgoing-request-middleware">出站请求中间件</h2>
+<p><code>HttpClient</code> 已经具有委托处理程序的概念，这些委托处理程序可以链接在一起，处理出站 HTTP 请求。 <code>IHttpClientFactory</code> 可以轻松定义处理程序并应用于每个命名客户端。 它支持注册和链接多个处理程序，以生成出站请求中间件管道。 每个处理程序都可以在出站请求前后执行工作。 此模式类似于 ASP.NET Core 中的入站中间件管道。 此模式提供了一种用于管理围绕 HTTP 请求的横切关注点的机制，包括缓存、错误处理、序列化以及日志记录。</p>
+<p>要创建处理程序，请定义一个派生自 &lt;xref:System.Net.Http.DelegatingHandler&gt; 的类。 重写 <code>SendAsync</code> 方法，在将请求传递至管道中的下一个处理程序之前执行代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码定义了基本处理程序。 它检查请求中是否包含 <code>X-API-KEY</code> 头。 如果标头缺失，它可以避免 HTTP 调用，并返回合适的响应。</p>
+<p>在注册期间可将一个或多个标头添加到 <code>HttpClient</code> 的配置中。 此任务通过 &lt;xref:Microsoft.Extensions.DependencyInjection.IHttpClientBuilder&gt; 上的扩展方法完成。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中通过 DI 注册了 <code>ValidateHeaderHandler</code>。 处理程序必须在 DI 中注册为暂时性服务且从不设置作用域。 如果该处理程序注册为作用域服务，并且处理程序依赖的任何服务都是可释放的：</p>
+<ul>
+<li>处理程序的服务可以在处理程序超出作用域之前被释放。</li>
+<li>已释放的处理程序服务可导致处理程序失败。</li>
+</ul>
+<p>注册后，可以调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.AddHttpMessageHandler*&gt;，传入处理程序类型。</p>
+<p>可以按处理程序应该执行的顺序注册多个处理程序。 每个处理程序都会覆盖下一个处理程序，直到最终 <code>HttpClientHandler</code> 执行请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用以下方法之一将每个请求状态与消息处理程序共享：</p>
+<ul>
+<li>使用 <code>HttpRequestMessage.Properties</code> 将数据传递到处理程序。</li>
+<li>使用 <code>IHttpContextAccessor</code> 访问当前请求。</li>
+<li>创建自定义 <code>AsyncLocal</code> 存储对象以传递数据。</li>
+</ul>
+<h2 id="use-polly-based-handlers">使用基于 Polly 的处理程序</h2>
+<p><code>IHttpClientFactory</code> 与一个名为 <a href="https://github.com/App-vNext/Polly">Polly</a> 的热门第三方库集成。 Polly 是适用于 .NET 的全面恢复和临时故障处理库。 开发人员通过它可以表达策略，例如以流畅且线程安全的方式处理重试、断路器、超时、Bulkhead 隔离和回退。</p>
+<p>提供了扩展方法，以实现将 Polly 策略用于配置的 <code>HttpClient</code> 实例。 Polly 扩展：</p>
+<ul>
+<li>支持将基于 Polly 的处理程序添加到客户端。</li>
+<li>安装了 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Http.Polly/">Microsoft.Extensions.Http.Polly</a> NuGet 包后可使用该扩展。 ASP.NET Core 共享框架中不包括该包。</li>
+</ul>
+<h3 id="handle-transient-faults">处理临时故障</h3>
+<p>大多数常见错误在暂时执行外部 HTTP 调用时发生。 包含了一种简便的扩展方法，该方法名为 <code>AddTransientHttpErrorPolicy</code>，允许定义策略来处理临时故障。 使用这种扩展方法配置的策略可以处理 <code>HttpRequestException</code>、HTTP 5xx 响应以及 HTTP 408 响应。</p>
+<p><code>AddTransientHttpErrorPolicy</code> 扩展可在 <code>Startup.ConfigureServices</code> 内使用。 该扩展可以提供 <code>PolicyBuilder</code> 对象的访问权限，该对象配置为处理表示可能的临时故障的错误：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码中定义了 <code>WaitAndRetryAsync</code> 策略。 请求失败后最多可以重试三次，每次尝试间隔 600 ms。</p>
+<h3 id="dynamically-select-policies">动态选择策略</h3>
+<p>存在其他扩展方法，可以用于添加基于 Polly 的处理程序。 这类扩展的其中一个是 <code>AddPolicyHandler</code>，它具备多个重载。 一个重载允许在定义要应用的策略时检查该请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，如果出站请求为 HTTP GET，则应用 10 秒超时。 其他所有 HTTP 方法应用 30 秒超时。</p>
+<h3 id="add-multiple-polly-handlers">添加多个 Polly 处理程序</h3>
+<p>通过嵌套 Polly 策略来增强功能是很常见的：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述示例中，添加两个处理程序。 第一个使用 <code>AddTransientHttpErrorPolicy</code> 扩展添加重试策略。 若请求失败，最多可重试三次。 第二个调用 <code>AddTransientHttpErrorPolicy</code> 添加断路器策略。 如果尝试连续失败了五次，则会阻止后续外部请求 30 秒。 断路器策略处于监控状态。 通过此客户端进行的所有调用都共享同样的线路状态。</p>
+<h3 id="add-policies-from-the-polly-registry">从 Polly 注册表添加策略</h3>
+<p>管理常用策略的一种方法是一次性定义它们并使用 <code>PolicyRegistry</code> 注册它们。 提供了一种扩展方法，可以使用注册表中的策略添加处理程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上面的代码中，两个策略在 <code>PolicyRegistry</code> 添加到 <code>ServiceCollection</code> 中时进行注册。 若要使用注册表中的策略，请使用 <code>AddPolicyHandlerFromRegistry</code> 方法，同时传递要应用的策略的名称。</p>
+<p>要进一步了解 <code>IHttpClientFactory</code> 和 Polly 集成，请参考 <a href="https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory">Polly Wiki</a>。</p>
+<h2 id="httpclient-and-lifetime-management">HttpClient 和生存期管理</h2>
+<p>每次对 <code>IHttpClientFactory</code> 调用 <code>CreateClient</code> 都会返回一个新 <code>HttpClient</code> 实例。 每个命名的客户端都具有一个 &lt;xref:System.Net.Http.HttpMessageHandler&gt;。 工厂管理 <code>HttpMessageHandler</code> 实例的生存期。</p>
+<p><code>IHttpClientFactory</code> 将工厂创建的 <code>HttpMessageHandler</code> 实例汇集到池中，以减少资源消耗。 新建 <code>HttpClient</code> 实例时，可能会重用池中的 <code>HttpMessageHandler</code> 实例（如果生存期尚未到期的话）。</p>
+<p>由于每个处理程序通常管理自己的基础 HTTP 连接，因此需要池化处理程序。 创建超出必要数量的处理程序可能会导致连接延迟。 部分处理程序还保持连接无期限地打开，这样可以防止处理程序对 DNS 更改作出反应。</p>
+<p>处理程序的默认生存期为两分钟。 可在每个命名客户端上重写默认值。 要重写该值，请在创建客户端时在返回的 <code>IHttpClientBuilder</code> 上调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.SetHandlerLifetime*&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>无需处置客户端。 处置既取消传出请求，又保证在调用 &lt;xref:System.IDisposable.Dispose*&gt; 后无法使用给定的 <code>HttpClient</code> 实例。 <code>IHttpClientFactory</code> 跟踪和处置 <code>HttpClient</code> 实例使用的资源。 <code>HttpClient</code> 实例通常可视为无需处置的 .NET 对象。</p>
+<p>保持各个 <code>HttpClient</code> 实例长时间处于活动状态是在 <code>IHttpClientFactory</code> 推出前使用的常见模式。 迁移到 <code>IHttpClientFactory</code> 后，就无需再使用此模式。</p>
+<h3 id="alternatives-to-ihttpclientfactory">IHttpClientFactory 的替代项</h3>
+<p>通过在启用了 DI 的应用中使用 <code>IHttpClientFactory</code>，可避免：</p>
+<ul>
+<li>通过共用 <code>HttpMessageHandler</code> 实例，解决资源耗尽问题。</li>
+<li>通过定期循环 <code>HttpMessageHandler</code> 实例，解决 DNS 过时问题。</li>
+</ul>
+<p>此外，还有其他方法使用生命周期长的 &lt;xref:System.Net.Http.SocketsHttpHandler&gt; 实例来解决上述问题。</p>
+<ul>
+<li>在应用启动时创建 <code>SocketsHttpHandler</code> 的实例，并在应用的整个生命周期中使用它。</li>
+<li>根据 DNS 刷新时间，将 &lt;xref:System.Net.Http.SocketsHttpHandler.PooledConnectionLifetime&gt; 配置为适当的值。</li>
+<li>根据需要，使用 <code>new HttpClient(handler, disposeHandler: false)</code> 创建 <code>HttpClient</code> 实例。</li>
+</ul>
+<p>上述方法使用 <code>IHttpClientFactory</code> 解决问题的类似方式解决资源管理问题。</p>
+<ul>
+<li><code>SocketsHttpHandler</code> 在 <code>HttpClient</code> 实例之间共享连接。 此共享可防止套接字耗尽。</li>
+<li><code>SocketsHttpHandler</code> 会根据 <code>PooledConnectionLifetime</code> 循环连接，避免出现 DNS 过时问题。</li>
+</ul>
+<h3 id="no-loccookies">Cookies</h3>
+<p>共用 <code>HttpMessageHandler</code> 实例将导致共享 <code>CookieContainer</code> 对象。 意外的 <code>CookieContainer</code> 对象共享通常会导致错误的代码。 对于需要 cookie 的应用，请考虑执行以下任一操作：</p>
+<ul>
+<li>禁用自动 cookie 处理</li>
+<li>避免 <code>IHttpClientFactory</code></li>
+</ul>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler*&gt; 以禁用自动 cookie 处理：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="logging">Logging</h2>
+<p>通过 <code>IHttpClientFactory</code> 创建的客户端记录所有请求的日志消息。 在日志记录配置中启用合适的信息级别可以查看默认日志消息。 仅在跟踪级别包含附加日志记录（例如请求标头的日志记录）。</p>
+<p>用于每个客户端的日志类别包含客户端名称。 例如，名为“MyNamedClient”的客户端使用 <code>System.Net.Http.HttpClient.MyNamedClient.LogicalHandler</code> 类别来记录消息。 后缀为 LogicalHandler 的消息在请求处理程序管道外部发生。 在请求时，在管道中的任何其他处理程序处理请求之前记录消息。 在响应时，在任何其他管道处理程序接收响应之后记录消息。</p>
+<p>日志记录还在请求处理程序管道内部发生。 在“MyNamedClient”示例中，这些消息是针对日志类别 <code>System.Net.Http.HttpClient.MyNamedClient.ClientHandler</code> 进行记录。 在请求时，在所有其他处理程序运行后，以及刚好在通过网络发出请求之前记录消息。 在响应时，此日志记录包含响应在通过处理程序管道被传递回去之前的状态。</p>
+<p>在管道内外启用日志记录，可以检查其他管道处理程序做出的更改。 例如，其中可能包含对请求标头的更改，或者对响应状态代码的更改。</p>
+<p>通过在日志类别中包含客户端名称，可以在必要时对特定的命名客户端筛选日志。</p>
+<h2 id="configure-the-httpmessagehandler">配置 HttpMessageHandler</h2>
+<p>控制客户端使用的内部 <code>HttpMessageHandler</code> 的配置是有必要的。</p>
+<p>在添加命名客户端或类型化客户端时，会返回 <code>IHttpClientBuilder</code>。 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler*&gt; 扩展方法可以用于定义委托。 委托用于创建和配置客户端使用的主要 <code>HttpMessageHandler</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="use-ihttpclientfactory-in-a-console-app">在控制台应用中使用 IHttpClientFactory</h2>
+<p>在控制台中，将以下包引用添加到项目中：</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/Microsoft.Extensions.Hosting">Microsoft.Extensions.Hosting</a></li>
+<li><a href="https://www.nuget.org/packages/Microsoft.Extensions.Http">Microsoft.Extensions.Http</a></li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>&lt;xref:System.Net.Http.IHttpClientFactory&gt; 已在<a class="xref" href="host/generic-host.html">泛型主机的</a>服务容器中注册。</li>
+<li><code>MyService</code> 从服务创建客户端工厂实例，用于创建 <code>HttpClient</code>。 <code>HttpClient</code> 用于检索网页。</li>
+<li><code>Main</code> 可创建作用域来执行服务的 <code>GetPage</code> 方法，并将网页内容的前 500 个字符写入控制台。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="header-propagation-middleware">标头传播中间件</h2>
+<p>标头传播是一个社区支持的中间件，可将 HTTP 标头从传入请求传播到传出 HTTP 客户端请求。 使用标头传播：</p>
+<ul>
+<li><p>引用 <a href="https://www.nuget.org/packages/HeaderPropagation">HeaderPropagation</a> 包的社区支持的端口。 ASP.NET Core 3.1 及更高版本支持 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.HeaderPropagation">Microsoft.AspNetCore.HeaderPropagation</a>。</p>
+</li>
+<li><p>在 <code>Startup</code> 中配置中间件和 <code>HttpClient</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>客户端在出站请求中包含配置的标头：</p>
+<pre><code class="lang-csharp">var client = clientFactory.CreateClient(&quot;MyForwardingClient&quot;);
+var response = client.GetAsync(...);
+</code></pre>
+</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests">使用 HttpClientFactory 来实现复原 HTTP 请求</a></li>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/implement-http-call-retries-exponential-backoff-polly">通过 HttpClientFactory 和 Polly 策略实现使用指数退避算法的 HTTP 调用重试</a></li>
+<li><a href="/dotnet/standard/microservices-architecture/implement-resilient-applications/implement-circuit-breaker-pattern">实现断路器模式</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

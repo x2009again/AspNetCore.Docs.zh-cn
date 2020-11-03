@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#25945;&#31243;&#65306;&#35835;&#21462;&#30456;&#20851;&#25968;&#25454; - ASP.NET MVC &#21644; EF Core </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#25945;&#31243;&#65306;&#35835;&#21462;&#30456;&#20851;&#25968;&#25454; - ASP.NET MVC &#21644; EF Core ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="data/ef-mvc/read-related-data">
+<h1 id="tutorial-read-related-data---aspnet-mvc-with-ef-core">教程：读取相关数据 - ASP.NET MVC 和 EF Core</h1>
+
+<p>前面教程创建了学校数据模型。 本教程将读取并显示相关数据 - 即 Entity Framework 加载到导航属性中的数据。</p>
+<p>下图是将会用到的页面。</p>
+<p><img src="read-related-data/_static/courses-index.png" alt="“课程索引”页"></p>
+<p><img src="read-related-data/_static/instructors-index.png" alt="“讲师索引”页"></p>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>了解如何加载相关数据</li>
+<li>创建“课程”页</li>
+<li>创建“讲师”页</li>
+<li>了解显式加载</li>
+</ul>
+</div>
+<h2 id="prerequisites">先决条件</h2>
+<ul>
+<li><a href="complex-data-model.html">创建复杂数据模型</a></li>
+</ul>
+<h2 id="learn-how-to-load-related-data">了解如何加载相关数据</h2>
+<p>对象关系映射 (ORM) 软件（如 Entity Framework）可通过多种方式将相关数据加载到实体的导航属性中：</p>
+<ul>
+<li><p>预先加载。 读取该实体时，会同时检索相关数据。 此时通常会出现单一联接查询，检索所有必需数据。 可使用 <code>Include</code> 和 <code>ThenInclude</code> 方法指定 Entity Framework Core 中的预先加载。</p>
+<p><img src="read-related-data/_static/eager-loading.png" alt="预先加载示例"></p>
+<p>可在单独查询中检索一些数据，EF 会“修正”导航属性。  也就是说，EF 会自动添加单独检索的实体，将其添加到之前检索的实体的导航属性中所属的位置。 对于检索相关数据的查询，可使用 <code>Load</code> 方法，而不采用返回列表或对象的方法，如 <code>ToList</code> 或 <code>Single</code>。</p>
+<p><img src="read-related-data/_static/separate-queries.png" alt="单独查询示例"></p>
+</li>
+<li><p>显式加载。 首次读取实体时，不检索相关数据。 如有需要，可编写检索相关数据的代码。 就像使用单独查询进行预先加载一样，显式加载时会向数据库发送多个查询。 二者的区别在于，代码通过显式加载指定要加载的导航属性。 在 Entity Framework Core 1.1 中，可使用 <code>Load</code> 方法执行显式加载。 例如：</p>
+<p><img src="read-related-data/_static/explicit-loading.png" alt="显式加载示例"></p>
+</li>
+<li><p>延迟加载。 首次读取实体时，不检索相关数据。 然而，首次尝试访问导航属性时，会自动检索导航属性所需的数据。 每次首次尝试从导航属性获取数据时，都向数据库发送查询。 Entity Framework Core 1.0 不支持延迟加载。</p>
+</li>
+</ul>
+<h3 id="performance-considerations">性能注意事项</h3>
+<p>如果知道自己需要每个检索的实体的相关数据，选择预先加载可获得最佳性能，因为相比每个检索的实体的单独查询，发送到数据库的单个查询更加有效。 例如，假设每个系有十个相关课程。 预先加载所有相关数据时，只会进行单一（联接）查询，往返数据库一次。 单独查询每个系的课程时，会往返数据库十一次。 延迟较高时，额外往返数据库对性能尤为不利。</p>
+<p>另一方面，在某些情况下，单独查询会更加高效。 在一个查询中预先加载所有相关数据时，可能会生成一个非常复杂的联接，SQL Server 无法有效处理该联接。 或者，如果你正在处理一组实体且只需访问其子集的导航属性，那么采用单独查询可获得更佳性能，因为预先加载所有数据后，会检索不需要的数据。 如果看重性能，那么最好测试两种方式的性能，以便做出最佳选择。</p>
+<h2 id="create-a-courses-page">创建“课程”页</h2>
+<p>Course 实体包括导航属性，其中包含分配有课程的系的 Department 实体。 若要在课程列表中显示接受分配的系的名称，需从位于 <code>Course.Department</code> 导航属性中的 Department 实体获取 Name 属性。</p>
+<p>使用与带视图的 MVC 控制器相同的选项，及之前用于学生控制器的 Entity Framework 基架为 Course 实体类型创建名为 CoursesController 的控制器，如下图所示：</p>
+<p><img src="read-related-data/_static/add-courses-controller.png" alt="添加课程控制器"></p>
+<p>打开 CoursesController.cs 并检查 <code>Index</code> 方法。 自动基架使用 <code>Include</code> 方法为 <code>Department</code> 导航属性指定了预先加载。</p>
+<p>将 <code>Index</code> 方法替换为以下代码，该代码为返回 Course 实体（是 <code>courses</code> 而不是 <code>schoolContext</code>）的 <code>IQueryable</code> 赋予了更合适的名称：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 Views/Courses/Index.cshtml 中，将模板代码替换为以下代码。 突出显示所作更改：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>已对基架代码进行了如下更改：</p>
+<ul>
+<li><p>将标题从“索引”更改为“课程”。</p>
+</li>
+<li><p>添加了显示 <code>CourseID</code> 属性值的“数字”列。 默认情况下，不针对主键进行架构，因为对最终用户而言，它们通常没有意义。 但在这种情况下主键是有意义的，而你需要将其呈现出来。</p>
+</li>
+<li><p>更改“院系”列，显示院系名称。 该代码显示已加载到 <code>Department</code> 导航属性中的 Department 实体的 <code>Name</code> 属性：</p>
+<pre><code class="lang-html">@Html.DisplayFor(modelItem =&gt; item.Department.Name)
+</code></pre>
+</li>
+</ul>
+<p>运行应用并选择“课程”选项卡，查看包含系名称的列表。</p>
+<p><img src="read-related-data/_static/courses-index.png" alt="“课程索引”页"></p>
+<h2 id="create-an-instructors-page">创建“讲师”页</h2>
+<p>本节将为 Instructor 实体创建一个控制器和视图，从而显示“讲师”页：</p>
+<p><img src="read-related-data/_static/instructors-index.png" alt="“讲师索引”页"></p>
+<p>该页面通过以下方式读取和显示相关数据：</p>
+<ul>
+<li><p>讲师列表显示 OfficeAssignment 实体的相关数据。 Instructor 与 OfficeAssignment 实体间存在一对零或一的关系。 将预先加载 OfficeAssignment 实体。 如前所述，需要主表所有检索行的相关数据时，预先加载通常更有效。 在这种情况下，你希望显示所有显示的讲师的办公室分配情况。</p>
+</li>
+<li><p>用户选择一名讲师时，显示相关 Course 实体。 Instructor 和 Course 实体是多对多关系。 预先加载 Course 实体及其相关 Department 实体。 在这种情况下，单独查询可能更有效，因为仅需显示所选讲师的课程。 但此示例显示的是如何在本身就位于导航属性内的实体中预先加载导航属性。</p>
+</li>
+<li><p>用户选择一门课程时，会显示 Enrollment 实体集的相关数据。 Course 和 Enrollment 实体是一对多关系。 单独查询 Enrollment 实体及其相关 Student 实体。</p>
+</li>
+</ul>
+<h3 id="create-a-view-model-for-the-instructor-index-view">创建“讲师索引”视图的视图模型</h3>
+<p>“讲师”页显示来自三个不同表格的数据。 因此将创建包含三个属性的视图模型，每个属性都包含一个表的数据。</p>
+<p>在 SchoolViewModels 文件夹中，创建 InstructorIndexData.cs，并使用以下代码替换现有代码 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="create-the-instructor-controller-and-views">创建讲师控制器和视图</h3>
+<p>使用 EF 读/写操作创建讲师控制器，如下图所示：</p>
+<p><img src="read-related-data/_static/add-instructors-controller.png" alt="添加讲师控制器"></p>
+<p>打开 InstructorsController.cs 并为 ViewModels 名称空间添加 using 语句：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用以下代码替换 Index 方法，预先加载相关数据并将其放入视图模型。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该方法接受可选路由数据 (<code>id</code>) 和查询字符串参数 (<code>courseID</code>)，二者提供所选讲师和课程的 ID 值。 参数由页面上的“选择”超链接提供。</p>
+<p>代码先创建一个视图模型实例，并在其中放入讲师列表。 代码指定预先加载 <code>Instructor.OfficeAssignment</code> 和 <code>Instructor.CourseAssignments</code> 导航属性。 在 <code>CourseAssignments</code> 属性中，加载 <code>Course</code> 属性，在其中加载 <code>Enrollments</code> 和 <code>Department</code> 属性，同时在每个 <code>Enrollment</code> 实体中加载 <code>Student</code> 属性。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>由于视图始终需要 OfficeAssignment 实体，因此更有效的做法是在同一查询中获取。 在网页中选择讲师后，需要 Course 实体，因此只有在页面频繁显示选中课程时，单个查询才比多个查询更有效。</p>
+<p>代码重复 <code>CourseAssignments</code> 和 <code>Course</code>，因为你需要 <code>Course</code> 中的两个属性。 <code>ThenInclude</code> 调用的第一个字符串获取 <code>CourseAssignment.Course</code>、<code>Course.Enrollments</code> 和 <code>Enrollment.Student</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此时，代码中的另一个 <code>ThenInclude</code> 将成为 <code>Student</code> 的导航属性，你不需要该属性。 但调用 <code>Include</code> 是从 <code>Instructor</code> 属性重新开始，因此必须再次遍历该链，这次指定 <code>Course.Department</code> 而不是 <code>Course.Enrollments</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>选择讲师时，将执行以下代码。 从视图模型中的讲师列表检索所选讲师。 然后，该视图模型的 <code>Courses</code> 属性加载讲师 <code>CourseAssignments</code> 导航属性中的 Course 实体。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Where</code> 方法返回一个集合，但在这种情况下，向该方法传入条件后，只返回一个 Instructor 实体。 <code>Single</code> 方法将集合转换为单个 Instructor 实体，让你可以访问该实体的 <code>CourseAssignments</code> 属性。 <code>CourseAssignments</code> 属性包含多个 <code>CourseAssignment</code> 实体，而你只需要相关的 <code>Course</code> 实体。</p>
+<p>如果知道集合只有一个项，则可在集合上使用 <code>Single</code> 方法。 如果集合为空或包含多个项，Single 方法将引发异常。 还可使用 <code>SingleOrDefault</code>，该方式在集合为空时返回默认值（本例中为 null）。 但在这种情况下，仍会引发异常（尝试在 null 引用上查找 <code>Courses</code> 属性时），并且异常消息不会清楚指出异常原因。 调用 <code>Single</code> 方法时，还可传入 Where 条件，而不是分别调用 <code>Where</code> 方法：</p>
+<pre><code class="lang-csharp">.Single(i =&gt; i.ID == id.Value)
+</code></pre>
+<p>而不是：</p>
+<pre><code class="lang-csharp">.Where(i =&gt; i.ID == id.Value).Single()
+</code></pre>
+<p>接着，如果选择了课程，则从视图模型中的课程列表中检索所选课程。 然后，视图模型的 <code>Enrollments</code> 属性加载该课程 <code>Enrollments</code> 导航属性中的 Enrollment 实体。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="modify-the-instructor-index-view">修改讲师索引视图</h3>
+<p>在 Views/Instructors/Index.cshtml 中，将模板代码替换为以下代码。 突出显示所作更改。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>已对现有代码进行了如下更改：</p>
+<ul>
+<li><p>将模型类更改为了 <code>InstructorIndexData</code>。</p>
+</li>
+<li><p>将页标题从“索引”更改为了“讲师” 。</p>
+</li>
+<li><p>添加了仅在 <code>item.OfficeAssignment</code> 不为 null 时才显示 <code>item.OfficeAssignment.Location</code> 的“办公室”列。 （由于这是一对零或一的关系，因此可能没有相关的 OfficeAssignment 实体。）</p>
+<pre><code class="lang-html">@if (item.OfficeAssignment != null)
+{
+    @item.OfficeAssignment.Location
+}
+</code></pre>
+</li>
+<li><p>添加了显示每位讲师所授课程的“课程”列。 有关更多信息，请参阅 Razor 语法文章的<a class="xref" href="../../mvc/views/razor.html#explicit-line-transition">显式行转换</a>部分。</p>
+</li>
+<li><p>添加了向所选讲师的 <code>tr</code> 元素中动态添加 <code>class=&quot;success&quot;</code> 的代码。 此时会使用 Bootstrap 类为所选行设置背景色。</p>
+<pre><code class="lang-html">string selectedRow = &quot;&quot;;
+if (item.ID == (int?)ViewData[&quot;InstructorID&quot;])
+{
+    selectedRow = &quot;success&quot;;
+}
+&lt;tr class=&quot;@selectedRow&quot;&gt;
+</code></pre>
+</li>
+<li><p>紧贴每行其他链接的前端添加了标有 Select 的新超链接，从而使所选讲师 ID 发送到 <code>Index</code> 方法。</p>
+<pre><code class="lang-html">&lt;a asp-action=&quot;Index&quot; asp-route-id=&quot;@item.ID&quot;&gt;Select&lt;/a&gt; |
+</code></pre>
+</li>
+</ul>
+<p>运行应用并选择“讲师”选项卡。没有相关 OfficeAssignment 实体时，该页面显示相关 OfficeAssignment 实体的 Location 属性和空表格单元格。</p>
+<p><img src="read-related-data/_static/instructors-index-no-selection.png" alt="未选择“讲师索引”页中的任何项"></p>
+<p>在 Views/Instructors/Index.cshtml 文件中，关闭表格元素（在文件末尾）后，添加以下代码。 选择讲师时，此代码显示与讲师相关的课程列表。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此代码读取视图模型的 <code>Courses</code> 属性以显示课程列表。 它还提供 Select 超链接，该链接可将所选课程的 ID 发送到 <code>Index</code> 操作方法。</p>
+<p>刷新页面并选择讲师。 此时会出现一个网格，其中显示有分配给所选讲师的课程，且还显示有每个课程的分配系的名称。</p>
+<p><img src="read-related-data/_static/instructors-index-instructor-selected.png" alt="已选择“讲师索引”页中的讲师"></p>
+<p>在刚刚添加的代码块后，添加以下代码。 选择课程后，代码将显示参与课程的学生列表。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此代码读取视图模型的 Enrollment 属性，从而显示参与课程的学生列表。</p>
+<p>再次刷新该页并选择讲师。 然后选择一门课程，查看参与的学生列表及其成绩。</p>
+<p><img src="read-related-data/_static/instructors-index.png" alt="已选择“讲师索引”页中的讲师和课程"></p>
+<h2 id="about-explicit-loading">关于显式加载</h2>
+<p>在 InstructorsController.cs 中检索讲师列表时，指定了预先加载 <code>CourseAssignments</code> 导航属性。</p>
+<p>假设你希望用户在选中讲师和课程时尽量少查看注册情况。 此时建议只在有请求时加载注册数据。 若要查看如何执行显式加载的示例，请使用以下代码替换 <code>Index</code> 方法，这将删除预先加载 Enrollment 并显式加载该属性。 代码所作更改为突出显示状态。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>新代码将从检索 Instructor 实体的代码中删除注册数据的 ThenInclude 方法调用。 它还会删除 <code>AsNoTracking</code>。  如果选择了讲师和课程，突出显示的代码会检索所选课程的 Enrollment 实体，及每个 Enrollment 的 Student 实体。</p>
+<p>运行应用，立即转到“讲师”索引页，尽管已经更改了数据的检索方式，但该页上显示的内容没有任何不同。</p>
+<h2 id="get-the-code">获取代码</h2>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/data/ef-mvc/intro/samples/cu-final">下载或查看已完成的应用程序。</a></p>
+<h2 id="next-steps">后续步骤</h2>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>已了解如何加载相关数据</li>
+<li>已创建“课程”页</li>
+<li>已创建“讲师”页</li>
+<li>已了解显式加载</li>
+</ul>
+</div>
+<p>请继续阅读下一篇教程，了解如何更新相关数据。</p>
+<div class="nextstepaction">
+<p><a href="update-related-data.html">更新相关数据</a></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

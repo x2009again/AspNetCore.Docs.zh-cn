@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#31532; 7 &#37096;&#20998;&#65292;&#23558;&#26032;&#23383;&#27573;&#28155;&#21152;&#21040; ASP.NET Core &#20013;&#30340; Razor &#39029;&#38754; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#31532; 7 &#37096;&#20998;&#65292;&#23558;&#26032;&#23383;&#27573;&#28155;&#21152;&#21040; ASP.NET Core &#20013;&#30340; Razor &#39029;&#38754; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/razor-pages/new-field">
+<h1 id="part-7-add-a-new-field-to-a-no-locrazor-page-in-aspnet-core">第 7 部分，将新字段添加到 ASP.NET Core 中的 Razor 页面</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<div range="&gt;= aspnetcore-3.0">
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie30">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/razor-pages/razor-pages-start">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+</div>
+
+<p>在此部分中，<a href="/ef/core/get-started/aspnetcore/new-db">Entity Framework</a> Code First 迁移用于：</p>
+<ul>
+<li>将新字段添加到模型。</li>
+<li>将新字段架构更改迁移到数据库。</li>
+</ul>
+<p>使用 EF Code First 自动创建数据库时，Code First 将：</p>
+<ul>
+<li>向数据库添加 <code>__EFMigrationsHistory</code> 表格，以跟踪数据库的架构是否与从生成它的模型类同步。</li>
+<li>如果该模型类未与数据库同步，EF 将引发异常。</li>
+</ul>
+<p>通过自动验证同步的架构/模型可以更容易地发现不一致的数据库/代码问题。</p>
+<h2 id="adding-a-rating-property-to-the-movie-model">向电影模型添加分级属性</h2>
+<p>打开 Models/Movie.cs 文件，并添加 <code>Rating</code> 属性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>构建应用程序。</p>
+<p>编辑 Pages/Movies/Index.cshtml，并添加 <code>Rating</code> 字段：</p>
+<p><a name="addrat"></a></p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>更新以下页面：</p>
+<ul>
+<li>将 <code>Rating</code> 字段添加到“删除”和“详细信息”页面。</li>
+<li>使用 <code>Rating</code> 字段更新 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie30/Pages/Movies/Create.cshtml">Create.cshtml</a>。</li>
+<li>将 <code>Rating</code> 字段添加到“编辑”页面。</li>
+</ul>
+<p>在 DB 更新为包括新字段之前，应用将不会正常工作。 在不更新数据库的情况下运行应用会引发 <code>SqlException</code>：</p>
+<p><code>SqlException: Invalid column name 'Rating'.</code></p>
+<p><code>SqlException</code> 异常是由于更新的 Movie 模型类与数据库的 Movie 表架构不同导致的。 （数据库表中没有 <code>Rating</code> 列。）</p>
+<p>可通过几种方法解决此错误：</p>
+<ol>
+<li><p>让 Entity Framework 自动丢弃并使用新的模型类架构重新创建数据库。 此方法在开发周期早期很方便；通过它可以一起快速改进模型和数据库架构。 此方法的缺点是会导致数据库中的现有数据丢失。 请勿对生产数据库使用此方法！ 当架构更改时丢弃数据库并使用初始值设定项以使用测试数据自动设定数据库种子，这通常是开发应用的有效方式。</p>
+</li>
+<li><p>对现有数据库架构进行显式修改，使它与模型类相匹配。 此方法的优点是可以保留数据。 可以手动或通过创建数据库更改脚本进行此更改。</p>
+</li>
+<li><p>使用 Code First 迁移更新数据库架构。</p>
+</li>
+</ol>
+<p>对于本教程，请使用 Code First 迁移。</p>
+<p>更新 <code>SeedData</code> 类，使它提供新列的值。 示例更改如下所示，但可能需要对每个 <code>new Movie</code> 块做出此更改。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie30/Models/SeedDataRating.cs">已完成的 SeedData.cs 文件</a>。</p>
+<p>生成解决方案。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p><a name="pmc"></a></p>
+<h3 id="add-a-migration-for-the-rating-field">添加用于评级字段的迁移</h3>
+<p>从“工具”菜单中，选择“NuGet 包管理器”&gt;“包管理器控制台”。
+在 PMC 中，输入以下命令：</p>
+<pre><code class="lang-powershell">Add-Migration Rating
+Update-Database
+</code></pre>
+<p><code>Add-Migration</code> 命令会通知框架执行以下操作：</p>
+<ul>
+<li>将 <code>Movie</code> 模型与 <code>Movie</code> DB 架构进行比较。</li>
+<li>创建代码以将 DB 架构迁移到新模型。</li>
+</ul>
+<p>名称“Rating”是任意的，用于对迁移文件进行命名。 为迁移文件使用有意义的名称是有帮助的。</p>
+<p><code>Update-Database</code> 命令指示框架将架构更改应用到数据库并保留现有数据。</p>
+<p><a name="ssox"></a></p>
+<p>如果删除 DB 中的所有记录，种子初始值设定项会设定 DB 种子，并将包括 <code>Rating</code> 字段。 可以使用浏览器中的删除链接，也可以从 <a class="xref" href="sql.html#ssox">Sql Server 对象资源管理器</a> (SSOX) 执行此操作。</p>
+<p>另一个方案是删除数据库，并使用迁移来重新创建该数据库。 删除 SSOX 中的数据库：</p>
+<ul>
+<li><p>在 SSOX 中选择数据库。</p>
+</li>
+<li><p>右键单击数据库，并选择“删除”。</p>
+</li>
+<li><p>检查“关闭现有连接”。</p>
+</li>
+<li><p>选择“确定”。</p>
+</li>
+<li><p>在 <a class="xref" href="new-field.html#pmc">PMC</a> 中更新数据库：</p>
+<pre><code class="lang-powershell">Update-Database
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<h3 id="drop-and-re-create-the-database">删除并重新创建数据库</h3>
+<div class="NOTE">
+<h5>Note</h5>
+<p>在本教程中，使用 Entity Framework Core 迁移功能（若可行）。 迁移会更新数据库架构，使其与数据模型中的更改相匹配。 但是，迁移仅能执行 EF Core 提供程序所支持的更改类型，且 SQLite 提供程序的功能将受限。 例如，支持添加列，但不支持删除或更改列。 如果已创建迁移以删除或更改列，则 <code>ef migrations add</code> 命令将成功，但 <code>ef database update</code> 命令会失败。 由于上述限制，本教程不对 SQLite 架构更改使用迁移。 转而在架构更改时，放弃并重新创建数据库。</p>
+<p>要绕开 SQLite 限制，可手动写入迁移代码，在表内容更改时重新生成表。 表重新生成涉及：</p>
+<ul>
+<li>创建新表。</li>
+<li>将旧表中的数据复制到新表中。</li>
+<li>放弃旧表。</li>
+<li>为新表重命名。</li>
+</ul>
+<p>有关更多信息，请参见以下资源：</p>
+<ul>
+<li><a href="/ef/core/providers/sqlite/limitations">SQLite EF Core 数据库提供程序限制</a></li>
+<li><a href="/ef/core/managing-schemas/migrations/#customize-migration-code">自定义迁移代码</a></li>
+<li><a href="/ef/core/modeling/data-seeding">数据种子设定</a></li>
+</ul>
+</div>
+<ul>
+<li><a href="https://sqlite.org/lang_altertable.html">SQLite ALTER TABLE 语句</a></li>
+</ul>
+
+<p>删除迁移文件夹。  使用以下命令重新创建数据库。</p>
+<pre><code class="lang-dotnetcli">dotnet ef database drop
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+</code></pre>
+</section>
+</div>
+
+<p>运行应用，并验证是否可以创建/编辑/显示具有 <code>Rating</code> 字段的电影。 如果数据库未设定种子，则在 <code>SeedData.Initialize</code> 方法中设置断点。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://youtu.be/3i7uMxiGGR8">本教程的 YouTube 版本</a></li>
+</ul>
+<div class="step-by-step">
+<p><a class="xref" href="search.html">上一篇：添加搜索</a>
+<a class="xref" href="validation.html">下一篇：添加验证</a></p>
+</div>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<div range="&gt;= aspnetcore-3.0">
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie30">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/razor-pages/razor-pages-start">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+</div>
+
+<p>在此部分中，<a href="/ef/core/get-started/aspnetcore/new-db">Entity Framework</a> Code First 迁移用于：</p>
+<ul>
+<li>将新字段添加到模型。</li>
+<li>将新字段架构更改迁移到数据库。</li>
+</ul>
+<p>使用 EF Code First 自动创建数据库时，Code First 将：</p>
+<ul>
+<li>向数据库添加表格，以跟踪数据库的架构是否与从生成它的模型类同步。</li>
+<li>如果该模型类未与数据库同步，EF 将引发异常。</li>
+</ul>
+<p>通过自动验证同步的架构/模型可以更容易地发现不一致的数据库/代码问题。</p>
+<h2 id="adding-a-rating-property-to-the-movie-model">向电影模型添加分级属性</h2>
+<p>打开 Models/Movie.cs 文件，并添加 <code>Rating</code> 属性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>构建应用程序。</p>
+<p>编辑 Pages/Movies/Index.cshtml，并添加 <code>Rating</code> 字段：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>更新以下页面：</p>
+<ul>
+<li>将 <code>Rating</code> 字段添加到“删除”和“详细信息”页面。</li>
+<li>使用 <code>Rating</code> 字段更新 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie22/Pages/Movies/Create.cshtml">Create.cshtml</a>。</li>
+<li>将 <code>Rating</code> 字段添加到“编辑”页面。</li>
+</ul>
+<p>在 DB 更新为包括新字段之前，应用将不会正常工作。 如果立即运行，应用会引发 <code>SqlException</code>：</p>
+<p><code>SqlException: Invalid column name 'Rating'.</code></p>
+<p>此错误是由于更新的 Movie 模型类与数据库的 Movie 表架构不同导致的。 （数据库表中没有 <code>Rating</code> 列。）</p>
+<p>可通过几种方法解决此错误：</p>
+<ol>
+<li><p>让 Entity Framework 自动丢弃并使用新的模型类架构重新创建数据库。 此方法在开发周期早期很方便；通过它可以一起快速改进模型和数据库架构。 此方法的缺点是会导致数据库中的现有数据丢失。 请勿对生产数据库使用此方法！ 当架构更改时丢弃数据库并使用初始值设定项以使用测试数据自动设定数据库种子，这通常是开发应用的有效方式。</p>
+</li>
+<li><p>对现有数据库架构进行显式修改，使它与模型类相匹配。 此方法的优点是可以保留数据。 可以手动或通过创建数据库更改脚本进行此更改。</p>
+</li>
+<li><p>使用 Code First 迁移更新数据库架构。</p>
+</li>
+</ol>
+<p>对于本教程，请使用 Code First 迁移。</p>
+<p>更新 <code>SeedData</code> 类，使它提供新列的值。 示例更改如下所示，但可能需要对每个 <code>new Movie</code> 块做出此更改。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/tutorials/razor-pages/razor-pages-start/sample/RazorPagesMovie22/Models/SeedDataRating.cs">已完成的 SeedData.cs 文件</a>。</p>
+<p>生成解决方案。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p><a name="pmc"></a></p>
+<h3 id="add-a-migration-for-the-rating-field">添加用于评级字段的迁移</h3>
+<p>从“工具”菜单中，选择“NuGet 包管理器”&gt;“包管理器控制台”。
+在 PMC 中，输入以下命令：</p>
+<pre><code class="lang-powershell">Add-Migration Rating
+Update-Database
+</code></pre>
+<p><code>Add-Migration</code> 命令会通知框架执行以下操作：</p>
+<ul>
+<li>将 <code>Movie</code> 模型与 <code>Movie</code> DB 架构进行比较。</li>
+<li>创建代码以将 DB 架构迁移到新模型。</li>
+</ul>
+<p>名称“Rating”是任意的，用于对迁移文件进行命名。 为迁移文件使用有意义的名称是有帮助的。</p>
+<p><code>Update-Database</code> 命令指示框架将架构更改应用到数据库。</p>
+<p><a name="ssox"></a></p>
+<p>如果删除 DB 中的所有记录，种子初始值设定项会设定 DB 种子，并将包括 <code>Rating</code> 字段。 可以使用浏览器中的删除链接，也可以从 <a class="xref" href="sql.html#ssox">Sql Server 对象资源管理器</a> (SSOX) 执行此操作。</p>
+<p>另一个方案是删除数据库，并使用迁移来重新创建该数据库。 删除 SSOX 中的数据库：</p>
+<ul>
+<li><p>在 SSOX 中选择数据库。</p>
+</li>
+<li><p>右键单击数据库，并选择“删除”。</p>
+</li>
+<li><p>检查“关闭现有连接”。</p>
+</li>
+<li><p>选择“确定”。</p>
+</li>
+<li><p>在 <a class="xref" href="new-field.html#pmc">PMC</a> 中更新数据库：</p>
+<pre><code class="lang-powershell">Update-Database
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+<h3 id="drop-and-re-create-the-database">删除并重新创建数据库</h3>
+<div class="NOTE">
+<h5>Note</h5>
+<p>在本教程中，使用 Entity Framework Core 迁移功能（若可行）。 迁移会更新数据库架构，使其与数据模型中的更改相匹配。 但是，迁移仅能执行 EF Core 提供程序所支持的更改类型，且 SQLite 提供程序的功能将受限。 例如，支持添加列，但不支持删除或更改列。 如果已创建迁移以删除或更改列，则 <code>ef migrations add</code> 命令将成功，但 <code>ef database update</code> 命令会失败。 由于上述限制，本教程不对 SQLite 架构更改使用迁移。 转而在架构更改时，放弃并重新创建数据库。</p>
+<p>要绕开 SQLite 限制，可手动写入迁移代码，在表内容更改时重新生成表。 表重新生成涉及：</p>
+<ul>
+<li>创建新表。</li>
+<li>将旧表中的数据复制到新表中。</li>
+<li>放弃旧表。</li>
+<li>为新表重命名。</li>
+</ul>
+<p>有关更多信息，请参见以下资源：</p>
+<ul>
+<li><a href="/ef/core/providers/sqlite/limitations">SQLite EF Core 数据库提供程序限制</a></li>
+<li><a href="/ef/core/managing-schemas/migrations/#customize-migration-code">自定义迁移代码</a></li>
+<li><a href="/ef/core/modeling/data-seeding">数据种子设定</a></li>
+</ul>
+</div>
+<ul>
+<li><a href="https://sqlite.org/lang_altertable.html">SQLite ALTER TABLE 语句</a></li>
+</ul>
+
+<p>删除数据库并通过迁移重新创建数据库。 若要删除该数据库，请删除数据库文件 (MvcMovie.db)。 然后运行 <code>ef database update</code> 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet ef database update
+</code></pre>
+</section>
+</div>
+
+<p>运行应用，并验证是否可以创建/编辑/显示具有 <code>Rating</code> 字段的电影。 如果数据库未设定种子，则在 <code>SeedData.Initialize</code> 方法中设置断点。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://youtu.be/3i7uMxiGGR8">本教程的 YouTube 版本</a></li>
+</ul>
+<div class="step-by-step">
+<p><a class="xref" href="search.html">上一篇：添加搜索</a>
+<a class="xref" href="validation.html">下一篇：添加验证</a></p>
+</div>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

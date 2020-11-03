@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992;&#25991;&#20214;&#35266;&#23519;&#31243;&#24207;&#24320;&#21457; ASP.NET Core &#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992;&#25991;&#20214;&#35266;&#23519;&#31243;&#24207;&#24320;&#21457; ASP.NET Core &#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/dotnet-watch">
+<h1 id="develop-aspnet-core-apps-using-a-file-watcher">使用文件观察程序开发 ASP.NET Core 应用</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://twitter.com/victorhurdugaci">Victor Hurdugaci</a></p>
+<p><code>dotnet watch</code> 是一种在源文件更改时运行 <a href="/dotnet/core/tools">.NET Core CLI</a> 命令的工具。 例如，文件更改可能触发编译、测试执行或部署。</p>
+<p>本教程使用一个现有 Web API 和两个终结点：分别返回两个数的总和以及乘积。 乘积的方法有一个 bug，本教程将会对其进行修复。</p>
+<p>下载<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/dotnet-watch/sample">示例应用</a>。 它包含两个项目：WebApp (ASP.NET Core Web API) 和 WebAppTests（用于 Web API 的单元测试）。</p>
+<p>在命令行界面中，导航到 WebApp 文件夹。 运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet run
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>可使用 <code>dotnet run --project &lt;PROJECT&gt;</code> 来指定要运行的项目。 例如，从示例应用的根路径运行 <code>dotnet run --project WebApp</code> 还会运行 WebApp 项目。</p>
+</div>
+<p>控制台输出会显示如下类似的消息（表示应用正在运行且正在等待请求）：</p>
+<pre><code class="lang-console">$ dotnet run
+Hosting environment: Development
+Content root path: C:/Docs/aspnetcore/tutorials/dotnet-watch/sample/WebApp
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+</code></pre>
+<p>在 Web 浏览器中，导航到 <code>http://localhost:&lt;port number&gt;/api/math/sum?a=4&amp;b=5</code>。 应该会显示结果 <code>9</code>。</p>
+<p>导航到产品 API (<code>http://localhost:&lt;port number&gt;/api/math/product?a=4&amp;b=5</code>)。 它会返回 <code>9</code>，而不是所预期的 <code>20</code>。 本教程的后面部分将解决该问题。</p>
+<div range="&lt;= aspnetcore-2.0">
+<h2 id="add-dotnet-watch-to-a-project">将 <code>dotnet watch</code> 添加到项目</h2>
+<p><code>dotnet watch</code> 文件观察程序工具随 2.1.300 版本的 .NET Core SDK 一同提供。 使用早期版本的 .NET Core SDK 时，需要执行以下步骤。</p>
+<ol>
+<li><p>将 <code>Microsoft.DotNet.Watcher.Tools</code> 包引用添加到 .csproj 文件：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+    &lt;DotNetCliToolReference Include=&quot;Microsoft.DotNet.Watcher.Tools&quot; Version=&quot;2.0.0&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+</li>
+<li><p>运行以下命令，安装 <code>Microsoft.DotNet.Watcher.Tools</code> 包：</p>
+<pre><code class="lang-dotnetcli">dotnet restore
+</code></pre>
+</li>
+</ol>
+</div>
+<h2 id="run-net-core-cli-commands-using-dotnet-watch">使用 <code>dotnet watch</code> 运行 .NET Core CLI 命令</h2>
+<p><code>dotnet watch</code> 可用于运行任何 <a href="/dotnet/core/tools#cli-commands">.NET Core CLI 命令</a> 例如：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>带 watch 的命令</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dotnet run</td>
+<td>dotnet watch run</td>
+</tr>
+<tr>
+<td>dotnet run -f netcoreapp3.1</td>
+<td>dotnet watch run -f netcoreapp3.1</td>
+</tr>
+<tr>
+<td>dotnet run -f netcoreapp3.1 -- --arg1</td>
+<td>dotnet watch run -f netcoreapp3.1 -- --arg1</td>
+</tr>
+<tr>
+<td>dotnet test</td>
+<td>dotnet watch test</td>
+</tr>
+</tbody>
+</table>
+<p>运行“WebApp”文件夹中的 <code>dotnet watch run</code>。 控制台输出指示 <code>watch</code> 已启动。</p>
+<div range="&gt;= aspnetcore-5.0">
+<p>在 Web 应用上运行 <code>dotnet watch run</code> 将启动一个浏览器，一旦准备就绪，该浏览器将导航到应用的 URL。 <code>dotnet watch</code> 通过读取应用的控制台输出并等待 &lt;xref:Microsoft.AspNetCore.WebHost&gt; 显示的就绪消息来完成此操作。</p>
+<p>当 <code>dotnet watch</code> 检测到监视文件的更改时刷新浏览器。 为此，watch 命令向应用注入一个中间件，用于修改应用创建的 HTML 响应。 中间件将 JavaScript 脚本块添加到页面，使 <code>dotnet watch</code> 可以指示浏览器进行刷新。 目前，对所有监视的文件（包括静态内容，如 .html 和 .css）的更改都会导致重建应用 。</p>
+<p><code>dotnet watch</code>:</p>
+<ul>
+<li>默认情况下，仅监视影响生成的文件。</li>
+<li>任何（通过配置）额外监视的文件仍然会导致生成发生。</li>
+</ul>
+<p>有关配置的详细信息，请参阅本文档中的 <a href="#dotnet-watch-configuration">dotnet-watch 配置</a></p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>可使用 <code>dotnet watch --project &lt;PROJECT&gt;</code> 来指定要监视的项目。 例如，从示例应用的根路径运行 <code>dotnet watch --project WebApp run</code> 还会运行并监视 WebApp 项目。</p>
+</div>
+<h2 id="make-changes-with-dotnet-watch">使用 <code>dotnet watch</code> 执行更改</h2>
+<p>确保 <code>dotnet watch</code> 正在运行。</p>
+<p>修复 MathController 的 <code>Product</code> 方法中的 bug，使其返回乘积而非总和。</p>
+<pre><code class="lang-csharp">public static int Product(int a, int b)
+{
+    return a * b;
+}
+</code></pre>
+<p>保存该文件。 控制台输出指示 <code>dotnet watch</code> 已检测到文件更改并已重启应用。</p>
+<p>验证 <code>http://localhost:&lt;port number&gt;/api/math/product?a=4&amp;b=5</code> 是否返回正确结果。</p>
+<h2 id="run-tests-using-dotnet-watch">使用 <code>dotnet watch</code> 运行测试</h2>
+<ol>
+<li><p>将 MathController.cs 的 <code>Product</code> 方法改回返回总和。 保存该文件。</p>
+</li>
+<li><p>在命令外壳中，导航到“WebAppTests”文件夹。</p>
+</li>
+<li><p>运行 <a href="/dotnet/core/tools/dotnet-restore">dotnet restore</a>。</p>
+</li>
+<li><p>运行 <code>dotnet watch test</code>。 其输出指示测试失败且观察程序正在等待文件更改：</p>
+<pre><code class="lang-console">Total tests: 2. Passed: 1. Failed: 1. Skipped: 0.
+Test Run Failed.
+</code></pre>
+</li>
+<li><p>修复 <code>Product</code> 方法代码，使其返回乘积。 保存该文件。</p>
+</li>
+</ol>
+<p><code>dotnet watch</code> 检测到文件更改并重新运行测试。 控制台输出指示测试通过。</p>
+<h2 id="customize-files-list-to-watch">自定义要监视的文件列表</h2>
+<p>默认情况下，<code>dotnet-watch</code> 跟踪与以下 glob 模式匹配的所有文件：</p>
+<ul>
+<li><code>**/*.cs</code></li>
+<li><code>*.csproj</code></li>
+<li><code>**/*.resx</code></li>
+</ul>
+<p>通过编辑 .csproj 文件，可向监视列表添加更多项。 可以单独指定项或使用 glob 模式指定。</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+    &lt;!-- extends watching group to include *.js files --&gt;
+    &lt;Watch Include=&quot;**\*.js&quot; Exclude=&quot;node_modules\**\*;**\*.js.map;obj\**\*;bin\**\*&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<h2 id="opt-out-of-files-to-be-watched">从要监视的文件中排除</h2>
+<p><code>dotnet-watch</code> 可配置为忽略其默认设置。 要忽略特定文件，请在 .csproj 文件中向某项的定义中添加 <code>Watch=&quot;false&quot;</code> 特性：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+    &lt;!-- exclude Generated.cs from dotnet-watch --&gt;
+    &lt;Compile Include=&quot;Generated.cs&quot; Watch=&quot;false&quot; /&gt;
+
+    &lt;!-- exclude Strings.resx from dotnet-watch --&gt;
+    &lt;EmbeddedResource Include=&quot;Strings.resx&quot; Watch=&quot;false&quot; /&gt;
+
+    &lt;!-- exclude changes in this referenced project --&gt;
+    &lt;ProjectReference Include=&quot;..\ClassLibrary1\ClassLibrary1.csproj&quot; Watch=&quot;false&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<h2 id="custom-watch-projects">自定义监视项目</h2>
+<p><code>dotnet-watch</code> 不仅限于 C# 项目。 可以创建自定义监视项目来处理不同的方案。 假设项目布局如下：</p>
+<ul>
+<li><strong>test/</strong>
+<ul>
+<li><em>UnitTests/UnitTests.csproj</em></li>
+<li><em>IntegrationTests/IntegrationTests.csproj</em></li>
+</ul>
+</li>
+</ul>
+<p>如果目标是监视这两个项目，请创建配置为监视这两个项目的自定义项目文件：</p>
+<pre><code class="lang-xml">&lt;Project&gt;
+    &lt;ItemGroup&gt;
+        &lt;TestProjects Include=&quot;**\*.csproj&quot; /&gt;
+        &lt;Watch Include=&quot;**\*.cs&quot; /&gt;
+    &lt;/ItemGroup&gt;
+
+    &lt;Target Name=&quot;Test&quot;&gt;
+        &lt;MSBuild Targets=&quot;VSTest&quot; Projects=&quot;@(TestProjects)&quot; /&gt;
+    &lt;/Target&gt;
+
+    &lt;Import Project=&quot;$(MSBuildExtensionsPath)\Microsoft.Common.targets&quot; /&gt;
+&lt;/Project&gt;
+</code></pre>
+<p>要对这两个项目启动文件监视，请更改为 test 文件夹。 请执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet watch msbuild /t:Test
+</code></pre>
+<p>当任一测试项目中的任何文件发生更改时，将会执行 VSTest。</p>
+<h2 id="dotnet-watch-configuration">dotnet-watch 配置</h2>
+<p>一些配置选项可以通过环境变量传递给 <code>dotnet watch</code>。 可用变量有：</p>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DOTNET_USE_POLLING_FILE_WATCHER</code></td>
+<td>如果设置为“1”或“true”，则 <code>dotnet watch</code> 使用轮询文件观察程序，而不是 CoreFx 的 <code>FileSystemWatcher</code>。 在监视网络共享或 Docker 装入卷上的文件时使用。</td>
+</tr>
+<tr>
+<td><code>DOTNET_WATCH_SUPPRESS_MSBUILD_INCREMENTALISM</code></td>
+<td>默认情况下，<code>dotnet watch</code> 通过避免某些操作（如在每次文件更改时运行还原或重新评估监视的文件集）来优化生成。 如果设置为“1”或“true”，则禁用这些优化。</td>
+</tr>
+<tr>
+<td><code>DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER</code></td>
+<td><code>dotnet watch run</code> 尝试为在 launchSettings.json 中配置了 <code>launchBrowser</code> 的 Web 应用启动浏览器。 如果设置为“1”或“true”，则抑制此行为。</td>
+</tr>
+<tr>
+<td><code>DOTNET_WATCH_SUPPRESS_BROWSER_REFRESH</code></td>
+<td><code>dotnet watch run</code> 检测到文件更改时尝试刷新浏览器。 如果设置为“1”或“true”，则抑制此行为。 如果设置了 <code>DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER</code>，则也会抑制此行为。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="dotnet-watch-in-github">GitHub 中的 <code>dotnet-watch</code></h2>
+<p><code>dotnet-watch</code> 是 GitHub <a href="https://github.com/dotnet/AspNetCore/tree/master/src/Tools/dotnet-watch">dotnet/AspNetCore 存储库</a>的一部分。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

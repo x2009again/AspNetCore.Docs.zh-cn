@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>SignalR&#22312;&#21518;&#21488;&#26381;&#21153;&#20013;&#25176;&#31649; ASP.NET Core </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="SignalR&#22312;&#21518;&#21488;&#26381;&#21153;&#20013;&#25176;&#31649; ASP.NET Core ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/background-services">
+<h1 id="host-aspnet-core-no-locsignalr-in-background-services">SignalR在后台服务中托管 ASP.NET Core</h1>
+
+<p>作者： <a href="https://twitter.com/bradygaster">Brady Gaster</a></p>
+<p>本文提供以下内容的指导：</p>
+<ul>
+<li>SignalR使用宿主 ASP.NET Core 的后台工作进程托管中心。</li>
+<li>从 .NET Core <a href="xref:Microsoft.Extensions.Hosting.BackgroundService">BackgroundService</a>中将消息发送到已连接的客户端。</li>
+</ul>
+<div range="&gt;= aspnetcore-3.0">
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/signalr/background-service/samples/3.x">查看或下载示例代码</a><a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">（如何下载）</a></p>
+</div>
+<div range="&lt;= aspnetcore-2.2">
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/signalr/background-service/samples/2.2">查看或下载示例代码</a><a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">（如何下载）</a></p>
+</div>
+<h2 id="enable-no-locsignalr-in-startup">SignalR在启动时启用</h2>
+<div range="&gt;= aspnetcore-3.0">
+<p>SignalR在后台工作进程的上下文中托管 ASP.NET Core 中心与在 ASP.NET Core 的 web 应用中托管集线器完全相同。 在 <code>Startup.ConfigureServices</code> 方法中，调用会 <code>services.AddSignalR</code> 将所需的服务添加到 ASP.NET Core 依赖关系注入 (DI) 层以支持 SignalR 。 在中 <code>Startup.Configure</code> ， <code>MapHub</code> 调用方法 <code>UseEndpoints</code> 以连接 ASP.NET Core 请求管道中的中心终结点。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<p>SignalR在后台工作进程的上下文中托管 ASP.NET Core 中心与在 ASP.NET Core 的 web 应用中托管集线器完全相同。 在 <code>Startup.ConfigureServices</code> 方法中，调用会 <code>services.AddSignalR</code> 将所需的服务添加到 ASP.NET Core 依赖关系注入 (DI) 层以支持 SignalR 。 在中 <code>Startup.Configure</code> ， <code>UseSignalR</code> 调用方法以将中心终结点连接到 ASP.NET Core 请求管道中的)  (。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<p>在前面的示例中， <code>ClockHub</code> 类实现 <code>Hub&lt;T&gt;</code> 类以创建强类型中心。 已 <code>ClockHub</code> 在类中配置， <code>Startup</code> 以响应终结点上的请求 <code>/hubs/clock</code> 。</p>
+<p>有关强类型化集线器的详细信息，请参阅 <a class="xref" href="hubs.html#strongly-typed-hubs">使用中 SignalR 的中心进行 ASP.NET Core</a>。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>此功能并不限于<a href="xref:Microsoft.AspNetCore.SignalR.Hub%601">集线器 &lt;T&gt; </a>类。 从 <a href="xref:Microsoft.AspNetCore.SignalR.Hub">中心</a>继承的任何类（如 <a href="xref:Microsoft.AspNetCore.SignalR.DynamicHub">DynamicHub</a>）都适用。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<p>强类型化所使用的接口 <code>ClockHub</code> 是 <code>IClock</code> 接口。</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="call-a-no-locsignalr-hub-from-a-background-service">SignalR从后台服务调用中心</h2>
+<p>在启动过程中， <code>Worker</code> <code>BackgroundService</code> 使用启用类 <code>AddHostedService</code> 。</p>
+<pre><code class="lang-csharp">services.AddHostedService&lt;Worker&gt;();
+</code></pre>
+<p>由于 SignalR 还会在 <code>Startup</code> 阶段启用，其中每个中心均附加到 ASP.NET CORE 的 HTTP 请求管道中的单个终结点，因此，每个中心都由 <code>IHubContext&lt;T&gt;</code> 服务器上的表示。 使用 ASP.NET Core 的 DI 功能，由宿主层实例化的其他类（如 <code>BackgroundService</code> 类、MVC 控制器类或 Razor 页模型）可以 <code>IHubContext&lt;ClockHub, IClock&gt;</code> 在构造过程中接受实例，从而获取对服务器端集线器的引用。</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<p>由于 <code>ExecuteAsync</code> 在后台服务中以迭代方式调用方法，服务器的当前日期和时间将使用发送到已连接的客户端 <code>ClockHub</code> 。</p>
+<h2 id="react-to-no-locsignalr-events-with-background-services">SignalR通过后台服务对事件做出响应</h2>
+<p>与使用适用于或 .NET 桌面应用程序的 JavaScript 客户端的单页面应用一样 SignalR <a class="xref" href="dotnet-client.html">ASP.NET Core SignalR .Net 客户端</a> ，也可以使用、 <code>BackgroundService</code> 或 <code>IHostedService</code> 实现来连接到 SignalR 集线器并响应事件。</p>
+<p><code>ClockHubClient</code>类实现 <code>IClock</code> 接口和 <code>IHostedService</code> 接口。 这样一来，就可以在过程中将其启用 <code>Startup</code> ，并对来自服务器的中心事件做出响应。</p>
+<pre><code class="lang-csharp">public partial class ClockHubClient : IClock, IHostedService
+{
+}
+</code></pre>
+<p>在初始化期间，会 <code>ClockHubClient</code> 创建一个实例 <code>HubConnection</code> ，并将该 <code>IClock.ShowTime</code> 方法作为中心事件的处理程序启用 <code>ShowTime</code> 。</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 <code>IHostedService.StartAsync</code> 实现中，以 <code>HubConnection</code> 异步方式启动。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 <code>IHostedService.StopAsync</code> 方法中，将 <code>HubConnection</code> 异步释放。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 <code>IHostedService.StartAsync</code> 实现中，以 <code>HubConnection</code> 异步方式启动。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 <code>IHostedService.StopAsync</code> 方法中，将 <code>HubConnection</code> 异步释放。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../tutorials/signalr.html">入门</a></li>
+<li><a class="xref" href="hubs.html">中心</a></li>
+<li><a class="xref" href="publish-to-azure-web-app.html">发布到 Azure</a></li>
+<li><a class="xref" href="hubs.html#strongly-typed-hubs">强类型中心</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

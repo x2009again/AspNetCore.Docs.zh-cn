@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#25176;&#31649;&#21644;&#37096;&#32626; ASP.NET Core Blazor </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#25176;&#31649;&#21644;&#37096;&#32626; ASP.NET Core Blazor ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/host-and-deploy/index">
+<h1 id="host-and-deploy-aspnet-core-no-locblazor">托管和部署 ASP.NET Core Blazor</h1>
+
+<p>作者：<a href="https://github.com/guardrex">Luke Latham</a>、<a href="https://www.timecockpit.com">Rainer Stropek</a> 和 <a href="https://github.com/danroth27">Daniel Roth</a></p>
+<h2 id="publish-the-app">发布应用</h2>
+<p>发布应用，用于发布配置中的部署。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ol>
+<li>从导航栏中选择“生成” &gt; “发布{应用程序}”。</li>
+<li>选择“发布目标”。 若要在本地发布，请选择“文件夹”。</li>
+<li>接受“选择文件夹”字段中的默认位置，或指定其他位置。 选择 <code>Publish</code> 按钮。</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li>选择“生成” &gt; “发布到文件夹” 。</li>
+<li>确认用于接收发布的资产的文件夹，并选择 <code>Publish</code>。</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>使用 <a href="/dotnet/core/tools/dotnet-publish"><code>dotnet publish</code></a> 命令发布具有发布配置的应用：</p>
+<pre><code class="lang-dotnetcli">dotnet publish -c Release
+</code></pre>
+</section>
+</div>
+
+<p>创建部署资产前，发布应用将触发项目依赖项的<a href="/dotnet/core/tools/dotnet-restore">还原</a>并<a href="/dotnet/core/tools/dotnet-build">生成</a>生成该项目。 在生成过程期间，将删除未使用的方法和程序集，以减少应用下载大小并缩短加载时间。</p>
+<p>发布位置：</p>
+<ul>
+<li>Blazor WebAssembly
+<ul>
+<li>独立：将应用发布到 <code>/bin/Release/{TARGET FRAMEWORK}/publish/wwwroot</code> 文件夹。 若要将应用部署为静态站点，请将 <code>wwwroot</code> 文件夹的内容复制到静态站点主机。</li>
+<li>托管：客户端 Blazor WebAssembly 应用与服务器应用的其他任何静态 Web 资产一起发布到服务器应用的 <code>/bin/Release/{TARGET FRAMEWORK}/publish/wwwroot</code> 文件夹。 将 <code>publish</code> 文件夹的内容部署到主机。</li>
+</ul>
+</li>
+<li>Blazor Server：将应用发布到 <code>/bin/Release/{TARGET FRAMEWORK}/publish</code> 文件夹。 将 <code>publish</code> 文件夹的内容部署到主机。</li>
+</ul>
+<p>文件夹中的资产将部署到 Web 服务器。 部署可能是手动或自动化过程，具体取决于使用的开发工具。</p>
+<h2 id="app-base-path">应用基路径</h2>
+<p>应用基路径是应用的根 URL 路径。 请考虑使用下列 ASP.NET Core 应用和 Blazor 子应用：</p>
+<ul>
+<li>ASP.NET Core 应用名为 <code>MyApp</code>：
+<ul>
+<li>该应用实际驻留在 <code>d:/MyApp</code> 中。</li>
+<li>在 <code>https://www.contoso.com/{MYAPP RESOURCE}</code> 收到请求。</li>
+</ul>
+</li>
+<li>名为 <code>CoolApp</code> 的 Blazor 应用是 <code>MyApp</code> 的子应用：
+<ul>
+<li>该子应用实际驻留在 <code>d:/MyApp/CoolApp</code> 中。</li>
+<li>在 <code>https://www.contoso.com/CoolApp/{COOLAPP RESOURCE}</code> 收到请求。</li>
+</ul>
+</li>
+</ul>
+<p>如果不为 <code>CoolApp</code> 指定其他配置，此方案中的子应用将不知道其在服务器上的位置。 例如，不知道它驻留在相对 URL 路径 <code>/CoolApp/</code> 上，应用就无法构造其资源的正确相对 URL。</p>
+<p>若要为 Blazor 应用的基路径 <code>https://www.contoso.com/CoolApp/</code> 提供配置，请将 <code>&lt;base&gt;</code> 标记的 <code>href</code> 属性设置为 <code>Pages/_Host.cshtml</code> 文件（Blazor Server）或 <code>wwwroot/index.html</code> 文件 (Blazor WebAssembly) 中的相对根路径：</p>
+<pre><code class="lang-html">&lt;base href=&quot;/CoolApp/&quot;&gt;
+</code></pre>
+<p>此外，Blazor Server应用还通过在应用的请求管道 <code>Startup.Configure</code> 中调用 &lt;xref:Microsoft.AspNetCore.Builder.UsePathBaseExtensions.UsePathBase*&gt;，设置服务器端基路径：</p>
+<pre><code class="lang-csharp">app.UsePathBase(&quot;/CoolApp&quot;);
+</code></pre>
+<p>提供相对 URL 路径，不再根目录中的元件可以构造相对于应用根路径的 URL。 位于目录结构不同级别的组件可生成指向整个应用其他位置的资源链接。 应用基路径也用于拦截所选超链接，其中链接的 <code>href</code> 目标位于应用基路径 URI 空间中。 Blazor 路由器负责处理内部导航。</p>
+<p>在许多托管方案中，应用的相对 URL 路径为应用的根目录。 在这些情况下，应用的相对 URL 基路径为正斜杠 (<code>&lt;base href=&quot;/&quot; /&gt;</code>)，它是 Blazor 应用的默认配置。 在其他托管方案中（例如 GitHub 页和 IIS 子应用），应用基路径必须设置为应用的服务器相对 URL 路径。</p>
+<p>若要设置应用的基路径，请更新 <code>Pages/_Host.cshtml</code> 文件（Blazor Server）或 <code>wwwroot/index.html</code> 文件 (Blazor WebAssembly) 的 <code>&lt;head&gt;</code> 标记元素中的 <code>&lt;base&gt;</code> 标记。 将 <code>href</code> 属性值设置为 <code>/{RELATIVE URL PATH}/</code>（需要尾部反斜杠），其中 <code>{RELATIVE URL PATH}</code> 是应用完整相对 URL 路径。</p>
+<p>对于具有非根相对 URL 路径（例如 <code>&lt;base href=&quot;/CoolApp/&quot;&gt;</code>）的 Blazor WebAssembly 应用，应用在本地运行时找不到其资源。 要在本地开发和测试过程中解决此问题，可提供 path base 参数，用于匹配运行时 <code>&lt;base&gt;</code> 标记的 <code>href</code> 值。 不要包含尾部反斜杠。 在本地运行应用时，若要传递路径基础参数，请使用 <code>--pathbase</code> 选项从应用的目录执行 <code>dotnet run</code> 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet run --pathbase=/{RELATIVE URL PATH (no trailing slash)}
+</code></pre>
+<p>对于具有相对 URL 路径 <code>/CoolApp/</code> (<code>&lt;base href=&quot;/CoolApp/&quot;&gt;</code>) 的 Blazor WebAssembly 应用，命令如下：</p>
+<pre><code class="lang-dotnetcli">dotnet run --pathbase=/CoolApp
+</code></pre>
+<p>Blazor WebAssembly 应用在 <code>http://localhost:port/CoolApp</code> 本地响应。</p>
+<p><strong>Blazor Server <code>MapFallbackToPage</code> 配置</strong></p>
+<p>在 <code>Startup.Configure</code> 中向 &lt;xref:Microsoft.AspNetCore.Builder.RazorPagesEndpointRouteBuilderExtensions.MapFallbackToPage%2A&gt; 添加以下路径：</p>
+<pre><code class="lang-csharp">endpoints.MapFallbackToPage(&quot;/{RELATIVE PATH}/{**path:nonfile}&quot;);
+</code></pre>
+<p>占位符 <code>{RELATIVE PATH}</code> 是服务器上的非根路径。 例如，如果应用的非根 URL 是 <code>https://{HOST}:{PORT}/CoolApp/</code>，<code>CoolApp</code> 就是占位符段：</p>
+<pre><code class="lang-csharp">endpoints.MapFallbackToPage(&quot;/CoolApp/{**path:nonfile}&quot;);
+</code></pre>
+<p>托管多个 Blazor WebAssembly 应用</p>
+<p>有关在托管的 Blazor 解决方案中托管多个 Blazor WebAssembly 应用的详细信息，请参阅 <a class="xref" href="webassembly.html#hosted-deployment-with-multiple-blazor-webassembly-apps">托管和部署 ASP.NET Core Blazor WebAssembly</a>。</p>
+<h2 id="deployment">部署</h2>
+<p>有关部署指南，请参阅以下主题：</p>
+<ul>
+<li><a class="xref" href="webassembly.html">托管和部署 ASP.NET Core Blazor WebAssembly</a></li>
+<li><a class="xref" href="server.html">托管和部署 ASP.NET Core Blazor Server</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

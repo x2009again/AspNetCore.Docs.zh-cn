@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#30446;&#24405;&#32467;&#26500; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#30446;&#24405;&#32467;&#26500; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="host-and-deploy/directory-structure">
+<h1 id="aspnet-core-directory-structure">ASP.NET Core 目录结构</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>发布目录包含应用的可部署资产，由 <a href="/dotnet/core/tools/dotnet-publish">dotnet publish</a> 命令生成  。 该目录包含：</p>
+<ul>
+<li>应用程序文件</li>
+<li>配置文件</li>
+<li>静态资产</li>
+<li>package</li>
+<li>运行时（仅限<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>应用类型</th>
+<th>目录结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="/dotnet/core/deploying/#framework-dependent-executables-fde">依赖于框架的可执行文件 (FDE)</a></td>
+<td><ul><li>publish†<ul><li>Views† MVC 应用（如果未预编译视图）</li><li>Pages† MVC 或 Razor Pages 应用（如果未预编译页）</li><li>wwwroot†</li><li>*.dll 文件</li><li>{ASSEMBLY NAME}.deps.json</li><li>{ASSEMBLY NAME}.dll</li><li>Windows 上的扩展名为 {ASSEMBLY NAME}{.EXTENSION} .exe，macOS 和 Linux 上没有扩展名</li><li>{ASSEMBLY NAME}.pdb</li><li>{ASSEMBLY NAME}.Views.dll</li><li>{ASSEMBLY NAME}.Views.pdb</li><li>{ASSEMBLY NAME}.runtimeconfig.json</li><li>web.config（IIS 部署）</li><li>createdump（<a href="https://github.com/dotnet/coreclr/blob/master/Documentation/botr/xplat-minidump-generation.md#configurationpolicy">Linux createdump 实用工具</a>）</li><li>*.so（Linux 共享对象库）</li><li>*.a（macOS 存档）</li><li>*.dylib（macOS 动态库）</li></ul></li></ul></td>
+</tr>
+<tr>
+<td><a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署 (SCD)</a></td>
+<td><ul><li>publish†<ul><li>Views† MVC 应用（如果未预编译视图）</li><li>Pages† MVC 或 Razor Pages 应用（如果未预编译页）</li><li>wwwroot†</li><li>*.dll 文件</li><li>{ASSEMBLY NAME}.deps.json</li><li>{ASSEMBLY NAME}.dll</li><li>{ASSEMBLY NAME}.exe</li><li>{ASSEMBLY NAME}.pdb</li><li>{ASSEMBLY NAME}.Views.dll</li><li>{ASSEMBLY NAME}.Views.pdb</li><li>{ASSEMBLY NAME}.runtimeconfig.json</li><li>web.config（IIS 部署）</li></ul></li></ul></td>
+</tr>
+</tbody>
+</table>
+<p>†指示目录</p>
+<p>publish 目录代表部署的内容根路径  ，也称为应用程序基路径  。 无论对服务器上已部署应用的 publish  目录如何命名，其位置都可作为托管应用的服务器物理路径。</p>
+<p>wwwroot 目录（如果存在）仅包含静态资产。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/core/tools/dotnet-publish">dotnet publish</a></li>
+<li><a href="/dotnet/core/deploying/">.NET Core 应用程序部署</a></li>
+<li><a href="/dotnet/standard/frameworks">目标框架</a></li>
+<li><a href="/dotnet/core/rid-catalog">.NET Core RID 目录</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>发布目录包含应用的可部署资产，由 <a href="/dotnet/core/tools/dotnet-publish">dotnet publish</a> 命令生成  。 该目录包含：</p>
+<ul>
+<li>应用程序文件</li>
+<li>配置文件</li>
+<li>静态资产</li>
+<li>package</li>
+<li>运行时（仅限<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>应用类型</th>
+<th>目录结构</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="/dotnet/core/deploying/#framework-dependent-executables-fde">依赖于框架的可执行文件 (FDE)</a></td>
+<td><ul><li>publish†<ul><li>Views† MVC 应用（如果未预编译视图）</li><li>Pages† MVC 或 Razor Pages 应用（如果未预编译页）</li><li>wwwroot†</li><li>*.dll 文件</li><li>{ASSEMBLY NAME}.deps.json</li><li>{ASSEMBLY NAME}.dll</li><li>Windows 上的扩展名为 {ASSEMBLY NAME}{.EXTENSION} .exe，macOS 和 Linux 上没有扩展名</li><li>{ASSEMBLY NAME}.pdb</li><li>{ASSEMBLY NAME}.Views.dll</li><li>{ASSEMBLY NAME}.Views.pdb</li><li>{ASSEMBLY NAME}.runtimeconfig.json</li><li>web.config（IIS 部署）</li><li>createdump（<a href="https://github.com/dotnet/coreclr/blob/master/Documentation/botr/xplat-minidump-generation.md#configurationpolicy">Linux createdump 实用工具</a>）</li><li>*.so（Linux 共享对象库）</li><li>*.a（macOS 存档）</li><li>*.dylib（macOS 动态库）</li></ul></li></ul></td>
+</tr>
+<tr>
+<td><a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署 (SCD)</a></td>
+<td><ul><li>publish†<ul><li>Views† MVC 应用（如果未预编译视图）</li><li>Pages† MVC 或 Razor Pages 应用（如果未预编译页）</li><li>wwwroot†</li><li>*.dll 文件</li><li>{ASSEMBLY NAME}.deps.json</li><li>{ASSEMBLY NAME}.dll</li><li>{ASSEMBLY NAME}.exe</li><li>{ASSEMBLY NAME}.pdb</li><li>{ASSEMBLY NAME}.Views.dll</li><li>{ASSEMBLY NAME}.Views.pdb</li><li>{ASSEMBLY NAME}.runtimeconfig.json</li><li>web.config（IIS 部署）</li></ul></li></ul></td>
+</tr>
+</tbody>
+</table>
+<p>†指示目录</p>
+<p>publish 目录代表部署的内容根路径  ，也称为应用程序基路径  。 无论对服务器上已部署应用的 publish  目录如何命名，其位置都可作为托管应用的服务器物理路径。</p>
+<p>wwwroot 目录（如果存在）仅包含静态资产。</p>
+<p>创建 Logs 文件夹对于 <a class="xref" href="aspnet-core-module.html#enhanced-diagnostic-logs">ASP.NET 核心模块增强的调试日志记录</a>来说非常有用  。 提供给 <code>&lt;handlerSetting&gt;</code> 值的路径中的文件夹不是由模块自动创建的，并且应该预先存在于部署中以允许模块编写调试日志。</p>
+<p>可以使用以下两种方法之一为部署创建 Logs 目录  ：</p>
+<ul>
+<li><p>向项目添加以下 <code>&lt;Target&gt;</code> 元素：</p>
+<pre><code class="lang-xml">&lt;Target Name=&quot;CreateLogsFolder&quot; AfterTargets=&quot;Publish&quot;&gt;
+   &lt;MakeDir Directories=&quot;$(PublishDir)Logs&quot; 
+            Condition=&quot;!Exists('$(PublishDir)Logs')&quot; /&gt;
+   &lt;WriteLinesToFile File=&quot;$(PublishDir)Logs\.log&quot; 
+                     Lines=&quot;Generated file&quot; 
+                     Overwrite=&quot;True&quot; 
+                     Condition=&quot;!Exists('$(PublishDir)Logs\.log')&quot; /&gt;
+&lt;/Target&gt;
+</code></pre>
+<p><code>&lt;MakeDir&gt;</code> 元素在发布的输出中创建一个空的 Logs  文件夹。 该元素使用 <code>PublishDir</code> 属性来确定创建文件夹的目标位置。 几种部署方法（如 Web 部署）均在部署期间跳过空文件夹。 <code>&lt;WriteLinesToFile&gt;</code> 元素在 Logs  文件夹中生成一个文件，该文件可确保将文件夹部署到服务器。 如果工作进程不具有对目标文件夹的写入权限，则使用此方法的文件夹创建操作将失败。</p>
+</li>
+<li><p>在部署中的服务器上物理创建 Logs  目录。</p>
+</li>
+</ul>
+<p>部署目录需要读取/执行权限。  Logs 目录需要读/写权限。 将文件写入其他目录需要读/写权限。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/core/tools/dotnet-publish">dotnet publish</a></li>
+<li><a href="/dotnet/core/deploying/">.NET Core 应用程序部署</a></li>
+<li><a href="/dotnet/standard/frameworks">目标框架</a></li>
+<li><a href="/dotnet/core/rid-catalog">.NET Core RID 目录</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

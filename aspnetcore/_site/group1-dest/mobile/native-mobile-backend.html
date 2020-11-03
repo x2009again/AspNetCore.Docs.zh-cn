@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; ASP.NET Core &#20026;&#26412;&#26426;&#31227;&#21160;&#24212;&#29992;&#21019;&#24314;&#21518;&#31471;&#26381;&#21153; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; ASP.NET Core &#20026;&#26412;&#26426;&#31227;&#21160;&#24212;&#29992;&#21019;&#24314;&#21518;&#31471;&#26381;&#21153; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="mobile/native-mobile-backend">
+<h1 id="create-backend-services-for-native-mobile-apps-with-aspnet-core">使用 ASP.NET Core 为本机移动应用创建后端服务</h1>
+
+<p>作者：<a href="https://ardalis.com/">Steve Smith</a></p>
+<p>移动应用可与 ASP.NET Core 后端服务通信。 有关从 iOS 模拟器和 Android 仿真程序连接本地 Web 服务的说明，请参阅<a href="/xamarin/cross-platform/deploy-test/connect-to-local-web-services">从 iOS 模拟器和 Android 仿真程序连接到本地 Web 服务</a>。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mobile/native-mobile-backend/sample">查看或下载后端服务代码示例</a></p>
+<h2 id="the-sample-native-mobile-app">本机移动应用示例</h2>
+<p>本教程演示如何创建使用 ASP.NET Core MVC 支持本机移动应用的后端服务。 它使用 <a href="/xamarin/xamarin-forms/data-cloud/consuming/rest">Xamarin Forms ToDoRest 应用</a> 作为其本机客户端，其中包括 Android、 iOS、 Windows Universal 和 Window Phone 设备的单独本机客户端。 你可以遵循链接中的教程来创建本机应用程序（并安装需要的免费 Xamarin 工具），以及下载 Xamarin 示例解决方案。 Xamarin 示例包含一个 ASP.NET Web API 2 服务项目，使用本文中的 ASP.NET Core 应用替换（客户端无需进行任何更改）。</p>
+<p><img src="native-mobile-backend/_static/todo-android.png" alt="在 Android 智能手机上运行的 ToDoRest 应用程序"></p>
+<h3 id="features">功能</h3>
+<p>ToDoRest 应用支持列出、 添加、删除和更新待办事项。 每个项都有一个 ID、 Name（名称）、Notes（说明）以及一个指示该项是否已完成的属性 Done。</p>
+<p>待办事项的主视图如上所示，列出每个项的名称，并使用复选标记指示它是否已完成。</p>
+<p>点击 <code>+</code> 图标打开“添加项”对话框：</p>
+<p><img src="native-mobile-backend/_static/todo-android-new-item.png" alt="“添加项”对话框"></p>
+<p>点击主列表屏幕上的项将打开一个编辑对话框，在其中可以修改项的名称、 说明以及是否完成，或删除项目：</p>
+<p><img src="native-mobile-backend/_static/todo-android-edit-item.png" alt="“编辑项”对话框"></p>
+<p>此示例默认配置为使用托管在 developer.xamarin.com上的后端服务，允许只读操作。 若要使用在你计算机上运行的下一节创建的 ASP.NET Core 应用对其进行测试，你需要更新应用程序的 <code>RestUrl</code> 常量。 导航到 <code>ToDoREST</code> 项目，然后打开 <em>Constants.cs</em> 文件。 使用包含计算机 IP 的 URL 地址替换 <code>RestUrl</code>（不是 localhost 或 127.0.0.1，因为此地址用于从设备模拟器中，而不是从你的计算机中访问）。 请包括端口号 (5000)。 为了测试你的服务能否在设备上正常运行，请确保没有活动的防火墙阻止访问此端口。</p>
+<pre><code class="lang-csharp">// URL of REST service (Xamarin ReadOnly Service)
+//public static string RestUrl = &quot;http://developer.xamarin.com:8081/api/todoitems{0}&quot;;
+
+// use your machine's IP address
+public static string RestUrl = &quot;http://192.168.1.207:5000/api/todoitems/{0}&quot;;
+</code></pre>
+<h2 id="creating-the-aspnet-core-project">创建 ASP.NET Core 项目</h2>
+<p>在 Visual Studio 中创建一个新的 ASP.NET Core Web 应用程序。 选择 Web API 模板和 No Authentication（无身份验证）。 将项目命名为 <em>ToDoApi</em> 。</p>
+<p><img src="native-mobile-backend/_static/web-api-template.png" alt="“新建 ASP.NET Web 应用程序”对话框，其中已选中 Web API 项目模板"></p>
+<p>对于向端口 5000 进行的请求，应用程序均需作出响应。 更新 Program.cs，使其包含 <code>.UseUrls(&quot;http://*:5000&quot;)</code>，以便实现以下操作  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>请确保直接运行应用程序，而不是在 IIS Express 后运行，因为在默认情况下，后者会忽略非本地请求。 从命令提示符处运行 <a href="/dotnet/core/tools/dotnet-run">dotnet run</a>，或从 Visual Studio 工具栏中的“调试目标”下拉列表中选择应用程序名称配置文件。</p>
+</div>
+<p>添加一个模型类来表示待办事项。 使用 <code>[Required]</code> 属性标记必需字段：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>API 方法需要通过某种方式处理数据。 使用原始 Xamarin 示例所用的 <code>IToDoRepository</code> 接口：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在此示例中，该实现仅使用一个专用项集合：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 <em>Startup.cs</em> 中配置该实现:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>现可创建 ToDoItemsController  。</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>有关创建 Web API 的详细信息，请参阅<a href="../tutorials/first-web-api.html">使用 ASP.NET Core MVC 和 Visual Studio 生成首个 Web API</a>。</p>
+</div>
+<h2 id="creating-the-controller">创建控制器</h2>
+<p>在项目中添加新控制器 <em>ToDoItemsController</em> 。 它应继承 Microsoft.AspNetCore.Mvc.Controller。 添加 <code>Route</code> 属性以指示控制器将处理路径以 <code>api/todoitems</code> 开始的请求。 路由中的 <code>[controller]</code> 标记会被控制器的名称代替（省略 <code>Controller</code> 后缀），这对全局路由特别有用。 详细了解 <a href="../fundamentals/routing.html">路由</a>。</p>
+<p>控制器需要 <code>IToDoRepository</code> 才能正常运行；通过控制器的构造函数请求该类型的实例。 在运行时，此实例将使用框架对 <a href="../fundamentals/dependency-injection.html">依赖关系注入</a> 的支持来提供。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此 API 支持四个不同的 HTTP 谓词来执行对数据源的 CRUD（创建、读取、更新、删除）操作。 最简单的是读取操作，它对应于 HTTP GET 请求。</p>
+<h3 id="reading-items">读取项目</h3>
+<p>要请求项列表，可对 <code>List</code> 方法使用 GET 请求。 <code>[HttpGet]</code> 方法的 <code>List</code> 属性指示此操作应仅处理 GET 请求。 此操作的路由是在控制器上指定的路由。 你不一定必须将操作名称用作路由的一部分。 你只需确保每个操作都有唯一的和明确的路由。 路由属性可以分别应用在控制器和方法级别，以此生成特定的路由。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>List</code> 方法返回 200 OK 响应代码和所有 ToDo 项，并序列化为 JSON 。</p>
+<p>你可以使用多种工具测试新的 API 方法，如 <a href="https://www.getpostman.com/docs/">Postman</a>，如此处所示：</p>
+<p><img src="native-mobile-backend/_static/postman-get.png" alt="Postman 控制台，其中显示一个 todoitem 的 GET 请求，以及显示所返回的三个项目的 JSON 的响应正文"></p>
+<h3 id="creating-items">创建项目</h3>
+<p>按照约定，创建新数据项映射到 HTTP POST 谓词。 <code>Create</code> 方法具有应用于它的 <code>[HttpPost]</code> 属性，并接受 <code>ToDoItem</code> 实例。 由于 <code>item</code> 参数在 POST 的正文中传递，因此该参数会指定 <code>[FromBody]</code> 属性。</p>
+<p>在该方法中，会检查项的有效性和之前是否存在于数据存储，并且如果没有任何问题，则使用存储库添加。 检查 <code>ModelState.IsValid</code> 将执行 <a href="../mvc/models/validation.html">模型验证</a>，应该在每个接受用户输入的 API 方法中执行此步骤。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例中使用一个枚举，后者包含传递到移动客户端的错误代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 Postman 测试添加新项，选择 POST 谓词并在请求正文中以 JSON 格式提供新对象。 你还应添加一个请求标头指定 <code>Content-Type</code> 为 <code>application/json</code>。</p>
+<p><img src="native-mobile-backend/_static/postman-post.png" alt="显示 POST 和响应的 Postman 控制台"></p>
+<p>该方法返回在响应中新建的项。</p>
+<h3 id="updating-items">更新项目</h3>
+<p>通过使用 HTTP PUT 请求来修改记录。 除了此更改之外，<code>Edit</code> 方法几乎与 <code>Create</code> 完全相同。 请注意，如果未找到记录，则 <code>Edit</code> 操作将返回 <code>NotFound</code>(404) 响应。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要使用 Postman 进行测试，将谓词更改为 PUT。 在请求正文中指定要更新的对象数据。</p>
+<p><img src="native-mobile-backend/_static/postman-put.png" alt="显示 PUT 和响应的 Postman 控制台"></p>
+<p>为了与预先存在的 API 保持一致，此方法在成功时返回 <code>NoContent</code> (204) 响应。</p>
+<h3 id="deleting-items">删除项</h3>
+<p>删除记录可以通过向服务发出 DELETE 请求并传递要删除项的 ID 来完成。 与更新一样，请求的项不存在时会收到 <code>NotFound</code> 响应。 请求成功会得到 <code>NoContent</code> (204) 响应。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请注意，在测试删除功能时，请求正文中不需要任何内容。</p>
+<p><img src="native-mobile-backend/_static/postman-delete.png" alt="显示 DELETE 和响应的 Postman 控制台"></p>
+<h2 id="common-web-api-conventions">常见的 Web API 约定</h2>
+<p>开发应用程序的后端服务时，你将想要使用一组一致的约定或策略来处理横切关注点。 例如，在上面所示服务中，针对不存在的特定记录的请求会收到 <code>NotFound</code> 响应，而不是<code>BadRequest</code> 响应。 同样，对于此服务，传递模型绑定类型的命令始终检查 <code>ModelState.IsValid</code> 并为无效的模型类型返回 <code>BadRequest</code>。</p>
+<p>一旦为 Api 指定通用策略，一般可以将其封装在 <a href="../mvc/controllers/filters.html">Filter（筛选器）</a>。 详细了解 <a href="/archive/msdn-magazine/2016/august/asp-net-core-real-world-asp-net-core-mvc-filters">如何封装 ASP.NET Core MVC 应用程序中的通用 API 策略</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/xamarin/xamarin-forms/enterprise-application-patterns/authentication-and-authorization">身份验证和授权</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

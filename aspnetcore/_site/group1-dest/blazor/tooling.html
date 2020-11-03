@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#29992;&#20110; ASP.NET Core Blazor &#30340;&#24037;&#20855; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#29992;&#20110; ASP.NET Core Blazor &#30340;&#24037;&#20855; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/tooling">
+<h1 id="tooling-for-aspnet-core-no-locblazor">用于 ASP.NET Core Blazor 的工具</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<div class="zone has-pivot" data-pivot="windows">
+<ol>
+<li><p>安装带有“ASP.NET 和 Web 开发”工作负载的最新版本 <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio 2019</a>。</p>
+</li>
+<li><p>创建新项目。</p>
+</li>
+<li><p>选择“Blazor 应用”。 选择“下一步”。</p>
+</li>
+<li><p>在“项目名称”字段提供项目名称，或接受默认项目名称。 确认“位置”条目正确无误或为项目提供位置。 选择“创建”。</p>
+</li>
+<li><p>若要获得 Blazor WebAssembly 体验，请选择“Blazor WebAssembly 应用”模板。 若要获得 Blazor Server 体验，请选择“Blazor Server 应用”模板。 选择“创建”。</p>
+<p>有关 Blazor WebAssembly 和 Blazor Server 这两个 Blazor 托管模型的信息，请参阅 <a class="xref" href="hosting-models.html">ASP.NET Core Blazor 托管模型</a>。</p>
+</li>
+<li><p>按 Ctrl+F5 运行应用<kbd></kbd><kbd></kbd>。</p>
+</li>
+</ol>
+<p>有关信任 ASP.NET Core HTTPS 开发证书的详细信息，请参阅 <a class="xref" href="../security/enforcing-ssl.html#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos">在 ASP.NET Core 强制实施 HTTPS</a>。</p>
+</div>
+<div class="zone has-pivot" data-pivot="linux">
+<ol>
+<li><p>安装最新版本的 <a href="https://dotnet.microsoft.com/download">.NET Core SDK</a>。 如果以前安装了该 SDK，可以通过在命令行界面中执行以下命令来确定已安装的版本：</p>
+<pre><code class="lang-dotnetcli">dotnet --version
+</code></pre>
+</li>
+<li><p>安装最新版本的 <a href="https://code.visualstudio.com">Visual Studio Code</a>。</p>
+</li>
+<li><p>安装最新的 <a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">C# for Visual Studio Code 扩展</a>。</p>
+</li>
+<li><p>若要获得 Blazor WebAssembly 体验，请在命令行界面中执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorwasm -o WebApplication1
+</code></pre>
+<p>若要获得 Blazor Server 体验，请在命令行界面中执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorserver -o WebApplication1
+</code></pre>
+<p>有关 Blazor WebAssembly 和 Blazor Server 这两个 Blazor 托管模型的信息，请参阅 <a class="xref" href="hosting-models.html">ASP.NET Core Blazor 托管模型</a>。</p>
+</li>
+<li><p>在 Visual Studio Code 中打开 <code>WebApplication1</code> 文件夹，</p>
+</li>
+<li><p>IDE 要求添加资产以用于生成和调试项目。 选择 <strong>“是”</strong> 。</p>
+</li>
+<li><p>按 Ctrl+F5 运行应用<kbd></kbd><kbd></kbd>。</p>
+</li>
+</ol>
+<h2 id="trust-a-development-certificate">信任开发证书</h2>
+<p>Linux 上没有用于信任证书的集中途径。 通常采用以下方法之一：</p>
+<ul>
+<li>在浏览器的排除列表中排除应用的 URL。</li>
+<li>信任 <code>localhost</code> 的所有自签名证书。</li>
+<li>将证书添加到浏览器的受信任证书列表。</li>
+</ul>
+<p>有关详细信息，请参阅浏览器制造商和 Linux 发行版提供的指南。</p>
+</div>
+<div class="zone has-pivot" data-pivot="macos">
+<ol>
+<li><p>安装 <a href="https://visualstudio.microsoft.com/vs/mac/">Visual Studio for Mac</a>。</p>
+</li>
+<li><p>选择“文件” &gt; “新建解决方案”或从“启动窗口”创建“新项目”   。</p>
+</li>
+<li><p>在边栏中，选择“Web 和控制台” &gt; “应用”。</p>
+<p>若要获得 Blazor WebAssembly 体验，请选择“Blazor WebAssembly 应用”模板。 若要获得 Blazor Server 体验，请选择“Blazor Server 应用”模板。 选择“下一步”。</p>
+<p>有关 Blazor WebAssembly 和 Blazor Server 这两个 Blazor 托管模型的信息，请参阅 <a class="xref" href="hosting-models.html">ASP.NET Core Blazor 托管模型</a>。</p>
+</li>
+<li><p>确认已将“身份验证”设置为“无身份验证”。 选择“下一步”。</p>
+</li>
+<li><p>在“项目名称”字段中，将应用命名为 <code>WebApplication1</code>。 选择“创建”。</p>
+</li>
+<li><p>选择“运行” &gt; “启动而不调试”以不使用调试程序运行应用 。 使用“运行” &gt; “开始调试”运行应用，或者使用“运行 (▶)”按钮通过调试程序运行应用。</p>
+</li>
+</ol>
+<p>如果出现信任开发证书的提示，请信任证书并继续操作。 信任证书需要使用用户密码和密钥链密码。 有关信任 ASP.NET Core HTTPS 开发证书的详细信息，请参阅 <a class="xref" href="../security/enforcing-ssl.html#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos">在 ASP.NET Core 强制实施 HTTPS</a>。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

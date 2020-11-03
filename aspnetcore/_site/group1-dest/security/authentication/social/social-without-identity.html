@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Facebook&#12289;Google &#21644;&#22806;&#37096;&#25552;&#20379;&#31243;&#24207;&#36523;&#20221;&#39564;&#35777; ASP.NET Core Identity </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Facebook&#12289;Google &#21644;&#22806;&#37096;&#25552;&#20379;&#31243;&#24207;&#36523;&#20221;&#39564;&#35777; ASP.NET Core Identity ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/social/social-without-identity">
+<h1 id="use-social-sign-in-provider-authentication-without-no-locaspnet-core-identity">在不使用社交登录提供程序身份验证的情况下使用 ASP.NET Core Identity</h1>
+
+<p>作者： <a href="https://twitter.com/serpent5">Kirk Larkin</a> 和 <a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<p><a class="xref" href="index.html">ASP.NET Core 中的 Facebook、Google 和外部提供程序身份验证</a> 描述如何使用户能够使用 OAuth 2.0 通过外部身份验证提供程序中的凭据进行登录。 该主题中所述的方法包括 ASP.NET Core Identity 作为身份验证提供程序。</p>
+<p>此示例演示如何在不使用的 <strong>情况下</strong> 使用外部身份验证提供程序 ASP.NET Core Identity 。 这对于不需要的所有功能 ASP.NET Core Identity 但仍需要与受信任的外部身份验证提供程序集成的应用很有用。</p>
+<p>此示例使用 <a class="xref" href="google-logins.html">Google 身份验证</a> 对用户进行身份验证。 使用 Google 身份验证将管理登录过程的许多复杂性转移到 Google。 若要与其他外部身份验证提供程序集成，请参阅以下主题：</p>
+<ul>
+<li><a class="xref" href="facebook-logins.html">Facebook 身份验证</a></li>
+<li><a class="xref" href="microsoft-logins.html">Microsoft 身份验证</a></li>
+<li><a class="xref" href="twitter-logins.html">Twitter 身份验证</a></li>
+<li><a class="xref" href="other-logins.html">其他提供程序</a></li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<p>在 <code>ConfigureServices</code> 方法中，使用 &lt;xref:Microsoft.Extensions.DependencyInjection.AuthenticationServiceCollectionExtensions.AddAuthentication*&gt; 、 &lt;xref:Microsoft.Extensions.DependencyInjection.CookieExtensions.AddCookie*&gt; 和方法配置应用的身份验证方案 &lt;xref:Microsoft.Extensions.DependencyInjection.GoogleExtensions.AddGoogle*&gt; ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>用于 &lt;xref:Microsoft.Extensions.DependencyInjection.AuthenticationServiceCollectionExtensions.AddAuthentication*&gt; 设置应用的的调用 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationOptions.DefaultScheme&gt; 。 <code>DefaultScheme</code>是以下 <code>HttpContext</code> 身份验证扩展方法使用的默认方案：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.AuthenticateAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.ChallengeAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.ForbidAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignInAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync*&gt;</li>
+</ul>
+<p>将应用的设置 <code>DefaultScheme</code> 为<a href="xref:Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme"> Cookie AuthenticationDefaults. AuthenticationScheme</a> ( &quot; Cookie s&quot; ) 将应用配置为使用 Cookie 作为这些扩展方法的默认方案。 将应用的设置 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationOptions.DefaultChallengeScheme&gt; 为 <a href="xref:Microsoft.AspNetCore.Authentication.Google.GoogleDefaults.AuthenticationScheme">GoogleDefaults. AuthenticationScheme</a> ( &quot;google&quot; ) 将应用配置为使用 Google 作为调用的默认方案 <code>ChallengeAsync</code> 。 <code>DefaultChallengeScheme</code> 重写 <code>DefaultScheme</code> 。 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationOptions&gt;有关设置时重写的其他属性，请参阅 <code>DefaultScheme</code> 。</p>
+<p>在中 <code>Startup.Configure</code> ， <code>UseAuthentication</code> 在 <code>UseAuthorization</code> 调用和之间调用和 <code>UseRouting</code> <code>UseEndpoints</code> 。 这会设置 <code>HttpContext.User</code> 属性并为请求运行授权中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要详细了解身份验证方案，请参阅 <a class="xref" href="../index.html#authentication-concepts">身份验证概念</a>。 若要了解有关 cookie 身份验证的详细信息，请参阅 <a class="xref" href="../cookie.html">cookie不使用身份验证ASP.NET Core Identity</a> 。</p>
+<h2 id="apply-authorization">应用授权</h2>
+<p>通过将 <code>AuthorizeAttribute</code> 特性应用于控制器、操作或页来测试应用的身份验证配置。 以下代码将访问 <em>隐私</em> 页面的权限限制为已经过身份验证的用户：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="sign-out">注销</h2>
+<p>若要注销当前用户并将其删除 cookie ，请调用 <a href="xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync*">SignOutAsync</a>。 下面的代码将 <code>Logout</code> 页面处理程序添加到 <em>索引</em> 页：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请注意，对的调用 <code>SignOutAsync</code> 未指定身份验证方案。 的应用程序 <code>DefaultScheme</code> 用作 <code>CookieAuthenticationDefaults.AuthenticationScheme</code> 回退。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../authorization/simple.html">ASP.NET Core 中的简单授权</a></li>
+<li><a class="xref" href="additional-claims.html">在 ASP.NET Core 中保存外部提供程序的其他声明和令牌</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p><a class="xref" href="index.html">ASP.NET Core 中的 Facebook、Google 和外部提供程序身份验证</a> 描述如何使用户能够使用 OAuth 2.0 通过外部身份验证提供程序中的凭据进行登录。 该主题中所述的方法包括 ASP.NET Core Identity 作为身份验证提供程序。</p>
+<p>此示例演示如何在不使用的 <strong>情况下</strong> 使用外部身份验证提供程序 ASP.NET Core Identity 。 这对于不需要的所有功能 ASP.NET Core Identity 但仍需要与受信任的外部身份验证提供程序集成的应用很有用。</p>
+<p>此示例使用 <a class="xref" href="google-logins.html">Google 身份验证</a> 对用户进行身份验证。 使用 Google 身份验证将管理登录过程的许多复杂性转移到 Google。 若要与其他外部身份验证提供程序集成，请参阅以下主题：</p>
+<ul>
+<li><a class="xref" href="facebook-logins.html">Facebook 身份验证</a></li>
+<li><a class="xref" href="microsoft-logins.html">Microsoft 身份验证</a></li>
+<li><a class="xref" href="twitter-logins.html">Twitter 身份验证</a></li>
+<li><a class="xref" href="other-logins.html">其他提供程序</a></li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<p>在 <code>ConfigureServices</code> 方法中，使用 <code>AddAuthentication</code> 、 <code>AddCookie</code> 和方法配置应用的身份验证方案 <code>AddGoogle</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>对 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication#Microsoft_Extensions_DependencyInjection_AuthenticationServiceCollectionExtensions_AddAuthentication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Microsoft_AspNetCore_Authentication_AuthenticationOptions__">AddAuthentication</a> 的调用将设置应用的 <a href="xref:Microsoft.AspNetCore.Authentication.AuthenticationOptions.DefaultScheme">DefaultScheme</a>。 <code>DefaultScheme</code>是以下 <code>HttpContext</code> 身份验证扩展方法使用的默认方案：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.AuthenticateAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.ChallengeAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.ForbidAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignInAsync*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync*&gt;</li>
+</ul>
+<p>将应用的设置 <code>DefaultScheme</code> 为<a href="xref:Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme"> Cookie AuthenticationDefaults. AuthenticationScheme</a> ( &quot; Cookie s&quot; ) 将应用配置为使用 Cookie 作为这些扩展方法的默认方案。 将应用的设置 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationOptions.DefaultChallengeScheme&gt; 为 <a href="xref:Microsoft.AspNetCore.Authentication.Google.GoogleDefaults.AuthenticationScheme">GoogleDefaults. AuthenticationScheme</a> ( &quot;google&quot; ) 将应用配置为使用 Google 作为调用的默认方案 <code>ChallengeAsync</code> 。 <code>DefaultChallengeScheme</code> 重写 <code>DefaultScheme</code> 。 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationOptions&gt;有关设置时重写的其他属性，请参阅 <code>DefaultScheme</code> 。</p>
+<p>在 <code>Configure</code> 方法中，调用 <code>UseAuthentication</code> 方法以调用设置属性的身份验证中间件 <code>HttpContext.User</code> 。 <code>UseAuthentication</code>在调用或之前调用 <code>UseMvcWithDefaultRoute</code> 方法 <code>UseMvc</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要详细了解身份验证方案，请参阅 <a class="xref" href="../index.html#authentication-concepts">身份验证概念</a>。 若要了解有关 cookie 身份验证的详细信息，请参阅 <a class="xref" href="../cookie.html">cookie不使用身份验证ASP.NET Core Identity</a> 。</p>
+<h2 id="apply-authorization">应用授权</h2>
+<p>通过将 <code>AuthorizeAttribute</code> 特性应用于控制器、操作或页来测试应用的身份验证配置。 以下代码将访问 <em>隐私</em> 页面的权限限制为已经过身份验证的用户：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="sign-out">注销</h2>
+<p>若要注销当前用户并将其删除 cookie ，请调用 <a href="xref:Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync*">SignOutAsync</a>。 下面的代码将 <code>Logout</code> 页面处理程序添加到 <em>索引</em> 页：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请注意，对的调用 <code>SignOutAsync</code> 未指定身份验证方案。 的应用程序 <code>DefaultScheme</code> 用作 <code>CookieAuthenticationDefaults.AuthenticationScheme</code> 回退。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../authorization/simple.html">ASP.NET Core 中的简单授权</a></li>
+<li><a class="xref" href="additional-claims.html">在 ASP.NET Core 中保存外部提供程序的其他声明和令牌</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

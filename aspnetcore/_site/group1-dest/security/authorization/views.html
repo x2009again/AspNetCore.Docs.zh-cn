@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core MVC &#20013;&#22522;&#20110;&#35270;&#22270;&#30340;&#25480;&#26435; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core MVC &#20013;&#22522;&#20110;&#35270;&#22270;&#30340;&#25480;&#26435; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authorization/views">
+<h1 id="view-based-authorization-in-aspnet-core-mvc">ASP.NET Core MVC 中基于视图的授权</h1>
+
+<p>开发人员通常需要根据当前用户标识来显示、隐藏或修改 UI。 可以通过 <a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>访问 MVC 视图中的授权服务。 若要将授权服务注入 Razor 视图，请使用 <code>@inject</code> 指令：</p>
+<pre><code class="lang-cshtml">@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+</code></pre>
+<p>如果要在每个视图中设置授权服务，请将 <code>@inject</code> 指令放入 <em>Views</em> 目录的 <em>_ViewImports.</em> 有关详细信息，请参阅<a class="xref" href="../../mvc/views/dependency-injection.html">视图中的依赖关系注入</a>。</p>
+<p>使用注入的授权服务进行调用的方法与在 <code>AuthorizeAsync</code> <a class="xref" href="resourcebased.html#security-authorization-resource-based-imperative">基于资源的授权</a>期间进行检查的方式完全相同：</p>
+<pre><code class="lang-cshtml">@if ((await AuthorizationService.AuthorizeAsync(User, &quot;PolicyName&quot;)).Succeeded)
+{
+    &lt;p&gt;This paragraph is displayed because you fulfilled PolicyName.&lt;/p&gt;
+}
+</code></pre>
+<p>在某些情况下，资源将是您的视图模型。 调用的方法与在 <code>AuthorizeAsync</code> <a class="xref" href="resourcebased.html#security-authorization-resource-based-imperative">基于资源的授权</a>期间进行检查的方式完全相同：</p>
+<pre><code class="lang-cshtml">@if ((await AuthorizationService.AuthorizeAsync(User, Model, Operations.Edit)).Succeeded)
+{
+    &lt;p&gt;&lt;a class=&quot;btn btn-default&quot; role=&quot;button&quot;
+        href=&quot;@Url.Action(&quot;Edit&quot;, &quot;Document&quot;, new { id = Model.Id })&quot;&gt;Edit&lt;/a&gt;&lt;/p&gt;
+}
+</code></pre>
+<p>在前面的代码中，该模型将作为资源进行传递，策略评估应考虑到该资源。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>请不要依赖于应用的 UI 元素的切换可见性，作为唯一的授权检查。 隐藏 UI 元素可能无法完全阻止对其关联控制器操作的访问。 例如，请考虑前面代码片段中的按钮。 <code>Edit</code>如果用户知道相对资源 URL 是 <em>/Document/Edit/1</em> 的，则用户可以调用操作方法。 出于此原因， <code>Edit</code> 操作方法应执行其自己的授权检查。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

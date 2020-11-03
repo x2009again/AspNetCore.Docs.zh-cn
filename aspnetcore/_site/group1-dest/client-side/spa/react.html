@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#36890;&#36807; ASP.NET Core &#20351;&#29992; React &#39033;&#30446;&#27169;&#26495; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#36890;&#36807; ASP.NET Core &#20351;&#29992; React &#39033;&#30446;&#27169;&#26495; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="spa/react">
+<h1 id="use-the-react-project-template-with-aspnet-core">通过 ASP.NET Core 使用 React 项目模板</h1>
+
+<p>更新的 React 项目模板为使用 React 和 <a href="https://github.com/facebookincubator/create-react-app">create-react-app</a> (CRA) 约定实现丰富的客户端用户界面 (UI) 的 ASP.NET Core 应用程序提供了便捷起点。</p>
+<p>该模板等同于创建两个项目，即用作 API 后端的 ASP.NET Core 项目和用作 UI 的标准 CRA React 项目，但均可在可以生成并发布为单个单元的单个应用程序项目中进行托管。</p>
+<p>React 项目模板不适用于服务器端呈现 (SSR)。 对于带有 React 和 Node.js 的 SSR，请考虑使用 <a href="https://github.com/zeit/next.js/">Next.js</a> 或 <a href="https://github.com/jaredpalmer/razzle">Razzle</a>。</p>
+<h2 id="create-a-new-app">创建新应用</h2>
+<p>如果已安装 ASP.NET Core 2.1，则无需安装 React 项目模板。</p>
+<p>在空目录中使用命令 <code>dotnet new react</code> 从命令提示符创建一个新项目。 例如，以下命令在 my-new-app 目录中创建应用并切换到该目录：</p>
+<pre><code class="lang-dotnetcli">dotnet new react -o my-new-app
+cd my-new-app
+</code></pre>
+<p>从 Visual Studio 或 .NET Core CLI 运行应用：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>打开生成的 .csproj 文件，并从此文件正常运行应用。</p>
+<p>生成过程会在首次运行时还原 npm 依赖关系，这可能需要几分钟的时间。 后续版本要快得多。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>确保你有一个名为 <code>ASPNETCORE_Environment</code> 的环境变量，其值为 <code>Development</code>。 在 Windows 上（在非 PowerShell 提示下）运行 <code>SET ASPNETCORE_Environment=Development</code>。 在 Linux 或 macOS 上运行 <code>export ASPNETCORE_Environment=Development</code>。</p>
+<p>运行 <a href="/dotnet/core/tools/dotnet-build">dotnet build</a> 以验证应用是否正确生成。 首次运行时，生成过程会还原 npm 依赖关系，这可能需要几分钟的时间。 后续版本要快得多。</p>
+<p>运行 <a href="/dotnet/core/tools/dotnet-run">dotnet run</a> 以启动应用。</p>
+</section>
+</div>
+
+<p>该项目模板创建一个 ASP.NET Core 应用和一个 React 应用。 ASP.NET Core 应用旨在用于数据访问、授权和其他服务器端问题。 位于 ClientApp 子目录中的 React 应用旨在用于所有 UI 问题。</p>
+<h2 id="add-pages-images-styles-modules-etc">添加页面、映像、样式、模块等。</h2>
+<p>ClientApp 目录是标准的 CRA React 应用。 有关详细信息，请参阅官方 <a href="https://create-react-app.dev/docs/getting-started/">CRA 文档</a>。</p>
+<p>此模板创建的 React 应用与 CRA 自身创建的应用之间存在细微差异；但是，该应用的功能未变。 该模板创建的应用包含基于 <a href="https://getbootstrap.com/">Bootstrap</a> 的布局和基本路由示例。</p>
+<h2 id="install-npm-packages">安装 npm 包</h2>
+<p>要安装第三方 npm 程序包，请使用 ClientApp 子目录中的命令提示符。 例如：</p>
+<pre><code class="lang-console">cd ClientApp
+npm install --save &lt;package_name&gt;
+</code></pre>
+<h2 id="publish-and-deploy">发布和部署</h2>
+<p>在开发过程中，应用在为开发人员之便而优化的模式下运行。 例如，JavaScript 捆绑包包含源映射（这样在调试时可以查看原始源代码）。 该应用程序监视磁盘上的 JavaScript、HTML 和 CSS 文件更改，并在看到这些文件更改时自动重新编译和重新加载。</p>
+<p>在生产中，提供针对性能进行了优化的应用版本。 该操作被配置为自动发生。 发布时，生成配置会发出转换的压缩客户端代码版本。 与开发版本不同，生产版本不需要在服务器上安装 Node.js。</p>
+<p>你可以使用标准 <a class="xref" href="../../host-and-deploy/index.html">ASP.NET Core 托管和部署方法</a>。</p>
+<h2 id="run-the-cra-server-independently">独立运行 CRA 服务器</h2>
+<p>在 ASP.NET Core 应用以开发模式启动时，该项目配置为在后台启动自己的 CRA 开发服务器实例。 这很方便，因为这表示你无需手动运行单独的服务器。</p>
+<p>这种默认设置有一个缺点。 每次修改 C# 代码并且需要重启 ASP.NET Core 应用时，CRA 服务器都会重启。 大约需要几秒才能开始备份。 如果你经常进行 C# 代码编辑并且不希望等待 CRA 服务器重启，请在外部运行独立于 ASP.NET Core 进程的 CRA 服务器。 为此，请执行以下操作：</p>
+<ol>
+<li><p>使用以下设置将 .env 文件添加到 ClientApp 子目录 ：</p>
+<pre><code>BROWSER=none
+</code></pre>
+<p>这将阻止在外部启动 CRA 服务器时打开 Web 浏览器。</p>
+</li>
+<li><p>在命令提示符中，切换到 ClientApp 子目录，并启动 CRA 开发服务器：</p>
+<pre><code class="lang-console">cd ClientApp
+npm start
+</code></pre>
+</li>
+<li><p>修改 ASP.NET Core 应用以使用外部 CRA 服务器实例，而不是启动它自己的实例。 在 Startup 类中，将 <code>spa.UseReactDevelopmentServer</code> 调用替换为以下内容：</p>
+<pre><code class="lang-csharp">spa.UseProxyToSpaDevelopmentServer(&quot;http://localhost:3000&quot;);
+</code></pre>
+</li>
+</ol>
+<p>当启动 ASP.NET Core 应用时，它不会启动 CRA 服务器， 而是使用你手动启动的实例。 这使它能够更快地启动和重新启动。 不再需要每次等待 React 应用重新生成。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>此模板不支持“服务器端呈现”功能。 使用此模板是为了通过“create-react-app”满足奇偶一致性。 因此，不支持“create-react-app”项目中没有的方案和功能（例如 SSR），这些内容作为练习提供给用户。</p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../security/authentication/identity-api-authorization.html">ASP.NET Core 上的单页面应用的身份验证简介</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

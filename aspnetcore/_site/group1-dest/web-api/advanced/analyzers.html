@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; Web API &#20998;&#26512;&#22120; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; Web API &#20998;&#26512;&#22120; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="web-api/advanced/analyzers">
+<h1 id="use-web-api-analyzers">使用 Web API 分析器</h1>
+
+<p>ASP.NET Core 2.2 和更高版本提供了用于 Web API 项目的 MVC 分析器包。 分析器使用带有 &lt;xref:Microsoft.AspNetCore.Mvc.ApiControllerAttribute&gt; 批注的控制器，同时构建 <a class="xref" href="conventions.html">Web API 约定</a>。</p>
+<p>分析器包会通知你执行以下操作的任何控制器操作：</p>
+<ul>
+<li>返回未声明的状态代码。</li>
+<li>返回未声明的成功结果。</li>
+<li>记录不返回的状态代码。</li>
+<li>包含显式模型验证检查。</li>
+</ul>
+<div range="&gt;= aspnetcore-3.0">
+<h2 id="reference-the-analyzer-package">引用分析器包</h2>
+<p>在 ASP.NET Core 3.0 或更高版本中，分析器随附在 .NET Core SDK 中。 若要在项目中启用分析器，请在项目文件中包含 <code>IncludeOpenAPIAnalyzers</code> 属性：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+ &lt;IncludeOpenAPIAnalyzers&gt;true&lt;/IncludeOpenAPIAnalyzers&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</div>
+<div range="= aspnetcore-2.2">
+<h2 id="package-installation">包安装</h2>
+<p>通过以下方法之一安装 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Api.Analyzers">Microsoft.AspNetCore.Mvc.Api.Analyzers</a> NuGet 包：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>从“程序包管理器控制台”窗口：</p>
+<ul>
+<li><p>请参阅 <strong>查看</strong> &gt; <strong>其他 Windows</strong> &gt; <strong>程序包管理器控制台</strong> 。</p>
+</li>
+<li><p>导航到 ApiConventions.csproj 文件所在的目录  。</p>
+</li>
+<li><p>执行以下命令：</p>
+<pre><code class="lang-powershell">Install-Package Microsoft.AspNetCore.Mvc.Api.Analyzers
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li>右键单击 <em>Packages</em> <strong>Solution Pad</strong> &gt; <strong>添加包 ...</strong> &quot;中的&quot; 包 &quot;文件夹。</li>
+<li>将 &quot; <strong>添加包</strong> &quot; 窗口的 &quot; <strong>源</strong> &quot; 下拉箭头设置为 &quot;nuget.org&quot;。</li>
+<li>在搜索框中输入“Microsoft.AspNetCore.Mvc.Api.Analyzers”。</li>
+<li>从结果窗格中选择“Microsoft.AspNetCore.Mvc.Api.Analyzers”包，然后单击“添加包”  。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>从“集成终端”中运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet add ApiConventions.csproj package Microsoft.AspNetCore.Mvc.Api.Analyzers
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet add ApiConventions.csproj package Microsoft.AspNetCore.Mvc.Api.Analyzers
+</code></pre>
+</section>
+</div>
+</div>
+<h2 id="analyzers-for-web-api-conventions">Web API 约定的分析器</h2>
+<p>OpenAPI 文档包含操作可能返回的状态代码和响应类型。 在 ASP.NET Core MVC 中，&lt;xref:Microsoft.AspNetCore.Mvc.ProducesResponseTypeAttribute&gt; 和 &lt;xref:Microsoft.AspNetCore.Mvc.ProducesAttribute&gt; 等属性用于记录操作。 <a class="xref" href="../../tutorials/web-api-help-pages-using-swagger.html">带有 Swagger/OpenAPI 的 ASP.NET Core Web API 帮助页</a> 进一步介绍有关记录 Web API 的详细信息。</p>
+<p>包中的其中一个分析器检查使用 &lt;xref:Microsoft.AspNetCore.Mvc.ApiControllerAttribute&gt; 进行批注的控制器，并标识不完全记录其响应的操作。 请考虑以下示例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述操作记录了 HTTP 200 成功返回类型，但未记录 HTTP 404 失败状态代码。 分析器将 HTTP 404 状态代码的缺失文档报告为警告。 提供了修复此问题的选项。</p>
+<p><img src="conventions/_static/Analyzer.gif" alt="报告警告的分析器"></p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="conventions.html">使用 Web API 约定</a></li>
+<li><a class="xref" href="../../tutorials/web-api-help-pages-using-swagger.html">带有 Swagger/OpenAPI 的 ASP.NET Core Web API 帮助页</a></li>
+<li><a class="xref" href="../index.html">使用 ASP.NET Core 创建 Web API</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

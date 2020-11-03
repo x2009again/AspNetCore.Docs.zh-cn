@@ -1,0 +1,535 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#32467;&#21512;&#20351;&#29992; ASP.NET Core SignalR &#21644; Blazor WebAssembly </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#32467;&#21512;&#20351;&#29992; ASP.NET Core SignalR &#21644; Blazor WebAssembly ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/signalr-blazor-webassembly">
+<h1 id="use-aspnet-core-no-locsignalr-with-no-locblazor-webassembly">结合使用 ASP.NET Core SignalR 和 Blazor WebAssembly</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p>本教程介绍结合使用 SignalR 和 Blazor WebAssembly 生成实时应用的基础知识。 您将学习如何：</p>
+<div class="checklist">
+<ul>
+<li>创建 Blazor WebAssembly 托管应用项目</li>
+<li>添加 SignalR 客户端库</li>
+<li>添加 SignalR 集线器</li>
+<li>添加 SignalR 服务和 SignalR 中心的终结点</li>
+<li>添加用于聊天的 Razor 组件代码</li>
+</ul>
+</div>
+<p>在本教程结束时，你将拥有一个正常运行的聊天应用。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/signalr-blazor-webassembly/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="prerequisites">先决条件</h2>
+<div range="&gt;= aspnetcore-5.0">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+<!-- * [Visual Studio 2019 16.8 or later](https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&utm_source=docs.microsoft.com&utm_campaign=inline+link&utm_content=download+vs2019) with the **ASP.NET and web development** workload -->
+<ul>
+<li>具有“ASP.NET 和 Web 开发”工作负载的 <a href="https://visualstudio.microsoft.com/vs/preview/">Visual Studio 2019 16.8 或更高版本（预览版）</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet/5.0">.NET 5.0 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet/5.0">.NET 5.0 SDK 或更高版本</a></p>
+</li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可以在 macOS、Linux 或 Windows 上以及任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<!-- * [Visual Studio for Mac version 8.8 or later (in preview)](https://visualstudio.microsoft.com/vs/mac/) -->
+<ul>
+<li><a href="/visualstudio/releasenotes/vs2019-mac-preview-relnotes">Visual Studio for Mac 版本 8.8 或更高版本（预览版）</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet/5.0">.NET 5.0 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+<p><a href="https://dotnet.microsoft.com/download/dotnet/5.0">.NET 5.0 SDK 或更高版本</a></p>
+</section>
+</div>
+</div>
+<div range="&lt; aspnetcore-5.0">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>具有“ASP.NET 和 Web 开发”工作负载的 <a href="https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&amp;utm_source=docs.microsoft.com&amp;utm_campaign=inline+link&amp;utm_content=download+vs2019">Visual Studio 2019 16.6 或更高版本</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可在任何平台（macOS、Linux 或 Windows）上或在任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。 有关在 macOS 上安装 Visual Studio Code 的详细信息，请参阅<a href="https://code.visualstudio.com/docs/setup/mac">macOS 上的 Visual Studio Code</a>。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><a href="https://visualstudio.microsoft.com/vs/mac/">Visual Studio for Mac 版本 8.6 或更高版本</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+<p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</section>
+</div>
+</div>
+<h2 id="create-a-hosted-no-locblazor-webassembly-app-project">创建托管 Blazor WebAssembly 应用项目</h2>
+<p>按照所选工具的指南进行操作：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio" role="tabpanel" data-tab="visual-studio">
+<div range="&gt;= aspnetcore-5.0">
+<div class="NOTE">
+<h5>Note</h5>
+<p>需要 Visual Studio 16.8 或更高版本以及 .NET Core SDK 5.0.0 或更高版本。</p>
+</div>
+</div>
+<div range="&lt; aspnetcore-5.0">
+<div class="NOTE">
+<h5>Note</h5>
+<p>需要 Visual Studio 16.6 或更高版本以及 .NET Core SDK 3.1.300 或更高版本。</p>
+</div>
+</div>
+<ol>
+<li><p>创建新项目。</p>
+</li>
+<li><p>选择“Blazor 应用”，然后选择“下一步”。</p>
+</li>
+<li><p>在“项目名称”字段中键入 <code>BlazorSignalRApp</code>。 确认“位置”条目正确无误或为项目提供位置。 选择“创建”。</p>
+</li>
+<li><p>选择“Blazor WebAssembly 应用”模板。</p>
+</li>
+<li><p>在“高级”下选中“托管的 ASP.NET Core”复选框。</p>
+</li>
+<li><p>选择“创建”  。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li><p>在命令行界面中执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorwasm --hosted --output BlazorSignalRApp
+</code></pre>
+</li>
+<li><p>在 Visual Studio Code 中打开应用的项目文件夹。</p>
+</li>
+<li><p>当显示添加资产以生成和调试应用的对话框时，选择“是”。 Visual Studio Code 会自动将生成的 <code>launch.json</code> 和 <code>tasks.json</code> 文件添加到 <code>.vscode</code> 文件夹中。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li><p>安装最新版本的 <a href="https://visualstudio.microsoft.com/vs/mac/">Visual Studio for Mac</a>，并执行以下步骤：</p>
+</li>
+<li><p>选择“文件” &gt; “新建解决方案”或从“启动窗口”创建“新项目”   。</p>
+</li>
+<li><p>在边栏中，选择“Web 和控制台” &gt; “应用”。</p>
+</li>
+<li><p>选择“Blazor WebAssembly 应用”模板。 选择“下一步”。</p>
+</li>
+<li><p>确认已将“身份验证”设置为“无身份验证”。 选中“托管的 ASP.NET Core”复选框。 选择“下一步”。</p>
+</li>
+<li><p>在“项目名称”字段中，将应用命名为 <code>BlazorSignalRApp</code>。 选择“创建”。</p>
+<p>如果出现信任开发证书的提示，请信任证书并继续操作。 信任证书需要使用用户密码和密钥链密码。</p>
+</li>
+<li><p>通过导航到项目文件夹并打开项目的解决方案文件 (<code>.sln</code>) 打开项目。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>在命令行界面中执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorwasm --hosted --output BlazorSignalRApp
+</code></pre>
+</section>
+</div>
+<h2 id="add-the-no-locsignalr-client-library">添加 SignalR 客户端库</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ol>
+<li><p>在“解决方案资源管理器”中，右键单击 <code>BlazorSignalRApp.Client</code> 项目，然后选择“管理 NuGet 包” 。</p>
+</li>
+<li><p>在“管理 NuGet 包”对话框中，确认“包源”设置为“<code>nuget.org</code>” 。</p>
+</li>
+<li><p>选择“浏览”后，在搜索框中键入“<code>Microsoft.AspNetCore.SignalR.Client</code>”。</p>
+</li>
+<li><p>在搜索结果中，选中 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR.Client"><code>Microsoft.AspNetCore.SignalR.Client</code></a> 包，然后选择“安装”。</p>
+</li>
+<li><p>如果出现“预览更改”对话框，则选择“确定”。</p>
+</li>
+<li><p>如果出现“许可证接受”对话框，如果你同意许可条款，请选择“我接受”。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>在“集成终端”（工具栏上的“视图” &gt; “终端”）中，执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet add Client package Microsoft.AspNetCore.SignalR.Client
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li><p>在“解决方案资源管理器”中，右键单击 <code>BlazorSignalRApp.Client</code> 项目，然后选择“管理 NuGet 包” 。</p>
+</li>
+<li><p>在“管理 NuGet 包”对话框中，确认源下拉列表设置为“<code>nuget.org</code>”。</p>
+</li>
+<li><p>选择“浏览”后，在搜索框中键入“<code>Microsoft.AspNetCore.SignalR.Client</code>”。</p>
+</li>
+<li><p>在搜索结果中，选中 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR.Client"><code>Microsoft.AspNetCore.SignalR.Client</code></a> 包旁边的复选框，然后选择“添加包”。</p>
+</li>
+<li><p>出现“许可证接受”对话框时，如果你同意许可条款，请选择“接受”。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>在命令行界面中执行以下命令：</p>
+<pre><code class="lang-dotnetcli">cd BlazorSignalRApp
+dotnet add Client package Microsoft.AspNetCore.SignalR.Client
+</code></pre>
+</section>
+</div>
+<h2 id="add-a-no-locsignalr-hub">添加 SignalR 集线器</h2>
+<p>在 <code>BlazorSignalRApp.Server</code> 项目中，创建 <code>Hubs</code>（复数）文件夹，并添加以下 <code>ChatHub</code> 类 (<code>Hubs/ChatHub.cs</code>)：</p>
+<div range="&gt;= aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="add-services-and-an-endpoint-for-the-no-locsignalr-hub">为 SignalR 中心添加服务和终结点</h2>
+<ol>
+<li><p>在 <code>BlazorSignalRApp.Server</code> 项目中打开 <code>Startup.cs</code> 文件。</p>
+</li>
+<li><p>将 <code>ChatHub</code> 类的命名空间添加到文件顶部：</p>
+<pre><code class="lang-csharp">using BlazorSignalRApp.Server.Hubs;
+</code></pre>
+</li>
+<li><p>将 SignalR 和响应压缩中间件服务添加到 <code>Startup.ConfigureServices</code>：</p>
+</li>
+</ol>
+<div range="&gt;= aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<ol>
+<li><p>在 <code>Startup.Configure</code>中：</p>
+<ul>
+<li>使用处理管道的配置顶部的“响应压缩中间件”。</li>
+<li>在控制器终结点和客户端回退之间，为中心添加一个终结点。</li>
+</ul>
+</li>
+</ol>
+<div range="&gt;= aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="add-no-locrazor-component-code-for-chat">添加用于聊天的 Razor 组件代码</h2>
+<ol>
+<li><p>在 <code>BlazorSignalRApp.Client</code> 项目中打开 <code>Pages/Index.razor</code> 文件。</p>
+</li>
+<li><p>将标记替换为以下代码：</p>
+</li>
+</ol>
+<div range="&gt;= aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="run-the-app">运行应用</h2>
+<ol>
+<li>按照工具的指南进行操作：</li>
+</ol>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ol>
+<li><p>在“解决方案资源管理器”中，选择 <code>BlazorSignalRApp.Server</code> 项目。 按 <kbd>F5</kbd> 来运行应用并进行调试，或者按 <kbd>Ctrl</kbd>+<kbd>F5</kbd> 来运行应用但不调试。</p>
+</li>
+<li><p>从地址栏复制 URL，打开另一个浏览器实例或选项卡，并在地址栏中粘贴该 URL。</p>
+</li>
+<li><p>选择任一浏览器，输入名称和消息，然后选择按钮发送消息。 两个页面上立即显示名称和消息：</p>
+<p><img src="signalr-blazor-webassembly/_static/3.x/signalr-blazor-webassembly-finished.png" alt="SignalR Blazor WebAssembly 示例应用在两个浏览器窗口中打开，显示交换的消息。"></p>
+<p>Quotes:<em>Star Trek VI:The Undiscovered Country</em> ©1991 <a href="https://www.paramountmovies.com/movies/star-trek-vi-the-undiscovered-country">Paramount</a></p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li>当 VS Code 主动为服务器应用创建一个启动配置文件 (<code>.vscode/launch.json</code>) 时，<code>program</code> 条目如下所示，它指向应用的程序集 (<code>{APPLICATION NAME}.Server.dll</code>)：</li>
+</ol>
+<div range="&gt;= aspnetcore-5.0">
+<pre><code class="lang-json">&quot;program&quot;: &quot;${workspaceFolder}/Server/bin/Debug/net5.0/{APPLICATION NAME}.Server.dll&quot;
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-5.0">
+<pre><code class="lang-json">&quot;program&quot;: &quot;${workspaceFolder}/Server/bin/Debug/netcoreapp3.1/{APPLICATION NAME}.Server.dll&quot;
+</code></pre>
+</div>
+<ol>
+<li><p>按 <kbd>F5</kbd> 来运行应用并进行调试，或者按 <kbd>Ctrl</kbd>+<kbd>F5</kbd> 来运行应用但不调试。</p>
+</li>
+<li><p>从地址栏复制 URL，打开另一个浏览器实例或选项卡，并在地址栏中粘贴该 URL。</p>
+</li>
+<li><p>选择任一浏览器，输入名称和消息，然后选择按钮发送消息。 两个页面上立即显示名称和消息：</p>
+<p><img src="signalr-blazor-webassembly/_static/3.x/signalr-blazor-webassembly-finished.png" alt="SignalR Blazor WebAssembly 示例应用在两个浏览器窗口中打开，显示交换的消息。"></p>
+<p>Quotes:<em>Star Trek VI:The Undiscovered Country</em> ©1991 <a href="https://www.paramountmovies.com/movies/star-trek-vi-the-undiscovered-country">Paramount</a></p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li><p>在“解决方案”边栏中，选择 <code>BlazorSignalRApp.Server</code> 项目。 按 <kbd>⌘</kbd>+<kbd>↩</kbd> 来运行应用并进行调试，或者按 <kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>↩</kbd> 来运行应用但不调试。</p>
+</li>
+<li><p>从地址栏复制 URL，打开另一个浏览器实例或选项卡，并在地址栏中粘贴该 URL。</p>
+</li>
+<li><p>选择任一浏览器，输入名称和消息，然后选择按钮发送消息。 两个页面上立即显示名称和消息：</p>
+<p><img src="signalr-blazor-webassembly/_static/3.x/signalr-blazor-webassembly-finished.png" alt="SignalR Blazor WebAssembly 示例应用在两个浏览器窗口中打开，显示交换的消息。"></p>
+<p>Quotes:<em>Star Trek VI:The Undiscovered Country</em> ©1991 <a href="https://www.paramountmovies.com/movies/star-trek-vi-the-undiscovered-country">Paramount</a></p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li><p>在命令行界面中执行以下命令：</p>
+<pre><code class="lang-dotnetcli">cd Server
+dotnet run
+</code></pre>
+</li>
+<li><p>从地址栏复制 URL，打开另一个浏览器实例或选项卡，并在地址栏中粘贴该 URL。</p>
+</li>
+<li><p>选择任一浏览器，输入名称和消息，然后选择按钮发送消息。 两个页面上立即显示名称和消息：</p>
+<p><img src="signalr-blazor-webassembly/_static/3.x/signalr-blazor-webassembly-finished.png" alt="SignalR Blazor WebAssembly 示例应用在两个浏览器窗口中打开，显示交换的消息。"></p>
+<p>Quotes:<em>Star Trek VI:The Undiscovered Country</em> ©1991 <a href="https://www.paramountmovies.com/movies/star-trek-vi-the-undiscovered-country">Paramount</a></p>
+</li>
+</ol>
+</section>
+</div>
+<h2 id="next-steps">后续步骤</h2>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>创建 Blazor WebAssembly 托管应用项目</li>
+<li>添加 SignalR 客户端库</li>
+<li>添加 SignalR 集线器</li>
+<li>添加 SignalR 服务和 SignalR 中心的终结点</li>
+<li>添加用于聊天的 Razor 组件代码</li>
+</ul>
+</div>
+<p>若要了解有关生成 Blazor 应用的详细信息，请参阅 Blazor 文档：</p>
+<div class="nextstepaction">
+<p><a class="xref" href="../blazor/index.html">ASP.NET Core Blazor 简介</a></p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../signalr/introduction.html">ASP.NET Core SignalR 简介</a></li>
+<li><a class="xref" href="../blazor/fundamentals/additional-scenarios.html#signalr-cross-origin-negotiation-for-authentication">SignalR 用于身份验证的跨源协商</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20889;&#20837;&#33258;&#23450;&#20041; ASP.NET Core &#20013;&#38388;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20889;&#20837;&#33258;&#23450;&#20041; ASP.NET Core &#20013;&#38388;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/middleware/write">
+<h1 id="write-custom-aspnet-core-middleware">写入自定义 ASP.NET Core 中间件</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://ardalis.com/">Steve Smith</a></p>
+<p>中间件是一种装配到应用管道以处理请求和响应的软件。 ASP.NET Core 提供了一组丰富的内置中间件组件，但在某些情况下，你可能需要写入自定义中间件。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>本主题介绍如何编写基于约定的中间件。 有关使用强类型和按请求激活的方法，请参阅 <a class="xref" href="extensibility.html">ASP.NET Core 中基于工厂的中间件激活</a>。</p>
+</div>
+<h2 id="middleware-class">中间件类</h2>
+<p>通常，中间件封装在类中，并且通过扩展方法公开。 请考虑以下中间件，该中间件通过查询字符串设置当前请求的区域性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以上示例代码用于演示创建中间件组件。 有关 ASP.NET Core 的内置本地化支持，请参阅 <a class="xref" href="../localization.html">ASP.NET Core 全球化和本地化</a>。</p>
+<p>通过传入区域性测试中间件。 例如，请求 <code>https://localhost:5001/?culture=no</code>。</p>
+<p>以下代码将中间件委托移动到类：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>必须包括中间件类：</p>
+<ul>
+<li>具有类型为 &lt;xref:Microsoft.AspNetCore.Http.RequestDelegate&gt; 的参数的公共构造函数。</li>
+<li>名为 <code>Invoke</code> 或 <code>InvokeAsync</code> 的公共方法。 此方法必须：
+<ul>
+<li>返回 <code>Task</code>。</li>
+<li>接受类型 &lt;xref:Microsoft.AspNetCore.Http.HttpContext&gt; 的第一个参数。</li>
+</ul>
+</li>
+</ul>
+<p>构造函数和 <code>Invoke</code>/<code>InvokeAsync</code> 的其他参数由<a class="xref" href="../dependency-injection.html">依赖关系注入 (DI)</a> 填充。</p>
+<h2 id="middleware-dependencies">中间件依赖项</h2>
+<p>中间件应通过在其构造函数中公开其依赖项来遵循<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#explicit-dependencies">显式依赖项原则</a>。 在每个应用程序生存期构造一次中间件。 如果需要与请求中的中间件共享服务，请参阅<a href="#per-request-middleware-dependencies">按请求中间件依赖项</a>部分。</p>
+<p>中间件组件可通过构造函数参数从<a class="xref" href="../dependency-injection.html">依赖关系注入 (DI)</a> 解析其依赖项。 <a href="/dotnet/api/microsoft.aspnetcore.builder.usemiddlewareextensions.usemiddleware#Microsoft_AspNetCore_Builder_UseMiddlewareExtensions_UseMiddleware_Microsoft_AspNetCore_Builder_IApplicationBuilder_System_Type_System_Object___">UseMiddleware&lt;T&gt;</a> 也可直接接受其他参数。</p>
+<h2 id="per-request-middleware-dependencies">按请求中间件依赖项</h2>
+<p>由于中间件是在应用启动时构造的，而不是按请求构造的，因此在每个请求过程中，中间件构造函数使用的范围内生存期服务不与其他依赖关系注入类型共享。 如果必须在中间件和其他类型之间共享范围内服务，请将这些服务添加到 <code>Invoke</code> 方法的签名。 <code>Invoke</code> 方法可接受由 DI 填充的其他参数：</p>
+<pre><code class="lang-csharp">public class CustomMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public CustomMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    // IMyScopedService is injected into Invoke
+    public async Task Invoke(HttpContext httpContext, IMyScopedService svc)
+    {
+        svc.MyProperty = 1000;
+        await _next(httpContext);
+    }
+}
+</code></pre>
+<p><a class="xref" href="../dependency-injection.html#lifetime-and-registration-options">生存期和注册选项</a>包含范围内生存期服务的中间件的完整示例。</p>
+<h2 id="middleware-extension-method">中间件扩展方法</h2>
+<p>以下扩展方法通过 &lt;xref:Microsoft.AspNetCore.Builder.IApplicationBuilder&gt; 公开中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下代码通过 <code>Startup.Configure</code> 调用中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../dependency-injection.html#lifetime-and-registration-options">生存期和注册选项</a>包含范围内、临时性和单一实例生存期服务的中间件的完整示例  。</li>
+<li><a class="xref" href="index.html">ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../../test/middleware.html">测试 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../../migration/http-modules.html">将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件</a></li>
+<li><a class="xref" href="../startup.html">ASP.NET Core 中的应用启动</a></li>
+<li><a class="xref" href="../request-features.html">ASP.NET Core 中的请求功能</a></li>
+<li><a class="xref" href="extensibility.html">ASP.NET Core 中基于工厂的中间件激活</a></li>
+<li><a class="xref" href="extensibility-third-party-container.html">使用 ASP.NET Core 中的第三方容器激活中间件</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

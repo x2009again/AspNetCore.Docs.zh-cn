@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#25945;&#31243;&#65306;&#22788;&#29702;&#24182;&#21457; - ASP.NET MVC &#21644; EF Core </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#25945;&#31243;&#65306;&#22788;&#29702;&#24182;&#21457; - ASP.NET MVC &#21644; EF Core ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="data/ef-mvc/concurrency">
+<h1 id="tutorial-handle-concurrency---aspnet-mvc-with-ef-core">教程：处理并发 - ASP.NET MVC 和 EF Core</h1>
+
+<p>在之前的教程中，你学习了如何更新数据。 本教程介绍如何处理多个用户同时更新同一实体时出现的冲突。</p>
+<p>你将创建可处理 Department 实体的 Web 页面并处理并发错误。 下图显示了“编辑”和“删除”页面，包括发生并发冲突时显示的一些消息。</p>
+<p><img src="concurrency/_static/edit-error.png" alt="“院系编辑”页"></p>
+<p><img src="concurrency/_static/delete-error.png" alt="“院系删除”页"></p>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>了解并发冲突</li>
+<li>添加跟踪属性</li>
+<li>创建 Departments 控制器和视图</li>
+<li>更新“索引”视图</li>
+<li>更新编辑方法</li>
+<li>更新“编辑”视图</li>
+<li>测试并发冲突</li>
+<li>更新“删除”页</li>
+<li>更新“详细信息”和“创建”视图</li>
+</ul>
+</div>
+<h2 id="prerequisites">先决条件</h2>
+<ul>
+<li><a href="update-related-data.html">更新相关数据</a></li>
+</ul>
+<h2 id="concurrency-conflicts">并发冲突</h2>
+<p>当某用户显示实体数据以对其进行编辑，而另一用户在上一用户的更改写入数据库之前更新同一实体的数据时，会发生并发冲突。 如果不启用此类冲突的检测，则最后更新数据库的人员将覆盖其他用户的更改。 在许多应用程序中，此风险是可接受的：如果用户很少或更新很少，或者一些更改被覆盖并不重要，则并发编程可能弊大于利。 在此情况下，不必配置应用程序来处理并发冲突。</p>
+<h3 id="pessimistic-concurrency-locking">悲观并发（锁定）</h3>
+<p>如果应用程序确实需要防止并发情况下出现意外数据丢失，一种方法是使用数据库锁定。 这称为悲观并发。 例如，在从数据库读取一行内容之前，请求锁定为只读或更新访问。 如果将一行锁定为更新访问，则其他用户无法将该行锁定为只读或更新访问，因为他们得到的是正在更改的数据的副本。 如果将一行锁定为只读访问，则其他人也可将其锁定为只读访问，但不能进行更新。</p>
+<p>管理锁定有缺点。 编程可能很复杂。 它需要大量的数据库管理资源，且随着应用程序用户数量的增加，可能会导致性能问题。 由于这些原因，并不是所有的数据库管理系统都支持悲观并发。 Entity Framework Core 未提供对它的内置支持，并且本教程不展示其实现方式。</p>
+<h3 id="optimistic-concurrency">开放式并发</h3>
+<p>悲观并发的替代方法是乐观并发。 悲观并发是指允许发生并发冲突，并在并发冲突发生时作出正确反应。 例如，Jane 访问“院系编辑”页面，并将英语系的预算从 350,000.00 美元更改为 0.00 美元。</p>
+<p><img src="concurrency/_static/change-budget.png" alt="将预算更改为零"></p>
+<p>在 Jane 单击“保存”之前，John 访问了相同页面，并将开始日期字段从 2007/1/9 更改为 2013/1/9。</p>
+<p><img src="concurrency/_static/change-date.png" alt="将开始日期更改为 2013"></p>
+<p>Jane 先单击“保存”，并在浏览器返回索引页时看到她的更改。</p>
+<p><img src="concurrency/_static/budget-zero.png" alt="预算已更改为零"></p>
+<p>然后 John 单击“编辑”页面上的“保存”，但页面上预算仍显示为 350,000.00 美元。 接下来的情况取决于并发冲突的处理方式。</p>
+<p>其中一些选项包括：</p>
+<ul>
+<li><p>可以跟踪用户已修改的属性，并仅更新数据库中相应的列。</p>
+<p>在示例方案中，不会有数据丢失，因为是由两个用户更新不同的属性。 下次有人浏览英语系时，将看到 Jane 和 John 两个人的更改 - 开始日期为 9/1/2013，预算为零美元。 这种更新方法可减少可能导致数据丢失的冲突次数，但是如果对实体的同一属性进行竞争性更改，则数据难免会丢失。 Entity Framework 是否以这种方式工作取决于更新代码的实现方式。 通常不适合在 Web 应用程序中使用，因为它要求保持大量的状态，以便跟踪实体的所有原始属性值以及新值。 维护大量的状态可能会影响应用程序的性能，因为它需要服务器资源或必须包含在网页本身（例如隐藏字段）或 cookie 中。</p>
+</li>
+<li><p>可让 John 的更改覆盖 Jane 的更改。</p>
+<p>下次有人浏览英语系时，将看到 2013/1/9 和还原的值 350,000.00 美元。 这称为“客户端优先”或“最后一个优先” 。 （客户端的所有值优先于数据存储的值。）正如本部分的介绍所述，如果不为并发处理编写任何代码，则自动执行此操作。</p>
+</li>
+<li><p>可以阻止在数据库中更新 John 的更改。</p>
+<p>通常，将显示一条错误消息，向他显示数据的当前状态，并允许他重新应用其更改（若他仍想更改）。 这称为“存储优先”方案。 （数据存储值优先于客户端提交的值。）本教程将执行“存储优先”方案。 此方法可确保用户在未收到具体发生内容的警报时，不会覆盖任何更改。</p>
+</li>
+</ul>
+<h3 id="detecting-concurrency-conflicts">检测并发冲突</h3>
+<p>你可以通过处理 Entity Framework 引发的 <code>DbConcurrencyException</code> 异常来解决冲突。 为了知道何时引发这些异常，Entity Framework 必须能够检测到冲突。 因此，你必须正确配置数据库和数据模型。 启用冲突检测的某些选项包括：</p>
+<ul>
+<li><p>数据库表中包含一个可用于确定某行更改时间的跟踪列。 然后可配置 Entity Framework，将该列包含在 SQL Update 或 Delete 命令的 Where 子句中。</p>
+<p>跟踪列的数据类型通常是 <code>rowversion</code>。 <code>rowversion</code> 值是一个序列号，该编号随着每次行的更新递增。 在 Update 或 Delete 命令中，Where 子句包含跟踪列的原始值（原始行版本）。 如果正在更新的行已被其他用户更改，则 <code>rowversion</code> 列中的值与原始值不同，这导致 Update 或 Delete 语句由于 Where 子句而找不到要更新的行。 当 Entity Framework 发现 Update 或 Delete 命令没有更新行（即受影响的行数为零）时，便将其解释为并发冲突。</p>
+</li>
+<li><p>配置 Entity Framework，在 Update 或 Delete 命令的 Where 子句中包含表中每个列的原始值。</p>
+<p>与第一个选项一样，如果行自第一次读取后发生更改，Where 子句将不返回要更新的行，Entity Framework 会将其解释为并发冲突。 对于包含许多列的数据库表，此方法可能导致非常多的 Where 子句，并且可能需要维持大量的状态。 如前所述，维持大量的状态会影响应用程序的性能。 因此通常不建议使用此方法，并且它也不是本教程中使用的方法。</p>
+<p>如果确实想要实现此并发方法，必须通过向要跟踪并发的实体添加 <code>ConcurrencyCheck</code> 属性来标记它们的所有非主键属性。 所作更改使 Entity Framework 能够将所有列包含在 Update 和 Delete 语句的 SQL Where 子句中。</p>
+</li>
+</ul>
+<p>在本教程的其余部分，将向 Department 实体添加 <code>rowversion</code> 跟踪属性，创建控制器和视图，并进行测试以验证是否一切正常工作。</p>
+<h2 id="add-a-tracking-property">添加跟踪属性</h2>
+<p>在 Models/Department.cs 中，添加名为 RowVersion 的跟踪属性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Timestamp</code> 属性指定此列将包含在发送到数据库的 Update 和 Delete 命令的 Where 子句中。 该属性称为 <code>Timestamp</code>，因为 SQL Server 的之前版本在 SQL <code>rowversion</code> 类型将其替换之前使用 SQL <code>timestamp</code> 数据类型。 用于 <code>rowversion</code> 的 .NET 类型为字节数组。</p>
+<p>如果更愿意使用 Fluent API，可使用 <code>IsConcurrencyToken</code> 方法（路径为 Data/SchoolContext.cs）指定跟踪属性，如下例所示：</p>
+<pre><code class="lang-csharp">modelBuilder.Entity&lt;Department&gt;()
+    .Property(p =&gt; p.RowVersion).IsConcurrencyToken();
+</code></pre>
+<p>通过添加属性，更改了数据库模型，因此需要再执行一次迁移。</p>
+<p>保存更改并生成项目，然后在命令窗口中输入以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet ef migrations add RowVersion
+</code></pre>
+<pre><code class="lang-dotnetcli">dotnet ef database update
+</code></pre>
+<h2 id="create-departments-controller-and-views">创建 Departments 控制器和视图</h2>
+<p>像之前在学生、课程和讲师教程中操作的那样，为“院系”控制器和视图创建基架。</p>
+<p><img src="concurrency/_static/add-departments-controller.png" alt="“为院系”创建基架"></p>
+<p>在 DepartmentsController.cs 文件中，将出现的 4 次“FirstMidName”更改为“FullName”，以便院系管理员下拉列表将包含讲师的全名，而不仅仅是姓氏。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="update-index-view">更新“索引”视图</h2>
+<p>基架引擎在索引视图中创建 RowVersion 列，但不应显示该字段。</p>
+<p>将 Views/Departments/Index.cshtml 中的代码替换为以下代码。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>这会将标题更改为“院系”，删除 RowVersion 列，并显示全名（而非管理员的名字）。</p>
+<h2 id="update-edit-methods">更新编辑方法</h2>
+<p>在 HttpGet <code>Edit</code> 方法和 <code>Details</code> 方法中，添加 <code>AsNoTracking</code>。 在 HttpGet <code>Edit</code> 方法中，为管理员添加预先加载。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将 HttpPost <code>Edit</code> 方法的现有代码替换为以下代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>代码先尝试读取要更新的院系。 如果 <code>FirstOrDefaultAsync</code> 方法返回 NULL，则该院系已被另一用户删除。 此情况下，代码将使用已发布的表单值创建院系实体，以便“编辑”页重新显示错误消息。 或者，如果仅显示错误消息而未重新显示院系字段，则不必重新创建 Department 实体。</p>
+<p>该视图将原始 <code>RowVersion</code> 值存储在隐藏字段中，且此方法在 <code>rowVersion</code> 参数中接收该值。 在调用 <code>SaveChanges</code> 之前，必须将该原始 <code>RowVersion</code> 属性值置于实体的 <code>OriginalValues</code> 集合中。</p>
+<pre><code class="lang-csharp">_context.Entry(departmentToUpdate).Property(&quot;RowVersion&quot;).OriginalValue = rowVersion;
+</code></pre>
+<p>然后，当 Entity Framework 创建 SQL UPDATE 命令时，该命令将包含一个 WHERE 子句，用于查找具有原始 <code>RowVersion</code> 值的行。 如果没有行受到 UPDATE 命令影响（没有行具有原始 <code>RowVersion</code> 值），则 Entity Framework 会引发 <code>DbUpdateConcurrencyException</code> 异常。</p>
+<p>该异常的 catch 块中的代码获取受影响的 Department 实体，该实体具有来自异常对象上的 <code>Entries</code> 属性的更新值。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Entries</code> 集合将仅包含一个 <code>EntityEntry</code> 对象。  该对象可用于获取用户输入的新值和当前的数据库值。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>对于所含的数据库值与用户在“编辑”页上输入的值不同的每一列，该代码均为其添加一个自定义错误消息（为简洁起见，此处仅显示一个字段）。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>最后，该代码将 <code>departmentToUpdate</code> 的 <code>RowVersion</code> 值设置为从数据库中检索到的新值。 重新显示“编辑”页时，这个新的 <code>RowVersion</code> 值将存储在隐藏字段中，当用户下次单击“保存”时，将只捕获自“编辑”页重新显示起发生的并发错误。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>ModelState</code> 具有旧的 <code>RowVersion</code> 值，因此需使用 <code>ModelState.Remove</code> 语句。 在此视图中，当两者都存在时，字段的 <code>ModelState</code> 值优于模型属性值。</p>
+<h2 id="update-edit-view">更新“编辑”视图</h2>
+<p>在 Views/Departments/Edit.cshtml 中，进行以下更改：</p>
+<ul>
+<li><p>添加隐藏字段以保存 <code>RowVersion</code> 属性值，紧跟在 <code>DepartmentID</code> 属性的隐藏字段后面。</p>
+</li>
+<li><p>向下拉列表添加“选择管理员”选项。</p>
+</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="test-concurrency-conflicts">测试并发冲突</h2>
+<p>运行应用并转到“院系索引”页。 右键单击英语系的“编辑”超链接，并选择“在新选项卡中打开”，然后单击英语系的“编辑”超链接。 现在，两个浏览器选项卡显示相同的信息。</p>
+<p>在第一个浏览器选项卡中更改一个字段，然后单击“保存”。</p>
+<p><img src="concurrency/_static/edit-after-change-1.png" alt="更改后的“院系编辑”页 1"></p>
+<p>浏览器显示具有更改值的索引页。</p>
+<p>在第二个浏览器选项卡中更改一个字段。</p>
+<p><img src="concurrency/_static/edit-after-change-2.png" alt="更改后的“院系编辑”页 2"></p>
+<p>单击“保存”  。 看见一条错误消息：</p>
+<p><img src="concurrency/_static/edit-error.png" alt="“院系编辑”页错误消息"></p>
+<p>再次单击“保存”。 保存在第二个浏览器选项卡中输入的值。 在索引页中出现时，可以看到已保存的值。</p>
+<h2 id="update-the-delete-page">更新“删除”页</h2>
+<p>对于“删除”页，Entity Framework 以类似方式检测其他人编辑院系所引起的并发冲突。 当 HttpGet <code>Delete</code> 方法显示确认视图时，该视图包含隐藏字段中的原始 <code>RowVersion</code> 值。 然后，该值可用于在用户确认删除时进行调用的 HttpPost <code>Delete</code> 方法。 当 Entity Framework 创建 SQL DELETE 命令时，它包含具有原始 <code>RowVersion</code> 值的 WHERE 子句。 如果该命令不影响任何行（即在显示“删除”确认页面后更改了行），则引发并发异常，调用 HttpGet <code>Delete</code> 方法，并将错误标志设置为 true，以重新显示具有一条错误消息的确认页面。 任意行均未受影响的原因也可能是，该行已被其他用户删除，因此在此情况下不显示错误消息。</p>
+<h3 id="update-the-delete-methods-in-the-departments-controller">更新“院系”控制器中的删除方法</h3>
+<p>在 DepartmentsController.cs 中，将 HttpGet <code>Delete</code> 方法替换为以下代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该方法接受可选参数，该参数指示是否在并发错误之后重新显示页面。 如果此标志为 true 且指定的院系不复存在，则它已被其他用户删除。 此情况下，代码将重定向到索引页。  如果此标志为 true 且该院系确实存在，则它已被其他用户更改。 此情况下，代码将使用 <code>ViewData</code> 向视图发送一条错误消息。</p>
+<p>将 HttpPost <code>Delete</code> 方法（名为 <code>DeleteConfirmed</code>）中的代码替换为以下代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在刚替换的基架代码中，此方法仅接受记录 ID：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; DeleteConfirmed(int id)
+</code></pre>
+<p>已将此参数更改为由模型绑定器创建的 Department 实体实例。 这样，EF 就可访问除记录键之外的 RowVersion 属性值。</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; Delete(Department department)
+</code></pre>
+<p>你还将操作方法名称从 <code>DeleteConfirmed</code> 更改为了 <code>Delete</code>。 基架代码使用 <code>DeleteConfirmed</code> 名称来为 HttpPost 方法提供唯一签名。 （CLR 要求重载方法具有不同的方法参数。）既然签名是唯一的，就可继续使用 MVC 约定，并为 HttpPost 和 HttpGet 删除方法使用同一名称。</p>
+<p>如果已删除院系，则 <code>AnyAsync</code> 方法返回 false，应用程序仅返回到 Index 方法。</p>
+<p>如果捕获到并发错误，代码将重新显示“删除”确认页，并提供一个指示它应显示并发错误消息的标志。</p>
+<h3 id="update-the-delete-view">更新“删除”视图</h3>
+<p>在 Views/Departments/Delete.cshtml 中，将基架代码替换为添加 DepartmentID 和 RowVersion 属性的错误消息字段和隐藏字段的以下代码。 突出显示所作更改。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>这将进行以下更改：</p>
+<ul>
+<li><p>在 <code>h2</code> 和 <code>h3</code> 标题之间添加错误消息。</p>
+</li>
+<li><p>将“管理员”字段中的 FirstMidName 替换为 FullName。</p>
+</li>
+<li><p>删除 RowVersion 字段。</p>
+</li>
+<li><p>添加 <code>RowVersion</code> 属性的隐藏字段。</p>
+</li>
+</ul>
+<p>运行应用并转到“院系索引”页。 右键单击英语系的“删除”超链接，并选择“在新选项卡中打开”，然后在第一个选项卡中单击英语系的“编辑”超链接。</p>
+<p>在第一个窗口中，更改其中一个值，然后单击“保存”：</p>
+<p><img src="concurrency/_static/edit-after-change-for-delete.png" alt="删除之前显示的更改后的“院系删除”页面"></p>
+<p>在第二个选项卡中，单击“删除”。 你将看到并发错误消息，且已使用数据库中的当前内容刷新了“院系”值。</p>
+<p><img src="concurrency/_static/delete-error.png" alt="显示有并发错误的“院系删除”确认页"></p>
+<p>如果再次单击“删除”，会重定向到已删除显示院系的索引页。</p>
+<h2 id="update-details-and-create-views">更新“详细信息”和“创建”视图</h2>
+<p>可选择性地清理“详细信息”和“创建”视图中的基架代码。</p>
+<p>替换 Views/Departments/Details.cshtml 中的代码，以删除 RowVersion 列并显示管理员的全名。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>替换 Views/Departments/Create.cshtml 中的代码，向下拉列表添加“选择”选项。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="get-the-code">获取代码</h2>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/data/ef-mvc/intro/samples/cu-final">下载或查看已完成的应用程序。</a></p>
+<h2 id="additional-resources">其他资源</h2>
+<p>要深入了解如何处理 EF Core 中的并发，请参阅<a href="/ef/core/saving/concurrency">并发冲突</a>。</p>
+<h2 id="next-steps">后续步骤</h2>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>已了解并发冲突</li>
+<li>已添加跟踪属性</li>
+<li>已创建 Departments 控制器和视图</li>
+<li>已更新“索引”视图</li>
+<li>已更新编辑方法</li>
+<li>已更新“编辑”视图</li>
+<li>已测试并发冲突</li>
+<li>已更新“删除”页</li>
+<li>已更新“详细信息”和“创建”视图</li>
+</ul>
+</div>
+<p>请继续阅读下一篇教程，了解如何为 Instructor 和 Students 实体实现“每个层次结构一个表”继承。</p>
+<div class="nextstepaction">
+<p><a href="inheritance.html">下一篇：实现“每个层次结构一个表”继承</a></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

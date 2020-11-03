@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312;&#27983;&#35272;&#22120;&#24212;&#29992;&#20013;&#20351;&#29992; gRPC </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312;&#27983;&#35272;&#22120;&#24212;&#29992;&#20013;&#20351;&#29992; gRPC ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/browser">
+<h1 id="use-grpc-in-browser-apps">在浏览器应用中使用 gRPC</h1>
+
+<p>作者：<a href="https://twitter.com/jamesnk">James Newton-King</a></p>
+<p>了解如何配置现有 ASP.NET Core gRPC 服务，以使其可以从使用 <a href="https://github.com/grpc/grpc/blob/2a388793792cc80944334535b7c729494d209a7e/doc/PROTOCOL-WEB.md">gRPC-Web</a> 协议的浏览器应用中进行调用。 gRPC-Web 允许浏览器 JavaScript 和 Blazor 应用调用 gRPC 服务。 无法从基于浏览器的应用中调用 HTTP/2 gRPC 服务。 可将托管于 ASP.NET Core 中的 gRPC 服务配置为随 HTTP/2 gRPC 一起支持 gRPC-Web。</p>
+<p>有关将 gRPC 服务添加到现有 ASP.NET Core 应用的说明，请参阅<a class="xref" href="aspnetcore.html#add-grpc-services-to-an-aspnet-core-app">将 gRPC 服务添加到 ASP.NET Core 应用</a>。</p>
+<p>有关创建 gRPC 项目的说明，请参阅 <a class="xref" href="../tutorials/grpc/grpc-start.html">在 ASP.NET Core 中创建 .NET Core gRPC 客户端和服务器</a>。</p>
+<h2 id="grpc-web-in-aspnet-core-vs-envoy">.NET Core 中的 gRPC-Web 与Envoy</h2>
+<p>有两种方式可将 gRPC-Web 添加到 ASP.NET Core 应用中：</p>
+<ul>
+<li>在 ASP.NET Core 中同时支持 gRPC-Web 和 gRPC HTTP/2。 此选项会使用 <code>Grpc.AspNetCore.Web</code> 包提供的中间件。</li>
+<li>使用 <a href="https://www.envoyproxy.io/">Envoy 代理</a>的 gRPC-Web 支持将 gRPC-Web 转换为 gRPC HTTP/2。 转换后的调用随后会转发给 ASP.NET Core 应用。</li>
+</ul>
+<p>每种方法既有优点，也有缺点。 如果应用的环境已将 Envoy 用作代理，则也可以使用 Envoy 提供 gRPC-Web 支持。 对于仅需要 ASP.NET Core 的 gRPC-Web 的基本解决方案，<code>Grpc.AspNetCore.Web</code> 是一个不错的选择。</p>
+<h2 id="configure-grpc-web-in-aspnet-core">配置 ASP.NET Core 中的 gRPC-Web</h2>
+<p>可将托管于 ASP.NET Core 中的 gRPC 服务配置为随 HTTP/2 gRPC 一起支持 gRPC-Web。 gRPC-Web 不需要对服务进行任何更改。 唯一的修改是启动配置。</p>
+<p>若要使用 ASP.NET Core gRPC 服务启用 gRPC-Web：</p>
+<ul>
+<li>添加对 <a href="https://www.nuget.org/packages/Grpc.AspNetCore.Web">Grpc.AspNetCore.Web</a> 包的引用。</li>
+<li>配置应用以使用 gRPC-Web，方法是将 <code>UseGrpcWeb</code> 和 <code>EnableGrpcWeb</code> 添加到 Startup.cs：</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>在路由之后、终结点之前添加 gRPC-Web 中间件 <code>UseGrpcWeb</code>。</li>
+<li>指定 <code>endpoints.MapGrpcService&lt;GreeterService&gt;()</code> 方法支持带有 <code>EnableGrpcWeb</code> 的 gRPC-Web。</li>
+</ul>
+<p>或者，可以配置 gRPC-Web 中间件，使所有服务在默认情况下都支持 gRPC-Web，而不需要 <code>EnableGrpcWeb</code>。 在添加中间件时指定 <code>new GrpcWebOptions { DefaultEnabled = true }</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>存在一个已知问题，它导致在 .NET Core 3.x 中<a class="xref" href="../fundamentals/servers/httpsys.html">由 Http.sys 托管</a>时 gRPC-Web 会失败。</p>
+<p><a href="https://github.com/grpc/grpc-dotnet/issues/853#issuecomment-610078202">此处</a>提供了一种变通方法，可用来获取在 Http.sys 上工作 gRPC-Web。</p>
+</div>
+<h3 id="grpc-web-and-cors">gRPC-Web 和 CORS</h3>
+<p>浏览器安全性可防止网页向不处理网页的域发送请求。 此限制适用于使用浏览器应用发出 gRPC-Web 调用。 例如，由 <code>https://www.contoso.com</code> 提供服务的浏览器应用对托管于 <code>https://services.contoso.com</code> 上的 gRPC-Web 服务的调用会被阻止。 跨域资源共享 (CORS) 可用于放宽此限制。</p>
+<p>若要允许浏览器应用进行跨域 gRPC-Web 调用，请<a class="xref" href="../security/cors.html">在 ASP.NET Core 中设置 CORS</a>。 使用内置 CORS 支持，并使用 &lt;xref:Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicyBuilder.WithExposedHeaders%2A&gt; 公开特定于 gRPC 的标头。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>调用 <code>AddCors</code> 以添加 CORS 服务，并配置公开特定于 gRPC 的标头的 CORS 策略。</li>
+<li>调用 <code>UseCors</code> 以在路由之后、终结点之前添加 CORS 中间件。</li>
+<li>指定 <code>endpoints.MapGrpcService&lt;GreeterService&gt;()</code> 方法支持带有 <code>RequiresCors</code>的 CORS。</li>
+</ul>
+<h3 id="grpc-web-and-streaming">gRPC-Web 和流式处理</h3>
+<p>HTTP/2 上的传统 gRPC 支持所有方向的流式处理。 gRPC-Web 对流式处理提供有限的支持：</p>
+<ul>
+<li>gRPC-Web 浏览器客户端不支持调用客户端流式处理和双向流式处理方法。</li>
+<li>托管在 Azure 应用服务和 IIS 上的 ASP.NET Core gRPC 服务不支持双向流式处理。</li>
+</ul>
+<p>使用 gRPC 时，仅建议使用一元方法和服务器流式处理方法。</p>
+<h2 id="call-grpc-web-from-the-browser">从浏览器调用 gRPC-Web</h2>
+<p>浏览器应用可以使用 gRPC-Web 来调用 gRPC 服务。 使用 gRPC-Web 从浏览器调用 gRPC 服务时，存在一些要求和限制：</p>
+<ul>
+<li>服务器必须已配置为支持 gRPC-Web。</li>
+<li>不支持客户端流式处理和双向流式处理调用。 支持服务器流式处理。</li>
+<li>在其他域上调用 gRPC 服务需要在服务器上配置 <a class="xref" href="../security/cors.html">CORS</a>。</li>
+</ul>
+<h3 id="javascript-grpc-web-client">JavaScript gRPC-Web 客户端</h3>
+<p>存在 JavaScript gRPC-Web 客户端。 有关如何从 JavaScript 使用 gRPC-Web 的说明，请参阅<a href="https://github.com/grpc/grpc-web/tree/master/net/grpc/gateway/examples/helloworld#write-client-code">使用 gRPC-Web 编写 JavaScript 客户端代码</a>。</p>
+<h3 id="configure-grpc-web-with-the-net-grpc-client">使用 .NET gRPC 客户端配置 gRPC-Web</h3>
+<p>可以将 .NET gRPC 客户端配置为发出 gRPC-Web 调用。 这对于托管在浏览器中且具有相同 JavaScript 代码 HTTP 限制的 <a class="xref" href="../blazor/index.html#blazor-webassembly">Blazor WebAssembly</a> 应用来说非常有用。 使用 .NET 客户端调用 gRPC-Web <a class="xref" href="client.html">与 HTTP/2 gRPC 相同</a>。 唯一的修改是创建通道的方式。</p>
+<p>若要使用 gRPC-Web：</p>
+<ul>
+<li>添加对 <a href="https://www.nuget.org/packages/Grpc.Net.Client.Web">Grpc.Net.Client.Web</a> 包的引用。</li>
+<li>确保对 <a href="https://www.nuget.org/packages/Grpc.Net.Client">Grpc.Net.Client</a> 包的引用为 2.29.0 或更高版本。</li>
+<li>配置通道以使用 <code>GrpcWebHandler</code>：</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>配置通道以使用 gRPC-Web。</li>
+<li>创建一个客户端并使用通道发出调用。</li>
+</ul>
+<p><code>GrpcWebHandler</code> 具有以下配置选项：</p>
+<ul>
+<li><strong>InnerHandler</strong>：发出 gRPC HTTP 请求的基础 &lt;xref:System.Net.Http.HttpMessageHandler&gt;，例如 <code>HttpClientHandler</code>。</li>
+<li>GrpcWebMode：枚举类型，指定 gRPC HTTP 请求 <code>Content-Type</code> 是 <code>application/grpc-web</code> 还是 <code>application/grpc-web-text</code>。
+<ul>
+<li><code>GrpcWebMode.GrpcWeb</code> 配置不进行编码即发送的内容。 默认值。</li>
+<li><code>GrpcWebMode.GrpcWebText</code> 配置需进行 base64 编码的内容。 对于浏览器中的服务器流式处理调用是必需的。</li>
+</ul>
+</li>
+<li><strong>HttpVersion</strong>：HTTP 协议 <code>Version</code> 用于在基础 gRPC HTTP 请求上设置 <a href="xref:System.Net.Http.HttpRequestMessage.Version">HttpRequestMessage.Version</a>。 gRPC-Web 不需要特定版本，且除非指定，否则不会替代默认版本。</li>
+</ul>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>生成的 gRPC 客户端具有用于调用一元方法的同步和异步方法。 例如，<code>SayHello</code> 是同步的，而 <code>SayHelloAsync</code> 是异步的。 在 Blazor WebAssembly 应用中调用同步方法将导致应用无响应。 必须始终在 Blazor WebAssembly 中使用异步方法。</p>
+</div>
+<h3 id="use-grpc-client-factory-with-grpc-web">将 gRPC-Web 与 gRPC 客户端工厂一起使用</h3>
+<p>可以使用 gRPC 与 <a href="xref:System.Net.Http.IHttpClientFactory">HttpClientFactory</a> 的集成来创建与 gRPC-Web 兼容的 .NET 客户端。</p>
+<p>若要将 gRPC-Web 与客户端工厂一起使用，请执行以下操作：</p>
+<ul>
+<li>将包引用添加到以下包的项目文件中：
+<ul>
+<li><a href="https://www.nuget.org/packages/Grpc.Net.Client.Web">Grpc.Net.Client.Web</a></li>
+<li><a href="https://www.nuget.org/packages/Grpc.Net.ClientFactory">Grpc.Net.ClientFactory</a></li>
+</ul>
+</li>
+<li>使用泛型 <code>AddGrpcClient</code> 扩展方法，通过依赖项注入 (DI) 注册 gRPC 客户端。 在 Blazor WebAssembly 应用中，服务在 <code>Program.cs</code> 中通过 DI 注册。</li>
+<li>使用 &lt;xref:Microsoft.Extensions.DependencyInjection.HttpClientBuilderExtensions.ConfigurePrimaryHttpMessageHandler%2A&gt; 扩展方法配置 <code>GrpcWebHandler</code>。</li>
+</ul>
+<pre><code class="lang-csharp">builder.Services
+    .AddGrpcClient&lt;Greet.GreeterClient&gt;((services, options) =&gt;
+    {
+        options.Address = new Uri(&quot;https://localhost:5001&quot;);
+    })
+    .ConfigurePrimaryHttpMessageHandler(
+        () =&gt; new GrpcWebHandler(GrpcWebMode.GrpcWebText, new HttpClientHandler()));
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="clientfactory.html">.NET Core 中的 gRPC 客户端工厂集成</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://github.com/grpc/grpc-web">适用于 Web 客户端 GitHub 项目的 gRPC</a></li>
+<li><a class="xref" href="../security/cors.html"> (CORS) 启用跨域请求 ASP.NET Core</a></li>
+<li><a class="xref" href="httpapi.html">从 gRPC 创建 JSON Web API</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

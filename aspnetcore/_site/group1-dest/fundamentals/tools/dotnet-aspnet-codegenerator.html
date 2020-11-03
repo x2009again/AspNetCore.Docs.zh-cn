@@ -1,0 +1,378 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>dotnet aspnet-codegenerator &#21629;&#20196; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="dotnet aspnet-codegenerator &#21629;&#20196; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/tools/dotnet-aspnet-codegenerator">
+<h1 id="dotnet-aspnet-codegenerator">dotnet aspnet-codegenerator</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p><code>dotnet aspnet-codegenerator</code> - 运行 ASP.NET Core 基架引擎。 使用 <code>dotnet aspnet-codegenerator</code> 只需要从命令行搭建基架，不必使用 Visual Studio 搭建基架。</p>
+<p>本文适用于：<a href="https://dotnet.microsoft.com/download/dotnet-core/2.1">.NET Core 2.1 SDK</a> 及更高版本。</p>
+<h2 id="installing-aspnet-codegenerator">安装 aspnet-codegenerator</h2>
+<p><code>dotnet-aspnet-codegenerator</code> 是必须安装的一个<a href="/dotnet/core/tools/global-tools">全局工具</a>。 以下命令安装 <code>dotnet-aspnet-codegenerator</code> 工具的最新稳定版本：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g dotnet-aspnet-codegenerator
+</code></pre>
+<p>以下命令将 <code>dotnet-aspnet-codegenerator</code> 更新到已安装的.NET Core SDK 提供的最新稳定版本：</p>
+<pre><code class="lang-dotnetcli">dotnet tool update -g dotnet-aspnet-codegenerator
+</code></pre>
+<h2 id="synopsis">摘要</h2>
+<pre><code>dotnet aspnet-codegenerator [arguments] [-p|--project] [-n|--nuget-package-dir] [-c|--configuration] [-tfm|--target-framework] [-b|--build-base-path] [--no-build] 
+dotnet aspnet-codegenerator [-h|--help]
+</code></pre>
+<h2 id="description">描述</h2>
+<p><code>dotnet aspnet-codegenerator</code> 全局命令运行 ASP.NET Core 代码生成器和基架引擎。</p>
+<h2 id="arguments">自变量</h2>
+<p><code>generator</code></p>
+<p>要运行的代码生成器。 以下是可用的生成器：</p>
+<table>
+<thead>
+<tr>
+<th>Generator</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>area</td>
+<td><a class="xref" href="../../mvc/controllers/areas.html">搭建区域的基架</a></td>
+</tr>
+<tr>
+<td>controller</td>
+<td><a class="xref" href="../../tutorials/first-mvc-app/adding-model.html">搭建控制器的基架</a></td>
+</tr>
+<tr>
+<td>标识</td>
+<td><a class="xref" href="../../security/authentication/scaffold-identity.html">构建 Identity</a></td>
+</tr>
+<tr>
+<td>razorpage</td>
+<td><a class="xref" href="../../tutorials/razor-pages/model.html">构建 Razor Pages</a></td>
+</tr>
+<tr>
+<td>查看</td>
+<td><a class="xref" href="../../mvc/views/overview.html">搭建视图的基架</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="options">选项</h2>
+<p><code>-n|--nuget-package-dir</code></p>
+<p>指定 NuGet 包目录。</p>
+<p><code>-c|--configuration {Debug|Release}</code></p>
+<p>定义生成配置。 默认值为 <code>Debug</code>。</p>
+<p><code>-tfm|--target-framework</code></p>
+<p>要使用的目标<a href="/dotnet/standard/frameworks">框架</a>。 例如 <code>net46</code>。</p>
+<p><code>-b|--build-base-path</code></p>
+<p>生成基本路径。</p>
+<p><code>-h|--help</code></p>
+<p>打印出有关命令的简短帮助。</p>
+<p><code>--no-build</code></p>
+<p>运行前不生成项目。 还将隐式设置 <code>--no-restore</code> 标记。</p>
+<p><code>-p|--project &lt;PATH&gt;</code></p>
+<p>指定要运行的项目文件的路径（文件夹名称或完整路径）。 如果未指定，则默认为当前目录。</p>
+<h2 id="generator-options">生成器选项</h2>
+<p>以下各节详细说明了受支持的生成器的可用选项：</p>
+<ul>
+<li>区域</li>
+<li>控制器</li>
+<li>Identity</li>
+<li>Razorpage</li>
+<li>视图</li>
+</ul>
+<p><a name="area"></a></p>
+<h3 id="area-options">区域选项</h3>
+<p>此工具适用于具有控制器和视图的 ASP.NET Core Web 项目。 它不适用于 Razor Pages 应用。</p>
+<p>用法：<code>dotnet aspnet-codegenerator area AreaNameToGenerate</code></p>
+<p>前面的命令生成以下文件夹：</p>
+<ul>
+<li><em>Areas</em>
+<ul>
+<li>AreaNameToGenerate
+<ul>
+<li><em>Controllers</em></li>
+<li><em>Data</em></li>
+<li>Models</li>
+<li><em>Views</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a name="ctl"></a></p>
+<h3 id="controller-options">控制器选项</h3>
+<p>下表列出了 <code>aspnet-codegenerator</code> <code>controller</code> 和 <code>razorpage</code> 的选项：</p>
+<!-- Options common to Razor Pages and Controller -->
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--model 或 -m</td>
+<td>要使用的模型类。</td>
+</tr>
+<tr>
+<td>--dataContext 或 -dc</td>
+<td>要使用的 <code>DbContext</code> 类。</td>
+</tr>
+<tr>
+<td>--bootstrapVersion 或 -b</td>
+<td>指定启动版本。 有效值为 <code>3</code> 或 <code>4</code>。 默认值为 <code>4</code>。 如果需要一个 wwwroot  目录而当前不存在，则创建一个，其中包含指定版本的启动文件。</td>
+</tr>
+<tr>
+<td>--referenceScriptLibraries 或 -scripts</td>
+<td>在生成的视图中引用脚本库。 向“编辑”和“创建”页面添加 <code>_ValidationScriptsPartial</code>。</td>
+</tr>
+<tr>
+<td>--layout 或 -l</td>
+<td>要使用的自定义布局页。</td>
+</tr>
+<tr>
+<td>--useDefaultLayout 或 -udl</td>
+<td>使用视图的默认布局。</td>
+</tr>
+<tr>
+<td>--force 或 -f</td>
+<td>覆盖现有文件。</td>
+</tr>
+<tr>
+<td>--relativeFolderPath 或 -outDir</td>
+<td>生成文件的项目的相对输出文件夹路径。 如果未指定，则会在项目文件夹中生成文件。</td>
+</tr>
+</tbody>
+</table>
+
+<p>下表列出了对于 <code>aspnet-codegenerator controller</code> 是唯一的选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--controllerName 或 -name</td>
+<td>控制器的名称。</td>
+</tr>
+<tr>
+<td>--useAsyncActions 或 -async</td>
+<td>生成异步控制器操作。</td>
+</tr>
+<tr>
+<td>--noViews 或 -nv</td>
+<td>不生成任何视图。</td>
+</tr>
+<tr>
+<td>--restWithNoViews 或 -api</td>
+<td>生成具有 REST 样式 API 的控制器。 假设 <code>noViews</code> 并且忽略任何与视图相关的选项。</td>
+</tr>
+<tr>
+<td>--readWriteActions 或 -actions</td>
+<td>不使用模型生成具有读/写操作的控制器。</td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>-h</code> 开关获取 <code>aspnet-codegenerator controller</code> 命令方面的帮助：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator controller -h
+</code></pre>
+<p>请参阅<a class="xref" href="../../tutorials/first-mvc-app/adding-model.html">搭建 movie 模型的基架</a>，查看 <code>dotnet aspnet-codegenerator controller</code> 示例。</p>
+<h3 id="no-locrazorpage">Razorpage</h3>
+<p><a name="rp"></a></p>
+<p>可以通过指定新页面的名称和要使用的模板来单独搭建 Razor Pages 的基架。 支持如下模板：</p>
+<ul>
+<li><code>Empty</code></li>
+<li><code>Create</code></li>
+<li><code>Edit</code></li>
+<li><code>Delete</code></li>
+<li><code>Details</code></li>
+<li><code>List</code></li>
+</ul>
+<p>例如，以下命令使用 Edit 模板生成MyEdit.cshtml  和 MyEdit.cshtml.cs：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator razorpage MyEdit Edit -m Movie -dc RazorPagesMovieContext -outDir Pages/Movies
+</code></pre>
+<p>通常不指定模板和生成的文件名，而是创建以下模板：</p>
+<ul>
+<li><code>Create</code></li>
+<li><code>Edit</code></li>
+<li><code>Delete</code></li>
+<li><code>Details</code></li>
+<li><code>List</code></li>
+</ul>
+<p>下表列出了 <code>aspnet-codegenerator</code> <code>razorpage</code> 和 <code>controller</code> 的选项：</p>
+<!-- Options common to Razor Pages and Controller -->
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--model 或 -m</td>
+<td>要使用的模型类。</td>
+</tr>
+<tr>
+<td>--dataContext 或 -dc</td>
+<td>要使用的 <code>DbContext</code> 类。</td>
+</tr>
+<tr>
+<td>--bootstrapVersion 或 -b</td>
+<td>指定启动版本。 有效值为 <code>3</code> 或 <code>4</code>。 默认值为 <code>4</code>。 如果需要一个 wwwroot  目录而当前不存在，则创建一个，其中包含指定版本的启动文件。</td>
+</tr>
+<tr>
+<td>--referenceScriptLibraries 或 -scripts</td>
+<td>在生成的视图中引用脚本库。 向“编辑”和“创建”页面添加 <code>_ValidationScriptsPartial</code>。</td>
+</tr>
+<tr>
+<td>--layout 或 -l</td>
+<td>要使用的自定义布局页。</td>
+</tr>
+<tr>
+<td>--useDefaultLayout 或 -udl</td>
+<td>使用视图的默认布局。</td>
+</tr>
+<tr>
+<td>--force 或 -f</td>
+<td>覆盖现有文件。</td>
+</tr>
+<tr>
+<td>--relativeFolderPath 或 -outDir</td>
+<td>生成文件的项目的相对输出文件夹路径。 如果未指定，则会在项目文件夹中生成文件。</td>
+</tr>
+</tbody>
+</table>
+
+<p>下表列出了对于 <code>aspnet-codegenerator razorpage</code> 是唯一的选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--namespaceName 或 -namespace</td>
+<td>用于生成的 PageModel 的命名空间的名称</td>
+</tr>
+<tr>
+<td>--partialView 或 -partial</td>
+<td>生成分部视图。 如果指定此选项，将忽略布局选项 -l 和 -udl。</td>
+</tr>
+<tr>
+<td>--noPageModel 或 -npm</td>
+<td>切换为不针对 Empty 模板生成 PageModel 类</td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>-h</code> 开关获取 <code>aspnet-codegenerator razorpage</code> 命令方面的帮助：</p>
+<pre><code class="lang-dotnetcli">dotnet aspnet-codegenerator razorpage -h
+</code></pre>
+<p>请参阅<a class="xref" href="../../tutorials/razor-pages/model.html">搭建 movie 模型的基架</a>，查看 <code>dotnet aspnet-codegenerator razorpage</code> 示例。</p>
+<h3 id="identity">Identity</h3>
+<p>请参阅<a class="xref" href="../../security/authentication/scaffold-identity.html">基架Identity</a></p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

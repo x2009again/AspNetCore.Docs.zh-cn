@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#26085;&#24535;&#35760;&#24405; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#26085;&#24535;&#35760;&#24405; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/fundamentals/logging">
+<h1 id="aspnet-core-no-locblazor-logging">ASP.NET Core Blazor 日志记录</h1>
+
+<h2 id="blazor-webassembly">Blazor WebAssembly</h2>
+<p>使用 <code>Program.Main</code> 中的 <code>WebAssemblyHostBuilder.Logging</code> 属性在 Blazor WebAssembly 应用中配置日志：</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
+...
+
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+builder.Logging.AddProvider(new CustomLoggingProvider());
+</code></pre>
+<p><code>Logging</code> 属性的类型为 &lt;xref:Microsoft.Extensions.Logging.ILoggingBuilder&gt;，因此可在 &lt;xref:Microsoft.Extensions.Logging.ILoggingBuilder&gt; 上使用的所有扩展方法也可在 <code>Logging</code> 上使用。</p>
+<p>可以从应用设置文件中加载日志记录配置。 有关详细信息，请参阅 <a class="xref" href="configuration.html#logging-configuration">ASP.NET Core Blazor 配置</a>。</p>
+<h2 id="blazor-server">Blazor Server</h2>
+<p>若要获取常规 ASP.NET Core 日志记录指南，请参阅 <a class="xref" href="../../fundamentals/logging/index.html">.NET Core 和 ASP.NET Core 中的日志记录</a>。</p>
+<h2 id="no-locblazor-webassembly-no-locsignalr-net-client-logging">Blazor WebAssembly SignalR .NET 客户端日志记录</h2>
+<p>注入 &lt;xref:Microsoft.Extensions.Logging.ILoggerProvider&gt;，将 <code>WebAssemblyConsoleLogger</code> 添加到传递给 &lt;xref:Microsoft.AspNetCore.SignalR.Client.HubConnectionBuilder&gt; 的日志记录提供程序。 与传统的 &lt;xref:Microsoft.Extensions.Logging.Console.ConsoleLogger&gt; 不同，<code>WebAssemblyConsoleLogger</code> 是特定于浏览器的日志记录 API（例如，<code>console.log</code>）的包装器。 使用 <code>WebAssemblyConsoleLogger</code> 可以在浏览器上下文内的 Mono 中进行日志记录。</p>
+<pre><code class="lang-csharp">@using Microsoft.Extensions.Logging
+@inject ILoggerProvider LoggerProvider
+
+...
+
+var connection = new HubConnectionBuilder()
+    .WithUrl(NavigationManager.ToAbsoluteUri(&quot;/chathub&quot;))
+    .ConfigureLogging(logging =&gt; logging.AddProvider(LoggerProvider))
+    .Build();
+</code></pre>
+<h2 id="log-in-no-locrazor-components">登录 Razor 组件</h2>
+<p>记录器会采用应用启动配置。</p>
+<p>要支持对 API 使用 IntelliSense 完成项（例如 &lt;xref:Microsoft.Extensions.Logging.LoggerExtensions.LogWarning%2A&gt; 和 &lt;xref:Microsoft.Extensions.Logging.LoggerExtensions.LogError%2A&gt;），需具备 &lt;xref:Microsoft.Extensions.Logging&gt; 的 <code>using</code> 指令。</p>
+<p>下面的示例演示了如何使用 Razor 组件中的 &lt;xref:Microsoft.Extensions.Logging.ILogger&gt; 进行日志记录：</p>
+<pre><code class="lang-razor">@page &quot;/counter&quot;
+@using Microsoft.Extensions.Logging;
+@inject ILogger&lt;Counter&gt; logger;
+
+&lt;h1&gt;Counter&lt;/h1&gt;
+
+&lt;p&gt;Current count: @currentCount&lt;/p&gt;
+
+&lt;button class=&quot;btn btn-primary&quot; @onclick=&quot;IncrementCount&quot;&gt;Click me&lt;/button&gt;
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        logger.LogWarning(&quot;Someone has clicked me!&quot;);
+
+        currentCount++;
+    }
+}
+</code></pre>
+<p>下面的示例演示了如何使用 Razor 组件中的 &lt;xref:Microsoft.Extensions.Logging.ILoggerFactory&gt; 进行日志记录：</p>
+<pre><code class="lang-razor">@page &quot;/counter&quot;
+@using Microsoft.Extensions.Logging;
+@inject ILoggerFactory LoggerFactory
+
+&lt;h1&gt;Counter&lt;/h1&gt;
+
+&lt;p&gt;Current count: @currentCount&lt;/p&gt;
+
+&lt;button class=&quot;btn btn-primary&quot; @onclick=&quot;IncrementCount&quot;&gt;Click me&lt;/button&gt;
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        var logger = LoggerFactory.CreateLogger&lt;Counter&gt;();
+        logger.LogWarning(&quot;Someone has clicked me!&quot;);
+
+        currentCount++;
+    }
+}
+</code></pre>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../fundamentals/logging/index.html">.NET Core 和 ASP.NET Core 中的日志记录</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

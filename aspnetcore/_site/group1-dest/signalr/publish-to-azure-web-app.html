@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>SignalR&#23558; ASP.NET Core &#24212;&#29992;&#31243;&#24207;&#21457;&#24067;&#21040; Azure App Service </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="SignalR&#23558; ASP.NET Core &#24212;&#29992;&#31243;&#24207;&#21457;&#24067;&#21040; Azure App Service ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/publish-to-azure-web-app">
+<h1 id="publish-an-aspnet-core-no-locsignalr-app-to-azure-app-service">SignalR将 ASP.NET Core 应用程序发布到 Azure App Service</h1>
+
+<p>作者： <a href="https://twitter.com/bradygaster">Brady Gaster</a></p>
+<p><a href="/azure/app-service/app-service-web-overview">Azure App Service</a> 是一种 <a href="https://azure.microsoft.com/">Microsoft 云计算</a> 平台服务，用于承载 web 应用，包括 ASP.NET Core。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>本文介绍如何 SignalR 从 Visual Studio 发布 ASP.NET Core 应用。 有关详细信息，请参阅<a href="https://azure.microsoft.com/services/signalr-service"> SignalR Azure 服务</a>。</p>
+</div>
+<h2 id="publish-the-app">发布应用</h2>
+<p>本文介绍如何使用 Visual Studio 中的工具进行发布。 Visual Studio Code 用户可以使用 <a href="/cli/azure">Azure CLI</a> 命令将应用发布到 Azure。 有关详细信息，请参阅 <a href="/azure/app-service/app-service-web-get-started-dotnet">使用命令行工具将 ASP.NET Core 应用程序发布到 Azure</a>。</p>
+<ol>
+<li><p>在“解决方案资源管理器”中右键单击该项目，然后选择“发布”。</p>
+</li>
+<li><p>确认已在 &quot; <strong>选取发布目标</strong> &quot; 对话框中选择 &quot; <strong>应用服务</strong> &quot; 和 &quot; <strong>新建</strong> &quot;。</p>
+</li>
+<li><p>从 &quot; <strong>发布</strong> &quot; 按钮下拉菜单中选择 &quot; <strong>创建配置文件</strong> &quot;。</p>
+<p>在 &quot; <strong>创建应用服务</strong> &quot; 对话框中，输入下表中所述的信息，然后选择 &quot; <strong>创建</strong> &quot;。</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>名称</strong></td>
+<td>应用的唯一名称。</td>
+</tr>
+<tr>
+<td><strong>订阅</strong></td>
+<td>应用使用的 Azure 订阅。</td>
+</tr>
+<tr>
+<td>资源组</td>
+<td>应用所属的一组相关资源。</td>
+</tr>
+<tr>
+<td><strong>托管计划</strong></td>
+<td>Web 应用的定价计划。</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><p>在 &quot; <strong>依赖关系</strong> &quot; 下拉列表中选择 <strong>Azure SignalR 服务</strong>  &gt;  <strong>Add</strong> ：</p>
+<p><img src="publish-to-azure-web-app/_static/signalr-service-dependency.png" alt="&quot;依赖关系&quot; 区域显示在 &quot;添加&quot; 下拉列表中选择的 Azure：：： no (SignalR) ：：： Service"></p>
+</li>
+<li><p>在 &quot; <strong>Azure SignalR 服务</strong> &quot; 对话框中，选择 &quot; <strong>创建新的 Azure SignalR 服务实例</strong> &quot;。</p>
+</li>
+<li><p>提供 <strong>名称</strong> 、 <strong>资源组</strong> 和 <strong>位置</strong> 。 返回到 &quot; <strong>Azure SignalR 服务</strong> &quot; 对话框，然后选择 &quot; <strong>添加</strong> &quot;。</p>
+</li>
+</ol>
+<p>Visual Studio 完成以下任务：</p>
+<ul>
+<li>创建包含发布设置的发布配置文件。</li>
+<li>使用提供的详细信息创建 <em>Azure Web 应用</em> 。</li>
+<li>发布应用程序。</li>
+<li>启动加载 web 应用程序的浏览器。</li>
+</ul>
+<p>应用的 URL 的格式为 <code>{APP SERVICE NAME}.azurewebsites.net</code> 。 例如，名为的应用程序 <code>SignalRChatApp</code> 具有的 URL <code>https://signalrchatapp.azurewebsites.net</code> 。</p>
+<p>如果在部署面向预览版 .NET Core 版本的应用时发生 HTTP <em>502.2 错误的网关</em> 错误，请参阅 <a class="xref" href="../host-and-deploy/azure-apps/index.html#deploy-aspnet-core-preview-release-to-azure-app-service">部署 ASP.NET Core 预览版本 Azure App Service</a> 以解决此问题。</p>
+<h2 id="configure-the-app-in-azure-app-service">在 Azure App Service 中配置应用</h2>
+<div class="NOTE">
+<h5>Note</h5>
+<p><em>本部分仅适用于不使用 Azure 服务的应用 SignalR 。</em></p>
+<p>如果应用使用 Azure SignalR 服务，应用服务不需要配置应用程序请求路由 (ARR) 相关性和 Web 套接字。 客户端将其 Web 套接字连接到 Azure SignalR 服务，而不是直接连接到应用程序。</p>
+</div>
+<p>对于不使用 Azure 服务托管的应用 SignalR ，请启用：</p>
+<ul>
+<li>[ARR 相关性] (<a href="https://azure.github.io/AppService/2016/05/16/Disable-Session-affinity-">https://azure.github.io/AppService/2016/05/16/Disable-Session-affinity-</a> cookie (ARR cookie) # B0 l) 将来自用户的请求路由回同一应用服务实例。 默认设置为 <strong>&quot;打开</strong> &quot;。</li>
+<li>允许 Web 套接字传输正常工作的<a class="xref" href="../fundamentals/websockets.html">Web 套接字</a>。 默认设置为 &quot; <strong>关闭</strong> &quot;。</li>
+</ul>
+<ol>
+<li>在 Azure 门户中，导航到 <strong>应用服务</strong> 中的 web 应用。</li>
+<li>打开 <strong>配置</strong>  &gt;  <strong>常规设置</strong> 。</li>
+<li>将 &quot; <strong>Web 套接字</strong> &quot; 设置为 <strong>&quot;开&quot;</strong> 。</li>
+<li>验证 <strong>ARR 相关性</strong> 是否设置为 <strong>On</strong> 。</li>
+</ol>
+<h2 id="app-service-plan-limits">应用服务计划限制</h2>
+<p>基于所选的应用服务计划，Web 套接字和其他传输受到限制。 有关详细信息，请参阅 azure <a href="/azure/azure-subscription-service-limits#app-service-limits">订阅和服务限制、配额和约束</a>一文中的 <em>azure 云服务限制</em> 和 <em>应用服务限制</em> 部分。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/azure/azure-signalr/signalr-overview">什么是 Azure SignalR 服务？</a></li>
+<li><a class="xref" href="introduction.html">ASP.NET Core SignalR 简介</a></li>
+<li><a class="xref" href="../host-and-deploy/index.html">托管和部署 ASP.NET Core</a></li>
+<li><a class="xref" href="../tutorials/publish-to-azure-webapp-using-vs.html">使用 Visual Studio 将 ASP.NET Core 应用发布到 Azure</a></li>
+<li><a href="/azure/app-service/app-service-web-get-started-dotnet">使用命令行工具将 ASP.NET Core 应用发布到 Azure</a></li>
+<li><a class="xref" href="../host-and-deploy/azure-apps/index.html#deploy-aspnet-core-preview-release-to-azure-app-service">在 Azure 上托管和部署 ASP.NET Core 预览应用</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

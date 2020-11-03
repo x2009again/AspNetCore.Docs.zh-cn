@@ -1,0 +1,598 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#23558; LibMan CLI &#19982; ASP.NET Core &#32467;&#21512;&#20351;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#23558; LibMan CLI &#19982; ASP.NET Core &#32467;&#21512;&#20351;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="client-side/libman/libman-cli">
+<h1 id="use-the-libman-cli-with-aspnet-core">将 LibMan CLI 与 ASP.NET Core 结合使用</h1>
+
+<p>作者：<a href="https://twitter.com/Scott_Addie">Scott Addie</a></p>
+<p><a class="xref" href="index.html">LibMan</a> CLI 是一种跨平台工具，在所有支持的 .NET Core 的位置都可得到支持。</p>
+<h2 id="prerequisites">先决条件</h2>
+<ul>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core 2.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+<h2 id="installation">安装</h2>
+<p>安装 LibMan CLI：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+</code></pre>
+<p>从 <a href="https://www.nuget.org/packages/Microsoft.Web.LibraryManager.Cli/">Microsoft.Web.LibraryManager.Cli</a> NuGet 包安装 <a href="/dotnet/core/tools/global-tools#install-a-global-tool">.NET Core 全局工具</a>。</p>
+<p>从特定 NuGet 包源安装 LibMan CLI：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.Web.LibraryManager.Cli --version 1.0.94-g606058a278 --add-source C:\Temp\
+</code></pre>
+<p>在前面的示例中，从本地 Windows 计算机的 C:\Temp\Microsoft.Web.LibraryManager.Cli.1.0.94-g606058a278.nupkg 文件安装 .NET Core 全局工具。</p>
+<h2 id="usage">用法</h2>
+<p>成功安装 CLI 之后，可以使用以下命令：</p>
+<pre><code class="lang-console">libman
+</code></pre>
+<p>查看已安装的 CLI 版本：</p>
+<pre><code class="lang-console">libman --version
+</code></pre>
+<p>查看可用 CLI 命令：</p>
+<pre><code class="lang-console">libman --help
+</code></pre>
+<p>前面的命令显示类似于以下内容的输出：</p>
+<pre><code class="lang-console"> 1.0.163+g45474d37ed
+
+Usage: libman [options] [command]
+
+Options:
+  --help|-h  Show help information
+  --version  Show version information
+
+Commands:
+  cache      List or clean libman cache contents
+  clean      Deletes all library files defined in libman.json from the project
+  init       Create a new libman.json
+  install    Add a library definition to the libman.json file, and download the 
+             library to the specified location
+  restore    Downloads all files from provider and saves them to specified 
+             destination
+  uninstall  Deletes all files for the specified library from their specified 
+             destination, then removes the specified library definition from 
+             libman.json
+  update     Updates the specified library
+
+Use &quot;libman [command] --help&quot; for more information about a command.
+</code></pre>
+<p>以下部分概述了可用的 CLI 命令。</p>
+<h2 id="initialize-libman-in-the-project">在项目中初始化 LibMan</h2>
+<p><code>libman init</code> 命令会创建一个 libman.json 文件（如果不存在）。 该文件会使用默认项模板内容进行创建。</p>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman init [-d|--default-destination] [-p|--default-provider] [--verbosity]
+libman init [-h|--help]
+</code></pre>
+<h3 id="options">选项</h3>
+<p><code>libman init</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-d|--default-destination &lt;PATH&gt;</code></p>
+<p>相对于当前文件夹的路径。 如果未在 libman.json 中为库定义 <code>destination</code> 属性，则库文件会安装在此位置。 <code>&lt;PATH&gt;</code> 值会写入 libman.json 的 <code>defaultDestination</code> 属性。</p>
+</li>
+<li><p><code>-p|--default-provider &lt;PROVIDER&gt;</code></p>
+<p>未为给定库定义提供程序时要使用的提供程序。 <code>&lt;PROVIDER&gt;</code> 值会写入 libman.json 的 <code>defaultProvider</code> 属性。 将 <code>&lt;PROVIDER&gt;</code> 替换为以下值之一：</p>
+[!include[LibMan provider names](../../includes/libman-cli/provider-names.md)]</li>
+</ul>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<p>在 ASP.NET Core 项目中创建 libman.json 文件：</p>
+<ul>
+<li><p>导航到项目根。</p>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-console">libman init
+</code></pre>
+</li>
+<li><p>键入默认提供程序的名称，或按 <code>Enter</code> 以使用默认 CDNJS 提供程序。 有效值包括：</p>
+[!include[LibMan provider names](../../includes/libman-cli/provider-names.md)]
+<p><img src="_static/libman-init-provider.png" alt="libman 初始化命令 - 默认提供程序"></p>
+</li>
+</ul>
+<p>具有以下内容的 libman.json 文件会添加到项目根：</p>
+<pre><code class="lang-json">{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;defaultProvider&quot;: &quot;cdnjs&quot;,
+  &quot;libraries&quot;: []
+}
+</code></pre>
+<h2 id="add-library-files">添加库文件</h2>
+<p><code>libman install</code> 命令会将库文件下载并安装到项目中。 如果 libman.json 文件不存在，则会添加一个。 libman.json 文件会进行修改，以存储库文件的配置详细信息。</p>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman install &lt;LIBRARY&gt; [-d|--destination] [--files] [-p|--provider] [--verbosity]
+libman install [-h|--help]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>LIBRARY</code></p>
+<p>要安装的库的名称。 此名称可以包含版本号表示法（例如 <code>@1.2.0</code>）。</p>
+<h3 id="options">选项</h3>
+<p><code>libman install</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-d|--destination &lt;PATH&gt;</code></p>
+<p>用于安装库的位置。 如果未指定，则使用默认位置。 如果 libman.json 中未指定 <code>defaultDestination</code> 属性，则此选项是必需的。</p>
+</li>
+<li><p><code>--files &lt;FILE&gt;</code></p>
+<p>指定要从库安装的文件的名称。 如果未指定，则会安装库中的所有文件。 为每个要安装的文件提供一个 <code>--files</code> 选项。 也支持相对路径。 例如：<code>--files dist/browser/signalr.js</code>。</p>
+</li>
+<li><p><code>-p|--provider &lt;PROVIDER&gt;</code></p>
+<p>用于库获取的提供程序的名称。 将 <code>&lt;PROVIDER&gt;</code> 替换为以下值之一：</p>
+[!include[LibMan provider names](../../includes/libman-cli/provider-names.md)]
+<p>如果未指定，则使用 libman.json 中的 <code>defaultProvider</code> 属性。 如果 libman.json 中未指定 <code>defaultProvider</code> 属性，则此选项是必需的。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<p>请考虑以下 libman.json 文件：</p>
+<pre><code class="lang-json">{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;defaultProvider&quot;: &quot;cdnjs&quot;,
+  &quot;libraries&quot;: []
+}
+</code></pre>
+<p>使用 CDNJS 提供程序将 jQuery 版本 3.2.1 jquery.min.js 文件安装到 wwwroot/scripts/jquery 文件夹：</p>
+<pre><code class="lang-console">libman install jquery@3.2.1 --provider cdnjs --destination wwwroot/scripts/jquery --files jquery.min.js
+</code></pre>
+<p>libman.json 文件类似于以下内容：</p>
+<pre><code class="lang-json">{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;defaultProvider&quot;: &quot;cdnjs&quot;,
+  &quot;libraries&quot;: [
+    {
+      &quot;library&quot;: &quot;jquery@3.2.1&quot;,
+      &quot;destination&quot;: &quot;wwwroot/scripts/jquery&quot;,
+      &quot;files&quot;: [
+        &quot;jquery.min.js&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>使用文件系统提供程序从 C:\temp\contosoCalendar\ 安装 calendar.js 和 calendar.css：</p>
+<pre><code class="lang-console">libman install C:\temp\contosoCalendar\ --provider filesystem --files calendar.js --files calendar.css
+</code></pre>
+<p>由于两个原因而出现以下提示：</p>
+<ul>
+<li>libman.json 文件不包含 <code>defaultDestination</code> 属性。</li>
+<li><code>libman install</code> 命令不包含 <code>-d|--destination</code> 选项。</li>
+</ul>
+<p><img src="_static/libman-install-destination.png" alt="libman 安装命令 - 目标"></p>
+<p>接受默认目标之后，libman.json 文件类似于以下内容：</p>
+<pre><code class="lang-json">{
+  &quot;version&quot;: &quot;1.0&quot;,
+  &quot;defaultProvider&quot;: &quot;cdnjs&quot;,
+  &quot;libraries&quot;: [
+    {
+      &quot;library&quot;: &quot;jquery@3.2.1&quot;,
+      &quot;destination&quot;: &quot;wwwroot/scripts/jquery&quot;,
+      &quot;files&quot;: [
+        &quot;jquery.min.js&quot;
+      ]
+    },
+    {
+      &quot;library&quot;: &quot;C:\\temp\\contosoCalendar\\&quot;,
+      &quot;provider&quot;: &quot;filesystem&quot;,
+      &quot;destination&quot;: &quot;wwwroot/lib/contosoCalendar&quot;,
+      &quot;files&quot;: [
+        &quot;calendar.js&quot;,
+        &quot;calendar.css&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+<h2 id="restore-library-files">还原库文件</h2>
+<p><code>libman restore</code> 命令安装在 libman.json 中定义的库文件。 适用以下规则：</p>
+<ul>
+<li>如果项目根中不存在 libman.json 文件，则会返回错误。</li>
+<li>如果库指定了提供程序，则会忽略 libman.json 中的 <code>defaultProvider</code> 属性。</li>
+<li>如果库指定了目标，则会忽略 libman.json 中的 <code>defaultDestination</code> 属性。</li>
+</ul>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman restore [--verbosity]
+libman restore [-h|--help]
+</code></pre>
+<h3 id="options">选项</h3>
+<p><code>libman restore</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<p>还原在 libman.json 中定义的库文件：</p>
+<pre><code class="lang-console">libman restore
+</code></pre>
+<h2 id="delete-library-files">删除库文件</h2>
+<p><code>libman clean</code> 命令会删除之前通过 LibMan 还原的库文件。 在此操作之后成为空的文件夹会删除。 libman.json 的 <code>libraries</code> 属性中库文件的关联配置不会删除。</p>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman clean [--verbosity]
+libman clean [-h|--help]
+</code></pre>
+<h3 id="options">选项</h3>
+<p><code>libman clean</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<p>删除通过 LibMan 安装的库文件：</p>
+<pre><code class="lang-console">libman clean
+</code></pre>
+<h2 id="uninstall-library-files">卸载库文件</h2>
+<p><code>libman uninstall</code> 命令：</p>
+<ul>
+<li>从 libman.json 中的目标删除与指定库关联的所有文件。</li>
+<li>从 libman.json 中删除关联库配置。</li>
+</ul>
+<p>在下述情况中会发生错误：</p>
+<ul>
+<li>项目根中不存在 libman.json 文件。</li>
+<li>指定库不存在。</li>
+</ul>
+<p>如果安装了多个具有相同名称的库，则系统会提示选择一个。</p>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman uninstall &lt;LIBRARY&gt; [--verbosity]
+libman uninstall [-h|--help]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>LIBRARY</code></p>
+<p>要卸载的库的名称。 此名称可以包含版本号表示法（例如 <code>@1.2.0</code>）。</p>
+<h3 id="options">选项</h3>
+<p><code>libman uninstall</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<p>请考虑以下 libman.json 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<ul>
+<li><p>若要卸载 jQuery，以下任一命令都会成功：</p>
+<pre><code class="lang-console">libman uninstall jquery
+</code></pre>
+<pre><code class="lang-console">libman uninstall jquery@3.3.1
+</code></pre>
+</li>
+<li><p>卸载通过 <code>filesystem</code> 提供程序安装的 Lodash 文件：</p>
+<pre><code class="lang-console">libman uninstall C:\temp\lodash\
+</code></pre>
+</li>
+</ul>
+<h2 id="update-library-version">更新库版本</h2>
+<p><code>libman update</code> 命令会将通过 LibMan 安装的库更新为指定版本。</p>
+<p>在下述情况中会发生错误：</p>
+<ul>
+<li>项目根中不存在 libman.json 文件。</li>
+<li>指定库不存在。</li>
+</ul>
+<p>如果安装了多个具有相同名称的库，则系统会提示选择一个。</p>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman update &lt;LIBRARY&gt; [-pre] [--to] [--verbosity]
+libman update [-h|--help]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>LIBRARY</code></p>
+<p>要更新的库的名称。</p>
+<h3 id="options">选项</h3>
+<p><code>libman update</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-pre</code></p>
+<p>获取库的最新预发行版本。</p>
+</li>
+<li><p><code>--to &lt;VERSION&gt;</code></p>
+<p>获取库的特定版本。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<ul>
+<li><p>将 jQuery 更新为最新版本：</p>
+<pre><code class="lang-console">libman update jquery
+</code></pre>
+</li>
+<li><p>将 jQuery 更新为版本 3.3.1：</p>
+<pre><code class="lang-console">libman update jquery --to 3.3.1
+</code></pre>
+</li>
+<li><p>将 jQuery 更新为最新预发行版本：</p>
+<pre><code class="lang-console">libman update jquery -pre
+</code></pre>
+</li>
+</ul>
+<h2 id="manage-library-cache">管理库缓存</h2>
+<p><code>libman cache</code> 命令会管理 LibMan 库缓存。 <code>filesystem</code> 提供程序不使用库缓存。</p>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">libman cache clean [&lt;PROVIDER&gt;] [--verbosity]
+libman cache list [--files] [--libraries] [--verbosity]
+libman cache [-h|--help]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PROVIDER</code></p>
+<p>仅与 <code>clean</code> 命令一起使用。 指定要清除的提供程序缓存。 有效值包括：</p>
+[!include[LibMan provider names](../../includes/libman-cli/provider-names.md)]<h3 id="options">选项</h3>
+<p><code>libman cache</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>--files</code></p>
+<p>列出缓存的文件的名称。</p>
+</li>
+<li><p><code>--libraries</code></p>
+<p>列出缓存的库的名称。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>-h|--help</code></p>
+<p>显示帮助信息。</p>
+</li>
+<li><p><code>--verbosity &lt;LEVEL&gt;</code></p>
+<p>设置输出的详细程度。 将 <code>&lt;LEVEL&gt;</code> 替换为以下值之一：</p>
+<ul>
+<li><code>quiet</code></li>
+<li><code>normal</code></li>
+<li><code>detailed</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="examples">示例</h3>
+<ul>
+<li><p>若要查看每个提供程序的缓存库的名称，请使用以下命令之一：</p>
+<pre><code class="lang-console">libman cache list
+</code></pre>
+<pre><code class="lang-console">libman cache list --libraries
+</code></pre>
+<p>显示了类似下面的输出：</p>
+<pre><code class="lang-console">Cache contents:
+---------------
+unpkg:
+    knockout
+    react
+    vue
+cdnjs:
+    font-awesome
+    jquery
+    knockout
+    lodash.js
+    react
+</code></pre>
+</li>
+<li><p>查看每个提供程序的缓存库文件的名称：</p>
+<pre><code class="lang-console">libman cache list --files
+</code></pre>
+<p>显示了类似下面的输出：</p>
+<pre><code class="lang-console">Cache contents:
+---------------
+unpkg:
+    knockout:
+        &lt;list omitted for brevity&gt;
+    react:
+        &lt;list omitted for brevity&gt;
+    vue:
+        &lt;list omitted for brevity&gt;
+cdnjs:
+    font-awesome
+        metadata.json
+    jquery
+        metadata.json
+        3.2.1\core.js
+        3.2.1\jquery.js
+        3.2.1\jquery.min.js
+        3.2.1\jquery.min.map
+        3.2.1\jquery.slim.js
+        3.2.1\jquery.slim.min.js
+        3.2.1\jquery.slim.min.map
+        3.3.1\core.js
+        3.3.1\jquery.js
+        3.3.1\jquery.min.js
+        3.3.1\jquery.min.map
+        3.3.1\jquery.slim.js
+        3.3.1\jquery.slim.min.js
+        3.3.1\jquery.slim.min.map
+    knockout
+        metadata.json
+        3.4.2\knockout-debug.js
+        3.4.2\knockout-min.js
+    lodash.js
+        metadata.json
+        4.17.10\lodash.js
+        4.17.10\lodash.min.js
+    react
+        metadata.json
+</code></pre>
+<p>请注意，前面的输出显示，jQuery 版本3.2.1 和3.3.1 缓存在 CDNJS 提供程序下。</p>
+</li>
+<li><p>清空 CDNJS 提供程序的库缓存：</p>
+<pre><code class="lang-console">libman cache clean cdnjs
+</code></pre>
+<p>清空 CDNJS 提供程序缓存之后，<code>libman cache list</code> 命令会显示以下内容：</p>
+<pre><code class="lang-console">Cache contents:
+---------------
+unpkg:
+    knockout
+    react
+    vue
+cdnjs:
+    (empty)
+</code></pre>
+</li>
+<li><p>为所有支持的提供程序清空缓存：</p>
+<pre><code class="lang-console">libman cache clean
+</code></pre>
+<p>清空所有提供程序缓存之后，<code>libman cache list</code> 命令会显示以下内容：</p>
+<pre><code class="lang-console">Cache contents:
+---------------
+unpkg:
+    (empty)
+cdnjs:
+    (empty)
+</code></pre>
+</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/core/tools/global-tools#install-a-global-tool">安装全局工具</a></li>
+<li><a class="xref" href="libman-vs.html">在 Visual Studio 中将 LibMan 与 ASP.NET Core 配合使用</a></li>
+<li><a href="https://github.com/aspnet/LibraryManager">LibMan GitHub 存储库</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

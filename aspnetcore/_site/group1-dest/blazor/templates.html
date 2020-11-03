@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#27169;&#26495; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#27169;&#26495; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/templates">
+<h1 id="aspnet-core-no-locblazor-templates">ASP.NET Core Blazor 模板</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p>Blazor 框架提供了一些模板，用于为每个 Blazor 托管模型开发应用：</p>
+<ul>
+<li>Blazor WebAssembly (<code>blazorwasm</code>)</li>
+<li>Blazor Server (<code>blazorserver</code>)</li>
+</ul>
+<p>有关 Blazor 的托管模型的详细信息，请参阅 <a class="xref" href="hosting-models.html">ASP.NET Core Blazor 托管模型</a>。</p>
+<p>通过将 <code>--help</code> 选项传递给 <a href="/dotnet/core/tools/dotnet-new"><code>dotnet new</code></a> CLI 命令，可提供模板选项：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorwasm --help
+dotnet new blazorserver --help
+</code></pre>
+<h2 id="no-locblazor-project-structure">Blazor 项目结构</h2>
+<p>以下文件和文件夹构成了基于 Blazor 项目模板生成的 Blazor 应用：</p>
+<ul>
+<li><p><code>Program.cs</code>：应用入口点，用于设置以下各项：</p>
+<ul>
+<li>ASP.NET Core <a class="xref" href="../fundamentals/host/generic-host.html">主机</a> (Blazor Server)</li>
+<li>WebAssembly 主机 (Blazor WebAssembly)：此文件中的代码对于通过 Blazor WebAssembly 模板 (<code>blazorwasm</code>) 创建的应用是唯一的。
+<ul>
+<li><code>App</code> 组件是应用的根组件。 <code>App</code> 组件被指定为根组件集合 (<code>builder.RootComponents.Add&lt;App&gt;(&quot;app&quot;)</code>) 的 <code>app</code> DOM 元素 (<code>&lt;app&gt;...&lt;/app&gt;</code>)。</li>
+<li>添加并配置了<a class="xref" href="fundamentals/dependency-injection.html">服务</a>（例如，<code>builder.Services.AddSingleton&lt;IMyDependency, MyDependency&gt;()</code>）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>Startup.cs</code> (Blazor Server)：包含应用的启动逻辑。 <code>Startup</code> 类定义两个方法：</p>
+<ul>
+<li><code>ConfigureServices</code>：配置应用的<a class="xref" href="../fundamentals/dependency-injection.html">依赖关系注入 (DI)</a> 服务。 在 Blazor Server 应用中，通过调用 &lt;xref:Microsoft.Extensions.DependencyInjection.ComponentServiceCollectionExtensions.AddServerSideBlazor%2A&gt; 添加服务，并将 <code>WeatherForecastService</code> 添加到服务容器以供示例 <code>FetchData</code> 组件使用。</li>
+<li><code>Configure</code>：配置应用的请求处理管道：
+<ul>
+<li>调用 &lt;xref:Microsoft.AspNetCore.Builder.ComponentEndpointRouteBuilderExtensions.MapBlazorHub%2A&gt; 可以为与浏览器的实时连接设置终结点。 使用 <a class="xref" href="../signalr/introduction.html">SignalR</a> 创建连接，该框架用于向应用添加实时 Web 功能。</li>
+<li>调用 <a href="xref:Microsoft.AspNetCore.Builder.RazorPagesEndpointRouteBuilderExtensions.MapFallbackToPage*"><code>MapFallbackToPage(&quot;/_Host&quot;)</code></a> 以设置应用的根页面 (<code>Pages/_Host.cshtml</code>) 并启用导航。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>wwwroot/index.html</code> (Blazor WebAssembly)：实现为 HTML 页面的应用的根页面：</p>
+<ul>
+<li>最初请求应用的任何页面时，都会呈现此页面并在响应中返回。</li>
+<li>此页面指定根 <code>App</code> 组件的呈现位置。 组件呈现在 <code>app</code> DOM 元素 (<code>&lt;app&gt;...&lt;/app&gt;</code>) 的位置。</li>
+<li>加载 <code>_framework/blazor.webassembly.js</code> JavaScript 文件，该文件用于：
+<ul>
+<li>下载 .NET 运行时、应用和应用依赖项。</li>
+<li>初始化运行时以运行应用。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>App.razor</code>：应用的根组件，用于使用 &lt;xref:Microsoft.AspNetCore.Components.Routing.Router&gt; 组件来设置客户端路由。 &lt;xref:Microsoft.AspNetCore.Components.Routing.Router&gt; 组件会截获浏览器导航并呈现与请求的地址匹配的页面。</p>
+</li>
+<li><p><code>Pages</code> 文件夹：包含构成 Blazor 应用的可路由组件/页面 (<code>.razor</code>) 和 Blazor Server 应用的根 Razor 页面。 每个页面的路由都是使用 <a class="xref" href="../mvc/views/razor.html#page"><code>@page</code></a> 指令指定的。 该模板包括以下组件：</p>
+<ul>
+<li><code>_Host.cshtml</code> (Blazor Server)：实现为 Razor 页面的应用的根页面：
+<ul>
+<li>最初请求应用的任何页面时，都会呈现此页面并在响应中返回。</li>
+<li>加载 <code>_framework/blazor.server.js</code> JavaScript 文件，该文件用于在浏览器和服务器之间建立实时 SignalR 连接。</li>
+<li>此主机页面指定根 <code>App</code> 组件 (<code>App.razor</code>) 的呈现位置。</li>
+</ul>
+</li>
+<li><code>Counter</code> (<code>Pages/Counter.razor</code>)：实现“计数器”页面。</li>
+<li><code>Error</code>（<code>Error.razor</code>，仅 Blazor Server 应用）：当应用中发生未经处理的异常时呈现。</li>
+<li><code>FetchData</code> (<code>Pages/FetchData.razor</code>)：实现“提取数据”页面。</li>
+<li><code>Index</code> (<code>Pages/Index.razor</code>)：实现主页。</li>
+</ul>
+</li>
+<li><p><code>Properties/launchSettings.json</code>：保留<a class="xref" href="../fundamentals/environments.html#development-and-launchsettingsjson">开发环境配置</a>。</p>
+</li>
+<li><p><code>Shared</code> 文件夹：包含应用使用的其他 UI 组件 (<code>.razor</code>)：</p>
+<ul>
+<li><code>MainLayout</code> (<code>MainLayout.razor</code>)：应用的<a class="xref" href="layouts.html">布局组件</a>。</li>
+<li><code>NavMenu</code> (<code>NavMenu.razor</code>)：实现边栏导航。 包括 <a class="xref" href="fundamentals/routing.html#navlink-component"><code>NavLink</code></a> 组件 (&lt;xref:Microsoft.AspNetCore.Components.Routing.NavLink&gt;)，该组件可向其他 Razor 组件呈现导航链接。 &lt;xref:Microsoft.AspNetCore.Components.Routing.NavLink&gt; 组件会在系统加载其组件时自动指示选定状态，这有助于用户了解当前显示的组件。</li>
+</ul>
+</li>
+<li><p><code>_Imports.razor</code>：包括要包含在应用组件 (<code>.razor</code>) 中的常见 Razor 指令，如用于命名空间的 <a class="xref" href="../mvc/views/razor.html#using"><code>@using</code></a> 指令。</p>
+</li>
+<li><p><code>Data</code> 文件夹 (Blazor Server)：包含 <code>WeatherForecast</code> 类和 <code>WeatherForecastService</code> 的实现，它们向应用的 <code>FetchData</code> 组件提供示例天气数据。</p>
+</li>
+<li><p><code>wwwroot</code>：应用的 <a class="xref" href="../fundamentals/index.html#web-root">Web 根目录</a>文件夹，其中包含应用的公共静态资产。</p>
+</li>
+<li><p><code>appsettings.json</code>：保留应用的<a class="xref" href="fundamentals/configuration.html">配置设置</a>。 在 Blazor WebAssembly 应用中，应用设置文件位于 <code>wwwroot</code> 文件夹中。 在 Blazor Server 应用中，应用设置文件位于项目根目录中。</p>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

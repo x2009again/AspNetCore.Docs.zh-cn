@@ -1,0 +1,698 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core SignalR &#20837;&#38376; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core SignalR &#20837;&#38376; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/signalr">
+<h1 id="tutorial-get-started-with-aspnet-core-no-locsignalr">教程：ASP.NET Core SignalR 入门</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>本教程介绍使用 SignalR 生成实时应用的基础知识。 您将学习如何：</p>
+<div class="checklist">
+<ul>
+<li>创建 Web 项目。</li>
+<li>添加 SignalR 客户端库。</li>
+<li>创建 SignalR 中心。</li>
+<li>配置项目以使用 SignalR。</li>
+<li>添加可将消息从任何客户端发送到所有连接客户端的代码。</li>
+</ul>
+</div>
+<p>最终将创建一个正常运行的聊天应用：</p>
+<p><img src="signalr/_static/3.x/signalr-get-started-finished.png" alt="SignalR 示例应用"></p>
+<h2 id="prerequisites">先决条件</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+<ul>
+<li>具有“ASP.NET 和 Web 开发”工作负载的 <a href="https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&amp;utm_source=docs.microsoft.com&amp;utm_campaign=inline+link&amp;utm_content=download+vs2019">Visual Studio 2019 16.4 或更高版本</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可在任何平台（macOS、Linux 或 Windows）上或在任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。 有关在 macOS 上安装 Visual Studio Code 的详细信息，请参阅<a href="https://code.visualstudio.com/docs/setup/mac">macOS 上的 Visual Studio Code</a>。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://visualstudio.microsoft.com/vs/mac/">Visual Studio for Mac 版本 8.4 或更高版本</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="create-a-web-app-project">创建 Web 应用项目</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li><p>从菜单中选择“文件”&gt;“新建项目”。</p>
+</li>
+<li><p>在“创建新项目”对话框中，选择“ASP.NET Core Web 应用程序”，然后选择“下一步”  。</p>
+</li>
+<li><p>在“配置新项目”对话框中，将项目命名为“SignalRChat”，然后选择“创建”。</p>
+</li>
+<li><p>在“创建新的 ASP.NET Core Web 应用程序”对话框中，选择 .NET Core 和 ASP.NET Core 3.1  。</p>
+</li>
+<li><p>选择“Web 应用程序”以创建使用 Razor Pages 的项目，然后选择“创建” 。</p>
+<p><img src="signalr/_static/3.x/signalr-new-project-dialog.png" alt="Visual Studio 中的“新建项目”对话框"></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在将要在其中创建新项目文件夹的文件夹中打开<a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a>。</p>
+</li>
+<li><p>运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new webapp -o SignalRChat
+code -r SignalRChat
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>从菜单中选择“文件”&gt;“新建解决方案”。</p>
+</li>
+<li><p>选择“.NET Core”&gt;“应用”&gt;“Web 应用程序”（不要选择“Web 应用程序(Model-View-Controller)”），然后选择“下一步”  。</p>
+</li>
+<li><p>确保“目标框架”设置为 .NET Core 3.1，然后选择“下一步”  。</p>
+</li>
+<li><p>将项目命名为“SignalRChat”，然后选择“创建”。</p>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="add-the-no-locsignalr-client-library">添加 SignalR 客户端库</h2>
+<p>ASP.NET Core 3.1 共享框架中包含 SignalR 服务器库。 JavaScript 客户端库不会自动包含在项目中。 对于此教程，使用库管理器 (LibMan) 从 unpkg 获取客户端库。 unpkg 是一个内容分发网络 (CDN)，可分发在 npm（即 Node.js 包管理器）中找到的任何内容。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li><p>在“解决方案资源管理器”中，右键单击项目，然后选择“添加”&gt;“客户端库”  。</p>
+</li>
+<li><p>在“添加客户端库”对话框中，对于“提供程序”，选择“unpkg”。</p>
+</li>
+<li><p>对于“库”，输入 <code>@microsoft/signalr@latest</code>。</p>
+</li>
+<li><p>选择“选择特定文件”，展开“dist/browser”文件夹，然后选择“signalr.js”和“signalr.min.js”。</p>
+</li>
+<li><p>将“目标位置”设置为 wwwroot/js/signalr/，然后选择“安装”。</p>
+<p><img src="signalr/_static/3.x/find-signalr-client-libs-select-files.png" alt="“添加客户端库”对话框 - 选择库"></p>
+<p>LibMan 创建 wwwroot/js/signalr 文件夹并将所选文件复制到该文件夹。</p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在集成终端中，运行以下命令以安装 LibMan。</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+</code></pre>
+</li>
+<li><p>使用 LibMan 运行以下命令，以获取 SignalR 客户端库。 可能需要等待几秒钟的时间才能看到输出。</p>
+<pre><code class="lang-console">libman install @microsoft/signalr@latest -p unpkg -d wwwroot/js/signalr --files dist/browser/signalr.js --files dist/browser/signalr.min.js
+</code></pre>
+<p>参数指定以下选项：</p>
+<ul>
+<li>使用 unpkg 提供程序。</li>
+<li>将文件复制到 wwwroot/js/signalr 目标。</li>
+<li>仅复制指定的文件。</li>
+</ul>
+<p>输出如下所示：</p>
+<pre><code class="lang-console">wwwroot/js/signalr/dist/browser/signalr.js written to disk
+wwwroot/js/signalr/dist/browser/signalr.min.js written to disk
+Installed library &quot;@microsoft/signalr@latest&quot; to &quot;wwwroot/js/signalr&quot;
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在“终端”中，运行以下命令以安装 LibMan。</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.Web.LibraryManager.Cli
+</code></pre>
+</li>
+<li><p>导航到项目文件夹（包含 SignalRChat.csproj 文件的文件夹）。</p>
+</li>
+<li><p>使用 LibMan 运行以下命令，以获取 SignalR 客户端库。</p>
+<pre><code class="lang-console">libman install @microsoft/signalr@latest -p unpkg -d wwwroot/js/signalr --files dist/browser/signalr.js --files dist/browser/signalr.min.js
+</code></pre>
+<p>参数指定以下选项：</p>
+<ul>
+<li>使用 unpkg 提供程序。</li>
+<li>将文件复制到 wwwroot/js/signalr 目标。</li>
+<li>仅复制指定的文件。</li>
+</ul>
+<p>输出如下所示：</p>
+<pre><code class="lang-console">wwwroot/js/signalr/dist/browser/signalr.js written to disk
+wwwroot/js/signalr/dist/browser/signalr.min.js written to disk
+Installed library &quot;@microsoft/signalr@latest&quot; to &quot;wwwroot/js/signalr&quot;
+</code></pre>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="create-a-no-locsignalr-hub">创建 SignalR 中心</h2>
+<p><em>中心</em>是一个类，用作处理客户端 - 服务器通信的高级管道。</p>
+<ul>
+<li><p>在 SignalRChat 项目文件夹中，创建 Hubs 文件夹。</p>
+</li>
+<li><p>在 Hubs 文件夹中，使用以下代码创建 ChatHub.cs 文件 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>ChatHub</code> 类继承自 SignalR <code>Hub</code> 类。 <code>Hub</code> 类管理连接、组和消息。</p>
+<p>可通过已连接客户端调用 <code>SendMessage</code>，以向所有客户端发送消息。 本教程后面部分将显示调用该方法的 JavaScript 客户端代码。 SignalR 代码是异步模式，可提供最大的可伸缩性。</p>
+</li>
+</ul>
+<h2 id="configure-no-locsignalr">配置 SignalR</h2>
+<p>必须将 SignalR 服务器配置为将 SignalR 请求传递给 SignalR。</p>
+<ul>
+<li><p>将以下突出显示的代码添加到 Startup.cs 文件。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>这些更改将 SignalR 添加到 ASP.NET Core 依赖关系注入和路由系统。</p>
+</li>
+</ul>
+<h2 id="add-no-locsignalr-client-code">添加 SignalR 客户端代码</h2>
+<ul>
+<li><p>使用以下代码替换 Pages\Index.cshtml 中的内容：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>创建名称以及消息文本的文本框和“提交”按钮。</li>
+<li>使用 <code>id=&quot;messagesList&quot;</code> 创建一个列表，用于显示从 SignalR 中心接收的消息。</li>
+<li>包含对 SignalR 的脚本引用以及在下一步中创建的“chat.js”应用程序代码。</li>
+</ul>
+</li>
+<li><p>在 wwwroot/js 文件夹中，使用以下代码创建 chat.js 文件 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>创建并启动连接。</li>
+<li>向“提交”按钮添加一个用于向中心发送消息的处理程序。</li>
+<li>向连接对象添加一个用于从中心接收消息并将其添加到列表的处理程序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="run-the-app">运行应用</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>按 Ctrl+F5 可运行应用而不进行调试。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在集成终端中，运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet watch run -p SignalRChat.csproj
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li>从菜单中选择“运行”&gt;“开始执行(不调试)”。</li>
+</ul>
+</section>
+</div>
+
+<ul>
+<li><p>从地址栏复制 URL，打开另一个浏览器实例或选项卡，并在地址栏中粘贴该 URL。</p>
+</li>
+<li><p>选择任一浏览器，输入名称和消息，然后选择“发送消息”按钮。</p>
+<p>两个页面上立即显示名称和消息。</p>
+<p><img src="signalr/_static/3.x/signalr-get-started-finished.png" alt="SignalR 示例应用"></p>
+</li>
+</ul>
+<div class="TIP">
+<h5>Tip</h5>
+<ul>
+<li><p>如果应用不起作用，请打开浏览器开发人员工具 (F12) 并转到控制台。 可能会看到与 HTML 和 JavaScript 代码相关的错误。 例如，假设将 signalr.js 放在不同于系统指示的文件夹中。 在这种情况下，对该文件的引用将不起作用，并且你将在控制台中看到 404 错误。
+<img src="signalr/_static/3.x/f12-console.png" alt="未找到 signalr.js 错误"></p>
+</li>
+<li><p>如果 Chrome 中出现 ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY 错误，请运行这些命令以更新开发证书：</p>
+<pre><code class="lang-dotnetcli">dotnet dev-certs https --clean
+dotnet dev-certs https --trust
+</code></pre>
+</li>
+</ul>
+</div>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>本教程介绍使用 SignalR 生成实时应用的基础知识。 您将学习如何：</p>
+<div class="checklist">
+<ul>
+<li>创建 Web 项目。</li>
+<li>添加 SignalR 客户端库。</li>
+<li>创建 SignalR 中心。</li>
+<li>配置项目以使用 SignalR。</li>
+<li>添加可将消息从任何客户端发送到所有连接客户端的代码。<br>
+最后，你将拥有一个工作聊天应用：<img src="signalr/_static/2.x/signalr-get-started-finished.png" alt="SignalR 示例应用"></li>
+</ul>
+</div>
+<h2 id="prerequisites">先决条件</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio" role="tabpanel" data-tab="visual-studio">
+<ul>
+<li>已安装“ASP.NET 和 Web 开发”工作负载的 <a href="https://visualstudio.microsoft.com/downloads/">Visual Studio 2017 版本 15.9 或更高版本</a>。 可使用 <a href="https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&amp;utm_source=docs.microsoft.com&amp;utm_campaign=inline+link&amp;utm_content=download+vs2019">Visual Studio 2019</a>，但某些项目创建步骤不同于本教程中所示的内容。</li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果使用 Visual Studio 2017，请参阅 <a href="https://github.com/dotnet/sdk/issues/3124">dotnet/sdk 问题 #3124</a>，以了解无法与 Visual Studio 一起使用的 .NET Core SDK 版本的信息。</p>
+</div>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可在任何平台（macOS、Linux 或 Windows）上或在任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://visualstudio.microsoft.com/downloads/">Visual Studio for Mac 版本 8.0 或更高版本</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+</section>
+</div>
+<h2 id="create-a-web-project">创建 Web 项目</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-5">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li><p>从菜单中选择“文件”&gt;“新建项目”。</p>
+</li>
+<li><p>在“新建项目”对话框中，选择“已安装”&gt;“Visual C#”&gt;“Web”&gt;“ASP.NET Core Web 应用” 。 将项目命名为“SignalRChat”。</p>
+<p><img src="signalr/_static/2.x/signalr-new-project-dialog.png" alt="Visual Studio 中的“新建项目”对话框"></p>
+</li>
+<li><p>选择“Web 应用”，以创建使用 Razor Pages 的项目。</p>
+</li>
+<li><p>选择“.NET Core”目标框架，选择“ASP.NET Core 2.2”，然后单击“确定”  。</p>
+<p><img src="signalr/_static/2.x/signalr-new-project-choose-type.png" alt="Visual Studio 中的“新建项目”对话框"></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在将要在其中创建新项目文件夹的文件夹中打开<a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a>。</p>
+</li>
+<li><p>运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new webapp -o SignalRChat   
+code -r SignalRChat    
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>从菜单中选择“文件”&gt;“新建解决方案”。</p>
+</li>
+<li><p>选择“.NET Core”&gt;“应用”&gt;“ASP.NET Core Web 应用”（请勿选择 ASP.NET Core Web 应用 (MVC)） 。</p>
+</li>
+<li><p>选择“下一步”。</p>
+</li>
+<li><p>将项目命名为“SignalRChat”，然后选择“创建”。</p>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="add-the-no-locsignalr-client-library">添加 SignalR 客户端库</h2>
+<p><code>Microsoft.AspNetCore.App</code> 元包中包括 SignalR 服务器库。 JavaScript 客户端库不会自动包含在项目中。 对于此教程，使用库管理器 (LibMan) 从 unpkg 获取客户端库。 unpkg 是一个内容分发网络 (CDN)，可分发在 npm（即 Node.js 包管理器）中找到的任何内容。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-6">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-6_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-6_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-6_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li><p>在“解决方案资源管理器”中，右键单击项目，然后选择“添加”&gt;“客户端库”  。</p>
+</li>
+<li><p>在“添加客户端库”对话框中，对于“提供程序”，选择“unpkg”。</p>
+</li>
+<li><p>对于“库”，输入 <code>@microsoft/signalr@3</code>，然后选择不是预览版的最新版本。</p>
+<p><img src="signalr/_static/2.x/libman1.png" alt="“添加客户端库”对话框 - 选择库"></p>
+</li>
+<li><p>选择“选择特定文件”，展开“dist/browser”文件夹，然后选择“signalr.js”和“signalr.min.js”。</p>
+</li>
+<li><p>将“目标位置”设置为 wwwroot/lib/signalr/，然后选择“安装”。</p>
+<p><img src="signalr/_static/2.x/libman2.png" alt="“添加客户端库”对话框 - 选择文件和目标"></p>
+<p>LibMan 创建 wwwroot/lib/signalr 文件夹并将所选文件复制到该文件夹。</p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-6_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在集成终端中，运行以下命令以安装 LibMan。</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.Web.LibraryManager.Cli   
+</code></pre>
+</li>
+<li><p>使用 LibMan 运行以下命令，以获取 SignalR 客户端库。 可能需要等待几秒钟的时间才能看到输出。</p>
+<pre><code class="lang-console">libman install @microsoft/signalr -p unpkg -d wwwroot/lib/signalr --files dist/browser/signalr.js --files dist/browser/signalr.min.js 
+</code></pre>
+<p>参数指定以下选项：</p>
+<ul>
+<li>使用 unpkg 提供程序。</li>
+<li>将文件复制到 wwwroot/lib/signalr 目标。</li>
+<li>仅复制指定的文件。</li>
+</ul>
+<p>输出如下所示：</p>
+<pre><code class="lang-console">wwwroot/lib/signalr/dist/browser/signalr.js written to disk   
+wwwroot/lib/signalr/dist/browser/signalr.min.js written to disk   
+Installed library &quot;@microsoft/signalr@3.0.1&quot; to &quot;wwwroot/lib/signalr&quot; 
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-6_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在“终端”中，运行以下命令以安装 LibMan。</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.Web.LibraryManager.Cli   
+</code></pre>
+</li>
+<li><p>导航到项目文件夹（包含 SignalRChat.csproj 文件的文件夹）。</p>
+</li>
+<li><p>使用 LibMan 运行以下命令，以获取 SignalR 客户端库。</p>
+<pre><code class="lang-console">libman install @microsoft/signalr -p unpkg -d wwwroot/lib/signalr --files dist/browser/signalr.js --files dist/browser/signalr.min.js 
+</code></pre>
+<p>参数指定以下选项：</p>
+<ul>
+<li>使用 unpkg 提供程序。</li>
+<li>将文件复制到 wwwroot/lib/signalr 目标。</li>
+<li>仅复制指定的文件。</li>
+</ul>
+<p>输出如下所示：</p>
+<pre><code class="lang-console">wwwroot/lib/signalr/dist/browser/signalr.js written to disk   
+wwwroot/lib/signalr/dist/browser/signalr.min.js written to disk   
+Installed library &quot;@microsoft/signalr@3.x.x&quot; to &quot;wwwroot/lib/signalr&quot; 
+</code></pre>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="create-a-no-locsignalr-hub">创建 SignalR 中心</h2>
+<p><em>中心</em>是一个类，用作处理客户端 - 服务器通信的高级管道。</p>
+<ul>
+<li><p>在 SignalRChat 项目文件夹中，创建 Hubs 文件夹。</p>
+</li>
+<li><p>在 Hubs 文件夹中，使用以下代码创建 ChatHub.cs 文件 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>ChatHub</code> 类继承自 SignalR <code>Hub</code> 类。 <code>Hub</code> 类管理连接、组和消息。</p>
+<p>可通过已连接客户端调用 <code>SendMessage</code>，以向所有客户端发送消息。 本教程后面部分将显示调用该方法的 JavaScript 客户端代码。 SignalR 代码是异步模式，可提供最大的可伸缩性。</p>
+</li>
+</ul>
+<h2 id="configure-no-locsignalr">配置 SignalR</h2>
+<p>必须将 SignalR 服务器配置为将 SignalR 请求传递给 SignalR。</p>
+<ul>
+<li><p>将以下突出显示的代码添加到 Startup.cs 文件。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>这些更改将 SignalR 添加到 ASP.NET Core 依赖关系注入系统和中间件管道。</p>
+</li>
+</ul>
+<h2 id="add-no-locsignalr-client-code">添加 SignalR 客户端代码</h2>
+<ul>
+<li><p>使用以下代码替换 Pages\Index.cshtml 中的内容：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>创建名称以及消息文本的文本框和“提交”按钮。</li>
+<li>使用 <code>id=&quot;messagesList&quot;</code> 创建一个列表，用于显示从 SignalR 中心接收的消息。</li>
+<li>包含对 SignalR 的脚本引用以及在下一步中创建的“chat.js”应用程序代码。</li>
+</ul>
+</li>
+<li><p>在 wwwroot/js 文件夹中，使用以下代码创建 chat.js 文件 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>创建并启动连接。</li>
+<li>向“提交”按钮添加一个用于向中心发送消息的处理程序。</li>
+<li>向连接对象添加一个用于从中心接收消息并将其添加到列表的处理程序。</li>
+</ul>
+</li>
+</ul>
+<h2 id="run-the-app">运行应用</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-7">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-7_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-7_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-7_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>按 Ctrl+F5 可运行应用而不进行调试。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-7_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>在集成终端中，运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet run -p SignalRChat.csproj
+</code></pre>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-7_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li>从菜单中选择“运行”&gt;“开始执行(不调试)”。</li>
+</ul>
+</section>
+</div>
+
+<ul>
+<li><p>从地址栏复制 URL，打开另一个浏览器实例或选项卡，并在地址栏中粘贴该 URL。</p>
+</li>
+<li><p>选择任一浏览器，输入名称和消息，然后选择“发送消息”按钮。</p>
+<p>两个页面上立即显示名称和消息。</p>
+<p><img src="signalr/_static/2.x/signalr-get-started-finished.png" alt="SignalR 示例应用"></p>
+</li>
+</ul>
+<div class="TIP">
+<h5>Tip</h5>
+<p>如果应用不起作用，请打开浏览器开发人员工具 (F12) 并转到控制台。 可能会看到与 HTML 和 JavaScript 代码相关的错误。 例如，假设将 signalr.js 放在不同于系统指示的文件夹中。 在这种情况下，对该文件的引用将不起作用，并且你将在控制台中看到 404 错误。<br>
+<img src="signalr/_static/2.x/f12-console.png" alt="未找到 signalr.js 错误"></p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=iKlVmu-r0JQ">本教程的 YouTube 版本</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

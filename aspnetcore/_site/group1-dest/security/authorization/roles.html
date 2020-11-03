@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#22522;&#20110;&#35282;&#33394;&#30340;&#25480;&#26435; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#22522;&#20110;&#35282;&#33394;&#30340;&#25480;&#26435; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authorization/roles">
+<h1 id="role-based-authorization-in-aspnet-core">ASP.NET Core 中的基于角色的授权</h1>
+
+<p><a name="security-authorization-role-based"></a></p>
+<p>创建标识时，它可能属于一个或多个角色。 例如，Tracy 可能属于管理员角色和用户角色，但 Scott 可能只属于用户角色。 如何创建和管理这些角色取决于授权过程的后备存储。 角色通过<a href="/dotnet/api/system.security.claims.claimsprincipal">ClaimsPrincipal</a>类的<a href="/dotnet/api/system.security.principal.genericprincipal.isinrole">IsInRole</a>方法向开发人员公开。</p>
+<h2 id="adding-role-checks">添加角色检查</h2>
+<p>基于角色的授权检查是声明性 — 的，开发人员将其嵌入到代码中、控制器或控制器内的操作，指定当前用户必须是其成员的角色才能访问请求的资源。</p>
+<p>例如，以下代码将访问权限限制为属于角色成员的用户的任何操作 <code>AdministrationController</code> <code>Administrator</code> ：</p>
+<pre><code class="lang-csharp">[Authorize(Roles = &quot;Administrator&quot;)]
+public class AdministrationController : Controller
+{
+}
+</code></pre>
+<p>可以将多个角色指定为逗号分隔列表：</p>
+<pre><code class="lang-csharp">[Authorize(Roles = &quot;HRManager,Finance&quot;)]
+public class SalaryController : Controller
+{
+}
+</code></pre>
+<p>此控制器仅可供作为角色或角色成员的用户访问 <code>HRManager</code> <code>Finance</code> 。</p>
+<p>如果应用多个属性，则访问用户必须是所有指定角色的成员;下面的示例要求用户必须是 <code>PowerUser</code> 和角色的成员 <code>ControlPanelUser</code> 。</p>
+<pre><code class="lang-csharp">[Authorize(Roles = &quot;PowerUser&quot;)]
+[Authorize(Roles = &quot;ControlPanelUser&quot;)]
+public class ControlPanelController : Controller
+{
+}
+</code></pre>
+<p>您可以通过在操作级别应用其他角色授权属性来进一步限制访问权限：</p>
+<pre><code class="lang-csharp">[Authorize(Roles = &quot;Administrator, PowerUser&quot;)]
+public class ControlPanelController : Controller
+{
+    public ActionResult SetTime()
+    {
+    }
+
+    [Authorize(Roles = &quot;Administrator&quot;)]
+    public ActionResult ShutDown()
+    {
+    }
+}
+</code></pre>
+<p>在前面的代码片段中 <code>Administrator</code> ，角色或角色的成员 <code>PowerUser</code> 可以访问控制器和 <code>SetTime</code> 操作，但只有角色的成员 <code>Administrator</code> 才能访问该 <code>ShutDown</code> 操作。</p>
+<p>你还可以锁定控制器，但允许对单个操作进行匿名、未经身份验证的访问。</p>
+<pre><code class="lang-csharp">[Authorize]
+public class ControlPanelController : Controller
+{
+    public ActionResult SetTime()
+    {
+    }
+
+    [AllowAnonymous]
+    public ActionResult Login()
+    {
+    }
+}
+</code></pre>
+<div range="&gt;= aspnetcore-2.0">
+<p>对于 Razor 页面， <code>AuthorizeAttribute</code> 可以通过以下任一方法来应用：</p>
+<ul>
+<li>使用 <a class="xref" href="../../razor-pages/razor-pages-conventions.html#page-model-action-conventions">约定</a>，或</li>
+<li>将应用 <code>AuthorizeAttribute</code> 到 <code>PageModel</code> 实例：</li>
+</ul>
+<pre><code class="lang-csharp">[Authorize(Policy = &quot;RequireAdministratorRole&quot;)]
+public class UpdateModel : PageModel
+{
+    public ActionResult OnPost()
+    {
+    }
+}
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>筛选器属性（包括 <code>AuthorizeAttribute</code> ）只能应用于 PageModel，不能应用于特定页面处理程序方法。</p>
+</div>
+</div>
+<p><a name="security-authorization-role-policy"></a></p>
+<h2 id="policy-based-role-checks">基于策略的角色检查</h2>
+<p>还可以使用新策略语法来表示角色要求，开发人员可在其中将在启动时作为授权服务配置的一部分注册策略。 这通常出现在 <code>ConfigureServices()</code> <em>Startup.cs</em> 文件中。</p>
+<div range="&gt;= aspnetcore-3.0">
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllersWithViews();
+    services.AddRazorPages();
+
+    services.AddAuthorization(options =&gt;
+    {
+        options.AddPolicy(&quot;RequireAdministratorRole&quot;,
+             policy =&gt; policy.RequireRole(&quot;Administrator&quot;));
+    });
+}
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+
+    services.AddAuthorization(options =&gt;
+    {
+        options.AddPolicy(&quot;RequireAdministratorRole&quot;,
+             policy =&gt; policy.RequireRole(&quot;Administrator&quot;));
+    });
+}
+</code></pre>
+</div>
+<p>策略是使用属性上的属性应用的 <code>Policy</code> <code>AuthorizeAttribute</code> ：</p>
+<pre><code class="lang-csharp">[Authorize(Policy = &quot;RequireAdministratorRole&quot;)]
+public IActionResult Shutdown()
+{
+    return View();
+}
+</code></pre>
+<p>如果要在某个要求中指定多个允许的角色，则可以将它们指定为方法的参数 <code>RequireRole</code> ：</p>
+<pre><code class="lang-csharp">options.AddPolicy(&quot;ElevatedRights&quot;, policy =&gt;
+                  policy.RequireRole(&quot;Administrator&quot;, &quot;PowerUser&quot;, &quot;BackupAdministrator&quot;));
+</code></pre>
+<p>此示例授权属于或角色的用户 <code>Administrator</code> <code>PowerUser</code> <code>BackupAdministrator</code> 。</p>
+<h3 id="add-role-services-to-no-locidentity">将角色服务添加到 Identity</h3>
+<p>追加 <a href="/dotnet/api/microsoft.aspnetcore.identity.identitybuilder.addroles#Microsoft_AspNetCore_Identity_IdentityBuilder_AddRoles__1">AddRoles</a> 以添加角色服务：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

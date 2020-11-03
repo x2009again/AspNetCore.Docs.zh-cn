@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22806;&#37096; OAuth &#36523;&#20221;&#39564;&#35777;&#25552;&#20379;&#31243;&#24207; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22806;&#37096; OAuth &#36523;&#20221;&#39564;&#35777;&#25552;&#20379;&#31243;&#24207; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/otherlogins">
+<h1 id="external-oauth-authentication-providers">外部 OAuth 身份验证提供程序</h1>
+
+<p>作者： <a href="https://twitter.com/RickAndMSFT">Rick Anderson</a>、 <a href="https://github.com/rustd">Pranav Rastogi 撰写</a>和 <a href="https://github.com/01binary">Valeriy Novytskyy</a></p>
+<p>下面的列表包含与 ASP.NET Core 应用一起使用的常见外部 OAuth 身份验证提供程序。 第三方 NuGet 包（如由 <a href="https://www.nuget.org/packages?q=owners%3Aaspnet-contrib+title%3AOAuth">contrib</a>维护的包）可用于对由 ASP.NET Core 团队实现的身份验证提供程序进行补充。</p>
+<ul>
+<li><p><a href="https://www.linkedin.com/developer/apps">LinkedIn</a> (<a href="https://developer.linkedin.com/docs/oauth2">说明</a>)</p>
+</li>
+<li><p><a href="https://www.instagram.com/developer/register/">Instagram</a> (<a href="https://www.instagram.com/developer/authentication/">说明</a>)</p>
+</li>
+<li><p><a href="https://www.reddit.com/login?dest=https%3A%2F%2Fwww.reddit.com%2Fprefs%2Fapps">Reddit</a> (<a href="https://github.com/reddit/reddit/wiki/OAuth2-Quick-Start-Example">说明</a>)</p>
+</li>
+<li><p><a href="https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fsettings%2Fapplications%2Fnew">Github</a> (<a href="https://developer.github.com/v3/oauth/">说明</a>)</p>
+</li>
+<li><p><a href="https://login.yahoo.com/config/login?src=devnet&amp;.done=http%3A%2F%2Fdeveloper.yahoo.com%2Fapps%2Fcreate%2F">Yahoo</a> (<a href="https://developer.yahoo.com/bbauth/user.html">说明</a>)</p>
+</li>
+<li><p><a href="https://www.tumblr.com/oauth/apps">Tumblr</a> (<a href="https://www.tumblr.com/docs/api/v2#auth">说明</a>)</p>
+</li>
+<li><p><a href="https://www.pinterest.com/login/?next=http%3A%2F%2Fdevsite%2Fapps%2F">Pinterest</a> (<a href="https://developers.pinterest.com/docs/api/overview/?">说明</a>)</p>
+</li>
+<li><p><a href="https://getpocket.com/developer/apps/new">袖珍</a> (<a href="https://getpocket.com/developer/docs/authentication">说明</a>)</p>
+</li>
+<li><p><a href="https://www.flickr.com/services/apps/create">Flickr</a> (<a href="https://www.flickr.com/services/api/auth.oauth.html">说明</a>)</p>
+</li>
+<li><p><a href="https://dribbble.com/signup">Dribble</a> (<a href="https://developer.dribbble.com/v1/oauth/">说明</a>)</p>
+</li>
+<li><p><a href="https://vimeo.com/join">Vimeo</a> (<a href="https://developer.vimeo.com/api/authentication">说明</a>)</p>
+</li>
+<li><p><a href="https://soundcloud.com/you/apps/new">SoundCloud</a> (<a href="https://developers.soundcloud.com/blog/we-love-oauth-2">说明</a>)</p>
+</li>
+<li><p><a href="https://vk.com/apps?act=manage">VK</a> (<a href="https://vk.com/pages?oid=-17680044&amp;p=Authorizing_Sites">说明</a>)</p>
+</li>
+</ul>
+<h2 id="multiple-authentication-providers">多个身份验证提供程序</h2>
+<p>如果应用需要多个提供程序，请在 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication">AddAuthentication</a> 后面链接提供程序扩展方法：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddMicrosoftAccount(microsoftOptions =&gt; { ... })
+    .AddGoogle(googleOptions =&gt; { ... })
+    .AddTwitter(twitterOptions =&gt; { ... })
+    .AddFacebook(facebookOptions =&gt; { ... });
+</code></pre>
+<h2 id="forward-request-information-with-a-proxy-or-load-balancer">使用代理或负载均衡器转发请求信息</h2>
+<p>如果应用部署在代理服务器或负载均衡器后面，则可能会将某些原始请求信息转发到请求标头中的应用。 此信息通常包括安全请求方案 (<code>https</code>)、主机和客户端 IP 地址。 应用不会自动读取这些请求标头以发现和使用原始请求信息。</p>
+<p>方案用于通过外部提供程序影响身份验证流的链接生成。 丢失安全方案 (<code>https</code>) 会导致应用生成不正确且不安全的重定向 URL。</p>
+<p>使用转发标头中间件以使应用可以使用原始请求信息来进行请求处理。</p>
+<p>有关更多信息，请参见 <a class="xref" href="../../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

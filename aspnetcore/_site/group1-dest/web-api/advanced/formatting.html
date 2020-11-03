@@ -1,0 +1,334 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#35774;&#32622; ASP.NET Core Web API &#20013;&#21709;&#24212;&#25968;&#25454;&#30340;&#26684;&#24335; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#35774;&#32622; ASP.NET Core Web API &#20013;&#21709;&#24212;&#25968;&#25454;&#30340;&#26684;&#24335; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="web-api/advanced/formatting">
+<h1 id="format-response-data-in-aspnet-core-web-api">设置 ASP.NET Core Web API 中响应数据的格式</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://ardalis.com/">Steve Smith</a></p>
+<p>ASP.NET Core MVC 支持设置响应数据的格式。 可以使用特定格式或响应客户端请求的格式，来设置响应数据的格式。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/web-api/advanced/formatting">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="format-specific-action-results">特定于格式的操作结果</h2>
+<p>一些操作结果类型特定于特殊格式，例如 &lt;xref:Microsoft.AspNetCore.Mvc.JsonResult&gt; 和 &lt;xref:Microsoft.AspNetCore.Mvc.ContentResult&gt;。 操作可以返回使用特定格式设置格式的结果，而不考虑客户端首选项。 例如，返回 <code>JsonResult</code>，将返回 JSON 格式的数据。 返回 <code>ContentResult</code> 或字符串，将返回纯文本格式的字符串数据。</p>
+<p>无需操作返回任意特定类型。 ASP.NET Core 支持任何对象返回值。  返回非 &lt;xref:Microsoft.AspNetCore.Mvc.IActionResult&gt; 类型对象的操作结果将使用相应的 &lt;xref:Microsoft.AspNetCore.Mvc.Formatters.IOutputFormatter&gt; 实现来进行序列化。 有关详细信息，请参阅 <a class="xref" href="../action-return-types.html">ASP.NET Core Web API 中控制器操作的返回类型</a>。</p>
+<p>内置的帮助程序方法 &lt;xref:Microsoft.AspNetCore.Mvc.ControllerBase.Ok*&gt; 返回 JSON 格式的数据：[!code-csharp<a href="./formatting/sample/Controllers/AuthorsController.cs?name=snippet_get"></a>]</p>
+<p>示例下载返回作者列表。 在 F12 浏览器开发人员工具或 <a href="https://www.getpostman.com/tools">Postman</a> 中使用上述代码：</p>
+<ul>
+<li>将显示包含内容类型的响应标头。  <code>application/json; charset=utf-8</code></li>
+<li>将显示请求标头。 例如 <code>Accept</code> 标头。 上述代码将忽略 <code>Accept</code> 标头。</li>
+</ul>
+<p>若要返回纯文本格式数据，请使用 &lt;xref:Microsoft.AspNetCore.Mvc.ContentResult&gt; 和 &lt;xref:Microsoft.AspNetCore.Mvc.ControllerBase.Content%2A&gt; 帮助程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中，返回的 <code>text/plain</code> 为 <code>Content-Type</code>。 返回字符串，将提供 <code>text/plain</code> 类型的 <code>Content-Type</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>对于包含多个返回类型的操作，将返回 <code>IActionResult</code>。 例如，基于执行的操作的结果返回不同的 HTTP 状态代码。</p>
+<h2 id="content-negotiation">内容协商</h2>
+<p>当客户端指定 <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">Accept 标头</a>时，会发生内容协商。 ASP.NET Core 使用的默认格式是 <a href="https://json.org/">JSON</a>。 内容协商有以下特点：</p>
+<ul>
+<li>由 &lt;xref:Microsoft.AspNetCore.Mvc.ObjectResult&gt; 实现。</li>
+<li>内置于从帮助程序方法返回的特定于状态代码的操作结果中。 操作结果帮助程序方法基于 <code>ObjectResult</code>。</li>
+</ul>
+<p>返回模型类型后，返回类型为 <code>ObjectResult</code>。</p>
+<p>以下操作方法使用 <code>Ok</code> 和 <code>NotFound</code> 帮助程序方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>默认情况下，ASP.NET Core 支持 <code>application/json</code>、<code>text/json</code> 和 <code>text/plain</code> 媒体类型。 <a href="https://www.telerik.com/fiddler">Fiddler</a> 或 <a href="https://www.getpostman.com/tools">Postman</a> 等工具可以设置 <code>Accept</code> 请求标头，来指定返回格式。 <code>Accept</code> 标头包含服务器支持的类型时，将返回该类型。 下一节将介绍如何添加其他格式化程序。</p>
+<p>控制器操作可以返回 POCO（普通旧 CLR 对象）。 返回 POCO 时，运行时自动创建包装该对象的 <code>ObjectResult</code>。 客户端将获得已格式化和序列化的对象。 若将返回的对象为 <code>null</code>，将返回 <code>204 No Content</code> 响应。</p>
+<p>返回对象类型：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，请求有效作者别名将返回具有作者数据的 <code>200 OK</code> 响应。 请求无效别名将返回 <code>204 No Content</code> 响应。</p>
+<h3 id="the-accept-header">Accept 标头</h3>
+<p>内容协商在 <code>Accept</code> 标头出现在请求中时发生  。 请求包含 Accept 标头时，ASP.NET Core 将执行以下操作：</p>
+<ul>
+<li>按首选顺序枚举 Accept 标头中的媒体类型。</li>
+<li>尝试找到可以生成某种指定格式的响应的格式化程序。</li>
+</ul>
+<p>若未找到可以满足客户端请求的格式化程序，ASP.NET Core 将指定以下操作：</p>
+<ul>
+<li>已设置 <code>406 Not Acceptable</code> 时，将返回 &lt;xref:Microsoft.AspNetCore.Mvc.MvcOptions&gt;，或者</li>
+<li>尝试找到第一个可以生成响应的格式化程序。</li>
+</ul>
+<p>如果没有配置实现所请求格式的格式化程序，那么使用第一个可以设置对象格式的格式化程序。 若请求中没有 <code>Accept</code> 标头：</p>
+<ul>
+<li>将使用第一个可以处理对象的格式化程序来将响应序列化。</li>
+<li>不执行任何协商。 服务器将决定要返回的格式。</li>
+</ul>
+<p>如果 Accept 标头包含 <code>*/*</code>，则将忽略该标头，除非 <code>RespectBrowserAcceptHeader</code> 在 &lt;xref:Microsoft.AspNetCore.Mvc.MvcOptions&gt; 上设置为 true。</p>
+<h3 id="browsers-and-content-negotiation">浏览器和内容协商</h3>
+<p>与典型的 API 客户端不同的是，Web 浏览器提供 <code>Accept</code> 标头。 Web 浏览器指定多种格式，包括通配符。 默认情况下，当框架检测到请求来自浏览器时，将执行以下操作：</p>
+<ul>
+<li>忽略 <code>Accept</code> 标头。</li>
+<li>若未另行配置，将使用 JSON 返回内容。</li>
+</ul>
+<p>这样，在使用 API 时，浏览器中的体验将更加一致。</p>
+<p>若要将应用配置为采用浏览器 Accept 标头，请将 &lt;xref:Microsoft.AspNetCore.Mvc.MvcOptions.RespectBrowserAcceptHeader&gt; 设置为 <code>true</code>：</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h3 id="configure-formatters">配置格式化程序</h3>
+<p>需要支持其他格式的应用可以添加相应的 NuGet 包，并配置支持。 输入和输出的格式化程序不同。 <a class="xref" href="../../mvc/models/model-binding.html">模型绑定</a>使用输入格式化程序。 格式响应使用输出格式化程序。 有关创建自定义格式化程序的信息，请参阅<a class="xref" href="custom-formatters.html">自定义格式化程序</a>。</p>
+<div range="&gt;= aspnetcore-3.0">
+<h3 id="add-xml-format-support">添加 XML 格式支持</h3>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.MvcXmlMvcBuilderExtensions.AddXmlSerializerFormatters*&gt; 来配置使用 &lt;xref:System.Xml.Serialization.XmlSerializer&gt; 实现的 XML 格式化程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码将使用 <code>XmlSerializer</code> 将结果序列化。</p>
+<p>使用前面的代码时，控制器方法会基于请求的 <code>Accept</code> 标头返回相应的格式。</p>
+<h3 id="configure-systemtextjson-based-formatters">配置基于 System.Text.Json 的格式化程序</h3>
+<p>可以使用 <code>Microsoft.AspNetCore.Mvc.JsonOptions.SerializerOptions</code> 配置基于 <code>System.Text.Json</code> 的格式化程序的功能。</p>
+<pre><code class="lang-csharp">services.AddControllers().AddJsonOptions(options =&gt;
+{
+    // Use the default property (Pascal) casing.
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
+    // Configure a custom converter.
+    options.JsonSerializerOptions.Converters.Add(new MyCustomJsonConverter());
+});
+</code></pre>
+<p>可以使用 <code>JsonResult</code> 配置基于每个操作的输出序列化选项。 例如： 。</p>
+<pre><code class="lang-csharp">public IActionResult Get()
+{
+    return Json(model, new JsonSerializerOptions
+    {
+        WriteIndented = true,
+    });
+}
+</code></pre>
+<h3 id="add-newtonsoftjson-based-json-format-support">添加基于 Newtonsoft.Json 的 JSON 格式支持</h3>
+<p>ASP.NET Core 3.0 之前的版本中，默认设置使用通过 <code>Newtonsoft.Json</code> 包实现的 JSON 格式化程序。 在 ASP.NET Core 3.0 或更高版本中，默认 JSON 格式化程序基于 <code>System.Text.Json</code>。 <code>Newtonsoft.Json</code>通过安装 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.NewtonsoftJson/"><code>Microsoft.AspNetCore.Mvc.NewtonsoftJson</code></a> NuGet 包并在中进行配置，可获得对基于的格式化程序和功能的支持 <code>Startup.ConfigureServices</code> 。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，对的调用将 <code>AddNewtonsoftJson</code> 配置以下 WEB API、MVC 和 Razor 页面功能以供使用 <code>Newtonsoft.Json</code> ：</p>
+<ul>
+<li>用于读取和写入 JSON 的输入和输出格式化程序</li>
+<li>&lt;xref:Microsoft.AspNetCore.Mvc.JsonResult&gt;</li>
+<li><a class="xref" href="../jsonpatch.html">JSON 修补程序</a></li>
+<li>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper&gt;</li>
+<li><a class="xref" href="../../fundamentals/app-state.html#tempdata">TempData</a></li>
+</ul>
+<p>某些功能可能不适用于基于 <code>System.Text.Json</code> 的格式化程序，而需要引用基于 <code>Newtonsoft.Json</code> 的格式化程序。 若应用符合以下情况，请继续使用基于 <code>Newtonsoft.Json</code> 的格式化程序：</p>
+<ul>
+<li>使用 <code>Newtonsoft.Json</code> 属性。 例如，<code>[JsonProperty]</code> 或 <code>[JsonIgnore]</code>。</li>
+<li>自定义序列化设置。</li>
+<li>依赖 <code>Newtonsoft.Json</code> 提供的功能。</li>
+<li>配置 <code>Microsoft.AspNetCore.Mvc.JsonResult.SerializerSettings</code>。 ASP.NET Core 3.0 之前的版本中，<code>JsonResult.SerializerSettings</code> 接受特定于 <code>Newtonsoft.Json</code> 的 <code>JsonSerializerSettings</code> 的实例。</li>
+<li>生成 <a class="xref" href="../../tutorials/web-api-help-pages-using-swagger.html">OpenAPI</a> 文档。</li>
+</ul>
+<p>可以使用 <code>Microsoft.AspNetCore.Mvc.MvcNewtonsoftJsonOptions.SerializerSettings</code> 配置基于 <code>Newtonsoft.Json</code> 的格式化程序的功能：</p>
+<pre><code class="lang-csharp">services.AddControllers().AddNewtonsoftJson(options =&gt;
+{
+    // Use the default property (Pascal) casing
+    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+
+    // Configure a custom converter
+    options.SerializerSettings.Converters.Add(new MyCustomJsonConverter());
+});
+</code></pre>
+<p>可以使用 <code>JsonResult</code> 配置基于每个操作的输出序列化选项。 例如： 。</p>
+<pre><code class="lang-csharp">public IActionResult Get()
+{
+    return Json(model, new JsonSerializerSettings
+    {
+        Formatting = Formatting.Indented,
+    });
+}
+</code></pre>
+</div>
+<div range="&lt;= aspnetcore-2.2">
+<h3 id="add-xml-format-support">添加 XML 格式支持</h3>
+<p>XML 格式需要 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Mvc.Formatters.Xml/">Microsoft.AspNetCore.Mvc.Formatters.Xml</a> NuGet 包。</p>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.MvcXmlMvcBuilderExtensions.AddXmlSerializerFormatters*&gt; 来配置使用 &lt;xref:System.Xml.Serialization.XmlSerializer&gt; 实现的 XML 格式化程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码将使用 <code>XmlSerializer</code> 将结果序列化。</p>
+<p>使用前面的代码时，控制器方法应基于请求的 <code>Accept</code> 标头返回相应的格式。</p>
+</div>
+<h3 id="specify-a-format">指定格式</h3>
+<p>若要限制响应格式，请应用 <a href="xref:Microsoft.AspNetCore.Mvc.ProducesAttribute"><code>[Produces]</code></a> 筛选器。 与大多数 <a class="xref" href="../../mvc/controllers/filters.html">筛选器</a>一样， <code>[Produces]</code> 可以在操作、控制器或全局范围内应用：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述 <a href="xref:Microsoft.AspNetCore.Mvc.ProducesAttribute"><code>[Produces]</code></a> 筛选器：</p>
+<ul>
+<li>强制控制器内的所有操作返回 JSON 格式的响应。</li>
+<li>若已配置其他格式化程序，并且客户端指定了其他格式，将返回 JSON。</li>
+</ul>
+<p>有关详细信息，请参阅<a class="xref" href="../../mvc/controllers/filters.html">筛选器</a>。</p>
+<h3 id="special-case-formatters">特例格式化程序</h3>
+<p>一些特例是使用内置格式化程序实现的。 默认情况下，<code>string</code> 返回类型的格式将设为 text/plain（如果通过 <code>Accept</code> 标头请求则为 text/html）  。 可以通过删除 &lt;xref:Microsoft.AspNetCore.Mvc.Formatters.StringOutputFormatter&gt; 删除此行为。 在 <code>ConfigureServices</code> 方法中删除格式化程序。 有模型对象返回类型的操作将在返回 <code>null</code> 时返回 <code>204 No Content</code>。 可以通过删除 &lt;xref:Microsoft.AspNetCore.Mvc.Formatters.HttpNoContentOutputFormatter&gt; 删除此行为。 以下代码删除 <code>StringOutputFormatter</code> 和 <code>HttpNoContentOutputFormatter</code>。</p>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<p>如果没有 <code>StringOutputFormatter</code>，内置 JSON 格式化程序将设置 <code>string</code> 返回类型的格式。 如果删除了内置 JSON 格式化程序并提供了 XML 格式化程序，则 XML 格式化程序将设置 <code>string</code> 返回类型的格式。 否则，<code>string</code> 返回类型返回 <code>406 Not Acceptable</code>。</p>
+<p>没有 <code>HttpNoContentOutputFormatter</code>，null 对象将使用配置的格式化程序来进行格式设置。 例如： 。</p>
+<ul>
+<li>JSON 格式化程序返回正文为 <code>null</code> 的响应。</li>
+<li>设置属性 <code>xsi:nil=&quot;true&quot;</code> 时，XML 格式化程序返回空 XML 元素。</li>
+</ul>
+<h2 id="response-format-url-mappings">响应格式 URL 映射</h2>
+<p>客户端可以在 URL 中请求特定格式，例如：</p>
+<ul>
+<li>在查询字符串中，或在路径中。</li>
+<li>使用格式特定的文件扩展名，如 .xml 或 .json。</li>
+</ul>
+<p>请求路径的映射必须在 API 使用的路由中指定。 例如： 。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述路由将允许指定所请求格式为可选文件扩展名。 <a href="xref:Microsoft.AspNetCore.Mvc.FormatFilterAttribute"><code>[FormatFilter]</code></a>特性检查中的格式值是否存在 <code>RouteData</code> ，并在创建响应时将响应格式映射到适当的格式化程序。</p>
+<table>
+<thead>
+<tr>
+<th>路由</th>
+<th>格式化程序</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/products/5</code></td>
+<td>默认输出格式化程序</td>
+</tr>
+<tr>
+<td><code>/api/products/5.json</code></td>
+<td>JSON 格式化程序（如配置）</td>
+</tr>
+<tr>
+<td><code>/api/products/5.xml</code></td>
+<td>XML 格式化程序（如配置）</td>
+</tr>
+</tbody>
+</table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

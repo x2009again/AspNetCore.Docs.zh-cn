@@ -1,0 +1,1093 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; HTTP REPL &#27979;&#35797; Web API </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; HTTP REPL &#27979;&#35797; Web API ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="web-api/http-repl">
+<h1 id="test-web-apis-with-the-http-repl">使用 HTTP REPL 测试 Web API</h1>
+
+<p>作者：<a href="https://twitter.com/Scott_Addie">Scott Addie</a></p>
+<p>HTTP 读取–求值–打印循环 (REPL)：</p>
+<ul>
+<li>一种轻量级跨平台命令行工具，在所有支持的 .NET Core 的位置都可得到支持。</li>
+<li>用于发出 HTTP 请求以测试 ASP.NET Core Web API（和非 ASP.NET Core web API）并查看其结果。</li>
+<li>可以在任何环境下测试托管的 web API，包括 localhost 和 Azure 应用服务。</li>
+</ul>
+<p>支持以下 <a href="https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#74-supported-methods">HTTP 谓词</a>：</p>
+<ul>
+<li><a href="#test-http-delete-requests">DELETE</a></li>
+<li><a href="#test-http-get-requests">GET</a></li>
+<li><a href="#test-http-head-requests">头</a></li>
+<li><a href="#test-http-options-requests">选项</a></li>
+<li><a href="#test-http-patch-requests">PATCH</a></li>
+<li><a href="#test-http-post-requests">POST</a></li>
+<li><a href="#test-http-put-requests">PUT</a></li>
+</ul>
+<p>若要继续操作，请<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/web-api/http-repl/samples">查看或下载示例 ASP.NET Core Web API</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">下载方式</a>）。</p>
+<h2 id="prerequisites">先决条件</h2>
+<ul>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core 2.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+<h2 id="installation">安装</h2>
+<p>若要安装 HTTP REPL，运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.dotnet-httprepl
+</code></pre>
+<p>从 <a href="https://www.nuget.org/packages/Microsoft.dotnet-httprepl">Microsoft.dotnet-httprepl</a> NuGet 包安装 <a href="/dotnet/core/tools/global-tools#install-a-global-tool">.NET Core 全局工具</a>。</p>
+<h2 id="usage">使用情况</h2>
+<p>成功安装该工具后，运行以下命令以启动 HTTP REPL：</p>
+<pre><code class="lang-console">httprepl
+</code></pre>
+<p>若要查看可用的 HTTP REPL 命令，请运行下面的一个命令：</p>
+<pre><code class="lang-console">httprepl -h
+</code></pre>
+<pre><code class="lang-console">httprepl --help
+</code></pre>
+<p>显示以下输出：</p>
+<pre><code class="lang-console">Usage:
+  httprepl [&lt;BASE_ADDRESS&gt;] [options]
+
+Arguments:
+  &lt;BASE_ADDRESS&gt; - The initial base address for the REPL.
+
+Options:
+  -h|--help - Show help information.
+
+Once the REPL starts, these commands are valid:
+
+Setup Commands:
+Use these commands to configure the tool for your API server
+
+connect        Configures the directory structure and base address of the api server
+set header     Sets or clears a header for all requests. e.g. `set header content-type application/json`
+
+HTTP Commands:
+Use these commands to execute requests against your application.
+
+GET            get - Issues a GET request
+POST           post - Issues a POST request
+PUT            put - Issues a PUT request
+DELETE         delete - Issues a DELETE request
+PATCH          patch - Issues a PATCH request
+HEAD           head - Issues a HEAD request
+OPTIONS        options - Issues a OPTIONS request
+
+Navigation Commands:
+The REPL allows you to navigate your URL space and focus on specific APIs that you are working on.
+
+set base       Set the base URI. e.g. `set base http://locahost:5000`
+ls             Show all endpoints for the current path
+cd             Append the given directory to the currently selected path, or move up a path when using `cd ..`
+
+Shell Commands:
+Use these commands to interact with the REPL shell.
+
+clear          Removes all text from the shell
+echo [on/off]  Turns request echoing on or off, show the request that was made when using request commands
+exit           Exit the shell
+
+REPL Customization Commands:
+Use these commands to customize the REPL behavior.
+
+pref [get/set] Allows viewing or changing preferences, e.g. 'pref set editor.command.default 'C:\\Program Files\\Microsoft VS Code\\Code.exe'`
+run            Runs the script at the given path. A script is a set of commands that can be typed with one command per line
+ui             Displays the Swagger UI page, if available, in the default browser
+
+Use `help &lt;COMMAND&gt;` for more detail on an individual command. e.g. `help get`.
+For detailed tool info, see https://aka.ms/http-repl-doc.
+</code></pre>
+<p>HTTP REPL 提供命令完成。 按 Tab <kbd></kbd>键可循环访问补全所键入字符或 API 终结点的命令的列表。 以下部分概述了可用的 CLI 命令。</p>
+<h2 id="connect-to-the-web-api">连接到 Web API</h2>
+<p>运行以下命令，连接到 Web API：</p>
+<pre><code class="lang-console">httprepl &lt;ROOT URI&gt;
+</code></pre>
+<p><code>&lt;ROOT URI&gt;</code> 是 Web API 的基 URI。 例如： 。</p>
+<pre><code class="lang-console">httprepl https://localhost:5001
+</code></pre>
+<p>或者，在 HTTP REPL 运行期间的任何时刻运行以下命令：</p>
+<pre><code class="lang-console">connect &lt;ROOT URI&gt;
+</code></pre>
+<p>例如： 。</p>
+<pre><code class="lang-console">(Disconnected)~ connect https://localhost:5001
+</code></pre>
+<h2 id="manually-point-to-the-swagger-document-for-the-web-api">手动指向 Web API 的 Swagger 文档</h2>
+<p>上述 connect 命令将尝试自动查找 Swagger 文档。 如果由于某种原因而无法执行此操作，则可以使用 <code>--swagger</code> 选项指定 Web API 的 Swagger 文档的 URI：</p>
+<pre><code class="lang-console">connect &lt;ROOT URI&gt; --swagger &lt;SWAGGER URI&gt;
+</code></pre>
+<p>例如： 。</p>
+<pre><code class="lang-console">(Disconnected)~ connect https://localhost:5001 --swagger /swagger/v1/swagger.json
+</code></pre>
+<h2 id="navigate-the-web-api">浏览 Web API</h2>
+<h3 id="view-available-endpoints">查看可用的终结点</h3>
+<p>若要在 Web API 地址的当前路径中列出不同的终结点（控制器），请运行 <code>ls</code> 或 <code>dir</code> 命令：</p>
+<pre><code class="lang-console">https://localhot:5001/~ ls
+</code></pre>
+<p>以下输出格式随即显示：</p>
+<pre><code class="lang-console">.        []
+Fruits   [get|post]
+People   [get|post]
+
+https://localhost:5001/~
+</code></pre>
+<p>上述输出指示有两个控制器可用：<code>Fruits</code> 和 <code>People</code>。 这两个控制器都支持无参数 HTTP GET 和 POST 操作。</p>
+<p>导航到特定控制器可显示更多详细信息。 例如，以下命令的输出显示 <code>Fruits</code> 控制器还支持 HTTP GET、PUT 和 DELETE 操作。 其中每个操作都需要路由中有一个 <code>id</code> 参数：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ ls
+.      [get|post]
+..     []
+{id}   [get|put|delete]
+
+https://localhost:5001/fruits~
+</code></pre>
+<p>或者，运行 <code>ui</code> 命令，在浏览器中打开 Web API 的 Swagger UI 页。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/~ ui
+</code></pre>
+<h3 id="navigate-to-an-endpoint">导航到一个终结点</h3>
+<p>若要在 Web API 上导航到其他终结点，请运行 <code>cd</code> 命令：</p>
+<pre><code class="lang-console">https://localhost:5001/~ cd people
+</code></pre>
+<p><code>cd</code> 命令后的路径不区分大小写。 以下输出格式随即显示：</p>
+<pre><code class="lang-console">/people    [get|post]
+
+https://localhost:5001/people~
+</code></pre>
+<h2 id="customize-the-http-repl">自定义 HTTP REPL</h2>
+<p>可自定义 HTTP REPL 的默认<a href="#set-color-preferences">颜色</a>。 此外，还可定义<a href="#set-the-default-text-editor">默认文本编辑器</a>。 HTTP REPL 首选项在当前会话中保持不变，并且也会在之后的会话中使用。 修改后，首选项存储在以下文件中：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_linux" role="tab" aria-controls="tabpanel_CeZOj-G++Q_linux" data-tab="linux" tabindex="0" aria-selected="true">Linux</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_macos" role="tab" aria-controls="tabpanel_CeZOj-G++Q_macos" data-tab="macos" tabindex="-1">macOS</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_windows" role="tab" aria-controls="tabpanel_CeZOj-G++Q_windows" data-tab="windows" tabindex="-1">Windows</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_linux" role="tabpanel" data-tab="linux">
+
+<p>%HOME%/.httpreplprefs</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_macos" role="tabpanel" data-tab="macos" aria-hidden="true" hidden="hidden">
+
+<p>%HOME%/.httpreplprefs</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_windows" role="tabpanel" data-tab="windows" aria-hidden="true" hidden="hidden">
+
+<p>%USERPROFILE%\.httpreplprefs</p>
+</section>
+</div>
+
+<p>.httpreplprefs  文件将在启动时加载，并且在运行时不监控对其的更改。 对文件的手动修改只会在重启该工具后生效。</p>
+<h3 id="view-the-settings">查看设置</h3>
+<p>若要查看可用的设置，请运行 <code>pref get</code> 命令。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/~ pref get
+</code></pre>
+<p>上述命令显示可用的键值对：</p>
+<pre><code class="lang-console">colors.json=Green
+colors.json.arrayBrace=BoldCyan
+colors.json.comma=BoldYellow
+colors.json.name=BoldMagenta
+colors.json.nameSeparator=BoldWhite
+colors.json.objectBrace=Cyan
+colors.protocol=BoldGreen
+colors.status=BoldYellow
+</code></pre>
+<h3 id="set-color-preferences">设置颜色首选项</h3>
+<p>当前仅 JSON 支持响应着色。 若要自定义默认的 HTTP REPL 工具着色，请找到与要更改的颜色相对应的键。 有关如何查找键的说明，请参阅<a href="#view-the-settings">查看设置</a>部分。 例如，将 <code>colors.json</code> 键值从 <code>Green</code> 更改为 <code>White</code>如下所示：</p>
+<pre><code class="lang-console">https://localhost:5001/people~ pref set colors.json White
+</code></pre>
+<p>只能使用<a href="https://github.com/dotnet/HttpRepl/blob/01d5c3c3373e98fe566ff5ef8a17c571de880293/src/Microsoft.Repl/ConsoleHandling/AllowedColors.cs">允许的颜色</a>。 后续 HTTP 请求使用新着色显示输出。</p>
+<p>如果未设置特定颜色键，则会考虑使用更通用的键。 若要演示此回退行为，请考虑使用以下示例：</p>
+<ul>
+<li>如果 <code>colors.json.name</code> 没有值，则使用 <code>colors.json.string</code>。</li>
+<li>如果 <code>colors.json.string</code> 没有值，则使用 <code>colors.json.literal</code>。</li>
+<li>如果 <code>colors.json.literal</code> 没有值，则使用 <code>colors.json</code>。</li>
+<li>如果 <code>colors.json</code> 没有值，则使用命令行界面的默认文本颜色 (<code>AllowedColors.None</code>)。</li>
+</ul>
+<h3 id="set-indentation-size">设置缩进尺寸</h3>
+<p>当前，仅 JSON 支持响应缩进尺寸自定义。 默认尺寸为两个空格。 例如： 。</p>
+<pre><code class="lang-json">[
+  {
+    &quot;id&quot;: 1,
+    &quot;name&quot;: &quot;Apple&quot;
+  },
+  {
+    &quot;id&quot;: 2,
+    &quot;name&quot;: &quot;Orange&quot;
+  },
+  {
+    &quot;id&quot;: 3,
+    &quot;name&quot;: &quot;Strawberry&quot;
+  }
+]
+</code></pre>
+<p>若要更改默认尺寸，请设置 <code>formatting.json.indentSize</code> 键。 例如，始终使用四个空格：</p>
+<pre><code class="lang-console">pref set formatting.json.indentSize 4
+</code></pre>
+<p>后续响应遵循四个空格的设置：</p>
+<pre><code class="lang-json">[
+    {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Apple&quot;
+    },
+    {
+        &quot;id&quot;: 2,
+        &quot;name&quot;: &quot;Orange&quot;
+    },
+    {
+        &quot;id&quot;: 3,
+        &quot;name&quot;: &quot;Strawberry&quot;
+    }
+]
+</code></pre>
+<h3 id="set-the-default-text-editor">设置默认文本编辑器</h3>
+<p>默认情况下，HTTP REPL 未配置任何文本编辑器供使用。 若要测试需要 HTTP 请求正文的 Web API 方法，必须设置默认文本编辑器。 HTTP REPL 工具将启动已配置的文本编辑器，专门用于编写请求正文。 运行以下命令，将你青睐的文本编辑器设置为默认编辑器：</p>
+<pre><code class="lang-console">pref set editor.command.default &quot;&lt;EXECUTABLE&gt;&quot;
+</code></pre>
+<p>在上述命令中，<code>&lt;EXECUTABLE&gt;</code> 是文本编辑器可执行文件的完整路径。 例如，运行以下命令，将 Visual Studio Code 设置为默认文本编辑器：</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_linux" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_linux" data-tab="linux" tabindex="0" aria-selected="true">Linux</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_macos" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_macos" data-tab="macos" tabindex="-1">macOS</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_windows" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_windows" data-tab="windows" tabindex="-1">Windows</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_linux" role="tabpanel" data-tab="linux">
+
+<pre><code class="lang-console">pref set editor.command.default &quot;/usr/bin/code&quot;
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_macos" role="tabpanel" data-tab="macos" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-console">pref set editor.command.default &quot;/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code&quot;
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_windows" role="tabpanel" data-tab="windows" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-console">pref set editor.command.default &quot;C:\Program Files\Microsoft VS Code\Code.exe&quot;
+</code></pre>
+</section>
+</div>
+
+<p>若要使用特定 CLI 参数启动默认文本编辑器，请设置 <code>editor.command.default.arguments</code> 键。 例如，假设 Visual Studio Code 为默认文本编辑器，并且你总是希望 HTTP REPL 在禁用了扩展的新会话中打开 Visual Studio Code。 运行以下命令：</p>
+<pre><code class="lang-console">pref set editor.command.default.arguments &quot;--disable-extensions --new-window&quot;
+</code></pre>
+<h3 id="set-the-swagger-search-paths">设置 Swagger 搜索路径</h3>
+<p>默认情况下，HTTP REPL 具有一组相对路径，可用于在不使用 <code>--swagger</code> 选项执行 <code>connect</code> 命令时查找 Swagger 文档。 将这些相对路径与 <code>connect</code> 命令中指定的根路径和基路径组合在一起。 默认相对路径为：</p>
+<ul>
+<li><em>swagger.js</em></li>
+<li><em>swagger/v1/swagger.js</em></li>
+<li><em>/swagger.js</em></li>
+<li><em>/swagger/v1/swagger.json</em></li>
+</ul>
+<p>若要在环境中使用一组不同的搜索路径，请设置 <code>swagger.searchPaths</code> 首选项。 该值必须是以竖线分隔的相对路径列表。 例如： 。</p>
+<pre><code class="lang-console">pref set swagger.searchPaths &quot;swagger/v2/swagger.json|swagger/v3/swagger.json&quot;
+</code></pre>
+<h2 id="test-http-get-requests">测试 HTTP GET 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">get &lt;PARAMETER&gt; [-F|--no-formatting] [-h|--header] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<p><code>get</code> 命令可以使用以下选项：</p>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<h3 id="example">示例</h3>
+<p>发出 HTTP GET 请求：</p>
+<ol>
+<li><p>在支持 <code>get</code> 命令的终结点上运行该命令：</p>
+<pre><code class="lang-console">https://localhost:5001/people~ get
+</code></pre>
+<p>上述命令显示以下输出格式：</p>
+<pre><code class="lang-console">HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Fri, 21 Jun 2019 03:38:45 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    &quot;id&quot;: 1,
+    &quot;name&quot;: &quot;Scott Hunter&quot;
+  },
+  {
+    &quot;id&quot;: 2,
+    &quot;name&quot;: &quot;Scott Hanselman&quot;
+  },
+  {
+    &quot;id&quot;: 3,
+    &quot;name&quot;: &quot;Scott Guthrie&quot;
+  }
+]
+
+
+https://localhost:5001/people~
+</code></pre>
+</li>
+<li><p>通过将参数传递给 <code>get</code> 命令来检索特定记录：</p>
+<pre><code class="lang-console">https://localhost:5001/people~ get 2
+</code></pre>
+<p>上述命令显示以下输出格式：</p>
+<pre><code class="lang-console">HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Fri, 21 Jun 2019 06:17:57 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    &quot;id&quot;: 2,
+    &quot;name&quot;: &quot;Scott Hanselman&quot;
+  }
+]
+
+
+https://localhost:5001/people~
+</code></pre>
+</li>
+</ol>
+<h2 id="test-http-post-requests">测试 HTTP POST 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">post &lt;PARAMETER&gt; [-c|--content] [-f|--file] [-h|--header] [--no-body] [-F|--no-formatting] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>-c|--content</code></p>
+<p>提供内联 HTTP 请求正文。 例如 <code>-c &quot;{&quot;id&quot;:2,&quot;name&quot;:&quot;Cherry&quot;}&quot;</code>。</p>
+</li>
+<li><p><code>-f|--file</code></p>
+<p>提供包含 HTTP 请求正文的文件的路径。 例如 <code>-f &quot;C:\request.json&quot;</code>。</p>
+</li>
+<li><p><code>--no-body</code></p>
+<p>指示无需 HTTP 请求正文。</p>
+</li>
+</ul>
+<h3 id="example">示例</h3>
+<p>发出 HTTP POST 请求：</p>
+<ol>
+<li><p>在支持 <code>post</code> 命令的终结点上运行该命令：</p>
+<pre><code class="lang-console">https://localhost:5001/people~ post -h Content-Type=application/json
+</code></pre>
+<p>在上述命令中，<code>Content-Type</code> HTTP 请求标头被设置为指示 JSON 的请求正文媒体类型。 默认文本编辑器打开一个 .tmp  文件，其中包含一个表示 HTTP 请求正文的 JSON 模板。 例如： 。</p>
+<pre><code class="lang-json">{
+  &quot;id&quot;: 0,
+  &quot;name&quot;: &quot;&quot;
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>若要设置默认文本编辑器，请参阅<a href="#set-the-default-text-editor">设置默认文本编辑器</a>部分。</p>
+</div>
+</li>
+<li><p>修改 JSON 模板以满足模型验证要求：</p>
+<pre><code class="lang-json">{
+  &quot;id&quot;: 0,
+  &quot;name&quot;: &quot;Scott Addie&quot;
+}
+</code></pre>
+</li>
+<li><p>保存 .tmp  文件，并关闭文本编辑器。 以下输出显示在命令行界面中：</p>
+<pre><code class="lang-console">HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+Date: Thu, 27 Jun 2019 21:24:18 GMT
+Location: https://localhost:5001/people/4
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{
+  &quot;id&quot;: 4,
+  &quot;name&quot;: &quot;Scott Addie&quot;
+}
+
+
+https://localhost:5001/people~
+</code></pre>
+</li>
+</ol>
+<h2 id="test-http-put-requests">测试 HTTP PUT 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">put &lt;PARAMETER&gt; [-c|--content] [-f|--file] [-h|--header] [--no-body] [-F|--no-formatting] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>-c|--content</code></p>
+<p>提供内联 HTTP 请求正文。 例如 <code>-c &quot;{&quot;id&quot;:2,&quot;name&quot;:&quot;Cherry&quot;}&quot;</code>。</p>
+</li>
+<li><p><code>-f|--file</code></p>
+<p>提供包含 HTTP 请求正文的文件的路径。 例如 <code>-f &quot;C:\request.json&quot;</code>。</p>
+</li>
+<li><p><code>--no-body</code></p>
+<p>指示无需 HTTP 请求正文。</p>
+</li>
+</ul>
+<h3 id="example">示例</h3>
+<p>发出 HTTP PUT 请求：</p>
+<ol>
+<li><p><em>可选</em> ：在 <code>get</code> 修改之前，运行命令以查看数据：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ get
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sat, 22 Jun 2019 00:07:32 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    &quot;id&quot;: 1,
+    &quot;data&quot;: &quot;Apple&quot;
+  },
+  {
+    &quot;id&quot;: 2,
+    &quot;data&quot;: &quot;Orange&quot;
+  },
+  {
+    &quot;id&quot;: 3,
+    &quot;data&quot;: &quot;Strawberry&quot;
+  }
+]
+</code></pre>
+</li>
+<li><p>在支持 <code>put</code> 命令的终结点上运行该命令：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ put 2 -h Content-Type=application/json
+</code></pre>
+<p>在上述命令中，<code>Content-Type</code> HTTP 请求标头被设置为指示 JSON 的请求正文媒体类型。 默认文本编辑器打开一个 .tmp  文件，其中包含一个表示 HTTP 请求正文的 JSON 模板。 例如： 。</p>
+<pre><code class="lang-json">{
+  &quot;id&quot;: 0,
+  &quot;name&quot;: &quot;&quot;
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>若要设置默认文本编辑器，请参阅<a href="#set-the-default-text-editor">设置默认文本编辑器</a>部分。</p>
+</div>
+</li>
+<li><p>修改 JSON 模板以满足模型验证要求：</p>
+<pre><code class="lang-json">{
+  &quot;id&quot;: 2,
+  &quot;name&quot;: &quot;Cherry&quot;
+}
+</code></pre>
+</li>
+<li><p>保存 .tmp  文件，并关闭文本编辑器。 以下输出显示在命令行界面中：</p>
+<pre><code class="lang-console">[main 2019-06-28T17:27:01.805Z] update#setState idle
+HTTP/1.1 204 No Content
+Date: Fri, 28 Jun 2019 17:28:21 GMT
+Server: Kestrel
+</code></pre>
+</li>
+<li><p><em>可选</em> ：发出 <code>get</code> 命令以查看修改。 例如，如果在文本编辑器中键入“Cherry”，<code>get</code> 会返回以下内容：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ get
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sat, 22 Jun 2019 00:08:20 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    &quot;id&quot;: 1,
+    &quot;data&quot;: &quot;Apple&quot;
+  },
+  {
+    &quot;id&quot;: 2,
+    &quot;data&quot;: &quot;Cherry&quot;
+  },
+  {
+    &quot;id&quot;: 3,
+    &quot;data&quot;: &quot;Strawberry&quot;
+  }
+]
+
+
+https://localhost:5001/fruits~
+</code></pre>
+</li>
+</ol>
+<h2 id="test-http-delete-requests">测试 HTTP DELETE 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">delete &lt;PARAMETER&gt; [-F|--no-formatting] [-h|--header] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<h3 id="example">示例</h3>
+<p>发出 HTTP DELETE 请求：</p>
+<ol>
+<li><p><em>可选</em> ：在 <code>get</code> 修改之前，运行命令以查看数据：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ get
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sat, 22 Jun 2019 00:07:32 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    &quot;id&quot;: 1,
+    &quot;data&quot;: &quot;Apple&quot;
+  },
+  {
+    &quot;id&quot;: 2,
+    &quot;data&quot;: &quot;Orange&quot;
+  },
+  {
+    &quot;id&quot;: 3,
+    &quot;data&quot;: &quot;Strawberry&quot;
+  }
+]
+</code></pre>
+</li>
+<li><p>在支持 <code>delete</code> 命令的终结点上运行该命令：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ delete 2
+</code></pre>
+<p>上述命令显示以下输出格式：</p>
+<pre><code class="lang-console">HTTP/1.1 204 No Content
+Date: Fri, 28 Jun 2019 17:36:42 GMT
+Server: Kestrel
+</code></pre>
+</li>
+<li><p><em>可选</em> ：发出 <code>get</code> 命令以查看修改。 在此示例中，<code>get</code> 返回以下内容：</p>
+<pre><code class="lang-console">https://localhost:5001/fruits~ get
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sat, 22 Jun 2019 00:16:30 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+[
+  {
+    &quot;id&quot;: 1,
+    &quot;data&quot;: &quot;Apple&quot;
+  },
+  {
+    &quot;id&quot;: 3,
+    &quot;data&quot;: &quot;Strawberry&quot;
+  }
+]
+
+
+https://localhost:5001/fruits~
+</code></pre>
+</li>
+</ol>
+<h2 id="test-http-patch-requests">测试 HTTP PATCH 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">patch &lt;PARAMETER&gt; [-c|--content] [-f|--file] [-h|--header] [--no-body] [-F|--no-formatting] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<ul>
+<li><p><code>-c|--content</code></p>
+<p>提供内联 HTTP 请求正文。 例如 <code>-c &quot;{&quot;id&quot;:2,&quot;name&quot;:&quot;Cherry&quot;}&quot;</code>。</p>
+</li>
+<li><p><code>-f|--file</code></p>
+<p>提供包含 HTTP 请求正文的文件的路径。 例如 <code>-f &quot;C:\request.json&quot;</code>。</p>
+</li>
+<li><p><code>--no-body</code></p>
+<p>指示无需 HTTP 请求正文。</p>
+</li>
+</ul>
+<h2 id="test-http-head-requests">测试 HTTP HEAD 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">head &lt;PARAMETER&gt; [-F|--no-formatting] [-h|--header] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<h2 id="test-http-options-requests">测试 HTTP OPTIONS 请求</h2>
+<h3 id="synopsis">摘要</h3>
+<pre><code class="lang-console">options &lt;PARAMETER&gt; [-F|--no-formatting] [-h|--header] [--response] [--response:body] [--response:headers] [-s|--streaming]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<p><code>PARAMETER</code></p>
+<p>关联控制器操作方法所需的路由参数（如果有）。</p>
+<h3 id="options">选项</h3>
+<ul>
+<li><p><code>-F|--no-formatting</code></p>
+<p>禁用 HTTP 响应格式的标志。</p>
+</li>
+<li><p><code>-h|--header</code></p>
+<p>设置 HTTP 请求标头。 支持以下两种值格式：</p>
+<ul>
+<li><code>{header}={value}</code></li>
+<li><code>{header}:{value}</code></li>
+</ul>
+</li>
+<li><p><code>--response</code></p>
+<p>指定一个文件，整个 HTTP 响应（包括标头和正文）应写入该文件。 例如 <code>--response &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:body</code></p>
+<p>指定一个文件，HTTP 响应正文应写入该文件。 例如 <code>--response:body &quot;C:\response.json&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>--response:headers</code></p>
+<p>指定一个文件，HTTP 响应标头应写入该文件。 例如 <code>--response:headers &quot;C:\response.txt&quot;</code>。 如果文件不存在，则创建该文件。</p>
+</li>
+<li><p><code>-s|--streaming</code></p>
+<p>支持 HTTP 响应流式处理的标志。</p>
+</li>
+</ul>
+<h2 id="set-http-request-headers">设置 HTTP 请求标头</h2>
+<p>若要设置 HTTP 请求标头，请使用下面一种方法：</p>
+<ul>
+<li><p>使用该 HTTP 请求进行内联设置。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/people~ post -h Content-Type=application/json
+</code></pre>
+<p>若使用上述方法，每个不同的 HTTP 请求标头都需要其自己的 <code>-h</code> 选项。</p>
+</li>
+<li><p>在发送 HTTP 请求之前进行设置。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/people~ set header Content-Type application/json
+</code></pre>
+<p>在发送请求之前设置标头时，标头在命令行界面会话期间保持设置。 若要清除标头，请提供一个空值。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/people~ set header Content-Type
+</code></pre>
+</li>
+</ul>
+<h2 id="test-secured-endpoints">测试受保护的终结点</h2>
+<p>HTTP 复制支持通过两种方式来测试受保护的终结点：通过登录用户的默认凭据或通过使用 HTTP 请求标头。</p>
+<h3 id="default-credentials">默认凭据</h3>
+<p>假设您要测试的 web API 托管在 IIS 中，并使用 Windows 身份验证进行保护。 你需要运行该工具的用户的凭据流向正在进行测试的 HTTP 终结点。 传递已登录用户的默认凭据：</p>
+<ol>
+<li><p>将 <code>httpClient.useDefaultCredentials</code> 首选项设置为 <code>true</code> ：</p>
+<pre><code class="lang-console">pref set httpClient.useDefaultCredentials true
+</code></pre>
+</li>
+<li><p>退出并重新启动该工具，然后将另一个请求发送到 web API。</p>
+</li>
+</ol>
+<h3 id="http-request-headers">HTTP 请求标头</h3>
+<p>支持的身份验证和授权方案的示例包括基本身份验证、JWT 持有者令牌和摘要式身份验证。 例如，可以使用以下命令将持有者令牌发送到终结点：</p>
+<pre><code class="lang-console">set header Authorization &quot;bearer &lt;TOKEN VALUE&gt;&quot;
+</code></pre>
+<p>若要访问 Azure 托管的终结点或使用 <a href="/rest/api/azure/">Azure REST API</a>，你需要持有者令牌。 使用以下步骤，通过 <a href="/cli/azure/">Azure CLI</a> 来获取 Azure 订阅的持有者令牌。 HTTP REPL 设置 HTTP 请求标头中的持有者令牌，并检索 Azure 应用服务 Web 应用的列表。</p>
+<ol>
+<li><p>登录到 Azure：</p>
+<pre><code class="lang-azurecli">az login
+</code></pre>
+</li>
+<li><p>使用以下命令获取订阅 ID：</p>
+<pre><code class="lang-azurecli">az account show --query id
+</code></pre>
+</li>
+<li><p>复制订阅 ID 并运行以下命令：</p>
+<pre><code class="lang-azurecli">az account set --subscription &quot;&lt;SUBSCRIPTION ID&gt;&quot;
+</code></pre>
+</li>
+<li><p>使用以下命令获取持有者令牌：</p>
+<pre><code class="lang-azurecli">az account get-access-token --query accessToken
+</code></pre>
+</li>
+<li><p>通过 HTTP REPL 连接到 Azure REST API：</p>
+<pre><code class="lang-console">httprepl https://management.azure.com
+</code></pre>
+</li>
+<li><p>设置 <code>Authorization</code> HTTP 请求标头：</p>
+<pre><code class="lang-console">https://management.azure.com/&gt; set header Authorization &quot;bearer &lt;ACCESS TOKEN&gt;&quot;
+</code></pre>
+</li>
+<li><p>导航到订阅：</p>
+<pre><code class="lang-console">https://management.azure.com/&gt; cd subscriptions/&lt;SUBSCRIPTION ID&gt;
+</code></pre>
+</li>
+<li><p>获取订阅的 Azure 应用服务 Web 应用的列表：</p>
+<pre><code class="lang-console">https://management.azure.com/subscriptions/{SUBSCRIPTION ID}&gt; get providers/Microsoft.Web/sites?api-version=2016-08-01
+</code></pre>
+<p>将显示以下响应：</p>
+<pre><code class="lang-console">HTTP/1.1 200 OK
+Cache-Control: no-cache
+Content-Length: 35948
+Content-Type: application/json; charset=utf-8
+Date: Thu, 19 Sep 2019 23:04:03 GMT
+Expires: -1
+Pragma: no-cache
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+x-ms-correlation-request-id: &lt;em&gt;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&lt;/em&gt;
+x-ms-original-request-ids: &lt;em&gt;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx&lt;/em&gt;
+x-ms-ratelimit-remaining-subscription-reads: 11999
+x-ms-request-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+x-ms-routing-request-id: WESTUS:xxxxxxxxxxxxxxxx:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx
+{
+  &quot;value&quot;: [
+    &lt;AZURE RESOURCES LIST&gt;
+  ]
+}
+</code></pre>
+</li>
+</ol>
+<h2 id="toggle-http-request-display">切换 HTTP 请求显示</h2>
+<p>默认情况下，禁止显示正在发送的 HTTP 请求。 可在命令行界面会话期间更改相应的设置。</p>
+<h3 id="enable-request-display">启用请求显示</h3>
+<p>运行 <code>echo on</code> 命令可查看正在发送的 HTTP 请求。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/people~ echo on
+Request echoing is on
+</code></pre>
+<p>当前会话中的后续 HTTP 请求显示请求标头。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/people~ post
+
+[main 2019-06-28T18:50:11.930Z] update#setState idle
+Request to https://localhost:5001...
+
+POST /people HTTP/1.1
+Content-Length: 41
+Content-Type: application/json
+User-Agent: HTTP-REPL
+
+{
+  &quot;id&quot;: 0,
+  &quot;name&quot;: &quot;Scott Addie&quot;
+}
+
+Response from https://localhost:5001...
+
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+Date: Fri, 28 Jun 2019 18:50:21 GMT
+Location: https://localhost:5001/people/4
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{
+  &quot;id&quot;: 4,
+  &quot;name&quot;: &quot;Scott Addie&quot;
+}
+
+
+https://localhost:5001/people~
+</code></pre>
+<h3 id="disable-request-display">禁用请求显示</h3>
+<p>运行 <code>echo off</code> 命令可禁止显示正在发送的 HTTP 请求。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/people~ echo off
+Request echoing is off
+</code></pre>
+<h2 id="run-a-script">运行脚本</h2>
+<p>如果经常执行一组相同的 HTTP REPL 命令，请考虑将它们存储在一个文本文件中。 文件中的命令采用与在命令行上手动执行的命令相同的形式。 可使用 <code>run</code> 命令批量执行这些命令。 例如： 。</p>
+<ol>
+<li><p>创建一个文本文件，其中包含一组换行符分隔的命令。 例如，一个包含以下命令的 people-script.txt  文件：</p>
+<pre><code class="lang-text">set base https://localhost:5001
+ls
+cd People
+ls
+get 1
+</code></pre>
+</li>
+<li><p>执行 <code>run</code> 命令，传入文本文件的路径。 例如： 。</p>
+<pre><code class="lang-console">https://localhost:5001/~ run C:\http-repl-scripts\people-script.txt
+</code></pre>
+<p>随即显示以下输出：</p>
+<pre><code class="lang-console">https://localhost:5001/~ set base https://localhost:5001
+Using swagger metadata from https://localhost:5001/swagger/v1/swagger.json
+
+https://localhost:5001/~ ls
+.        []
+Fruits   [get|post]
+People   [get|post]
+
+https://localhost:5001/~ cd People
+/People    [get|post]
+
+https://localhost:5001/People~ ls
+.      [get|post]
+..     []
+{id}   [get|put|delete]
+
+https://localhost:5001/People~ get 1
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Fri, 12 Jul 2019 19:20:10 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+{
+  &quot;id&quot;: 1,
+  &quot;name&quot;: &quot;Scott Hunter&quot;
+}
+
+
+https://localhost:5001/People~
+</code></pre>
+</li>
+</ol>
+<h2 id="clear-the-output">清除输出</h2>
+<p>若要删除 HTTP REPL 工具写入命令行界面的所有输出，请运行 <code>clear</code> 或 <code>cls</code> 命令。 例如，假设命令行界面包含以下输出：</p>
+<pre><code class="lang-console">httprepl https://localhost:5001
+(Disconnected)~ set base &quot;https://localhost:5001&quot;
+Using swagger metadata from https://localhost:5001/swagger/v1/swagger.json
+
+https://localhost:5001/~ ls
+.        []
+Fruits   [get|post]
+People   [get|post]
+
+https://localhost:5001/~
+</code></pre>
+<p>运行以下命令以清除输出：</p>
+<pre><code class="lang-console">https://localhost:5001/~ clear
+</code></pre>
+<p>运行上述命令后，命令行界面仅包含以下输出：</p>
+<pre><code class="lang-console">https://localhost:5001/~
+</code></pre>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#74-supported-methods">REST API 请求</a></li>
+<li><a href="https://github.com/dotnet/HttpRepl">HTTP REPL GitHub 存储库</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

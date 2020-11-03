@@ -1,0 +1,1410 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#23545; Azure &#24212;&#29992;&#26381;&#21153;&#21644; IIS &#19978;&#30340; ASP.NET Core &#36827;&#34892;&#25925;&#38556;&#25490;&#38500; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#23545; Azure &#24212;&#29992;&#26381;&#21153;&#21644; IIS &#19978;&#30340; ASP.NET Core &#36827;&#34892;&#25925;&#38556;&#25490;&#38500; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="test/troubleshoot-azure-iis">
+<h1 id="troubleshoot-aspnet-core-on-azure-app-service-and-iis">对 Azure 应用服务和 IIS 上的 ASP.NET Core 进行故障排除</h1>
+
+<p>作者：<a href="https://github.com/jkotalik">Justin Kotalik</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<p>本文提供了有关常见应用启动错误的信息，以及在将应用部署到 Azure 应用服务或 IIS 时如何诊断错误的说明：</p>
+<p><a href="#app-startup-errors">应用启动错误</a><br>
+介绍常见的启动 HTTP 状态代码方案。</p>
+<p><a href="#troubleshoot-on-azure-app-service">排查 Azure 应用服务中的问题</a><br>
+为部署到 Azure 应用服务的应用提供疑难解答建议。</p>
+<p><a href="#troubleshoot-on-iis">IIS 疑难解答</a><br>
+为部署到 IIS 或在本地 IIS Express 上运行的应用提供疑难解答建议。 本指南适用于 Windows Server 和 Windows 桌面部署。</p>
+<p><a href="#clear-package-caches">清除包缓存</a><br>
+说明当执行重大升级或更改包版本时，不一致的包中断应用时应如何处理。</p>
+<p><a href="#additional-resources">其他资源</a><br>
+列出其他疑难解答主题。</p>
+<h2 id="app-startup-errors">应用启动错误</h2>
+<p>在 Visual Studio 中，ASP.NET Core 项目默认为在调试期间进行 <a href="/iis/extensions/introduction-to-iis-express/iis-express-overview">IIS Express</a> 托管。 本地调试时出现的“502.5 - 进程失败”或“500.30 - 启动失败”可以使用本主题中的建议进行诊断 。</p>
+<h3 id="40314-forbidden">403.14 禁止</h3>
+<p>应用无法启动。 记录以下错误：</p>
+<pre><code>The Web server is configured to not list the contents of this directory.
+</code></pre>
+<p>此错误通常是由于托管系统上的部署中断引起的，包括以下任何情况：</p>
+<ul>
+<li>该应用部署到托管系统上的错误文件夹。</li>
+<li>部署过程未能将所有应用的文件和文件夹移到托管系统上的部署文件夹中。</li>
+<li>部署中缺少 web.config 文件，或者 web.config 文件内容格式不正确 。</li>
+</ul>
+<p>执行以下步骤：</p>
+<ol>
+<li>从托管系统上的部署文件夹中删除所有文件和文件夹。</li>
+<li>使用常规部署方法（如 Visual Studio、PowerShell 或手动部署）将应用“发布”文件夹的内容重新部署到托管系统：
+<ul>
+<li>确认部署中存在 web.config 文件，并且其内容正确。</li>
+<li>在 Azure 应用服务上托管时，请确认该应用已部署到 <code>D:\home\site\wwwroot</code> 文件夹。</li>
+<li>当应用由 IIS 托管时，请确认应用已部署到“IIS 管理器”的“基本设置”中显示的 IIS 物理路径  。</li>
+</ul>
+</li>
+<li>通过将托管系统上的部署与项目“发布”文件夹的内容进行比较，确认已部署应用的所有文件和文件夹。</li>
+</ol>
+<p>有关已发布 ASP.NET Core 应用布局的详细信息，请参阅 <a class="xref" href="../host-and-deploy/directory-structure.html">ASP.NET Core 目录结构</a>。 有关 web.config 文件的详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#configuration-with-webconfig">ASP.NET Core 模块</a>。</p>
+<h3 id="500-internal-server-error">500 内部服务器错误</h3>
+<p>应用启动，但某个错误阻止了服务器完成请求。</p>
+<p>在启动期间或在创建响应时，应用的代码内出现此错误。 响应可能不包含任何内容，或响应可能会在浏览器中显示为“500 内部服务器错误”。 应用程序事件日志通常表明应用正常启动。 从服务器的角度来看，这是正确的。 应用已启动，但无法生成有效的响应。 在服务器上的命令提示符下运行应用，或启用 ASP.NET Core 模块 stdout 日志来解决问题。</p>
+<h3 id="5000-in-process-handler-load-failure">500.0 进程内处理程序加载失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p>加载 <a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>组件时出现未知错误。 请执行以下一项操作：</p>
+<ul>
+<li>联系 <a href="https://support.microsoft.com/oas/default.aspx?prid=15832">Microsoft 支持部门</a>（依次选择“开发人员工具”和“ASP.NET Core”） 。</li>
+<li>在 Stack Overflow 上提出问题。</li>
+<li>在 <a href="https://github.com/dotnet/AspNetCore">GitHub 存储库</a>中提出问题。</li>
+</ul>
+<h3 id="50030-in-process-startup-failure">500.30 进程内启动失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>尝试进程内启动 .NET Core CLR，但启动失败。 进程启动失败的原因通常可通过“应用程序事件日志”和“ASP.NET Core 模块 stdout 日志”中的条目进行确定。</p>
+<p>常见失败情况：</p>
+<ul>
+<li>由于目标 ASP.NET Core 共享框架版本不存在，因此应用配置错误。 检查目标计算机上安装的 ASP.NET Core 共享框架版本。</li>
+<li>使用 Azure Key Vault 时，缺少对 Key Vault 的权限。 检查目标 Key Vault 中的访问策略，确保授予了正确的权限。</li>
+</ul>
+<h3 id="50031-ancm-failed-to-find-native-dependencies">500.31 ANCM 找不到本机依赖项</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>尝试进程内启动 .NET Core 运行时，但启动失败。 此类启动失败的最常见原因是未安装 <code>Microsoft.NETCore.App</code> 或 <code>Microsoft.AspNetCore.App</code>运行时。 如果将应用部署为面向 ASP.NET Core 3.0，并且计算机上不存在该版本，则会发生此错误。 示例错误消息如下所示：</p>
+<pre><code>The specified framework 'Microsoft.NETCore.App', version '3.0.0' was not found.
+  - The following frameworks were found:
+      2.2.1 at [C:\Program Files\dotnet\x64\shared\Microsoft.NETCore.App]
+      3.0.0-preview5-27626-15 at [C:\Program Files\dotnet\x64\shared\Microsoft.NETCore.App]
+      3.0.0-preview6-27713-13 at [C:\Program Files\dotnet\x64\shared\Microsoft.NETCore.App]
+      3.0.0-preview6-27714-15 at [C:\Program Files\dotnet\x64\shared\Microsoft.NETCore.App]
+      3.0.0-preview6-27723-08 at [C:\Program Files\dotnet\x64\shared\Microsoft.NETCore.App]
+</code></pre>
+<p>错误消息列出了所有已安装的 .NET Core 版本以及应用请求的版本。 请通过以下一种方法修复此错误：</p>
+<ul>
+<li>在计算机上安装适当版本的 .NET Core。</li>
+<li>更改应用，使其面向计算机上已存在的 .NET Core 版本。</li>
+<li>将应用作为<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>进行发布。</li>
+</ul>
+<p>在开发过程（<code>ASPNETCORE_ENVIRONMENT</code> 环境变量设置为 <code>Development</code>）中运行时，HTTP 响应中会写入特定的错误。 进程启动失败的原因也可在“应用程序事件日志”中找到。</p>
+<h3 id="50032-ancm-failed-to-load-dll">500.32 ANCM 无法加载 dll</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p>此错误的最常见原因是针对不兼容的处理器体系结构发布了应用。 如果工作进程作为 32 位应用运行，而将应用发布为面向 64 位，则会发生此错误。</p>
+<p>请通过以下一种方法修复此错误：</p>
+<ul>
+<li>针对同一处理器体系结构将应用作为工作进程进行重新发布。</li>
+<li>将应用作为<a href="/dotnet/core/deploying/#framework-dependent-executables-fde">依赖框架的部署</a>进行发布。</li>
+</ul>
+<h3 id="50033-ancm-request-handler-load-failure">500.33 ANCM 请求处理程序加载失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p>应用未引用 <code>Microsoft.AspNetCore.App</code> 框架。 <a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>只能托管面向 <code>Microsoft.AspNetCore.App</code> 框架的应用。</p>
+<p>要修复此错误，请确保应用面向 <code>Microsoft.AspNetCore.App</code> 框架。 检查 <code>.runtimeconfig.json</code> 以验证该应用所面向的框架。</p>
+<h3 id="50034-ancm-mixed-hosting-models-not-supported">500.34 ANCM 混合托管模型不受支持</h3>
+<p>工作进程不能在同一进程中同时运行进程内应用和进程外应用。</p>
+<p>要修复此错误，请在单独的 IIS 应用程序池中运行应用。</p>
+<h3 id="50035-ancm-multiple-in-process-applications-in-same-process">500.35 ANCM 同一进程内有多个进程内应用程序</h3>
+<p>工作进程不能在同一进程中运行多个进程内应用。</p>
+<p>要修复此错误，请在单独的 IIS 应用程序池中运行应用。</p>
+<h3 id="50036-ancm-out-of-process-handler-load-failure">500.36 ANCM 进程外处理程序加载失败</h3>
+<p>进程外请求处理程序 aspnetcorev2_outofprocess.dll 未与 aspnetcorev2.dll 文件相邻 。 这表示 <a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>的安装已损坏。</p>
+<p>要修复此错误，请修复 <a class="xref" href="../host-and-deploy/iis/index.html#install-the-net-core-hosting-bundle">.NET Core 托管捆绑包</a>（对于 IIS）或 Visual Studio（对于 IIS Express）的安装。</p>
+<h3 id="50037-ancm-failed-to-start-within-startup-time-limit">500.37 ANCM 无法在启动时间限制内启动</h3>
+<p>ANCM 无法在提供的启动时间限制内启动。 默认情况下，超时时间为 120 秒。</p>
+<p>在同一台计算机上启动大量应用时，则可能发生此错误。 在启动期间检查服务器上的 CPU/内存使用峰值。 可能需要交错执行多个应用程序的启动进程。</p>
+<h3 id="50038-ancm-application-dll-not-found">500.38 ANCM 找不到应用程序 DLL</h3>
+<p>ANCM 找不到应用程序 ANCM，该内容应显示在可执行文件的旁边。</p>
+<p>在使用进程内托管模型托管打包为<a href="/dotnet/core/whats-new/dotnet-core-3-0#single-file-executables">单文件可执行程序</a>的应用。 该进程内模型要求 ANCM 将 .NET Core 应用加载到现有 IIS 进程中。 单文件部署模型不支持此方案。 请在应用的项目文件中使用下述方法之一来修复此错误：</p>
+<ol>
+<li>通过将 <code>PublishSingleFile</code> MSBuild 属性设置为 <code>false</code> 来禁用单文件发布。</li>
+<li>通过将 <code>AspNetCoreHostingModel</code> MSBuild 属性设置为 <code>OutOfProcess</code> 来切换到进程外托管模型。</li>
+</ol>
+<h3 id="5025-process-failure">502.5 进程失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>尝试启动工作进程，但启动失败。 进程启动失败的原因通常可通过“应用程序事件日志”和“ASP.NET Core 模块 stdout 日志”中的条目进行确定。</p>
+<p>常见的失败情况是，由于目标 ASP.NET Core 共享框架版本不存在，因此应用配置错误。 检查目标计算机上安装的 ASP.NET Core 共享框架版本。 共享框架是安装在计算机上并由 <code>Microsoft.AspNetCore.App</code> 等元包引用的一组程序集（.dll 文件）。 元包引用可以指定所需的最低版本。 有关详细信息，请参阅<a href="https://natemcmaster.com/blog/2018/08/29/netcore-primitives-2/">共享框架</a>。</p>
+<p>托管或应用配置错误导致工作进程失败时，将返回“502.5 进程失败”错误页面：</p>
+<h3 id="failed-to-start-application-errorcode-0x800700c1">未能启动应用程序（错误代码“0x800700c1”）</h3>
+<pre><code>EventID: 1010
+Source: IIS AspNetCore Module V2
+Failed to start application '/LM/W3SVC/6/ROOT/', ErrorCode '0x800700c1'.
+</code></pre>
+<p>应用未能启动，因为应用的程序集 (.dll) 无法加载。</p>
+<p>当已发布的应用与 w3wp/iisexpress 进程之间的位数不匹配时，会出现此错误。</p>
+<p>确认应用池的 32 位设置正确：</p>
+<ol>
+<li>在 IIS 管理器的“应用程序池”中选择应用池。</li>
+<li>在“操作”面板中的“编辑应用程序池”下选择“高级设置”。</li>
+<li>设置“启用 32 位应用程序”：
+<ul>
+<li>如果部署 32 位 (x86) 应用，则将值设置为 <code>True</code>。</li>
+<li>如果部署 64 位 (x64) 应用，则将值设置为 <code>False</code>。</li>
+</ul>
+</li>
+</ol>
+<p>确认项目文件中的 <code>&lt;Platform&gt;</code> MSBuild 属性与应用的已发布位数之间没有冲突。</p>
+<h3 id="connection-reset">连接重置</h3>
+<p>如果在发送标头后出现错误，则服务器在出现错误时发送“500 内部服务器错误”已经太晚了。 通常在序列化响应的复杂对象期间出现错误时发生这种情况。 此类型的错误在客户端上显示为“连接重置”错误。 <a class="xref" href="../fundamentals/logging/index.html">应用程序日志记录</a>可以帮助解决这些类型的错误。</p>
+<h3 id="default-startup-limits">默认启动限制</h3>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>的默认“startupTimeLimit”配置为 120 秒。 保留默认值时，在模块记录进程故障之前，可能最多需要两分钟来启动应用。 有关配置模块的信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#attributes-of-the-aspnetcore-element">aspNetCore 元素的属性</a>。</p>
+<h2 id="troubleshoot-on-azure-app-service">排查 Azure 应用服务中的问题</h2>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><strong>Azure 应用服务中的 ASP.NET Core 预览版</strong></p>
+<p>默认情况下不会将 ASP.NET Core 预览版部署到 Azure 应用服务。 要托管使用 ASP.NET Core 预览版的应用，请参阅<a class="xref" href="../host-and-deploy/azure-apps/index.html#deploy-aspnet-core-preview-release-to-azure-app-service">将 ASP.NET Core 预览版部署到 Azure 应用服务</a>。</p>
+</div>
+<!-- 
+> [!IMPORTANT]
+> **ASP.NET Core 3.0 with Azure App Service**
+>
+> ASP.NET Core 3.0 has not yet been deployed to Azure App Service. We hope to provide ASP.NET Core 3 on Azure App Service soon. To host an app that uses an ASP.NET Core 3.0:
+
+* Treat ASP.NET Core 3.0 like a preview release for Azure App Service deployment.
+* See [Deploy ASP.NET Core preview release to Azure App Service](xref:host-and-deploy/azure-apps/index#deploy-aspnet-core-preview-release-to-azure-app-service).
+-->
+<h3 id="application-event-log-azure-app-service">应用程序事件日志（Azure 应用服务）</h3>
+<p>若要访问应用程序事件日志，请在 Azure 门户中使用“诊断并解决问题”边栏选项卡：</p>
+<ol>
+<li>在 Azure 门户中打开“应用服务”中的应用。</li>
+<li>选择“诊断并解决问题”。</li>
+<li>选择“诊断工具”标题。</li>
+<li>在“支持工具”下，选择“应用程序事件”按钮 。</li>
+<li>检查“源”列中由 IIS AspNetCoreModule 或 IIS AspNetCoreModule V2条目提供的最新错误 。</li>
+</ol>
+<p>使用“诊断并解决问题”边栏选项卡的替代方法是直接使用 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 检查应用程序事件日志文件：</p>
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开 LogFiles 文件夹。</li>
+<li>选择 eventlog.xml 文件旁边的铅笔图标。</li>
+<li>检查日志。 滚动到日志底部以查看最新事件。</li>
+</ol>
+<h3 id="run-the-app-in-the-kudu-console">在 Kudu 控制台中运行应用</h3>
+<p>许多启动错误未在应用程序事件日志中生成有用信息。 可以在 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 远程执行控制台中运行应用以发现错误：</p>
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+</ol>
+<h4 id="test-a-32-bit-x86-app">测试 32 位 (x86) 应用</h4>
+<p><strong>当前版本</strong></p>
+<ol>
+<li><code>cd d:\home\site\wwwroot</code></li>
+<li>运行应用：
+<ul>
+<li><p>如果应用是<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：</p>
+<pre><code class="lang-dotnetcli">dotnet .\{ASSEMBLY NAME}.dll
+</code></pre>
+</li>
+<li><p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<pre><code class="lang-console">{ASSEMBLY NAME}.exe
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<p><strong>在预览版上运行的依赖框架的部署</strong></p>
+<p>必须安装 ASP.NET Core {VERSION} (x86) 运行时站点扩展。</p>
+<ol>
+<li><code>cd D:\home\SiteExtensions\AspNetCoreRuntime.{X.Y}.x32</code>（<code>{X.Y}</code> 是运行时版本）</li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<h4 id="test-a-64-bit-x64-app">测试 64 位 (x64) 应用</h4>
+<p><strong>当前版本</strong></p>
+<ul>
+<li>如果应用是 64 位 (x64) <a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：
+<ol>
+<li><code>cd D:\Program Files\dotnet</code></li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+</li>
+<li>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：
+<ol>
+<li><code>cd D:\home\site\wwwroot</code></li>
+<li>运行应用：<code>{ASSEMBLY NAME}.exe</code></li>
+</ol>
+</li>
+</ul>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<p><strong>在预览版上运行的依赖框架的部署</strong></p>
+<p>必须安装 ASP.NET Core {VERSION} (x64) 运行时站点扩展。</p>
+<ol>
+<li><code>cd D:\home\SiteExtensions\AspNetCoreRuntime.{X.Y}.x64</code>（<code>{X.Y}</code> 是运行时版本）</li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<h3 id="aspnet-core-module-stdout-log-azure-app-service">ASP.NET Core 模块 stdout 日志（Azure 应用服务）</h3>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。 仅使用 stdout 日志记录来解决应用启动问题。</p>
+<p>对于在 ASP.NET Core 应用启动后生成的常规日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<p>ASP.NET Core 模块 stdout 日志通常记录应用程序事件日志中找不到的有用错误消息。 若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>在 Azure 门户中，导航到 Web 应用。</li>
+<li>在“应用服务”边栏选项卡中，在搜索框中输入 kudu 。</li>
+<li>依次选择“高级工具”&gt;“Go” 。</li>
+<li>选择“调试控制台”&gt;“CMD”。</li>
+<li>导航到 site/wwwroot</li>
+<li>选择铅笔图标以编辑 web.config 文件。</li>
+<li>在 <code>&lt;aspNetCore /&gt;</code> 元素中，设置 <code>stdoutLogEnabled=&quot;true&quot;</code> 并选择“保存”。</li>
+</ol>
+<p>故障排除完成后，通过设置 <code>stdoutLogEnabled=&quot;false&quot;</code> 来禁用 stdout 日志记录。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#log-creation-and-redirection">ASP.NET Core 模块</a>。</p>
+<h3 id="aspnet-core-module-debug-log-azure-app-service">ASP.NET Core 模块调试日志（Azure 应用服务）</h3>
+<p>ASP.NET Core 模块调试日志从 ASP.NET Core 模块提供了更多、更详细的日志记录。 若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>要启用增强的诊断日志，请执行以下任一操作：
+<ul>
+<li>按照<a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">增强的诊断日志</a>中的说明配置应用以获取增强的诊断日志记录。 重新部署应用。</li>
+<li>使用 Kudu 控制台将<a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">增强的诊断日志</a>中显示的 <code>&lt;handlerSettings&gt;</code> 添加到动态应用的 web.config 文件中：
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site &gt; wwwroot”下的文件夹。 通过选择铅笔按钮编辑 web.config 文件。 添加 <code>&lt;handlerSettings&gt;</code> 部分（如<a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">增强的诊断日志</a>中所示）。 选择“保存”按钮。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site &gt; wwwroot”下的文件夹。 如果没有为 aspnetcore-debug.log 文件提供路径，则该文件将显示在列表中。 如果提供了路径，请导航到日志文件的位置。</li>
+<li>使用文件名旁边的铅笔按钮打开日志文件。</li>
+</ol>
+<p>故障排除完成后，禁用调试日志记录：</p>
+<p>要禁用增强的调试日志，请执行以下任一操作：</p>
+<ul>
+<li>从本地删除 web.config 文件中的 <code>&lt;handlerSettings&gt;</code> 并重新部署该应用。</li>
+<li>使用 Kudu 控制台编辑 web.config 文件并删除 <code>&lt;handlerSettings&gt;</code> 部分。 保存该文件。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用调试日志可能会导致应用或服务器出现故障。 日志文件大小没有任何限制。 仅使用调试日志记录来解决应用启动问题。</p>
+<p>对于在 ASP.NET Core 应用启动后生成的常规日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="slow-or-hanging-app-azure-app-service">应用缓慢或挂起（Azure 应用服务）</h3>
+<p>如果应用程序响应缓慢或在有请求时挂起，请参阅以下文章：</p>
+<ul>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-performance-degradation">解决 Azure 应用服务中 Web 应用性能缓慢的问题</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/asiatech/2015/12/28/use-crash-diagnoser-site-extension-to-capture-dump-for-intermittent-exception-issues-or-performance-issues-on-azure-web-app/">使用故障诊断程序站点扩展来捕获 Azure Web 应用程序上间歇性异常问题或性能问题的转储</a></li>
+</ul>
+<h3 id="monitoring-blades">监视边栏选项卡</h3>
+<p>监视边栏选项卡提供了本主题前面所述的方法的替代故障排除体验。 这些边栏选项卡可用于诊断 500 系列错误。</p>
+<p>确认是否已安装 ASP.NET Core 扩展。 如果未安装扩展，请手动进行安装：</p>
+<ol>
+<li>在“开发工具”边栏选项卡部分中，选择“扩展”边栏选项卡。</li>
+<li>“ASP.NET Core 扩展”应显示在列表中。</li>
+<li>如果未安装扩展，请选择“添加”按钮。</li>
+<li>从列表中选择“ASP.NET Core 扩展”。</li>
+<li>选择“确定”以接受法律条款。</li>
+<li>选择“添加扩展”边栏选项卡上的“确定”。</li>
+<li>信息性弹出消息指示成功安装扩展的时间。</li>
+</ol>
+<p>如果未启用 stdout 日志记录，请执行以下步骤：</p>
+<ol>
+<li>在 Azure 门户中，选择“开发工具”区域中的“高级工具”边栏选项卡。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site&gt;wwwroot”下的文件夹，然后向下滚动以显示列表底部的 web.config 文件 。</li>
+<li>单击“web.config”文件旁边的铅笔图标。</li>
+<li>将“stdoutLogEnabled”设置为 <code>true</code>，并将“stdoutLogFile”路径更改为 <code>\\?\%home%\LogFiles\stdout</code>。</li>
+<li>选择“保存”以保存已更新的 web.config 文件。</li>
+</ol>
+<p>继续激活诊断日志记录：</p>
+<ol>
+<li>在 Azure 门户中，选择“诊断日志”边栏选项卡。</li>
+<li>选择“应用程序日志记录(文件系统)”和“详细错误消息”的“开”开关。 选择边栏选项卡顶部的“保存”按钮。</li>
+<li>若要包含失败请求跟踪（也称为失败请求事件缓冲 (FREB) 日志记录），请选择“失败请求跟踪”的“开”开关。</li>
+<li>选择“日志流”边栏选项卡，将在门户中的“诊断日志”边栏选项卡下立即列出。</li>
+<li>向应用发出请求。</li>
+<li>在日志流数据中，指示了错误的原因。</li>
+</ol>
+<p>故障排除完成后，请务必禁用 stdout 日志记录。</p>
+<p>若要查看失败请求跟踪日志（FREB 日志），请执行以下操作：</p>
+<ol>
+<li>在 Azure 门户中导航到“诊断并解决问题”边栏选项卡。</li>
+<li>从侧栏的“支持工具”区域中选择“失败请求跟踪日志”。</li>
+</ol>
+<p>有关详细信息，请参阅<a href="/azure/app-service/web-sites-enable-diagnostic-log#failed-request-traces">“在 Azure 应用服务中启用 Web 应用的诊断日志记录”主题的“失败请求跟踪”部分</a>和 <a href="/azure/app-service/app-service-web-availability-performance-application-issues-faq#how-do-i-turn-on-failed-request-tracing">Azure 中的 Web 应用的应用程序性能常见问题：如何打开失败请求跟踪？</a>。</p>
+<p>有关详细信息，请参阅<a href="/azure/app-service/web-sites-enable-diagnostic-log">在 Azure 应用服务中启用 Web 应用的诊断日志记录</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。</p>
+<p>对于 ASP.NET Core 应用中的例程日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h2 id="troubleshoot-on-iis">IIS 疑难解答</h2>
+<h3 id="application-event-log-iis">应用程序事件日志 (IIS)</h3>
+<p>访问应用程序事件日志：</p>
+<ol>
+<li>打开“开始”菜单，搜索“事件查看器”，然后选择“事件查看器”应用。</li>
+<li>在“事件查看器”中，打开“Windows 日志”节点。</li>
+<li>选择“应用程序”以打开应用程序事件日志。</li>
+<li>搜索与失败应用相关联的错误。 错误具有“源”列中“IIS AspNetCore 模块”或“IIS Express AspNetCore 模块”的值。</li>
+</ol>
+<h3 id="run-the-app-at-a-command-prompt">在命令提示符处运行应用</h3>
+<p>许多启动错误未在应用程序事件日志中生成有用信息。 可以通过在托管系统上在命令提示符处运行应用来找到某些错误的原因。</p>
+<h4 id="framework-dependent-deployment">依赖框架的部署</h4>
+<p>如果应用是<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：</p>
+<ol>
+<li>在命令提示符处，导航到部署文件夹并通过使用 dotnet.exe 执行应用的程序集来运行应用。 在以下命令中，替换 &lt;assembly_name&gt; 的应用程序集的名称：<code>dotnet .\&lt;assembly_name&gt;.dll</code>。</li>
+<li>来自应用且显示任何错误的控制台输出将写入控制台窗口。</li>
+<li>如果向应用发出请求时出现错误，请向 Kestrel 侦听所在的主机和端口发出请求。 如果使用默认主机和端口，请向 <code>http://localhost:5000/</code> 发出请求。 如果应用在 Kestrel 终结点地址处正常响应，则问题更可能与承载配置相关，而不太可能在于应用。</li>
+</ol>
+<h4 id="self-contained-deployment">独立部署</h4>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<ol>
+<li>在命令提示符处，导航到部署文件夹并运行应用的可执行文件。 在以下命令中，替换 &lt;assembly_name&gt; 的应用程序集的名称：<code>&lt;assembly_name&gt;.exe</code>。</li>
+<li>来自应用且显示任何错误的控制台输出将写入控制台窗口。</li>
+<li>如果向应用发出请求时出现错误，请向 Kestrel 侦听所在的主机和端口发出请求。 如果使用默认主机和端口，请向 <code>http://localhost:5000/</code> 发出请求。 如果应用在 Kestrel 终结点地址处正常响应，则问题更可能与承载配置相关，而不太可能在于应用。</li>
+</ol>
+<h3 id="aspnet-core-module-stdout-log-iis">ASP.NET Core 模块 stdout 日志 (IIS)</h3>
+<p>若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>在托管系统上导航到站点的部署文件夹。</li>
+<li>如果 logs 文件夹不存在，请创建该文件夹。 有关如何启用 MSBuild 以在部署中自动创建 logs 文件夹的说明，请参阅<a class="xref" href="../host-and-deploy/directory-structure.html">目录结构</a>主题。</li>
+<li>编辑 web.config 文件。 将“stdoutLogEnabled”设置为 <code>true</code> 并更改“stdoutLogFile”路径以指向 logs 文件夹（例如，<code>.\logs\stdout</code>）。 路径中的 <code>stdout</code> 是日志文件名的前缀。 创建日志时，将自动添加时间戳、进程 ID 和文件扩展名。 如果将 <code>stdout</code> 用作文件名的前缀，典型的日志文件将命名为“stdout_20180205184032_5412.log”。</li>
+<li>请确保应用程序池的标识具有对日志文件夹的写入权限。</li>
+<li>保存已更新的 web.config 文件。</li>
+<li>向应用发出请求。</li>
+<li>导航到 logs 文件夹。 查找并打开最新的 stdout 日志。</li>
+<li>研究日志以查找错误。</li>
+</ol>
+<p>故障排除完成后，禁用 stdout 日志记录：</p>
+<ol>
+<li>编辑 web.config 文件。</li>
+<li>将“stdoutLogEnabled”设置为 <code>false</code>。</li>
+<li>保存该文件。</li>
+</ol>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#log-creation-and-redirection">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。</p>
+<p>对于 ASP.NET Core 应用中的例程日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="aspnet-core-module-debug-log-iis">ASP.NET Core 模块调试日志 (IIS)</h3>
+<p>将以下处理程序设置添加到应用的 web.config 文件以启用 ASP.NET Core 模块调试日志：</p>
+<pre><code class="lang-xml">&lt;aspNetCore ...&gt;
+  &lt;handlerSettings&gt;
+    &lt;handlerSetting name=&quot;debugLevel&quot; value=&quot;file&quot; /&gt;
+    &lt;handlerSetting name=&quot;debugFile&quot; value=&quot;c:\temp\ancm.log&quot; /&gt;
+  &lt;/handlerSettings&gt;
+&lt;/aspNetCore&gt;
+</code></pre>
+<p>确认为日志指定的路径存在，并且应用池的标识具有该位置的写入权限。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">ASP.NET Core 模块</a>。</p>
+<h3 id="enable-the-developer-exception-page">启用开发人员异常页面</h3>
+<p><code>ASPNETCORE_ENVIRONMENT</code> <a class="xref" href="../host-and-deploy/aspnet-core-module.html#setting-environment-variables">环境变量可以添加到 web.config</a> 以在开发环境中运行应用。 只要在应用启动时环境不被主机生成器上的 <code>UseEnvironment</code> 重写，设置环境变量就会在运行应用时显示“<a class="xref" href="../fundamentals/error-handling.html">开发人员异常页面</a>”。</p>
+<pre><code class="lang-xml">&lt;aspNetCore processPath=&quot;dotnet&quot;
+      arguments=&quot;.\MyApp.dll&quot;
+      stdoutLogEnabled=&quot;false&quot;
+      stdoutLogFile=&quot;.\logs\stdout&quot;
+      hostingModel=&quot;InProcess&quot;&gt;
+  &lt;environmentVariables&gt;
+    &lt;environmentVariable name=&quot;ASPNETCORE_ENVIRONMENT&quot; value=&quot;Development&quot; /&gt;
+  &lt;/environmentVariables&gt;
+&lt;/aspNetCore&gt;
+</code></pre>
+<p>仅建议在未向 Internet 公开的暂存服务器和测试服务器上设置 <code>ASPNETCORE_ENVIRONMENT</code> 的环境变量。 在故障排除后从 web.config 文件中删除环境变量。 有关设置 web.config 中的环境变量的信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#setting-environment-variables">aspNetCore 的 environmentVariables 子元素</a>。</p>
+<h3 id="obtain-data-from-an-app">从应用中获取数据</h3>
+<p>如果应用能够响应请求，则使用终端内联中间件从应用中获取请求、连接和其他数据。 有关详细信息和示例代码，请参阅<a class="xref" href="troubleshoot.html#obtain-data-from-an-app">ASP.NET Core 项目故障排除和调试</a>。</p>
+<h3 id="slow-or-hanging-app-iis">应用缓慢或挂起 (IIS)</h3>
+<p>故障转储是系统内存的一个快照，可帮助确定应用崩溃、启动故障或应用速度缓慢等状况的原因。</p>
+<h4 id="app-crashes-or-encounters-an-exception">应用崩溃或引发异常</h4>
+<p>从 <a href="/windows/desktop/wer/windows-error-reporting">Windows 错误报告 (WER)</a> 中获取转储并进行分析：</p>
+<ol>
+<li><p>创建文件夹，将崩溃转储文件保存在 <code>c:\dumps</code>。 应用池必须对该文件夹具有写权限。</p>
+</li>
+<li><p>运行 <a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/test/troubleshoot-azure-iis/scripts/EnableDumps.ps1">EnableDumps PowerShell 脚本</a>：</p>
+<ul>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">进程内托管模型</a>，则请为 w3wp.exe 运行脚本：</p>
+<pre><code class="lang-console">.\EnableDumps w3wp.exe c:\dumps
+</code></pre>
+</li>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#out-of-process-hosting-model">进程外托管模型</a>，则请为 dotnet.exe 运行脚本：</p>
+<pre><code class="lang-console">.\EnableDumps dotnet.exe c:\dumps
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>在造成崩溃的条件下运行应用。</p>
+</li>
+<li><p>出现崩溃后，运行 <a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/test/troubleshoot-azure-iis/scripts/DisableDumps.ps1">DisableDumps PowerShell 脚本</a>：</p>
+<ul>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">进程内托管模型</a>，则请为 w3wp.exe 运行脚本：</p>
+<pre><code class="lang-console">.\DisableDumps w3wp.exe
+</code></pre>
+</li>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#out-of-process-hosting-model">进程外托管模型</a>，则请为 dotnet.exe 运行脚本：</p>
+<pre><code class="lang-console">.\DisableDumps dotnet.exe
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p>在应用崩溃并完成转储收集后，即可正常终止应用。 PowerShell 脚本会 WER 来按应用收集转储（最多收集 5 个）。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>崩溃转储可能会占用大量磁盘空间（每个最多占用数 GB）。</p>
+</div>
+<h4 id="app-hangs-fails-during-startup-or-runs-normally">应用挂起、在启动期间失败或正常运行</h4>
+<p>如果应用挂起（停止响应但不崩溃）、在启动期间失败或者正常运行<em>hangs</em>，请参阅<a href="/windows-hardware/drivers/debugger/user-mode-dump-files#choosing-the-best-tool">用户模式转储文件：选择最佳工具</a>，以选择适合用于生成转储的工具。</p>
+<h4 id="analyze-the-dump">分析转储</h4>
+<p>可采用几种方法来分析转储。 有关详细信息，请参阅<a href="/windows-hardware/drivers/debugger/analyzing-a-user-mode-dump-file">分析用户模式转储文件</a>。</p>
+<h2 id="clear-package-caches">清除包缓存</h2>
+<p>正常运行的应用在开发计算机上升级 .NET Core SDK 或在应用内更改包版本后可能会立即出现故障。 在某些情况下，不同的包可能在执行主要升级时中断应用。 可以按照以下说明来修复其中大部分问题：</p>
+<ol>
+<li><p>删除 bin 和 obj 文件夹。</p>
+</li>
+<li><p>通过从命令行界面执行 <a href="/dotnet/core/tools/dotnet-nuget-locals">dotnet nuget locals all --clear</a> 清除包缓存。</p>
+<p>清除包缓存还可通过使用 <a href="https://www.nuget.org/downloads">nuget.exe</a> 工具并执行命令 <code>nuget locals all -clear</code> 来完成。 <em>nuget.exe</em> 不是与 Windows 桌面操作系统的捆绑安装，必须从 <a href="https://www.nuget.org/downloads">NuGet 网站</a>中单独获取。</p>
+</li>
+<li><p>还原并重新生成项目。</p>
+</li>
+<li><p>在重新部署应用前，在服务器上删除部署文件夹中的所有文件。</p>
+</li>
+</ol>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+<li><a class="xref" href="../host-and-deploy/azure-iis-errors-reference.html">Azure 应用服务和 IIS 上 ASP.NET Core 的常见错误参考</a></li>
+<li><a class="xref" href="../fundamentals/error-handling.html">处理 ASP.NET Core 中的错误</a></li>
+<li><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a></li>
+</ul>
+<h3 id="azure-documentation">Azure 文档</h3>
+<ul>
+<li><a href="/azure/application-insights/app-insights-asp-net-core">用于 ASP.NET Core 的 Application Insights</a></li>
+<li><a href="/azure/app-service/web-sites-dotnet-troubleshoot-visual-studio#remotedebug">“使用 Visual Studio 对 Azure 应用服务中的 Web 应用进行故障排除”的“远程调试 Web 应用”一节</a></li>
+<li><a href="/azure/app-service/app-service-diagnostics">Azure 应用服务诊断概述</a></li>
+<li><a href="/azure/app-service/web-sites-monitor">如何：在 Azure 应用服务中监视应用</a></li>
+<li><a href="/azure/app-service/web-sites-dotnet-troubleshoot-visual-studio">使用 Visual Studio 对 Azure 应用服务中的 Web 应用进行故障排除</a></li>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-http-502-http-503">解决 Azure Web 应用中的“502 错误的网关”和“503 服务不可用”HTTP 错误</a></li>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-performance-degradation">解决 Azure 应用服务中 Web 应用性能缓慢的问题</a></li>
+<li><a href="/azure/app-service/app-service-web-availability-performance-application-issues-faq">Azure 中的 Web 应用的应用程序性能常见问题</a></li>
+<li><a href="https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox">Azure Web 应用沙盒（应用服务运行时执行限制）</a></li>
+<li><a href="https://channel9.msdn.com/Shows/Azure-Friday/Azure-App-Service-Diagnostic-and-Troubleshooting-Experience">Azure Friday：Azure 应用服务诊断和疑难解答体验（12 分钟视频）</a></li>
+</ul>
+<h3 id="visual-studio-documentation">Visual Studio 文档</h3>
+<ul>
+<li><a href="/visualstudio/debugger/remote-debugging-azure">在 Azure 中的 IIS 上的 Visual Studio 2017 中远程调试 ASP.NET Core</a></li>
+<li><a href="/visualstudio/debugger/remote-debugging-aspnet-on-a-remote-iis-computer">在远程 IIS 计算机的 Visual Studio 2017 中远程调试 ASP.NET Core</a></li>
+<li><a href="/visualstudio/debugger/getting-started-with-the-debugger">了解如何使用 Visual Studio 进行调试</a></li>
+</ul>
+<h3 id="visual-studio-code-documentation">Visual Studio Code 文档</h3>
+<ul>
+<li><a href="https://code.visualstudio.com/docs/editor/debugging">使用 Visual Studio Code 进行调试</a></li>
+</ul>
+</div>
+<div range="= aspnetcore-2.2">
+<p>本文提供了有关常见应用启动错误的信息，以及在将应用部署到 Azure 应用服务或 IIS 时如何诊断错误的说明：</p>
+<p><a href="#app-startup-errors">应用启动错误</a><br>
+介绍常见的启动 HTTP 状态代码方案。</p>
+<p><a href="#troubleshoot-on-azure-app-service">排查 Azure 应用服务中的问题</a><br>
+为部署到 Azure 应用服务的应用提供疑难解答建议。</p>
+<p><a href="#troubleshoot-on-iis">IIS 疑难解答</a><br>
+为部署到 IIS 或在本地 IIS Express 上运行的应用提供疑难解答建议。 本指南适用于 Windows Server 和 Windows 桌面部署。</p>
+<p><a href="#clear-package-caches">清除包缓存</a><br>
+说明当执行重大升级或更改包版本时，不一致的包中断应用时应如何处理。</p>
+<p><a href="#additional-resources">其他资源</a><br>
+列出其他疑难解答主题。</p>
+<h2 id="app-startup-errors">应用启动错误</h2>
+<p>在 Visual Studio 中，ASP.NET Core 项目默认为在调试期间进行 <a href="/iis/extensions/introduction-to-iis-express/iis-express-overview">IIS Express</a> 托管。 本地调试时出现的“502.5 - 进程失败”或“500.30 - 启动失败”可以使用本主题中的建议进行诊断 。</p>
+<h3 id="40314-forbidden">403.14 禁止</h3>
+<p>应用无法启动。 记录以下错误：</p>
+<pre><code>The Web server is configured to not list the contents of this directory.
+</code></pre>
+<p>此错误通常是由于托管系统上的部署中断引起的，包括以下任何情况：</p>
+<ul>
+<li>该应用部署到托管系统上的错误文件夹。</li>
+<li>部署过程未能将所有应用的文件和文件夹移到托管系统上的部署文件夹中。</li>
+<li>部署中缺少 web.config 文件，或者 web.config 文件内容格式不正确 。</li>
+</ul>
+<p>执行以下步骤：</p>
+<ol>
+<li>从托管系统上的部署文件夹中删除所有文件和文件夹。</li>
+<li>使用常规部署方法（如 Visual Studio、PowerShell 或手动部署）将应用“发布”文件夹的内容重新部署到托管系统：
+<ul>
+<li>确认部署中存在 web.config 文件，并且其内容正确。</li>
+<li>在 Azure 应用服务上托管时，请确认该应用已部署到 <code>D:\home\site\wwwroot</code> 文件夹。</li>
+<li>当应用由 IIS 托管时，请确认应用已部署到“IIS 管理器”的“基本设置”中显示的 IIS 物理路径  。</li>
+</ul>
+</li>
+<li>通过将托管系统上的部署与项目“发布”文件夹的内容进行比较，确认已部署应用的所有文件和文件夹。</li>
+</ol>
+<p>有关已发布 ASP.NET Core 应用布局的详细信息，请参阅 <a class="xref" href="../host-and-deploy/directory-structure.html">ASP.NET Core 目录结构</a>。 有关 web.config 文件的详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#configuration-with-webconfig">ASP.NET Core 模块</a>。</p>
+<h3 id="500-internal-server-error">500 内部服务器错误</h3>
+<p>应用启动，但某个错误阻止了服务器完成请求。</p>
+<p>在启动期间或在创建响应时，应用的代码内出现此错误。 响应可能不包含任何内容，或响应可能会在浏览器中显示为“500 内部服务器错误”。 应用程序事件日志通常表明应用正常启动。 从服务器的角度来看，这是正确的。 应用已启动，但无法生成有效的响应。 在服务器上的命令提示符下运行应用，或启用 ASP.NET Core 模块 stdout 日志来解决问题。</p>
+<h3 id="5000-in-process-handler-load-failure">500.0 进程内处理程序加载失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>无法找到 .NET Core CLR 和进程内请求处理程序 (aspnetcorev2_inprocess.dll)。 检查：</p>
+<ul>
+<li>该应用针对 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Server.IIS">Microsoft.AspNetCore.Server.IIS NuGet</a> 包或 <a class="xref" href="../fundamentals/metapackage-app.html">Microsoft.AspNetCore.App 元包</a>。</li>
+<li>目标计算机上安装了该应用所针对的 ASP.NET Core 共享框架版本。</li>
+</ul>
+<h3 id="5000-out-of-process-handler-load-failure">500.0 进程外处理程序加载失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>无法找到进程外托管请求处理程序。 请确保 aspnetcorev2.dll 旁边的子文件夹中存在 aspnetcorev2_outofprocess.dll 。</p>
+<h3 id="5025-process-failure">502.5 进程失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>尝试启动工作进程，但启动失败。 进程启动失败的原因通常可通过“应用程序事件日志”和“ASP.NET Core 模块 stdout 日志”中的条目进行确定。</p>
+<p>常见的失败情况是，由于目标 ASP.NET Core 共享框架版本不存在，因此应用配置错误。 检查目标计算机上安装的 ASP.NET Core 共享框架版本。 共享框架是安装在计算机上并由 <code>Microsoft.AspNetCore.App</code> 等元包引用的一组程序集（.dll 文件）。 元包引用可以指定所需的最低版本。 有关详细信息，请参阅<a href="https://natemcmaster.com/blog/2018/08/29/netcore-primitives-2/">共享框架</a>。</p>
+<p>托管或应用配置错误导致工作进程失败时，将返回“502.5 进程失败”错误页面：</p>
+<h3 id="failed-to-start-application-errorcode-0x800700c1">未能启动应用程序（错误代码“0x800700c1”）</h3>
+<pre><code>EventID: 1010
+Source: IIS AspNetCore Module V2
+Failed to start application '/LM/W3SVC/6/ROOT/', ErrorCode '0x800700c1'.
+</code></pre>
+<p>应用未能启动，因为应用的程序集 (.dll) 无法加载。</p>
+<p>当已发布的应用与 w3wp/iisexpress 进程之间的位数不匹配时，会出现此错误。</p>
+<p>确认应用池的 32 位设置正确：</p>
+<ol>
+<li>在 IIS 管理器的“应用程序池”中选择应用池。</li>
+<li>在“操作”面板中的“编辑应用程序池”下选择“高级设置”。</li>
+<li>设置“启用 32 位应用程序”：
+<ul>
+<li>如果部署 32 位 (x86) 应用，则将值设置为 <code>True</code>。</li>
+<li>如果部署 64 位 (x64) 应用，则将值设置为 <code>False</code>。</li>
+</ul>
+</li>
+</ol>
+<p>确认项目文件中的 <code>&lt;Platform&gt;</code> MSBuild 属性与应用的已发布位数之间没有冲突。</p>
+<h3 id="connection-reset">连接重置</h3>
+<p>如果在发送标头后出现错误，则服务器在出现错误时发送“500 内部服务器错误”已经太晚了。 通常在序列化响应的复杂对象期间出现错误时发生这种情况。 此类型的错误在客户端上显示为“连接重置”错误。 <a class="xref" href="../fundamentals/logging/index.html">应用程序日志记录</a>可以帮助解决这些类型的错误。</p>
+<h3 id="default-startup-limits">默认启动限制</h3>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>的默认“startupTimeLimit”配置为 120 秒。 保留默认值时，在模块记录进程故障之前，可能最多需要两分钟来启动应用。 有关配置模块的信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#attributes-of-the-aspnetcore-element">aspNetCore 元素的属性</a>。</p>
+<h2 id="troubleshoot-on-azure-app-service">排查 Azure 应用服务中的问题</h2>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><strong>Azure 应用服务中的 ASP.NET Core 预览版</strong></p>
+<p>默认情况下不会将 ASP.NET Core 预览版部署到 Azure 应用服务。 要托管使用 ASP.NET Core 预览版的应用，请参阅<a class="xref" href="../host-and-deploy/azure-apps/index.html#deploy-aspnet-core-preview-release-to-azure-app-service">将 ASP.NET Core 预览版部署到 Azure 应用服务</a>。</p>
+</div>
+<!-- 
+> [!IMPORTANT]
+> **ASP.NET Core 3.0 with Azure App Service**
+>
+> ASP.NET Core 3.0 has not yet been deployed to Azure App Service. We hope to provide ASP.NET Core 3 on Azure App Service soon. To host an app that uses an ASP.NET Core 3.0:
+
+* Treat ASP.NET Core 3.0 like a preview release for Azure App Service deployment.
+* See [Deploy ASP.NET Core preview release to Azure App Service](xref:host-and-deploy/azure-apps/index#deploy-aspnet-core-preview-release-to-azure-app-service).
+-->
+<h3 id="application-event-log-azure-app-service">应用程序事件日志（Azure 应用服务）</h3>
+<p>若要访问应用程序事件日志，请在 Azure 门户中使用“诊断并解决问题”边栏选项卡：</p>
+<ol>
+<li>在 Azure 门户中打开“应用服务”中的应用。</li>
+<li>选择“诊断并解决问题”。</li>
+<li>选择“诊断工具”标题。</li>
+<li>在“支持工具”下，选择“应用程序事件”按钮 。</li>
+<li>检查“源”列中由 IIS AspNetCoreModule 或 IIS AspNetCoreModule V2条目提供的最新错误 。</li>
+</ol>
+<p>使用“诊断并解决问题”边栏选项卡的替代方法是直接使用 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 检查应用程序事件日志文件：</p>
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开 LogFiles 文件夹。</li>
+<li>选择 eventlog.xml 文件旁边的铅笔图标。</li>
+<li>检查日志。 滚动到日志底部以查看最新事件。</li>
+</ol>
+<h3 id="run-the-app-in-the-kudu-console">在 Kudu 控制台中运行应用</h3>
+<p>许多启动错误未在应用程序事件日志中生成有用信息。 可以在 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 远程执行控制台中运行应用以发现错误：</p>
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+</ol>
+<h4 id="test-a-32-bit-x86-app">测试 32 位 (x86) 应用</h4>
+<p><strong>当前版本</strong></p>
+<ol>
+<li><code>cd d:\home\site\wwwroot</code></li>
+<li>运行应用：
+<ul>
+<li><p>如果应用是<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：</p>
+<pre><code class="lang-dotnetcli">dotnet .\{ASSEMBLY NAME}.dll
+</code></pre>
+</li>
+<li><p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<pre><code class="lang-console">{ASSEMBLY NAME}.exe
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<p><strong>在预览版上运行的依赖框架的部署</strong></p>
+<p>必须安装 ASP.NET Core {VERSION} (x86) 运行时站点扩展。</p>
+<ol>
+<li><code>cd D:\home\SiteExtensions\AspNetCoreRuntime.{X.Y}.x32</code>（<code>{X.Y}</code> 是运行时版本）</li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+<p>应用的控制台输出（显示任何错误）会传送到 Kudu 控制台。</p>
+<h4 id="test-a-64-bit-x64-app">测试 64 位 (x64) 应用</h4>
+<p><strong>当前版本</strong></p>
+<ul>
+<li>如果应用是 64 位 (x64) <a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：
+<ol>
+<li><code>cd D:\Program Files\dotnet</code></li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+</li>
+<li>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：
+<ol>
+<li><code>cd D:\home\site\wwwroot</code></li>
+<li>运行应用：<code>{ASSEMBLY NAME}.exe</code></li>
+</ol>
+</li>
+</ul>
+<p>应用的控制台输出（显示任何错误）会传送到 Kudu 控制台。</p>
+<p><strong>在预览版上运行的依赖框架的部署</strong></p>
+<p>必须安装 ASP.NET Core {VERSION} (x64) 运行时站点扩展。</p>
+<ol>
+<li><code>cd D:\home\SiteExtensions\AspNetCoreRuntime.{X.Y}.x64</code>（<code>{X.Y}</code> 是运行时版本）</li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<h3 id="aspnet-core-module-stdout-log-azure-app-service">ASP.NET Core 模块 stdout 日志（Azure 应用服务）</h3>
+<p>ASP.NET Core 模块 stdout 日志通常记录应用程序事件日志中找不到的有用错误消息。 若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>在 Azure 门户中导航到“诊断并解决问题”边栏选项卡。</li>
+<li>在“选择问题类别”下，选择“Web 应用关闭”按钮。</li>
+<li>在“建议的解决方案”&gt;“启用 Stdout 日志重定向”下，选择“打开 Kudu 控制台以编辑 Web.Config”对应的按钮  。</li>
+<li>在 Kudu 诊断控制台中，打开路径“站点 &gt; wwwroot”下的文件夹。 向下滚动以在列表底部显示“web.config”文件。</li>
+<li>单击“web.config”文件旁边的铅笔图标。</li>
+<li>将“stdoutLogEnabled”设置为 <code>true</code>，并将“stdoutLogFile”路径更改为 <code>\\?\%home%\LogFiles\stdout</code>。</li>
+<li>选择“保存”以保存已更新的 web.config 文件。</li>
+<li>向应用发出请求。</li>
+<li>返回到 Azure 门户。 选择“开发工具”区域中的“高级工具”边栏选项卡。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>选择“LogFiles”文件夹。</li>
+<li>检查“已修改”列并选择铅笔图标以编辑具有最新修改日期的 stdout 日志。</li>
+<li>打开日志文件后，将显示错误。</li>
+</ol>
+<p>故障排除完成后，禁用 stdout 日志记录：</p>
+<ol>
+<li>在 Kudu 诊断控制台中，返回到路径“site &gt; wwwroot”以显示 web.config 文件。 通过选择铅笔图标再次打开 web.config 文件。</li>
+<li>将“stdoutLogEnabled”设置为 <code>false</code>。</li>
+<li>选择“保存”以保存文件。</li>
+</ol>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#log-creation-and-redirection">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。 仅使用 stdout 日志记录来解决应用启动问题。</p>
+<p>对于在 ASP.NET Core 应用启动后生成的常规日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="aspnet-core-module-debug-log-azure-app-service">ASP.NET Core 模块调试日志（Azure 应用服务）</h3>
+<p>ASP.NET Core 模块调试日志从 ASP.NET Core 模块提供了更多、更详细的日志记录。 若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>要启用增强的诊断日志，请执行以下任一操作：
+<ul>
+<li>按照<a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">增强的诊断日志</a>中的说明配置应用以获取增强的诊断日志记录。 重新部署应用。</li>
+<li>使用 Kudu 控制台将<a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">增强的诊断日志</a>中显示的 <code>&lt;handlerSettings&gt;</code> 添加到动态应用的 web.config 文件中：
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site &gt; wwwroot”下的文件夹。 通过选择铅笔按钮编辑 web.config 文件。 添加 <code>&lt;handlerSettings&gt;</code> 部分（如<a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">增强的诊断日志</a>中所示）。 选择“保存”按钮。</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site &gt; wwwroot”下的文件夹。 如果没有为 aspnetcore-debug.log 文件提供路径，则该文件将显示在列表中。 如果提供了路径，请导航到日志文件的位置。</li>
+<li>使用文件名旁边的铅笔按钮打开日志文件。</li>
+</ol>
+<p>故障排除完成后，禁用调试日志记录：</p>
+<p>要禁用增强的调试日志，请执行以下任一操作：</p>
+<ul>
+<li>从本地删除 web.config 文件中的 <code>&lt;handlerSettings&gt;</code> 并重新部署该应用。</li>
+<li>使用 Kudu 控制台编辑 web.config 文件并删除 <code>&lt;handlerSettings&gt;</code> 部分。 保存该文件。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用调试日志可能会导致应用或服务器出现故障。 日志文件大小没有任何限制。 仅使用调试日志记录来解决应用启动问题。</p>
+<p>对于在 ASP.NET Core 应用启动后生成的常规日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="slow-or-hanging-app-azure-app-service">应用缓慢或挂起（Azure 应用服务）</h3>
+<p>如果应用程序响应缓慢或在有请求时挂起，请参阅以下文章：</p>
+<ul>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-performance-degradation">解决 Azure 应用服务中 Web 应用性能缓慢的问题</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/asiatech/2015/12/28/use-crash-diagnoser-site-extension-to-capture-dump-for-intermittent-exception-issues-or-performance-issues-on-azure-web-app/">使用故障诊断程序站点扩展来捕获 Azure Web 应用程序上间歇性异常问题或性能问题的转储</a></li>
+</ul>
+<h3 id="monitoring-blades">监视边栏选项卡</h3>
+<p>监视边栏选项卡提供了本主题前面所述的方法的替代故障排除体验。 这些边栏选项卡可用于诊断 500 系列错误。</p>
+<p>确认是否已安装 ASP.NET Core 扩展。 如果未安装扩展，请手动进行安装：</p>
+<ol>
+<li>在“开发工具”边栏选项卡部分中，选择“扩展”边栏选项卡。</li>
+<li>“ASP.NET Core 扩展”应显示在列表中。</li>
+<li>如果未安装扩展，请选择“添加”按钮。</li>
+<li>从列表中选择“ASP.NET Core 扩展”。</li>
+<li>选择“确定”以接受法律条款。</li>
+<li>选择“添加扩展”边栏选项卡上的“确定”。</li>
+<li>信息性弹出消息指示成功安装扩展的时间。</li>
+</ol>
+<p>如果未启用 stdout 日志记录，请执行以下步骤：</p>
+<ol>
+<li>在 Azure 门户中，选择“开发工具”区域中的“高级工具”边栏选项卡。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site&gt;wwwroot”下的文件夹，然后向下滚动以显示列表底部的 web.config 文件 。</li>
+<li>单击“web.config”文件旁边的铅笔图标。</li>
+<li>将“stdoutLogEnabled”设置为 <code>true</code>，并将“stdoutLogFile”路径更改为 <code>\\?\%home%\LogFiles\stdout</code>。</li>
+<li>选择“保存”以保存已更新的 web.config 文件。</li>
+</ol>
+<p>继续激活诊断日志记录：</p>
+<ol>
+<li>在 Azure 门户中，选择“诊断日志”边栏选项卡。</li>
+<li>选择“应用程序日志记录(文件系统)”和“详细错误消息”的“开”开关。 选择边栏选项卡顶部的“保存”按钮。</li>
+<li>若要包含失败请求跟踪（也称为失败请求事件缓冲 (FREB) 日志记录），请选择“失败请求跟踪”的“开”开关。</li>
+<li>选择“日志流”边栏选项卡，将在门户中的“诊断日志”边栏选项卡下立即列出。</li>
+<li>向应用发出请求。</li>
+<li>在日志流数据中，指示了错误的原因。</li>
+</ol>
+<p>故障排除完成后，请务必禁用 stdout 日志记录。</p>
+<p>若要查看失败请求跟踪日志（FREB 日志），请执行以下操作：</p>
+<ol>
+<li>在 Azure 门户中导航到“诊断并解决问题”边栏选项卡。</li>
+<li>从侧栏的“支持工具”区域中选择“失败请求跟踪日志”。</li>
+</ol>
+<p>有关详细信息，请参阅<a href="/azure/app-service/web-sites-enable-diagnostic-log#failed-request-traces">“在 Azure 应用服务中启用 Web 应用的诊断日志记录”主题的“失败请求跟踪”部分</a>和 <a href="/azure/app-service/app-service-web-availability-performance-application-issues-faq#how-do-i-turn-on-failed-request-tracing">Azure 中的 Web 应用的应用程序性能常见问题：如何打开失败请求跟踪？</a>。</p>
+<p>有关详细信息，请参阅<a href="/azure/app-service/web-sites-enable-diagnostic-log">在 Azure 应用服务中启用 Web 应用的诊断日志记录</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。</p>
+<p>对于 ASP.NET Core 应用中的例程日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h2 id="troubleshoot-on-iis">IIS 疑难解答</h2>
+<h3 id="application-event-log-iis">应用程序事件日志 (IIS)</h3>
+<p>访问应用程序事件日志：</p>
+<ol>
+<li>打开“开始”菜单，搜索“事件查看器”，然后选择“事件查看器”应用。</li>
+<li>在“事件查看器”中，打开“Windows 日志”节点。</li>
+<li>选择“应用程序”以打开应用程序事件日志。</li>
+<li>搜索与失败应用相关联的错误。 错误具有“源”列中“IIS AspNetCore 模块”或“IIS Express AspNetCore 模块”的值。</li>
+</ol>
+<h3 id="run-the-app-at-a-command-prompt">在命令提示符处运行应用</h3>
+<p>许多启动错误未在应用程序事件日志中生成有用信息。 可以通过在托管系统上在命令提示符处运行应用来找到某些错误的原因。</p>
+<h4 id="framework-dependent-deployment">依赖框架的部署</h4>
+<p>如果应用是<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：</p>
+<ol>
+<li>在命令提示符处，导航到部署文件夹并通过使用 dotnet.exe 执行应用的程序集来运行应用。 在以下命令中，替换 &lt;assembly_name&gt; 的应用程序集的名称：<code>dotnet .\&lt;assembly_name&gt;.dll</code>。</li>
+<li>来自应用且显示任何错误的控制台输出将写入控制台窗口。</li>
+<li>如果向应用发出请求时出现错误，请向 Kestrel 侦听所在的主机和端口发出请求。 如果使用默认主机和端口，请向 <code>http://localhost:5000/</code> 发出请求。 如果应用在 Kestrel 终结点地址处正常响应，则问题更可能与承载配置相关，而不太可能在于应用。</li>
+</ol>
+<h4 id="self-contained-deployment">独立部署</h4>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<ol>
+<li>在命令提示符处，导航到部署文件夹并运行应用的可执行文件。 在以下命令中，替换 &lt;assembly_name&gt; 的应用程序集的名称：<code>&lt;assembly_name&gt;.exe</code>。</li>
+<li>来自应用且显示任何错误的控制台输出将写入控制台窗口。</li>
+<li>如果向应用发出请求时出现错误，请向 Kestrel 侦听所在的主机和端口发出请求。 如果使用默认主机和端口，请向 <code>http://localhost:5000/</code> 发出请求。 如果应用在 Kestrel 终结点地址处正常响应，则问题更可能与承载配置相关，而不太可能在于应用。</li>
+</ol>
+<h3 id="aspnet-core-module-stdout-log-iis">ASP.NET Core 模块 stdout 日志 (IIS)</h3>
+<p>若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>在托管系统上导航到站点的部署文件夹。</li>
+<li>如果 logs 文件夹不存在，请创建该文件夹。 有关如何启用 MSBuild 以在部署中自动创建 logs 文件夹的说明，请参阅<a class="xref" href="../host-and-deploy/directory-structure.html">目录结构</a>主题。</li>
+<li>编辑 web.config 文件。 将“stdoutLogEnabled”设置为 <code>true</code> 并更改“stdoutLogFile”路径以指向 logs 文件夹（例如，<code>.\logs\stdout</code>）。 路径中的 <code>stdout</code> 是日志文件名的前缀。 创建日志时，将自动添加时间戳、进程 ID 和文件扩展名。 如果将 <code>stdout</code> 用作文件名的前缀，典型的日志文件将命名为“stdout_20180205184032_5412.log”。</li>
+<li>请确保应用程序池的标识具有对日志文件夹的写入权限。</li>
+<li>保存已更新的 web.config 文件。</li>
+<li>向应用发出请求。</li>
+<li>导航到 logs 文件夹。 查找并打开最新的 stdout 日志。</li>
+<li>研究日志以查找错误。</li>
+</ol>
+<p>故障排除完成后，禁用 stdout 日志记录：</p>
+<ol>
+<li>编辑 web.config 文件。</li>
+<li>将“stdoutLogEnabled”设置为 <code>false</code>。</li>
+<li>保存该文件。</li>
+</ol>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#log-creation-and-redirection">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。</p>
+<p>对于 ASP.NET Core 应用中的例程日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="aspnet-core-module-debug-log-iis">ASP.NET Core 模块调试日志 (IIS)</h3>
+<p>将以下处理程序设置添加到应用的 web.config 文件以启用 ASP.NET Core 模块调试日志：</p>
+<pre><code class="lang-xml">&lt;aspNetCore ...&gt;
+  &lt;handlerSettings&gt;
+    &lt;handlerSetting name=&quot;debugLevel&quot; value=&quot;file&quot; /&gt;
+    &lt;handlerSetting name=&quot;debugFile&quot; value=&quot;c:\temp\ancm.log&quot; /&gt;
+  &lt;/handlerSettings&gt;
+&lt;/aspNetCore&gt;
+</code></pre>
+<p>确认为日志指定的路径存在，并且应用池的标识具有该位置的写入权限。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#enhanced-diagnostic-logs">ASP.NET Core 模块</a>。</p>
+<h3 id="enable-the-developer-exception-page">启用开发人员异常页面</h3>
+<p><code>ASPNETCORE_ENVIRONMENT</code> <a class="xref" href="../host-and-deploy/aspnet-core-module.html#setting-environment-variables">环境变量可以添加到 web.config</a> 以在开发环境中运行应用。 只要在应用启动时环境不被主机生成器上的 <code>UseEnvironment</code> 重写，设置环境变量就会在运行应用时显示“<a class="xref" href="../fundamentals/error-handling.html">开发人员异常页面</a>”。</p>
+<pre><code class="lang-xml">&lt;aspNetCore processPath=&quot;dotnet&quot;
+      arguments=&quot;.\MyApp.dll&quot;
+      stdoutLogEnabled=&quot;false&quot;
+      stdoutLogFile=&quot;.\logs\stdout&quot;
+      hostingModel=&quot;InProcess&quot;&gt;
+  &lt;environmentVariables&gt;
+    &lt;environmentVariable name=&quot;ASPNETCORE_ENVIRONMENT&quot; value=&quot;Development&quot; /&gt;
+  &lt;/environmentVariables&gt;
+&lt;/aspNetCore&gt;
+</code></pre>
+<p>仅建议在未向 Internet 公开的暂存服务器和测试服务器上设置 <code>ASPNETCORE_ENVIRONMENT</code> 的环境变量。 在故障排除后从 web.config 文件中删除环境变量。 有关设置 web.config 中的环境变量的信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#setting-environment-variables">aspNetCore 的 environmentVariables 子元素</a>。</p>
+<h3 id="obtain-data-from-an-app">从应用中获取数据</h3>
+<p>如果应用能够响应请求，则使用终端内联中间件从应用中获取请求、连接和其他数据。 有关详细信息和示例代码，请参阅<a class="xref" href="troubleshoot.html#obtain-data-from-an-app">ASP.NET Core 项目故障排除和调试</a>。</p>
+<h3 id="slow-or-hanging-app-iis">应用缓慢或挂起 (IIS)</h3>
+<p>故障转储是系统内存的一个快照，可帮助确定应用崩溃、启动故障或应用速度缓慢等状况的原因。</p>
+<h4 id="app-crashes-or-encounters-an-exception">应用崩溃或引发异常</h4>
+<p>从 <a href="/windows/desktop/wer/windows-error-reporting">Windows 错误报告 (WER)</a> 中获取转储并进行分析：</p>
+<ol>
+<li><p>创建文件夹，将崩溃转储文件保存在 <code>c:\dumps</code>。 应用池必须对该文件夹具有写权限。</p>
+</li>
+<li><p>运行 <a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/test/troubleshoot-azure-iis/scripts/EnableDumps.ps1">EnableDumps PowerShell 脚本</a>：</p>
+<ul>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">进程内托管模型</a>，则请为 w3wp.exe 运行脚本：</p>
+<pre><code class="lang-console">.\EnableDumps w3wp.exe c:\dumps
+</code></pre>
+</li>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#out-of-process-hosting-model">进程外托管模型</a>，则请为 dotnet.exe 运行脚本：</p>
+<pre><code class="lang-console">.\EnableDumps dotnet.exe c:\dumps
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>在造成崩溃的条件下运行应用。</p>
+</li>
+<li><p>出现崩溃后，运行 <a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/test/troubleshoot-azure-iis/scripts/DisableDumps.ps1">DisableDumps PowerShell 脚本</a>：</p>
+<ul>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">进程内托管模型</a>，则请为 w3wp.exe 运行脚本：</p>
+<pre><code class="lang-console">.\DisableDumps w3wp.exe
+</code></pre>
+</li>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#out-of-process-hosting-model">进程外托管模型</a>，则请为 dotnet.exe 运行脚本：</p>
+<pre><code class="lang-console">.\DisableDumps dotnet.exe
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p>在应用崩溃并完成转储收集后，即可正常终止应用。 PowerShell 脚本会 WER 来按应用收集转储（最多收集 5 个）。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>崩溃转储可能会占用大量磁盘空间（每个最多占用数 GB）。</p>
+</div>
+<h4 id="app-hangs-fails-during-startup-or-runs-normally">应用挂起、在启动期间失败或正常运行</h4>
+<p>如果应用挂起（停止响应但不崩溃）、在启动期间失败或者正常运行<em>hangs</em>，请参阅<a href="/windows-hardware/drivers/debugger/user-mode-dump-files#choosing-the-best-tool">用户模式转储文件：选择最佳工具</a>，以选择适合用于生成转储的工具。</p>
+<h4 id="analyze-the-dump">分析转储</h4>
+<p>可采用几种方法来分析转储。 有关详细信息，请参阅<a href="/windows-hardware/drivers/debugger/analyzing-a-user-mode-dump-file">分析用户模式转储文件</a>。</p>
+<h2 id="clear-package-caches">清除包缓存</h2>
+<p>正常运行的应用在开发计算机上升级 .NET Core SDK 或在应用内更改包版本后可能会立即出现故障。 在某些情况下，不同的包可能在执行主要升级时中断应用。 可以按照以下说明来修复其中大部分问题：</p>
+<ol>
+<li><p>删除 bin 和 obj 文件夹。</p>
+</li>
+<li><p>通过从命令行界面执行 <a href="/dotnet/core/tools/dotnet-nuget-locals">dotnet nuget locals all --clear</a> 清除包缓存。</p>
+<p>清除包缓存还可通过使用 <a href="https://www.nuget.org/downloads">nuget.exe</a> 工具并执行命令 <code>nuget locals all -clear</code> 来完成。 <em>nuget.exe</em> 不是与 Windows 桌面操作系统的捆绑安装，必须从 <a href="https://www.nuget.org/downloads">NuGet 网站</a>中单独获取。</p>
+</li>
+<li><p>还原并重新生成项目。</p>
+</li>
+<li><p>在重新部署应用前，在服务器上删除部署文件夹中的所有文件。</p>
+</li>
+</ol>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+<li><a class="xref" href="../host-and-deploy/azure-iis-errors-reference.html">Azure 应用服务和 IIS 上 ASP.NET Core 的常见错误参考</a></li>
+<li><a class="xref" href="../fundamentals/error-handling.html">处理 ASP.NET Core 中的错误</a></li>
+<li><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a></li>
+</ul>
+<h3 id="azure-documentation">Azure 文档</h3>
+<ul>
+<li><a href="/azure/application-insights/app-insights-asp-net-core">用于 ASP.NET Core 的 Application Insights</a></li>
+<li><a href="/azure/app-service/web-sites-dotnet-troubleshoot-visual-studio#remotedebug">“使用 Visual Studio 对 Azure 应用服务中的 Web 应用进行故障排除”的“远程调试 Web 应用”一节</a></li>
+<li><a href="/azure/app-service/app-service-diagnostics">Azure 应用服务诊断概述</a></li>
+<li><a href="/azure/app-service/web-sites-monitor">如何：在 Azure 应用服务中监视应用</a></li>
+<li><a href="/azure/app-service/web-sites-dotnet-troubleshoot-visual-studio">使用 Visual Studio 对 Azure 应用服务中的 Web 应用进行故障排除</a></li>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-http-502-http-503">解决 Azure Web 应用中的“502 错误的网关”和“503 服务不可用”HTTP 错误</a></li>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-performance-degradation">解决 Azure 应用服务中 Web 应用性能缓慢的问题</a></li>
+<li><a href="/azure/app-service/app-service-web-availability-performance-application-issues-faq">Azure 中的 Web 应用的应用程序性能常见问题</a></li>
+<li><a href="https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox">Azure Web 应用沙盒（应用服务运行时执行限制）</a></li>
+<li><a href="https://channel9.msdn.com/Shows/Azure-Friday/Azure-App-Service-Diagnostic-and-Troubleshooting-Experience">Azure Friday：Azure 应用服务诊断和疑难解答体验（12 分钟视频）</a></li>
+</ul>
+<h3 id="visual-studio-documentation">Visual Studio 文档</h3>
+<ul>
+<li><a href="/visualstudio/debugger/remote-debugging-azure">在 Azure 中的 IIS 上的 Visual Studio 2017 中远程调试 ASP.NET Core</a></li>
+<li><a href="/visualstudio/debugger/remote-debugging-aspnet-on-a-remote-iis-computer">在远程 IIS 计算机的 Visual Studio 2017 中远程调试 ASP.NET Core</a></li>
+<li><a href="/visualstudio/debugger/getting-started-with-the-debugger">了解如何使用 Visual Studio 进行调试</a></li>
+</ul>
+<h3 id="visual-studio-code-documentation">Visual Studio Code 文档</h3>
+<ul>
+<li><a href="https://code.visualstudio.com/docs/editor/debugging">使用 Visual Studio Code 进行调试</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-2.2">
+<p>本文提供了有关常见应用启动错误的信息，以及在将应用部署到 Azure 应用服务或 IIS 时如何诊断错误的说明：</p>
+<p><a href="#app-startup-errors">应用启动错误</a><br>
+介绍常见的启动 HTTP 状态代码方案。</p>
+<p><a href="#troubleshoot-on-azure-app-service">排查 Azure 应用服务中的问题</a><br>
+为部署到 Azure 应用服务的应用提供疑难解答建议。</p>
+<p><a href="#troubleshoot-on-iis">IIS 疑难解答</a><br>
+为部署到 IIS 或在本地 IIS Express 上运行的应用提供疑难解答建议。 本指南适用于 Windows Server 和 Windows 桌面部署。</p>
+<p><a href="#clear-package-caches">清除包缓存</a><br>
+说明当执行重大升级或更改包版本时，不一致的包中断应用时应如何处理。</p>
+<p><a href="#additional-resources">其他资源</a><br>
+列出其他疑难解答主题。</p>
+<h2 id="app-startup-errors">应用启动错误</h2>
+<p>在 Visual Studio 中，ASP.NET Core 项目默认为在调试期间进行 <a href="/iis/extensions/introduction-to-iis-express/iis-express-overview">IIS Express</a> 托管。 本地调试时出现的“502.5 - 进程失败”可以使用本主题中的建议进行诊断。</p>
+<h3 id="40314-forbidden">403.14 禁止</h3>
+<p>应用无法启动。 记录以下错误：</p>
+<pre><code>The Web server is configured to not list the contents of this directory.
+</code></pre>
+<p>此错误通常是由于托管系统上的部署中断引起的，包括以下任何情况：</p>
+<ul>
+<li>该应用部署到托管系统上的错误文件夹。</li>
+<li>部署过程未能将所有应用的文件和文件夹移到托管系统上的部署文件夹中。</li>
+<li>部署中缺少 web.config 文件，或者 web.config 文件内容格式不正确 。</li>
+</ul>
+<p>执行以下步骤：</p>
+<ol>
+<li>从托管系统上的部署文件夹中删除所有文件和文件夹。</li>
+<li>使用常规部署方法（如 Visual Studio、PowerShell 或手动部署）将应用“发布”文件夹的内容重新部署到托管系统：
+<ul>
+<li>确认部署中存在 web.config 文件，并且其内容正确。</li>
+<li>在 Azure 应用服务上托管时，请确认该应用已部署到 <code>D:\home\site\wwwroot</code> 文件夹。</li>
+<li>当应用由 IIS 托管时，请确认应用已部署到“IIS 管理器”的“基本设置”中显示的 IIS 物理路径  。</li>
+</ul>
+</li>
+<li>通过将托管系统上的部署与项目“发布”文件夹的内容进行比较，确认已部署应用的所有文件和文件夹。</li>
+</ol>
+<p>有关已发布 ASP.NET Core 应用布局的详细信息，请参阅 <a class="xref" href="../host-and-deploy/directory-structure.html">ASP.NET Core 目录结构</a>。 有关 web.config 文件的详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#configuration-with-webconfig">ASP.NET Core 模块</a>。</p>
+<h3 id="500-internal-server-error">500 内部服务器错误</h3>
+<p>应用启动，但某个错误阻止了服务器完成请求。</p>
+<p>在启动期间或在创建响应时，应用的代码内出现此错误。 响应可能不包含任何内容，或响应可能会在浏览器中显示为“500 内部服务器错误”。 应用程序事件日志通常表明应用正常启动。 从服务器的角度来看，这是正确的。 应用已启动，但无法生成有效的响应。 在服务器上的命令提示符下运行应用，或启用 ASP.NET Core 模块 stdout 日志来解决问题。</p>
+<h3 id="5025-process-failure">502.5 进程失败</h3>
+<p>工作进程失败。 应用不启动。</p>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>尝试启动工作进程，但启动失败。 进程启动失败的原因通常可通过“应用程序事件日志”和“ASP.NET Core 模块 stdout 日志”中的条目进行确定。</p>
+<p>常见的失败情况是，由于目标 ASP.NET Core 共享框架版本不存在，因此应用配置错误。 检查目标计算机上安装的 ASP.NET Core 共享框架版本。 共享框架是安装在计算机上并由 <code>Microsoft.AspNetCore.App</code> 等元包引用的一组程序集（.dll 文件）。 元包引用可以指定所需的最低版本。 有关详细信息，请参阅<a href="https://natemcmaster.com/blog/2018/08/29/netcore-primitives-2/">共享框架</a>。</p>
+<p>托管或应用配置错误导致工作进程失败时，将返回“502.5 进程失败”错误页面：</p>
+<h3 id="failed-to-start-application-errorcode-0x800700c1">未能启动应用程序（错误代码“0x800700c1”）</h3>
+<pre><code>EventID: 1010
+Source: IIS AspNetCore Module V2
+Failed to start application '/LM/W3SVC/6/ROOT/', ErrorCode '0x800700c1'.
+</code></pre>
+<p>应用未能启动，因为应用的程序集 (.dll) 无法加载。</p>
+<p>当已发布的应用与 w3wp/iisexpress 进程之间的位数不匹配时，会出现此错误。</p>
+<p>确认应用池的 32 位设置正确：</p>
+<ol>
+<li>在 IIS 管理器的“应用程序池”中选择应用池。</li>
+<li>在“操作”面板中的“编辑应用程序池”下选择“高级设置”。</li>
+<li>设置“启用 32 位应用程序”：
+<ul>
+<li>如果部署 32 位 (x86) 应用，则将值设置为 <code>True</code>。</li>
+<li>如果部署 64 位 (x64) 应用，则将值设置为 <code>False</code>。</li>
+</ul>
+</li>
+</ol>
+<p>确认项目文件中的 <code>&lt;Platform&gt;</code> MSBuild 属性与应用的已发布位数之间没有冲突。</p>
+<h3 id="connection-reset">连接重置</h3>
+<p>如果在发送标头后出现错误，则服务器在出现错误时发送“500 内部服务器错误”已经太晚了。 通常在序列化响应的复杂对象期间出现错误时发生这种情况。 此类型的错误在客户端上显示为“连接重置”错误。 <a class="xref" href="../fundamentals/logging/index.html">应用程序日志记录</a>可以帮助解决这些类型的错误。</p>
+<h3 id="default-startup-limits">默认启动限制</h3>
+<p><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>的默认“startupTimeLimit”配置为 120 秒。 保留默认值时，在模块记录进程故障之前，可能最多需要两分钟来启动应用。 有关配置模块的信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#attributes-of-the-aspnetcore-element">aspNetCore 元素的属性</a>。</p>
+<h2 id="troubleshoot-on-azure-app-service">排查 Azure 应用服务中的问题</h2>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><strong>Azure 应用服务中的 ASP.NET Core 预览版</strong></p>
+<p>默认情况下不会将 ASP.NET Core 预览版部署到 Azure 应用服务。 要托管使用 ASP.NET Core 预览版的应用，请参阅<a class="xref" href="../host-and-deploy/azure-apps/index.html#deploy-aspnet-core-preview-release-to-azure-app-service">将 ASP.NET Core 预览版部署到 Azure 应用服务</a>。</p>
+</div>
+<!-- 
+> [!IMPORTANT]
+> **ASP.NET Core 3.0 with Azure App Service**
+>
+> ASP.NET Core 3.0 has not yet been deployed to Azure App Service. We hope to provide ASP.NET Core 3 on Azure App Service soon. To host an app that uses an ASP.NET Core 3.0:
+
+* Treat ASP.NET Core 3.0 like a preview release for Azure App Service deployment.
+* See [Deploy ASP.NET Core preview release to Azure App Service](xref:host-and-deploy/azure-apps/index#deploy-aspnet-core-preview-release-to-azure-app-service).
+-->
+<h3 id="application-event-log-azure-app-service">应用程序事件日志（Azure 应用服务）</h3>
+<p>若要访问应用程序事件日志，请在 Azure 门户中使用“诊断并解决问题”边栏选项卡：</p>
+<ol>
+<li>在 Azure 门户中打开“应用服务”中的应用。</li>
+<li>选择“诊断并解决问题”。</li>
+<li>选择“诊断工具”标题。</li>
+<li>在“支持工具”下，选择“应用程序事件”按钮 。</li>
+<li>检查“源”列中由 IIS AspNetCoreModule 或 IIS AspNetCoreModule V2条目提供的最新错误 。</li>
+</ol>
+<p>使用“诊断并解决问题”边栏选项卡的替代方法是直接使用 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 检查应用程序事件日志文件：</p>
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开 LogFiles 文件夹。</li>
+<li>选择 eventlog.xml 文件旁边的铅笔图标。</li>
+<li>检查日志。 滚动到日志底部以查看最新事件。</li>
+</ol>
+<h3 id="run-the-app-in-the-kudu-console">在 Kudu 控制台中运行应用</h3>
+<p>许多启动错误未在应用程序事件日志中生成有用信息。 可以在 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 远程执行控制台中运行应用以发现错误：</p>
+<ol>
+<li>打开“开发工具”区域中的“高级工具” 。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+</ol>
+<h4 id="test-a-32-bit-x86-app">测试 32 位 (x86) 应用</h4>
+<p><strong>当前版本</strong></p>
+<ol>
+<li><code>cd d:\home\site\wwwroot</code></li>
+<li>运行应用：
+<ul>
+<li><p>如果应用是<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：</p>
+<pre><code class="lang-dotnetcli">dotnet .\{ASSEMBLY NAME}.dll
+</code></pre>
+</li>
+<li><p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<pre><code class="lang-console">{ASSEMBLY NAME}.exe
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<p><strong>在预览版上运行的依赖框架的部署</strong></p>
+<p>必须安装 ASP.NET Core {VERSION} (x86) 运行时站点扩展。</p>
+<ol>
+<li><code>cd D:\home\SiteExtensions\AspNetCoreRuntime.{X.Y}.x32</code>（<code>{X.Y}</code> 是运行时版本）</li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+<p>应用的控制台输出（显示任何错误）会传送到 Kudu 控制台。</p>
+<h4 id="test-a-64-bit-x64-app">测试 64 位 (x64) 应用</h4>
+<p><strong>当前版本</strong></p>
+<ul>
+<li>如果应用是 64 位 (x64) <a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：
+<ol>
+<li><code>cd D:\Program Files\dotnet</code></li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+</li>
+<li>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：
+<ol>
+<li><code>cd D:\home\site\wwwroot</code></li>
+<li>运行应用：<code>{ASSEMBLY NAME}.exe</code></li>
+</ol>
+</li>
+</ul>
+<p>应用的控制台输出（显示任何错误）会传送到 Kudu 控制台。</p>
+<p><strong>在预览版上运行的依赖框架的部署</strong></p>
+<p>必须安装 ASP.NET Core {VERSION} (x64) 运行时站点扩展。</p>
+<ol>
+<li><code>cd D:\home\SiteExtensions\AspNetCoreRuntime.{X.Y}.x64</code>（<code>{X.Y}</code> 是运行时版本）</li>
+<li>运行应用：<code>dotnet \home\site\wwwroot\{ASSEMBLY NAME}.dll</code></li>
+</ol>
+<p>来自应用且显示任何错误的控制台输出将传送到 Kudu 控制台。</p>
+<h3 id="aspnet-core-module-stdout-log-azure-app-service">ASP.NET Core 模块 stdout 日志（Azure 应用服务）</h3>
+<p>ASP.NET Core 模块 stdout 日志通常记录应用程序事件日志中找不到的有用错误消息。 若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>在 Azure 门户中导航到“诊断并解决问题”边栏选项卡。</li>
+<li>在“选择问题类别”下，选择“Web 应用关闭”按钮。</li>
+<li>在“建议的解决方案”&gt;“启用 Stdout 日志重定向”下，选择“打开 Kudu 控制台以编辑 Web.Config”对应的按钮  。</li>
+<li>在 Kudu 诊断控制台中，打开路径“站点 &gt; wwwroot”下的文件夹。 向下滚动以在列表底部显示“web.config”文件。</li>
+<li>单击“web.config”文件旁边的铅笔图标。</li>
+<li>将“stdoutLogEnabled”设置为 <code>true</code>，并将“stdoutLogFile”路径更改为 <code>\\?\%home%\LogFiles\stdout</code>。</li>
+<li>选择“保存”以保存已更新的 web.config 文件。</li>
+<li>向应用发出请求。</li>
+<li>返回到 Azure 门户。 选择“开发工具”区域中的“高级工具”边栏选项卡。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>选择“LogFiles”文件夹。</li>
+<li>检查“已修改”列并选择铅笔图标以编辑具有最新修改日期的 stdout 日志。</li>
+<li>打开日志文件后，将显示错误。</li>
+</ol>
+<p>故障排除完成后，禁用 stdout 日志记录：</p>
+<ol>
+<li>在 Kudu 诊断控制台中，返回到路径“site &gt; wwwroot”以显示 web.config 文件。 通过选择铅笔图标再次打开 web.config 文件。</li>
+<li>将“stdoutLogEnabled”设置为 <code>false</code>。</li>
+<li>选择“保存”以保存文件。</li>
+</ol>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#log-creation-and-redirection">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。 仅使用 stdout 日志记录来解决应用启动问题。</p>
+<p>对于在 ASP.NET Core 应用启动后生成的常规日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="slow-or-hanging-app-azure-app-service">应用缓慢或挂起（Azure 应用服务）</h3>
+<p>如果应用程序响应缓慢或在有请求时挂起，请参阅以下文章：</p>
+<ul>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-performance-degradation">解决 Azure 应用服务中 Web 应用性能缓慢的问题</a></li>
+<li><a href="https://blogs.msdn.microsoft.com/asiatech/2015/12/28/use-crash-diagnoser-site-extension-to-capture-dump-for-intermittent-exception-issues-or-performance-issues-on-azure-web-app/">使用故障诊断程序站点扩展来捕获 Azure Web 应用程序上间歇性异常问题或性能问题的转储</a></li>
+</ul>
+<h3 id="monitoring-blades">监视边栏选项卡</h3>
+<p>监视边栏选项卡提供了本主题前面所述的方法的替代故障排除体验。 这些边栏选项卡可用于诊断 500 系列错误。</p>
+<p>确认是否已安装 ASP.NET Core 扩展。 如果未安装扩展，请手动进行安装：</p>
+<ol>
+<li>在“开发工具”边栏选项卡部分中，选择“扩展”边栏选项卡。</li>
+<li>“ASP.NET Core 扩展”应显示在列表中。</li>
+<li>如果未安装扩展，请选择“添加”按钮。</li>
+<li>从列表中选择“ASP.NET Core 扩展”。</li>
+<li>选择“确定”以接受法律条款。</li>
+<li>选择“添加扩展”边栏选项卡上的“确定”。</li>
+<li>信息性弹出消息指示成功安装扩展的时间。</li>
+</ol>
+<p>如果未启用 stdout 日志记录，请执行以下步骤：</p>
+<ol>
+<li>在 Azure 门户中，选择“开发工具”区域中的“高级工具”边栏选项卡。 选择“转到→”按钮。 此时将在新的浏览器选项卡或窗口中打开 Kudu 控制台。</li>
+<li>使用页面顶部的导航栏，打开“调试控制台”并选择“CMD”。</li>
+<li>打开路径“site&gt;wwwroot”下的文件夹，然后向下滚动以显示列表底部的 web.config 文件 。</li>
+<li>单击“web.config”文件旁边的铅笔图标。</li>
+<li>将“stdoutLogEnabled”设置为 <code>true</code>，并将“stdoutLogFile”路径更改为 <code>\\?\%home%\LogFiles\stdout</code>。</li>
+<li>选择“保存”以保存已更新的 web.config 文件。</li>
+</ol>
+<p>继续激活诊断日志记录：</p>
+<ol>
+<li>在 Azure 门户中，选择“诊断日志”边栏选项卡。</li>
+<li>选择“应用程序日志记录(文件系统)”和“详细错误消息”的“开”开关。 选择边栏选项卡顶部的“保存”按钮。</li>
+<li>若要包含失败请求跟踪（也称为失败请求事件缓冲 (FREB) 日志记录），请选择“失败请求跟踪”的“开”开关。</li>
+<li>选择“日志流”边栏选项卡，将在门户中的“诊断日志”边栏选项卡下立即列出。</li>
+<li>向应用发出请求。</li>
+<li>在日志流数据中，指示了错误的原因。</li>
+</ol>
+<p>故障排除完成后，请务必禁用 stdout 日志记录。</p>
+<p>若要查看失败请求跟踪日志（FREB 日志），请执行以下操作：</p>
+<ol>
+<li>在 Azure 门户中导航到“诊断并解决问题”边栏选项卡。</li>
+<li>从侧栏的“支持工具”区域中选择“失败请求跟踪日志”。</li>
+</ol>
+<p>有关详细信息，请参阅<a href="/azure/app-service/web-sites-enable-diagnostic-log#failed-request-traces">“在 Azure 应用服务中启用 Web 应用的诊断日志记录”主题的“失败请求跟踪”部分</a>和 <a href="/azure/app-service/app-service-web-availability-performance-application-issues-faq#how-do-i-turn-on-failed-request-tracing">Azure 中的 Web 应用的应用程序性能常见问题：如何打开失败请求跟踪？</a>。</p>
+<p>有关详细信息，请参阅<a href="/azure/app-service/web-sites-enable-diagnostic-log">在 Azure 应用服务中启用 Web 应用的诊断日志记录</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。</p>
+<p>对于 ASP.NET Core 应用中的例程日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h2 id="troubleshoot-on-iis">IIS 疑难解答</h2>
+<h3 id="application-event-log-iis">应用程序事件日志 (IIS)</h3>
+<p>访问应用程序事件日志：</p>
+<ol>
+<li>打开“开始”菜单，搜索“事件查看器”，然后选择“事件查看器”应用。</li>
+<li>在“事件查看器”中，打开“Windows 日志”节点。</li>
+<li>选择“应用程序”以打开应用程序事件日志。</li>
+<li>搜索与失败应用相关联的错误。 错误具有“源”列中“IIS AspNetCore 模块”或“IIS Express AspNetCore 模块”的值。</li>
+</ol>
+<h3 id="run-the-app-at-a-command-prompt">在命令提示符处运行应用</h3>
+<p>许多启动错误未在应用程序事件日志中生成有用信息。 可以通过在托管系统上在命令提示符处运行应用来找到某些错误的原因。</p>
+<h4 id="framework-dependent-deployment">依赖框架的部署</h4>
+<p>如果应用是<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>：</p>
+<ol>
+<li>在命令提示符处，导航到部署文件夹并通过使用 dotnet.exe 执行应用的程序集来运行应用。 在以下命令中，替换 &lt;assembly_name&gt; 的应用程序集的名称：<code>dotnet .\&lt;assembly_name&gt;.dll</code>。</li>
+<li>来自应用且显示任何错误的控制台输出将写入控制台窗口。</li>
+<li>如果向应用发出请求时出现错误，请向 Kestrel 侦听所在的主机和端口发出请求。 如果使用默认主机和端口，请向 <code>http://localhost:5000/</code> 发出请求。 如果应用在 Kestrel 终结点地址处正常响应，则问题更可能与承载配置相关，而不太可能在于应用。</li>
+</ol>
+<h4 id="self-contained-deployment">独立部署</h4>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<ol>
+<li>在命令提示符处，导航到部署文件夹并运行应用的可执行文件。 在以下命令中，替换 &lt;assembly_name&gt; 的应用程序集的名称：<code>&lt;assembly_name&gt;.exe</code>。</li>
+<li>来自应用且显示任何错误的控制台输出将写入控制台窗口。</li>
+<li>如果向应用发出请求时出现错误，请向 Kestrel 侦听所在的主机和端口发出请求。 如果使用默认主机和端口，请向 <code>http://localhost:5000/</code> 发出请求。 如果应用在 Kestrel 终结点地址处正常响应，则问题更可能与承载配置相关，而不太可能在于应用。</li>
+</ol>
+<h3 id="aspnet-core-module-stdout-log-iis">ASP.NET Core 模块 stdout 日志 (IIS)</h3>
+<p>若要启用和查看 stdout 日志，请执行以下操作：</p>
+<ol>
+<li>在托管系统上导航到站点的部署文件夹。</li>
+<li>如果 logs 文件夹不存在，请创建该文件夹。 有关如何启用 MSBuild 以在部署中自动创建 logs 文件夹的说明，请参阅<a class="xref" href="../host-and-deploy/directory-structure.html">目录结构</a>主题。</li>
+<li>编辑 web.config 文件。 将“stdoutLogEnabled”设置为 <code>true</code> 并更改“stdoutLogFile”路径以指向 logs 文件夹（例如，<code>.\logs\stdout</code>）。 路径中的 <code>stdout</code> 是日志文件名的前缀。 创建日志时，将自动添加时间戳、进程 ID 和文件扩展名。 如果将 <code>stdout</code> 用作文件名的前缀，典型的日志文件将命名为“stdout_20180205184032_5412.log”。</li>
+<li>请确保应用程序池的标识具有对日志文件夹的写入权限。</li>
+<li>保存已更新的 web.config 文件。</li>
+<li>向应用发出请求。</li>
+<li>导航到 logs 文件夹。 查找并打开最新的 stdout 日志。</li>
+<li>研究日志以查找错误。</li>
+</ol>
+<p>故障排除完成后，禁用 stdout 日志记录：</p>
+<ol>
+<li>编辑 web.config 文件。</li>
+<li>将“stdoutLogEnabled”设置为 <code>false</code>。</li>
+<li>保存该文件。</li>
+</ol>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#log-creation-and-redirection">ASP.NET Core 模块</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>无法禁用 stdout 日志可能会导致应用或服务器出现故障。 日志文件大小或创建的日志文件数没有限制。</p>
+<p>对于 ASP.NET Core 应用中的例程日志记录，使用限制日志文件大小和旋转日志的日志记录库。 有关详细信息，请参阅<a class="xref" href="../fundamentals/logging/index.html#third-party-logging-providers">第三方日志记录提供程序</a>。</p>
+</div>
+<h3 id="enable-the-developer-exception-page">启用开发人员异常页面</h3>
+<p><code>ASPNETCORE_ENVIRONMENT</code> <a class="xref" href="../host-and-deploy/aspnet-core-module.html#setting-environment-variables">环境变量可以添加到 web.config</a> 以在开发环境中运行应用。 只要在应用启动时环境不被主机生成器上的 <code>UseEnvironment</code> 重写，设置环境变量就会在运行应用时显示“<a class="xref" href="../fundamentals/error-handling.html">开发人员异常页面</a>”。</p>
+<pre><code class="lang-xml">&lt;aspNetCore processPath=&quot;dotnet&quot;
+      arguments=&quot;.\MyApp.dll&quot;
+      stdoutLogEnabled=&quot;false&quot;
+      stdoutLogFile=&quot;.\logs\stdout&quot;&gt;
+  &lt;environmentVariables&gt;
+    &lt;environmentVariable name=&quot;ASPNETCORE_ENVIRONMENT&quot; value=&quot;Development&quot; /&gt;
+  &lt;/environmentVariables&gt;
+&lt;/aspNetCore&gt;
+</code></pre>
+<p>仅建议在未向 Internet 公开的暂存服务器和测试服务器上设置 <code>ASPNETCORE_ENVIRONMENT</code> 的环境变量。 在故障排除后从 web.config 文件中删除环境变量。 有关设置 web.config 中的环境变量的信息，请参阅 <a class="xref" href="../host-and-deploy/aspnet-core-module.html#setting-environment-variables">aspNetCore 的 environmentVariables 子元素</a>。</p>
+<h3 id="obtain-data-from-an-app">从应用中获取数据</h3>
+<p>如果应用能够响应请求，则使用终端内联中间件从应用中获取请求、连接和其他数据。 有关详细信息和示例代码，请参阅<a class="xref" href="troubleshoot.html#obtain-data-from-an-app">ASP.NET Core 项目故障排除和调试</a>。</p>
+<h3 id="slow-or-hanging-app-iis">应用缓慢或挂起 (IIS)</h3>
+<p>故障转储是系统内存的一个快照，可帮助确定应用崩溃、启动故障或应用速度缓慢等状况的原因。</p>
+<h4 id="app-crashes-or-encounters-an-exception">应用崩溃或引发异常</h4>
+<p>从 <a href="/windows/desktop/wer/windows-error-reporting">Windows 错误报告 (WER)</a> 中获取转储并进行分析：</p>
+<ol>
+<li><p>创建文件夹，将崩溃转储文件保存在 <code>c:\dumps</code>。 应用池必须对该文件夹具有写权限。</p>
+</li>
+<li><p>运行 <a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/test/troubleshoot-azure-iis/scripts/EnableDumps.ps1">EnableDumps PowerShell 脚本</a>：</p>
+<ul>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">进程内托管模型</a>，则请为 w3wp.exe 运行脚本：</p>
+<pre><code class="lang-console">.\EnableDumps w3wp.exe c:\dumps
+</code></pre>
+</li>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#out-of-process-hosting-model">进程外托管模型</a>，则请为 dotnet.exe 运行脚本：</p>
+<pre><code class="lang-console">.\EnableDumps dotnet.exe c:\dumps
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>在造成崩溃的条件下运行应用。</p>
+</li>
+<li><p>出现崩溃后，运行 <a href="https://github.com/dotnet/AspNetCore.Docs/blob/master/aspnetcore/test/troubleshoot-azure-iis/scripts/DisableDumps.ps1">DisableDumps PowerShell 脚本</a>：</p>
+<ul>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#in-process-hosting-model">进程内托管模型</a>，则请为 w3wp.exe 运行脚本：</p>
+<pre><code class="lang-console">.\DisableDumps w3wp.exe
+</code></pre>
+</li>
+<li><p>如果应用使用<a class="xref" href="../host-and-deploy/iis/index.html#out-of-process-hosting-model">进程外托管模型</a>，则请为 dotnet.exe 运行脚本：</p>
+<pre><code class="lang-console">.\DisableDumps dotnet.exe
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<p>在应用崩溃并完成转储收集后，即可正常终止应用。 PowerShell 脚本会 WER 来按应用收集转储（最多收集 5 个）。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>崩溃转储可能会占用大量磁盘空间（每个最多占用数 GB）。</p>
+</div>
+<h4 id="app-hangs-fails-during-startup-or-runs-normally">应用挂起、在启动期间失败或正常运行</h4>
+<p>如果应用挂起（停止响应但不崩溃）、在启动期间失败或者正常运行<em>hangs</em>，请参阅<a href="/windows-hardware/drivers/debugger/user-mode-dump-files#choosing-the-best-tool">用户模式转储文件：选择最佳工具</a>，以选择适合用于生成转储的工具。</p>
+<h4 id="analyze-the-dump">分析转储</h4>
+<p>可采用几种方法来分析转储。 有关详细信息，请参阅<a href="/windows-hardware/drivers/debugger/analyzing-a-user-mode-dump-file">分析用户模式转储文件</a>。</p>
+<h2 id="clear-package-caches">清除包缓存</h2>
+<p>正常运行的应用在开发计算机上升级 .NET Core SDK 或在应用内更改包版本后可能会立即出现故障。 在某些情况下，不同的包可能在执行主要升级时中断应用。 可以按照以下说明来修复其中大部分问题：</p>
+<ol>
+<li><p>删除 bin 和 obj 文件夹。</p>
+</li>
+<li><p>通过从命令行界面执行 <a href="/dotnet/core/tools/dotnet-nuget-locals">dotnet nuget locals all --clear</a> 清除包缓存。</p>
+<p>清除包缓存还可通过使用 <a href="https://www.nuget.org/downloads">nuget.exe</a> 工具并执行命令 <code>nuget locals all -clear</code> 来完成。 <em>nuget.exe</em> 不是与 Windows 桌面操作系统的捆绑安装，必须从 <a href="https://www.nuget.org/downloads">NuGet 网站</a>中单独获取。</p>
+</li>
+<li><p>还原并重新生成项目。</p>
+</li>
+<li><p>在重新部署应用前，在服务器上删除部署文件夹中的所有文件。</p>
+</li>
+</ol>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+<li><a class="xref" href="../host-and-deploy/azure-iis-errors-reference.html">Azure 应用服务和 IIS 上 ASP.NET Core 的常见错误参考</a></li>
+<li><a class="xref" href="../fundamentals/error-handling.html">处理 ASP.NET Core 中的错误</a></li>
+<li><a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a></li>
+</ul>
+<h3 id="azure-documentation">Azure 文档</h3>
+<ul>
+<li><a href="/azure/application-insights/app-insights-asp-net-core">用于 ASP.NET Core 的 Application Insights</a></li>
+<li><a href="/azure/app-service/web-sites-dotnet-troubleshoot-visual-studio#remotedebug">“使用 Visual Studio 对 Azure 应用服务中的 Web 应用进行故障排除”的“远程调试 Web 应用”一节</a></li>
+<li><a href="/azure/app-service/app-service-diagnostics">Azure 应用服务诊断概述</a></li>
+<li><a href="/azure/app-service/web-sites-monitor">如何：在 Azure 应用服务中监视应用</a></li>
+<li><a href="/azure/app-service/web-sites-dotnet-troubleshoot-visual-studio">使用 Visual Studio 对 Azure 应用服务中的 Web 应用进行故障排除</a></li>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-http-502-http-503">解决 Azure Web 应用中的“502 错误的网关”和“503 服务不可用”HTTP 错误</a></li>
+<li><a href="/azure/app-service/app-service-web-troubleshoot-performance-degradation">解决 Azure 应用服务中 Web 应用性能缓慢的问题</a></li>
+<li><a href="/azure/app-service/app-service-web-availability-performance-application-issues-faq">Azure 中的 Web 应用的应用程序性能常见问题</a></li>
+<li><a href="https://github.com/projectkudu/kudu/wiki/Azure-Web-App-sandbox">Azure Web 应用沙盒（应用服务运行时执行限制）</a></li>
+<li><a href="https://channel9.msdn.com/Shows/Azure-Friday/Azure-App-Service-Diagnostic-and-Troubleshooting-Experience">Azure Friday：Azure 应用服务诊断和疑难解答体验（12 分钟视频）</a></li>
+</ul>
+<h3 id="visual-studio-documentation">Visual Studio 文档</h3>
+<ul>
+<li><a href="/visualstudio/debugger/remote-debugging-azure">在 Azure 中的 IIS 上的 Visual Studio 2017 中远程调试 ASP.NET Core</a></li>
+<li><a href="/visualstudio/debugger/remote-debugging-aspnet-on-a-remote-iis-computer">在远程 IIS 计算机的 Visual Studio 2017 中远程调试 ASP.NET Core</a></li>
+<li><a href="/visualstudio/debugger/getting-started-with-the-debugger">了解如何使用 Visual Studio 进行调试</a></li>
+</ul>
+<h3 id="visual-studio-code-documentation">Visual Studio Code 文档</h3>
+<ul>
+<li><a href="https://code.visualstudio.com/docs/editor/debugging">使用 Visual Studio Code 进行调试</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#23558; HTTP &#22788;&#29702;&#31243;&#24207;&#21644;&#27169;&#22359;&#36801;&#31227;&#21040; ASP.NET Core &#20013;&#38388;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#23558; HTTP &#22788;&#29702;&#31243;&#24207;&#21644;&#27169;&#22359;&#36801;&#31227;&#21040; ASP.NET Core &#20013;&#38388;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="migration/http-modules">
+<h1 id="migrate-http-handlers-and-modules-to-aspnet-core-middleware">将 HTTP 处理程序和模块迁移到 ASP.NET Core 中间件</h1>
+
+<p>本文介绍如何将现有 <a href="/iis/configuration/system.webserver/">的 ASP.NET HTTP 模块和处理程序从 system.webserver</a> 迁移到 ASP.NET Core <a class="xref" href="../fundamentals/middleware/index.html">中间件</a>。</p>
+<h2 id="modules-and-handlers-revisited">模块和处理程序被</h2>
+<p>在继续 ASP.NET Core 中间件之前，让我们先回顾一下 HTTP 模块和处理程序的工作原理：</p>
+<p><img src="http-modules/_static/moduleshandlers.png" alt="模块处理程序"></p>
+<p><strong>处理程序是：</strong></p>
+<ul>
+<li><p>实现<a href="/dotnet/api/system.web.ihttphandler">IHttpHandler</a>的类</p>
+</li>
+<li><p>用于处理具有给定文件名或扩展名的请求，如 <em>. report</em></p>
+</li>
+<li><p>在 <em>Web.config</em> 中 <a href="/iis/configuration/system.webserver/handlers/">配置</a></p>
+</li>
+</ul>
+<p><strong>模块为：</strong></p>
+<ul>
+<li><p>实现<a href="/dotnet/api/system.web.ihttpmodule">IHttpModule</a>的类</p>
+</li>
+<li><p>为每个请求调用</p>
+</li>
+<li><p>能够短路 (停止进一步处理请求)</p>
+</li>
+<li><p>可以添加到 HTTP 响应，或创建自己的响应</p>
+</li>
+<li><p>在 <em>Web.config</em> 中 <a href="/iis/configuration/system.webserver/modules/">配置</a></p>
+</li>
+</ul>
+<p><strong>模块处理传入请求的顺序由确定：</strong></p>
+<ol>
+<li><p><a href="https://docs.microsoft.com/previous-versions/ms227673(v=vs.140)">https://docs.microsoft.com/previous-versions/ms227673(v=vs.140)</a>，它是 ASP.NET： <a href="/dotnet/api/system.web.httpapplication.beginrequest">BeginRequest</a>、 <a href="/dotnet/api/system.web.httpapplication.authenticaterequest">AuthenticateRequest</a>等引发的序列事件。每个模块都可以为一个或多个事件创建处理程序。</p>
+</li>
+<li><p>对于同一事件，在 <em>Web.config</em> 中配置它们的顺序。</p>
+</li>
+</ol>
+<p>除了模块外，还可以将生命周期事件的处理程序添加到 <em>Global.asax.cs</em> 文件。 这些处理程序在配置的模块中的处理程序之后运行。</p>
+<h2 id="from-handlers-and-modules-to-middleware">从处理程序和模块到中间件</h2>
+<p><strong>中间件比 HTTP 模块和处理程序更简单：</strong></p>
+<ul>
+<li><p>除 IIS 配置) 和应用程序生命周期外，模块、处理程序、 <em>Global.asax.cs</em> 、 <em>Web.config</em> (</p>
+</li>
+<li><p>中间件已使用模块和处理程序的角色</p>
+</li>
+<li><p>中间件使用代码而不是 <em>Web.config</em> 来配置</p>
+</li>
+</ul>
+<div range="&gt;= aspnetcore-3.0">
+<ul>
+<li>通过<a class="xref" href="../fundamentals/middleware/index.html#branch-the-middleware-pipeline">管道分支</a>，你可以将请求发送到特定的中间件，不仅可以基于 URL，还可以发送到请求标头、查询字符串等。</li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<ul>
+<li>通过<a class="xref" href="../fundamentals/middleware/index.html#use-run-and-map">管道分支</a>，你可以将请求发送到特定的中间件，不仅可以基于 URL，还可以发送到请求标头、查询字符串等。</li>
+</ul>
+</div>
+<p><strong>中间件非常类似于模块：</strong></p>
+<ul>
+<li><p>为每个请求按原则调用</p>
+</li>
+<li><p>无法将<a href="#http-modules-shortcircuiting-middleware">请求传递给下一个中间件</a>来对请求进行短线路</p>
+</li>
+<li><p>能够创建自己的 HTTP 响应</p>
+</li>
+</ul>
+<p><strong>中间件和模块按不同的顺序进行处理：</strong></p>
+<ul>
+<li><p>中间件的顺序取决于它们插入请求管道的顺序，而模块的顺序主要基于 <a href="https://docs.microsoft.com/previous-versions/ms227673(v=vs.140)">https://docs.microsoft.com/previous-versions/ms227673(v=vs.140)</a> 事件</p>
+</li>
+<li><p>响应的中间件顺序与请求的顺序相反，而对于请求和响应，模块的顺序是相同的。</p>
+</li>
+<li><p>请参阅 <a class="xref" href="../fundamentals/middleware/index.html#create-a-middleware-pipeline-with-iapplicationbuilder">使用 IApplicationBuilder 创建中间件管道</a></p>
+</li>
+</ul>
+<p><img src="http-modules/_static/middleware.png" alt="中间件"></p>
+<p>请注意，在上图中，身份验证中间件与请求短路。</p>
+<h2 id="migrating-module-code-to-middleware">将模块代码迁移到中间件</h2>
+<p>现有 HTTP 模块如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如 <a class="xref" href="../fundamentals/middleware/index.html">中间件</a> 页中所示，ASP.NET Core 中间件是一个类，该类公开 <code>Invoke</code> 采用 <code>HttpContext</code> 并返回的方法 <code>Task</code> 。 新的中间件将如下所示：</p>
+<p><a name="http-modules-usemiddleware"></a></p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的中间件模板取自 <a class="xref" href="../fundamentals/middleware/write.html">编写中间件</a>的部分。</p>
+<p><em>MyMiddlewareExtensions</em> helper 类使你可以更轻松地在类中配置中间件 <code>Startup</code> 。 <code>UseMyMiddleware</code>方法将中间件类添加到请求管道。 中间件的构造函数中插入了中间件所需的服务。</p>
+<p><a name="http-modules-shortcircuiting-middleware"></a></p>
+<p>如果用户未获得授权，则模块可能会终止请求：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>中间件通过不调用 <code>Invoke</code> 管道中的下一个中间件来处理这种情况。 请记住，这并不完全终止请求，因为当响应通过管道返回以前的中间件时，仍然会调用以前的。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>当您将模块的功能迁移到新的中间件时，您可能会发现您的代码不会进行编译，因为 <code>HttpContext</code> 在 ASP.NET Core 中，类发生了重大更改。 <a href="#migrating-to-the-new-httpcontext">稍后</a>，你将了解如何迁移到新的 ASP.NET Core HttpContext。</p>
+<h2 id="migrating-module-insertion-into-the-request-pipeline">将模块插入迁移到请求管道中</h2>
+<p>通常使用 <em>Web.config</em> 将 HTTP 模块添加到请求管道：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过在类中将 <a class="xref" href="../fundamentals/middleware/index.html#create-a-middleware-pipeline-with-iapplicationbuilder">新的中间件添加</a> 到请求管道来转换此项 <code>Startup</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>插入新中间件的管道中的确切位置取决于它作为模块处理的事件 <code>BeginRequest</code> ， (、等 <code>EndRequest</code> ) 及其在 <em>Web.config</em> 的模块列表中的顺序。</p>
+<p>如前所述，ASP.NET Core 中没有应用程序生命周期，中间件的处理响应顺序与模块使用的顺序不同。 这可能会使你的排序决策更具挑战性。</p>
+<p>如果排序会成为一个问题，则可以将模块拆分为多个中间件组件，这些组件可以独立排序。</p>
+<h2 id="migrating-handler-code-to-middleware">将处理程序代码迁移到中间件</h2>
+<p>HTTP 处理程序如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 ASP.NET Core 项目中，将其转换为类似于下面的中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此中间件与与模块对应的中间件非常类似。 唯一的区别在于，这里不会调用 <code>_next.Invoke(context)</code> 。 这样做很有意义，因为处理程序位于请求管道的末尾，因此没有要调用的下一个中间件。</p>
+<h2 id="migrating-handler-insertion-into-the-request-pipeline">将处理程序插入迁移到请求管道中</h2>
+<p>配置 HTTP 处理程序是在 <em>Web.config</em> 中完成的，如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以通过将新的处理程序中间件添加到类中的请求管道来转换此转换 <code>Startup</code> ，类似于从模块转换的中间件。 此方法的问题是，它会将所有请求发送到新的处理程序中间件。 但是，只需要具有给定扩展的请求来访问中间件。 这将为你提供与 HTTP 处理程序相同的功能。</p>
+<p>一种解决方法是使用扩展方法分支具有给定扩展的请求的管道 <code>MapWhen</code> 。 可在 <code>Configure</code> 添加其他中间件的相同方法中执行此操作：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MapWhen</code> 采用以下参数：</p>
+<ol>
+<li><p>一个采用的 lambda， <code>HttpContext</code> <code>true</code> 如果请求应向下分支，则返回。 这意味着，不仅可以根据请求的扩展来分支请求，还可以处理请求标头、查询字符串参数等。</p>
+</li>
+<li><p>一个采用 <code>IApplicationBuilder</code> 并添加分支的所有中间件的 lambda。 这意味着，可以将其他中间件添加到处理程序中间件前面的分支。</p>
+</li>
+</ol>
+<p>将在所有请求上调用分支之前添加到管道的中间件;该分支不会对它们产生任何影响。</p>
+<h2 id="loading-middleware-options-using-the-options-pattern">使用 options 模式加载中间件选项</h2>
+<p>某些模块和处理程序具有存储在 <em>Web.config</em> 中的配置选项。但是，在 ASP.NET Core 新的配置模型用于代替 <em>Web.config</em> 。</p>
+<p>新 <a class="xref" href="../fundamentals/configuration/index.html">配置系统</a> 提供以下选项来解决此类情况：</p>
+<ul>
+<li><p>将选项直接注入中间件，如下 <a href="#loading-middleware-options-through-direct-injection">一节</a>所示。</p>
+</li>
+<li><p>使用 <a class="xref" href="../fundamentals/configuration/options.html">options 模式</a>：</p>
+</li>
+</ul>
+<ol>
+<li><p>创建用于保存中间件选项的类，例如：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>存储选项值</p>
+<p>配置系统允许您将选项值存储在任何所需的位置。 但是，大多数站点 <em>appsettings.json</em> 都使用，因此我们将采取这种方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><em>MyMiddlewareOptionsSection</em> 是部分名称。 它不必与 options 类的名称相同。</p>
+</li>
+<li><p>将选项值与 options 类相关联</p>
+<p>Options 模式使用 ASP.NET Core 的依赖项注入框架将选项类型 (例如 <code>MyMiddlewareOptions</code>) 与 <code>MyMiddlewareOptions</code> 具有实际选项的对象相关联。</p>
+<p>更新你的 <code>Startup</code> 类：</p>
+<ol>
+<li><p>如果使用的是 <em>appsettings.json</em> ，请将其添加到构造函数中的配置生成器 <code>Startup</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>配置 options 服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>将选项与 options 类相关联：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+</ol>
+</li>
+<li><p>将选项注入中间件构造函数。 这类似于将选项注入控制器。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将中间件添加到中的 <a href="#http-modules-usemiddleware">UseMiddleware</a> 扩展方法 <code>IApplicationBuilder</code> 会处理依赖关系注入。</p>
+<p>这并不限于 <code>IOptions</code> 对象。 中间件所需的任何其他对象都可以通过这种方式注入。</p>
+</li>
+</ol>
+<h2 id="loading-middleware-options-through-direct-injection">通过直接注入加载中间件选项</h2>
+<p>Options 模式的优点在于，它在选项值与其使用者之间产生松散耦合。 将选项类与实际选项值相关联后，任何其他类都可以通过依赖关系注入框架访问这些选项。 无需围绕选项值进行传递。</p>
+<p>如果要使用不同的选项两次使用同一中间件，则会出现这种情况。 例如，在不同的分支中使用的授权中间件允许不同角色。 不能将两个不同的选项对象与一个 options 类相关联。</p>
+<p>解决方法是在类中获取选项对象，并将其 <code>Startup</code> 直接传递给中间件的每个实例。</p>
+<ol>
+<li><p>将第二个键添加到 <em>appsettings.json</em></p>
+<p>若要将第二组选项添加到 <em>appsettings.json</em> 文件中，请使用新密钥来唯一标识它：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>检索选项值并将其传递给中间件。 <code>Use...</code>将中间件添加到管道的扩展方法 () 是要传入选项值的逻辑位置：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>启用中间件以采用 options 参数。 提供 <code>Use...</code> 扩展方法 (的重载，该重载采用 options 参数，并将其传递给 <code>UseMiddleware</code>) 。 当 <code>UseMiddleware</code> 用参数调用时，它会在实例化中间件对象时将参数传递给中间件构造函数。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请注意这如何包装对象中的选项对象 <code>OptionsWrapper</code> 。 这实现 <code>IOptions</code> 了中间件构造函数的预期。</p>
+</li>
+</ol>
+<h2 id="migrating-to-the-new-httpcontext">迁移到新的 HttpContext</h2>
+<p>你以前看到， <code>Invoke</code> 中间件中的方法采用类型为的参数 <code>HttpContext</code> ：</p>
+<pre><code class="lang-csharp">public async Task Invoke(HttpContext context)
+</code></pre>
+<p><code>HttpContext</code> 在 ASP.NET Core 中进行了重大更改。 本部分演示如何将 system.servicemodel 最 <a href="/dotnet/api/system.web.httpcontext">常用的属性转换为新</a> 的 <code>Microsoft.AspNetCore.Http.HttpContext</code> 。</p>
+<h3 id="httpcontext">HttpContext</h3>
+<p><strong>HttpContext</strong> 会转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>唯一的请求 ID (不)</strong></p>
+<p>提供每个请求的唯一 id。 在日志中包含非常有用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="httpcontextrequest">Httpcontext.current 请求</h3>
+<p><strong>HttpMethod</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>HttpContext</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>Httpcontext.current</strong> 转换为（ <strong>RawUrl</strong> ）：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>IsSecureConnection</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>UserHostAddress</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>Httpcontext.current Cookie 。s</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>RequestContext RouteData</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>Httpcontext.current</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>UserAgent</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>UrlReferrer</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>HttpContext</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>Httpcontext.current</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>仅当 content 子类型为 <em>x-www-url 编码</em> 或 <em>窗体数据</em> 时才读取窗体值。</p>
+</div>
+<p><strong>InputStream</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>仅在管道末尾的处理程序类型中间件中使用此代码。</p>
+<p>对于每个请求，可以读取上面所示的原始主体。 第一次读取后尝试读取正文的中间件将读取空正文。</p>
+<p>这并不适用于读取如上所示的窗体，因为这是从缓冲区中完成的。</p>
+</div>
+<h3 id="httpcontextresponse">HttpContext 响应</h3>
+<p><strong>Httpcontext.current</strong> 转换为（ <strong>StatusDescription</strong> ）：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>ContentEncoding</strong> 和 <strong>httpcontext</strong> 转换为以下内容：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>Httpcontext.current</strong> 还会转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>Httpcontext.current</strong> 转换为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>TransmitFile</strong></p>
+<p><a class="xref" href="../fundamentals/request-features.html#middleware-and-request-features">中间件和请求功能</a>中讨论了如何提供文件。</p>
+<p><strong>Httpcontext.current 标头</strong></p>
+<p>发送响应标头比较复杂，因为如果在将任何内容写入响应正文后设置这些标头，则不会发送这些标头。</p>
+<p>解决方法是设置一个回调方法，该方法将在开始写入响应之前被调用。 最好在中间件中的方法的开头完成此操作 <code>Invoke</code> 。 这是设置响应标头的此回调方法。</p>
+<p>下面的代码设置一个名为的回调方法 <code>SetHeaders</code> ：</p>
+<pre><code class="lang-csharp">public async Task Invoke(HttpContext httpContext)
+{
+    // ...
+    httpContext.Response.OnStarting(SetHeaders, state: httpContext);
+</code></pre>
+<p><code>SetHeaders</code>回调方法将如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>HttpContext 响应。 Cookie些</strong></p>
+<p>Cookie在 <em>设置 Cookie</em> 响应标头中传递到浏览器。 因此，发送需要与 cookie 用于发送响应标头的回调相同：</p>
+<pre><code class="lang-csharp">public async Task Invoke(HttpContext httpContext)
+{
+    // ...
+    httpContext.Response.OnStarting(SetCookies, state: httpContext);
+    httpContext.Response.OnStarting(SetHeaders, state: httpContext);
+</code></pre>
+<p><code>SetCookies</code>回调方法将如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/iis/configuration/system.webserver/">HTTP 处理程序和 HTTP 模块概述</a></li>
+<li><a class="xref" href="../fundamentals/configuration/index.html">配置</a></li>
+<li><a class="xref" href="../fundamentals/startup.html">应用程序启动</a></li>
+<li><a class="xref" href="../fundamentals/middleware/index.html">中间件</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

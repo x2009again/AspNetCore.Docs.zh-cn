@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; C# &#30340; gRPC &#26381;&#21153; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; C# &#30340; gRPC &#26381;&#21153; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/basics">
+<h1 id="grpc-services-with-c">使用 C# 的 gRPC 服务</h1>
+
+<p>本文档概述在 C# 中编写 <a href="https://grpc.io/docs/guides/">gRPC</a> 应用所需的概念。 此处涵盖的主题适用于基于 <a href="https://grpc.io/blog/grpc-stacks">C-core</a> 和基于 ASP.NET Core 的 gRPC 应用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Azure 应用服务或 IIS 当前不支持 <a class="xref" href="index.html">ASP.NET Core gRPC</a>。 Http.Sys 的 HTTP/2 实现不支持 gRPC 依赖的 HTTP 响应尾随标头。 有关详细信息，请参阅<a href="https://github.com/dotnet/AspNetCore/issues/9020">此 GitHub 问题</a>。</p>
+</div>
+<h2 id="proto-file">proto 文件</h2>
+<p>gRPC 使用协定优先方法进行 API 开发。 默认情况下，协议缓冲区 (protobuf) 用作接口定义语言 (IDL)。 *.proto 文件包含：</p>
+<ul>
+<li>gRPC 服务的定义。</li>
+<li>在客户端与服务器之间发送的消息。</li>
+</ul>
+<p>有关 protobuf 文件语法的详细信息，请参阅 <a class="xref" href="protobuf.html">为 .NET 应用创建 Protobuf 消息</a>。</p>
+<p>例如，请考虑<a class="xref" href="../tutorials/grpc/grpc-start.html">开始使用 gRPC 服务</a>中使用的 greet.proto 文件：</p>
+<ul>
+<li>定义 <code>Greeter</code> 服务。</li>
+<li><code>Greeter</code> 服务定义 <code>SayHello</code> 调用。</li>
+<li><code>SayHello</code> 发送 <code>HelloRequest</code> 消息并接收 <code>HelloReply</code> 消息：</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>若要查看翻译为非英语语言的代码注释，请在 <a href="https://github.com/MicrosoftDocs/feedback/issues/2515">此 GitHub 讨论问题</a>中告诉我们。</p>
+<h2 id="add-a-proto-file-to-a-c-app">将 .proto 文件添加到 C# 应用</h2>
+<p>通过将 *.proto 文件添加到 <code>&lt;Protobuf&gt;</code> 项组中，可将该文件包含在项目中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>默认情况下，<code>&lt;Protobuf&gt;</code> 引用将生成具体的客户端和服务基类。 可使用引用元素的 <code>GrpcServices</code> 特性来限制 C# 资产生成。 有效 <code>GrpcServices</code> 选项如下：</p>
+<ul>
+<li><code>Both</code>（如果不存在，则为默认值）</li>
+<li><code>Server</code></li>
+<li><code>Client</code></li>
+<li><code>None</code></li>
+</ul>
+<h2 id="c-tooling-support-for-proto-files">.proto 文件的 C# 工具支持</h2>
+<p>需要工具包 <a href="https://www.nuget.org/packages/Grpc.Tools/">Grpc.Tools</a> 才能从 *.proto 文件生成 C# 资产。 生成的资产（文件）：</p>
+<ul>
+<li>在每次生成项目时按需生成。</li>
+<li>不会添加到项目中或是签入到源代码管理中。</li>
+<li>是包含在 obj 目录中的生成工件。</li>
+</ul>
+<p>服务器和客户端项目都需要此包。 <code>Grpc.AspNetCore</code> 元包中包含对 <code>Grpc.Tools</code> 的引用。 服务器项目可以使用 Visual Studio 中的包管理器或通过将 <code>&lt;PackageReference&gt;</code> 添加到项目文件来添加 <code>Grpc.AspNetCore</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>客户端项目应直接引用 <code>Grpc.Tools</code> 以及使用 gRPC 客户端所需的其他包。 运行时不需要工具包，因此依赖项标记为 <code>PrivateAssets=&quot;All&quot;</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="generated-c-assets">生成的 C# 资产</h2>
+<p>工具包会生成表示在所包含 *.proto 文件中定义的消息的 C# 类型。</p>
+<p>对于服务器端资产，会生成抽象服务基类型。 基类型包含 .proto 文件中包含的所有 gRPC 调用的定义。 创建一个派生自此基类型并为 gRPC 调用实现逻辑的具体服务实现。 对于 <code>greet.proto</code>（前面所述的示例），会生成一个包含虚拟 <code>SayHello</code> 方法的抽象 <code>GreeterBase</code> 类型。 具体实现 <code>GreeterService</code> 会替代该方法，并实现处理 gRPC 调用的逻辑。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>对于客户端资产，会生成一个具体客户端类型。 .proto 文件中的 gRPC 调用会转换为具体类型中的方法，可以进行调用。 对于 <code>greet.proto</code>（前面所述的示例），会生成一个 <code>GreeterClient</code> 类型。 调用 <code>GreeterClient.SayHelloAsync</code> 以发起对服务器的 gRPC 调用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>默认情况下，会为 <code>&lt;Protobuf&gt;</code> 项组中包含的每个 *.proto 文件都生成服务器和客户端资产。 若要确保服务器项目中仅生成服务器资产，请将 <code>GrpcServices</code> 属性设置为 <code>Server</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>同样，该属性在客户端项目中设置为 <code>Client</code>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="index.html">.NET Core 上的 gRPC 的简介</a></li>
+<li><a class="xref" href="../tutorials/grpc/grpc-start.html">在 ASP.NET Core 中创建 .NET Core gRPC 客户端和服务器</a></li>
+<li><a class="xref" href="aspnetcore.html">使用 ASP.NET Core 的 gRPC 服务</a></li>
+<li><a class="xref" href="client.html">使用 .NET 客户端调用 gRPC 服务</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

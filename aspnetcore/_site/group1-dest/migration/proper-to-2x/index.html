@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20174; ASP.NET &#36801;&#31227;&#21040; ASP.NET Core </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20174; ASP.NET &#36801;&#31227;&#21040; ASP.NET Core ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="migration/proper-to-2x/index">
+<h1 id="migrate-from-aspnet-to-aspnet-core">从 ASP.NET 迁移到 ASP.NET Core</h1>
+
+<p>作者：<a href="https://isaaclevin.com">Isaac Levin</a></p>
+<p>本文可作为从 ASP.NET 应用迁移到 ASP.NET Core 的参考指南。</p>
+<h2 id="prerequisites">先决条件</h2>
+<p><a href="https://dotnet.microsoft.com/download">.NET Core SDK 2.2 或更高版本</a></p>
+<h2 id="target-frameworks">目标框架</h2>
+<p>ASP.NET Core 项目为开发人员提供了面向 .NET Core 和/或 .NET Framework 的灵活性。 若要确定最合适的目标框架，请参阅<a href="/dotnet/standard/choosing-core-framework-server">为服务器应用选择 .NET Core 或 .NET Framework</a>。</p>
+<p>面向 .NET Framework 时，项目需要引用单个 NuGet 包。</p>
+<p>得益于有 ASP.NET Core <a class="xref" href="../../fundamentals/metapackage-app.html">元包</a>，面向 .NET Core 时可以避免进行大量的显式包引用。 在项目中安装 <code>Microsoft.AspNetCore.App</code> 元包：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+   &lt;PackageReference Include=&quot;Microsoft.AspNetCore.App&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>使用此元包时，应用不会部署元包中引用的任何包。 .NET Core 运行时存储中包含这些资产，并已预编译，旨在提升性能。 如需了解更多详情，请参阅<a class="xref" href="../../fundamentals/metapackage-app.html">用于 ASP.NET Core 的 Microsoft.AspNetCore.App 元包</a>。</p>
+<h2 id="project-structure-differences">项目结构差异</h2>
+<p>ASP.NET Core 中简化了 .csproj 文件格式。 下面是一些显著的更改：</p>
+<ul>
+<li><p>无需显式添加，即可将文件视作项目的一部分。 服务于大型团队时，这可减少出现 XML 合并冲突的风险。</p>
+</li>
+<li><p>没有对其他项目的基于 GUID 的引用，这可以提高文件的可读性。</p>
+</li>
+<li><p>无需在 Visual Studio 中卸载文件即可对它进行编辑：</p>
+<p><img src="_static/EditProjectVs2017.png" alt="Visual Studio 2017 中的“编辑 CSPROJ”上下文菜单选项"></p>
+</li>
+</ul>
+<h2 id="globalasax-file-replacement">Global.asax 文件替换</h2>
+<p>ASP.NET Core 引入了启动应用的新机制。 ASP.NET 应用程序的入口点是 Global.asax 文件。 路由配置及筛选器和区域注册等任务在 Global.asax 文件中进行处理。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法会将应用程序和应用程序要部署到的服务器耦合在一起，并且它们的耦合方式会干扰实现。 为了将它们分离，引入了 <a href="https://owin.org/">OWIN</a> 来提供一种更为简便的同时使用多个框架的方法。 OWIN 提供了一个管道，可以只添加所需的模块。 托管环境使用 <a class="xref" href="../../fundamentals/startup.html">Startup</a> 函数配置服务和应用的请求管道。 <code>Startup</code> 在应用程序中注册一组中间件。 对于每个请求，应用程序都使用现有处理程序集的链接列表的头指针调用各个中间件组件。 每个中间件组件可以向请求处理管道添加一个或多个处理程序。 为此，需要返回对成为列表新头的处理程序的引用。 每个处理程序负责记住并调用列表中的下一个处理程序。 使用 ASP.NET Core 时，应用程序的入口点是 <code>Startup</code>，不再具有 Global.asax 的依赖关系。 结合使用 OWIN 和 .NET Framework 时，使用的管道应如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>这会配置默认路由，默认为 XmlSerialization 而不是 Json。 根据需要向此管道添加其他中间件（加载服务、配置设置、静态文件等）。</p>
+<p>ASP.NET Core 使用相似的方法，但是不依赖 OWIN 处理条目。 而是通过 Program.cs <code>Main</code> 方法（类似于控制台应用程序）来完成，并且 <code>Startup</code> 会通过该处进行加载。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Startup</code> 必须包含 <code>Configure</code> 方法。 在 <code>Configure</code> 中，向管道添加必要的中间件。 在下面的示例（来自默认网站模板）中，扩展方法为管道配置以下支持：</p>
+<ul>
+<li>错误页</li>
+<li>HTTP 严格传输安全</li>
+<li>从 HTTP 重定向到 HTTPS</li>
+<li>ASP.NET Core MVC</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>现在主机和应用程序已分离，这样将来就可以灵活地迁移到其他平台。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>若要获取 ASP.NET Core Startup 和中间件的更深入的参考信息，请参阅 <a class="xref" href="../../fundamentals/startup.html">ASP.NET Core 中的 Startup</a></p>
+</div>
+<h2 id="store-configurations">存储配置</h2>
+<p>ASP.NET 支持存储设置。 这些设置可用于支持应用程序已部署到的环境（以此用途为例）。 常见做法是将所有的自定义键值对存储在 Web.config 文件的 <code>&lt;appSettings&gt;</code> 部分中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>应用程序使用 <code>System.Configuration</code> 命名空间中的 <code>ConfigurationManager.AppSettings</code> 集合读取这些设置：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>ASP.NET Core 可以将应用程序的配置数据存储在任何文件中，并可在启动中间件的过程中加载它们。 项目模板中使用的默认文件是 appsettings.json：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将此文件加载到应用程序内的 <code>IConfiguration</code> 的实例的过程在 Startup.cs 中完成：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>应用读取 <code>Configuration</code> 来获得这些设置：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法有扩展项，它们可使此过程更加可靠，例如使用<a class="xref" href="../../fundamentals/dependency-injection.html">依存关系注入</a> (DI) 来加载使用这些值的服务。 DI 方法提供了一组强类型的配置对象。</p>
+<pre><code class="lang-csharp">// Assume AppConfiguration is a class representing a strongly-typed version of AppConfiguration section
+services.Configure&lt;AppConfiguration&gt;(Configuration.GetSection(&quot;AppConfiguration&quot;));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>若要获取 ASP.NET Core 配置的更深入的参考信息，请参阅 <a class="xref" href="../../fundamentals/configuration/index.html">ASP.NET Core 中的配置</a>。</p>
+</div>
+<h2 id="native-dependency-injection">本机依存关系注入</h2>
+<p>生成大型可缩放应用程序时，一个重要的目标是将组件和服务松散耦合。 <a class="xref" href="../../fundamentals/dependency-injection.html">依赖项注入</a>不仅是可实现此目标的常用技术，还是 ASP.NET Core 的本机组件。</p>
+<p>在 ASP.NET 应用中，开发人员依赖第三方库实现依存关系注入。 其中的一个库是 Microsoft 模式和做法提供的 <a href="https://github.com/unitycontainer/unity">Unity</a>。</p>
+<p>实现打包 <code>UnityContainer</code> 的 <code>IDependencyResolver</code> 是使用 Unity 设置依存关系注入的一个示例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建 <code>UnityContainer</code> 的实例，注册服务，然后将 <code>HttpConfiguration</code> 的依赖关系解析程序设置为容器的 <code>UnityResolver</code> 新实例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在必要时注入 <code>IProductRepository</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>由于依存关系注入是 ASP.NET Core 的组成部分，因此可以在 Startup.cs 的 <code>ConfigureServices</code> 方法中添加你的服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可在任意位置注入存储库，Unity 亦是如此。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>有关依赖关系注入的详细信息，请参阅<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>。</p>
+</div>
+<h2 id="serve-static-files">提供静态文件</h2>
+<p>Web 开发的一个重要环节是提供客户端静态资产的功能。 HTML、CSS、Javascript 和图像是最常见的静态文件示例。 这些文件需要保存在应用（或 CDN）的发布位置中，并且需要引用它们，以便请求可以加载这些文件。 在 ASP.NET Core 中，此过程发生了变化。</p>
+<p>在 ASP.NET 中，静态文件存储在各种目录中，并在视图中进行引用。</p>
+<p>在 ASP.NET Core 中，静态文件存储在“Web 根”（&lt;内容根&gt;/wwwroot）中，除非另有配置。 通过从 <code>Startup.Configure</code> 调用 <code>UseStaticFiles</code> 扩展方法将这些文件加载到请求管道中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>如果面向 .NET Framework，请安装 NuGet 包 <code>Microsoft.AspNetCore.StaticFiles</code>。</p>
+</div>
+<p>例如，可以通过浏览器从类似 <code>http://&lt;app&gt;/images/&lt;imageFileName&gt;</code> 的位置访问 wwwroot/images 文件夹中的图像资产。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>若要获取在 ASP.NET Core 中提供静态文件的更深入的参考信息，请参阅<a class="xref" href="../../fundamentals/static-files.html">静态文件</a>。</p>
+</div>
+<h2 id="multi-value-no-loccookies">多值 cookie</h2>
+<p>ASP.NET Core 不支持<a href="xref:System.Web.HttpCookie.Values">多值 cookie</a>。 为每个值创建一个 cookie。</p>
+<h2 id="partial-app-migration">部分应用迁移</h2>
+<p>部分应用迁移的一种方法是创建 IIS 子应用程序，只将特定的路由从 ASP.NET 4.x 迁移到 ASP.NET Core，同时保留应用的 URL 结构。 例如，applicationHost.config 文件中应用的 URL 结构：</p>
+<pre><code class="lang-xml">&lt;sites&gt;
+    &lt;site name=&quot;Default Web Site&quot; id=&quot;1&quot; serverAutoStart=&quot;true&quot;&gt;
+        &lt;application path=&quot;/&quot;&gt;
+            &lt;virtualDirectory path=&quot;/&quot; physicalPath=&quot;D:\sites\MainSite\&quot; /&gt;
+        &lt;/application&gt;
+        &lt;application path=&quot;/api&quot; applicationPool=&quot;DefaultAppPool&quot;&gt;
+            &lt;virtualDirectory path=&quot;/&quot; physicalPath=&quot;D:\sites\netcoreapi&quot; /&gt;
+        &lt;/application&gt;
+        &lt;bindings&gt;
+            &lt;binding protocol=&quot;http&quot; bindingInformation=&quot;*:80:&quot; /&gt;
+            &lt;binding protocol=&quot;https&quot; bindingInformation=&quot;*:443:&quot; sslFlags=&quot;0&quot; /&gt;
+        &lt;/bindings&gt;
+    &lt;/site&gt;
+    ...
+&lt;/sites&gt;
+</code></pre>
+<p>目录结构：</p>
+<pre><code>.
+├── MainSite
+│   ├── ...
+│   └── Web.config
+└── NetCoreApi
+    ├── ...
+    └── web.config
+</code></pre>
+<h2 id="bind-and-input-formatters">[BIND] 和输入格式化程序</h2>
+<p><a href="/aspnet/mvc/overview/getting-started/introduction/examining-the-edit-methods-and-edit-view">ASP.NET 早期版本</a>使用 <code>[Bind]</code> 属性防止“过多发布”攻击。 在 ASP.NET Core 中，<a class="xref" href="../../mvc/models/model-binding.html#input-formatters">输入格式化程序</a>的工作方式有所不同。 与输入格式化程序一起用于分析 JSON 或 XML 时，<code>[Bind]</code> 属性不再专用于防止过多发布。 数据源是使用 <code>x-www-form-urlencoded</code> 内容类型发布的表单数据时，这些属性会影响模型绑定。</p>
+<p>对于将 JSON 信息发布到控制器并使用 JSON 输入格式化程序分析数据的应用程序，我们建议将 <code>[Bind]</code> 属性替换为与 <code>[Bind]</code> 属性定义的属性相匹配的视图模型。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/core/porting/libraries">将库移植到 .NET Core</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20174; ASP.NET Core Blazor WebAssembly &#35843;&#29992; Web API </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20174; ASP.NET Core Blazor WebAssembly &#35843;&#29992; Web API ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/call-web-api">
+<h1 id="call-a-web-api-from-aspnet-core-no-locblazor">从 ASP.NET Core Blazor 调用 Web API</h1>
+
+<p>作者：<a href="https://github.com/guardrex">Luke Latham</a>、<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/juandelacruz23">Juan De la Cruz</a></p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>本主题适用于 Blazor WebAssembly。 <a class="xref" href="hosting-models.html#blazor-server">Blazor Server</a> 应用使用 &lt;xref:System.Net.Http.HttpClient&gt; 实例（通常是使用 &lt;xref:System.Net.Http.IHttpClientFactory&gt; 创建）调用 Web API。 有关适用于 Blazor Server 的指南，请参阅 <a class="xref" href="../fundamentals/http-requests.html">在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求</a>。</p>
+</div>
+<p><a class="xref" href="hosting-models.html#blazor-webassembly">Blazor WebAssembly</a> 应用使用预配置的 &lt;xref:System.Net.Http.HttpClient&gt; 服务调用 Web API。 使用 Blazor JSON 帮助程序或通过 &lt;xref:System.Net.Http.HttpRequestMessage&gt; 撰写请求，其中可以包含 JavaScript <a href="https://developer.mozilla.org/docs/Web/API/Fetch_API">Fetch API </a> 选项。 Blazor WebAssembly 应用中的 &lt;xref:System.Net.Http.HttpClient&gt; 服务侧重于使请求返回源服务器。 本主题中的指导仅适用于 Blazor WebAssembly 应用。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/common/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）：选择 <code>BlazorWebAssemblySample</code> 应用。</p>
+<p>请查看 <code>BlazorWebAssemblySample</code> 示例应用中的以下组件：</p>
+<ul>
+<li>调用 Web API (<code>Pages/CallWebAPI.razor</code>)</li>
+<li>HTTP 请求测试程序 (<code>Components/HTTPRequestTester.razor</code>)</li>
+</ul>
+<h2 id="packages">package</h2>
+<p>在项目文件中引用 <a href="https://www.nuget.org/packages/System.Net.Http.Json"><code>System.Net.Http.Json</code></a> NuGet 包。</p>
+<h2 id="add-the-httpclient-service">添加 HttpClient 服务</h2>
+<p>在 <code>Program.Main</code> 中个，如果 &lt;xref:System.Net.Http.HttpClient&gt; 服务尚不存在，则添加它：</p>
+<pre><code class="lang-csharp">builder.Services.AddScoped(sp =&gt; 
+    new HttpClient
+    {
+        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    });
+</code></pre>
+<h2 id="httpclient-and-json-helpers">HttpClient 和 JSON 帮助程序</h2>
+<p>在 Blazor WebAssembly 应用中，<a class="xref" href="../fundamentals/http-requests.html"><code>HttpClient</code></a> 作为预配置服务提供，用于使请求返回源服务器。</p>
+<p>默认情况下，Blazor Server 应用不包含 &lt;xref:System.Net.Http.HttpClient&gt; 服务。 使用 <a class="xref" href="../fundamentals/http-requests.html"><code>HttpClient</code> 工厂基础结构</a>向应用提供 &lt;xref:System.Net.Http.HttpClient&gt;。</p>
+<p>&lt;xref:System.Net.Http.HttpClient&gt; 和 JSON 帮助程序还用于调用第三方 Web API 终结点。 &lt;xref:System.Net.Http.HttpClient&gt; 使用浏览器 <a href="https://developer.mozilla.org/docs/Web/API/Fetch_API">Fetch API</a> 来实现，受其限制制约，包括强制实施相同初始策略。</p>
+<p>客户端的基址设置为原始服务器的地址。 使用 <a class="xref" href="../mvc/views/razor.html#inject"><code>@inject</code></a> 指令插入 &lt;xref:System.Net.Http.HttpClient&gt; 实例：</p>
+<pre><code class="lang-razor">@using System.Net.Http
+@inject HttpClient Http
+</code></pre>
+<p>在下面的示例中，Todo Web API 处理创建、读取、更新和删除 (CRUD) 操作。 这些示例基于存储以下内容的 <code>TodoItem</code> 类：</p>
+<ul>
+<li>ID（<code>Id</code>、<code>long</code>）：项的唯一 ID。</li>
+<li>名称（<code>Name</code>、<code>string</code>）：项的名称。</li>
+<li>状态（<code>IsComplete</code>、<code>bool</code>）：指明 Todo 项是否已完成。</li>
+</ul>
+<pre><code class="lang-csharp">private class TodoItem
+{
+    public long Id { get; set; }
+    public string Name { get; set; }
+    public bool IsComplete { get; set; }
+}
+</code></pre>
+<p>JSON 帮助程序方法将请求发送到 URI（以下示例中的 Web API）并处理响应：</p>
+<ul>
+<li><p>&lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.GetFromJsonAsync%2A&gt;：发送 HTTP GET 请求，并分析 JSON 响应正文来创建对象。</p>
+<p>在下面的代码中，<code>todoItems</code> 由组件显示。 当组件完成呈现 (<a class="xref" href="components/lifecycle.html#component-initialization-methods"><code>OnInitializedAsync</code></a>) 时，会触发 <code>GetTodoItems</code> 方法。 有关完整的示例，请参阅示例应用。</p>
+<pre><code class="lang-razor">@using System.Net.Http
+@inject HttpClient Http
+
+@code {
+    private TodoItem[] todoItems;
+
+    protected override async Task OnInitializedAsync() =&gt; 
+        todoItems = await Http.GetFromJsonAsync&lt;TodoItem[]&gt;(&quot;api/TodoItems&quot;);
+}
+</code></pre>
+</li>
+<li><p>&lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.PostAsJsonAsync%2A&gt;：发送 HTTP POST 请求（包括 JSON 编码的内容），并分析 JSON 响应正文来创建对象。</p>
+<p>在下面的代码中，<code>newItemName</code> 由组件的绑定元素提供。 通过选择 <code>&lt;button&gt;</code> 元素来触发 <code>AddItem</code> 方法。 有关完整的示例，请参阅示例应用。</p>
+<pre><code class="lang-razor">@using System.Net.Http
+@inject HttpClient Http
+
+&lt;input @bind=&quot;newItemName&quot; placeholder=&quot;New Todo Item&quot; /&gt;
+&lt;button @onclick=&quot;@AddItem&quot;&gt;Add&lt;/button&gt;
+
+@code {
+    private string newItemName;
+
+    private async Task AddItem()
+    {
+        var addItem = new TodoItem { Name = newItemName, IsComplete = false };
+        await Http.PostAsJsonAsync(&quot;api/TodoItems&quot;, addItem);
+    }
+}
+</code></pre>
+<p>调用 &lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.PostAsJsonAsync%2A&gt; 会返回 &lt;xref:System.Net.Http.HttpResponseMessage&gt;。 若要对响应消息中的 JSON 内容进行反序列化处理，请使用 <code>ReadFromJsonAsync&lt;T&gt;</code> 扩展方法：</p>
+<pre><code class="lang-csharp">var content = response.Content.ReadFromJsonAsync&lt;WeatherForecast&gt;();
+</code></pre>
+</li>
+<li><p>&lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.PutAsJsonAsync%2A&gt;：发送 HTTP PUT 请求（包括 JSON 编码的内容）。</p>
+<p>在下面的代码中，<code>Name</code> 和 <code>IsCompleted</code> 的 <code>editItem</code> 值由组件的绑定元素提供。 当在 UI 的另一个部分中选择项并调用 <code>EditItem</code> 时，会设置项的 <code>Id</code>。 通过选择 Save <code>&lt;button&gt;</code> 元素来触发 <code>SaveItem</code> 方法。 有关完整的示例，请参阅示例应用。</p>
+<pre><code class="lang-razor">@using System.Net.Http
+@inject HttpClient Http
+
+&lt;input type=&quot;checkbox&quot; @bind=&quot;editItem.IsComplete&quot; /&gt;
+&lt;input @bind=&quot;editItem.Name&quot; /&gt;
+&lt;button @onclick=&quot;@SaveItem&quot;&gt;Save&lt;/button&gt;
+
+@code {
+    private TodoItem editItem = new TodoItem();
+
+    private void EditItem(long id)
+    {
+        editItem = todoItems.Single(i =&gt; i.Id == id);
+    }
+
+    private async Task SaveItem() =&gt;
+        await Http.PutAsJsonAsync($&quot;api/TodoItems/{editItem.Id}, editItem);
+}
+</code></pre>
+<p>调用 &lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.PutAsJsonAsync%2A&gt; 会返回 &lt;xref:System.Net.Http.HttpResponseMessage&gt;。 若要对响应消息中的 JSON 内容进行反序列化处理，请使用 &lt;xref:System.Net.Http.Json.HttpContentJsonExtensions.ReadFromJsonAsync%2A&gt; 扩展方法：</p>
+<pre><code class="lang-csharp">var content = response.Content.ReadFromJsonAsync&lt;WeatherForecast&gt;();
+</code></pre>
+</li>
+</ul>
+<p>&lt;xref:System.Net.Http&gt; 包括用于发送 HTTP 请求和接收 HTTP 响应的附加扩展方法。 &lt;xref:System.Net.Http.HttpClient.DeleteAsync%2A?displayProperty=nameWithType&gt; 用于将 HTTP DELETE 请求发送到 Web API。</p>
+<p>在下面的代码中，Delete <code>&lt;button&gt;</code> 元素调用 <code>DeleteItem</code> 方法。 绑定 <code>&lt;input&gt;</code> 元素提供要删除的项的 <code>id</code>。 有关完整的示例，请参阅示例应用。</p>
+<pre><code class="lang-razor">@using System.Net.Http
+@inject HttpClient Http
+
+&lt;input @bind=&quot;id&quot; /&gt;
+&lt;button @onclick=&quot;@DeleteItem&quot;&gt;Delete&lt;/button&gt;
+
+@code {
+    private long id;
+
+    private async Task DeleteItem() =&gt;
+        await Http.DeleteAsync($&quot;api/TodoItems/{id}&quot;);
+}
+</code></pre>
+<h2 id="named-httpclient-with-ihttpclientfactory">已命名的 HttpClient 和 IHttpClientFactory</h2>
+<p>支持已命名的 &lt;xref:System.Net.Http.HttpClient&gt; 的 &lt;xref:System.Net.Http.IHttpClientFactory&gt; 服务和配置。</p>
+<p>在项目文件中引用 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Http"><code>Microsoft.Extensions.Http</code></a> NuGet 包。</p>
+<p><code>Program.Main</code> (<code>Program.cs</code>)：</p>
+<pre><code class="lang-csharp">builder.Services.AddHttpClient(&quot;ServerAPI&quot;, client =&gt; 
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+</code></pre>
+<p><code>FetchData</code> 组件 (<code>Pages/FetchData.razor</code>)：</p>
+<pre><code class="lang-razor">@inject IHttpClientFactory ClientFactory
+
+...
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var client = ClientFactory.CreateClient(&quot;ServerAPI&quot;);
+
+        forecasts = await client.GetFromJsonAsync&lt;WeatherForecast[]&gt;(
+            &quot;WeatherForecast&quot;);
+    }
+}
+</code></pre>
+<h2 id="typed-httpclient">类型化 HttpClient</h2>
+<p>类型化 &lt;xref:System.Net.Http.HttpClient&gt; 使用应用的一个或多个 &lt;xref:System.Net.Http.HttpClient&gt; 实例（默认或命名）从一个或多个 web API 终结点返回数据。</p>
+<p><code>WeatherForecastClient.cs</code>：</p>
+<pre><code class="lang-csharp">using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+
+public class WeatherForecastClient
+{
+    private readonly HttpClient client;
+
+    public WeatherForecastClient(HttpClient client)
+    {
+        this.client = client;
+    }
+
+    public async Task&lt;WeatherForecast[]&gt; GetForecastAsync()
+    {
+        var forecasts = new WeatherForecast[0];
+    
+        try
+        {
+            forecasts = await client.GetFromJsonAsync&lt;WeatherForecast[]&gt;(
+                &quot;WeatherForecast&quot;);
+        }
+        catch
+        {
+            ...
+        }
+    
+        return forecasts;
+    }
+}
+</code></pre>
+<p><code>Program.Main</code> (<code>Program.cs</code>)：</p>
+<pre><code class="lang-csharp">builder.Services.AddHttpClient&lt;WeatherForecastClient&gt;(client =&gt; 
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+</code></pre>
+<p>组件插入类型化的 &lt;xref:System.Net.Http.HttpClient&gt; 来调用 web API。</p>
+<p><code>FetchData</code> 组件 (<code>Pages/FetchData.razor</code>)：</p>
+<pre><code class="lang-razor">@inject WeatherForecastClient Client
+
+...
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Client.GetForecastAsync();
+    }
+}
+</code></pre>
+<h2 id="httpclient-and-httprequestmessage-with-fetch-api-request-options">具有提取 API 请求选项的 <code>HttpClient</code> 和 <code>HttpRequestMessage</code></h2>
+<p>在 Blazor WebAssembly 应用中的 WebAssembly 上运行时，可以使用 <a class="xref" href="../fundamentals/http-requests.html"><code>HttpClient</code></a>（<a href="xref:System.Net.Http.HttpClient">API 文档</a>）和 &lt;xref:System.Net.Http.HttpRequestMessage&gt; 自定义请求。 例如，可以指定 HTTP 方法和请求标头。 以下组件向服务器上的待办事项列表 API 终结点发出 <code>POST</code> 请求，并显示响应正文：</p>
+<pre><code class="lang-razor">@page &quot;/todorequest&quot;
+@using System.Net.Http
+@using System.Net.Http.Headers
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient Http
+@inject IAccessTokenProvider TokenProvider
+
+&lt;h1&gt;ToDo Request&lt;/h1&gt;
+
+&lt;button @onclick=&quot;PostRequest&quot;&gt;Submit POST request&lt;/button&gt;
+
+&lt;p&gt;Response body returned by the server:&lt;/p&gt;
+
+&lt;p&gt;@responseBody&lt;/p&gt;
+
+@code {
+    private string responseBody;
+
+    private async Task PostRequest()
+    {
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod(&quot;POST&quot;),
+            RequestUri = new Uri(&quot;https://localhost:10000/api/TodoItems&quot;),
+            Content =
+                JsonContent.Create(new TodoItem
+                {
+                    Name = &quot;My New Todo Item&quot;,
+                    IsComplete = false
+                })
+        };
+
+        var tokenResult = await TokenProvider.RequestAccessToken();
+
+        if (tokenResult.TryGetToken(out var token))
+        {
+            requestMessage.Headers.Authorization =
+                new AuthenticationHeaderValue(&quot;Bearer&quot;, token.Value);
+
+            requestMessage.Content.Headers.TryAddWithoutValidation(
+                &quot;x-custom-header&quot;, &quot;value&quot;);
+
+            var response = await Http.SendAsync(requestMessage);
+            var responseStatusCode = response.StatusCode;
+
+            responseBody = await response.Content.ReadAsStringAsync();
+        }
+    }
+
+    public class TodoItem
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public bool IsComplete { get; set; }
+    }
+}
+</code></pre>
+<p>&lt;xref:System.Net.Http.HttpClient&gt; 的 .NET WebAssembly 实现使用 <a href="https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch">WindowOrWorkerGlobalScope.fetch()</a>。 提取允许配置多个<a href="https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters">特定于请求的选项</a>。</p>
+<p>使用下表中所示的 &lt;xref:System.Net.Http.HttpRequestMessage&gt; 扩展方法可配置 HTTP fetch 请求选项。</p>
+<table>
+<thead>
+<tr>
+<th>扩展方法</th>
+<th>提取请求属性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestCredentials%2A&gt;</td>
+<td><a href="https://developer.mozilla.org/docs/Web/API/Request/credentials"><code>credentials</code></a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestCache%2A&gt;</td>
+<td><a href="https://developer.mozilla.org/docs/Web/API/Request/cache"><code>cache</code></a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestMode%2A&gt;</td>
+<td><a href="https://developer.mozilla.org/docs/Web/API/Request/mode"><code>mode</code></a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestIntegrity%2A&gt;</td>
+<td><a href="https://developer.mozilla.org/docs/Web/API/Request/integrity"><code>integrity</code></a></td>
+</tr>
+</tbody>
+</table>
+<p>可使用更通用的 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestOption%2A&gt; 扩展方法设置其他选项。</p>
+<p>HTTP 响应通常在 Blazor WebAssembly 应用中缓冲，以支持同步读取响应内容。 要支持响应流式处理，请对请求使用 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserResponseStreamingEnabled%2A&gt; 扩展方法。</p>
+<p>要在跨源请求中加入凭据，请使用 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Http.WebAssemblyHttpRequestMessageExtensions.SetBrowserRequestCredentials%2A&gt; 扩展方法：</p>
+<pre><code class="lang-csharp">requestMessage.SetBrowserRequestCredentials(BrowserRequestCredentials.Include);
+</code></pre>
+<p>有关 Fetch API 选项的详细信息，请参阅 <a href="https://developer.mozilla.org/docs/Web/API/WindowOrWorkerGlobalScope/fetch#Parameters">MDN Web 文档：WindowOrWorkerGlobalScope.fetch():Parameters</a>。</p>
+<h2 id="handle-errors">处理错误</h2>
+<p>如果在与 web API 交互时出现错误，开发人员代码可以处理这些错误。 例如，&lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.GetFromJsonAsync%2A&gt; 需要服务器 API 的 JSON 响应，其中 <code>Content-Type</code> 为 <code>application/json</code>。 如果响应不是 JSON 格式，则内容验证会引发 &lt;xref:System.NotSupportedException&gt;。</p>
+<p>在下面的示例中，天气预测数据请求的 URI 终结点拼写错误。 URI 应该为 <code>WeatherForecast</code>，但在单元格中显示为 <code>WeatherForcast</code>（缺少“e”）。</p>
+<p>&lt;xref:System.Net.Http.Json.HttpClientJsonExtensions.GetFromJsonAsync%2A&gt; 调用需要返回 JSON，但服务器为服务器上的未处理异常返回 HTML，其中 <code>Content-Type</code> 为 <code>text/html</code>。 由于找不到路径并且中间件无法为请求提供页面或视图，因此服务器上发生未处理的异常。</p>
+<p>在客户端上的 &lt;xref:Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync%2A&gt; 中，当响应内容验证为非 JSON 时，将引发 &lt;xref:System.NotSupportedException&gt;。 在 <code>catch</code> 块中捕获到异常，其中自定义逻辑可以记录错误或向用户显示友好错误消息：</p>
+<pre><code class="lang-csharp">protected override async Task OnInitializedAsync()
+{
+    try
+    {
+        forecasts = await Http.GetFromJsonAsync&lt;WeatherForecast[]&gt;(
+            &quot;WeatherForcast&quot;);
+    }
+    catch (NotSupportedException exception)
+    {
+        ...
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>前面示例代码为了方便本文演示。 即使终结点不存在或服务器上发生未处理的异常，也可将 Web API 服务器应用配置为返回 JSON。</p>
+</div>
+<p>有关详细信息，请参阅 <a class="xref" href="fundamentals/handle-errors.html">处理 ASP.NET Core Blazor 应用中的错误</a>。</p>
+<h2 id="cross-origin-resource-sharing-cors">跨域资源共享 (CORS)</h2>
+<p>浏览器安全可防止网页向不同域（而不是向网页提供服务的域）进行请求。 此限制称为同域策略。 同域策略可防止恶意站点从另一站点读取敏感数据。 若要从浏览器向具有不同源的终结点进行请求，终结点必须启用<a href="https://www.w3.org/TR/cors/">跨域资源共享 (CORS)</a>。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/common/samples/">Blazor WebAssembly 示例应用 (BlazorWebAssemblySample)</a> 演示如何在调用 Web API 组件 (<code>Pages/CallWebAPI.razor</code>) 中使用 CORS。</p>
+<p>有关 CORS 与 Blazor 应用中的安全请求的详细信息，请参阅 <a class="xref" href="security/webassembly/additional-scenarios.html#cross-origin-resource-sharing-cors">ASP.NET Core Blazor WebAssembly 其他安全方案</a>。</p>
+<p>有关 CORS 与 ASP.NET Core 应用的一般信息，请参阅 <a class="xref" href="../security/cors.html"> (CORS) 启用跨域请求 ASP.NET Core</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="security/webassembly/additional-scenarios.html">ASP.NET Core Blazor WebAssembly 其他安全方案</a>：包括对使用 &lt;xref:System.Net.Http.HttpClient&gt; 发出安全 Web API 请求的介绍。</li>
+<li><a class="xref" href="../fundamentals/http-requests.html">在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求</a></li>
+<li><a class="xref" href="../security/enforcing-ssl.html">在 ASP.NET Core 强制实施 HTTPS</a></li>
+<li><a class="xref" href="../fundamentals/servers/kestrel.html#endpoint-configuration">Kestrel HTTPS 终结点配置</a></li>
+<li><a href="https://www.w3.org/TR/cors/">W3C 上的跨域资源共享 (CORS)</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

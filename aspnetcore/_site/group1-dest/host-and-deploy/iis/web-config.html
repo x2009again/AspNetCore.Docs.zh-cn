@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>web.config &#25991;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="web.config &#25991;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="host-and-deploy/iis/web-config">
+<h1 id="webconfig-file"><code>web.config</code> 文件</h1>
+
+<p><code>web.config</code> 文件由 IIS 和 <a class="xref" href="../aspnet-core-module.html">ASP.NET Core 模块</a>读取，用于使用 IIS 配置已托管的应用。</p>
+<h2 id="webconfig-file-location"><code>web.config</code> 文件位置</h2>
+<p>为了正确设置 <a class="xref" href="../aspnet-core-module.html">ASP.NET Core 模块</a>，<code>web.config</code> 文件必须存在于已部署应用的<a class="xref" href="../../fundamentals/index.html#content-root">内容根</a>路径（通常为应用基路径）中。 该位置与向 IIS 提供的网站物理路径相同。 若要使用 Web 部署发布多个应用，应用的根路径中需要包含 <code>web.config</code> 文件。</p>
+<p>敏感文件存在于应用的物理路径中，如 <code>{ASSEMBLY}.runtimeconfig.json</code>、<code>{ASSEMBLY}.xml</code>（XML 文档注释）和 <code>{ASSEMBLY}.deps.json</code>，其中 <code>{ASSEMBLY}</code> 占位符为程序集名称。 如果有 <code>web.config</code> 文件且站点正常启动时，IIS 在收到敏感文件请求时不会提供这些敏感文件。 如果 <code>web.config</code> 文件缺失、名字错误或者无法将站点配置为正常启动，IIS 可能会公开提供敏感文件。</p>
+<p><code>web.config</code> 文件必须始终存在于部署中、名称正确以及能够将站点配置为正常启动。切勿从生产部署中删除 <code>web.config</code> 文件。</p>
+<p>如果项目中没有 <code>web.config</code> 文件，则该文件是使用正确的 <code>processPath</code> 和 <code>arguments</code>（用于配置 ASP.NET Core 模块）创建的，并且已被移到<a class="xref" href="../directory-structure.html">发布的输出</a>中。</p>
+<p>如果项目中没有 <code>web.config</code> 文件，则该文件是通过正确的 <code>processPath</code> 和 <code>arguments</code>（用于配置 ASP.NET Core 模块）转换的，并且已被移到发布的输出中。 转换不会修改文件中的 IIS 配置设置。</p>
+<p><code>web.config</code> 文件可能会提供控制活动 IIS 模块的额外 IIS 配置设置。 有关能够处理 ASP.NET Core 应用请求的 IIS 模块的信息，请参阅 <a class="xref" href="modules.html">IIS 模块</a>主题。</p>
+<p>发布项目时，<code>web.config</code> 文件的创建、转换和发布是由 MSBuild 目标 (<code>_TransformWebConfig</code>) 处理的。 此目标位于 Web SDK 目标 (<code>Microsoft.NET.Sdk.Web</code>) 中。 SDK 设置在项目文件的顶部：</p>
+<pre><code class="lang-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk.Web&quot;&gt;
+</code></pre>
+<p>为了防止 Web SDK 转换 <code>web.config</code> 文件，请在项目文件中使用 <code>&lt;IsTransformWebConfigDisabled&gt;</code> 属性：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;IsTransformWebConfigDisabled&gt;true&lt;/IsTransformWebConfigDisabled&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<p>禁用 Web SDK 对文件的转换时，<code>processPath</code> 和 <code>arguments</code> 应由开发人员手动设置。 有关详细信息，请参阅 <a class="xref" href="../aspnet-core-module.html">ASP.NET Core 模块</a>。</p>
+<h2 id="configuration-of-aspnet-core-module-with-webconfig">使用 <code>web.config</code> 配置 ASP.NET Core 模块</h2>
+<p>在站点的 <code>web.config</code> 文件中使用 <code>system.webServer</code> 节点的 <code>aspNetCore</code> 部分配置 ASP.NET Core 模块。</p>
+<p>以下 <code>web.config</code> 文件发布用于<a href="/dotnet/articles/core/deploying/#framework-dependent-deployments-fdd">依赖框架的部署</a>，并配置 ASP.NET Core 模块以处理站点请求：</p>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;configuration&gt;
+  &lt;location path=&quot;.&quot; inheritInChildApplications=&quot;false&quot;&gt;
+    &lt;system.webServer&gt;
+      &lt;handlers&gt;
+        &lt;add name=&quot;aspNetCore&quot; path=&quot;*&quot; verb=&quot;*&quot; modules=&quot;AspNetCoreModuleV2&quot; resourceType=&quot;Unspecified&quot; /&gt;
+      &lt;/handlers&gt;
+      &lt;aspNetCore processPath=&quot;dotnet&quot;
+                  arguments=&quot;.\MyApp.dll&quot;
+                  stdoutLogEnabled=&quot;false&quot;
+                  stdoutLogFile=&quot;.\logs\stdout&quot;
+                  hostingModel=&quot;inprocess&quot; /&gt;
+    &lt;/system.webServer&gt;
+  &lt;/location&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p>以下 <code>web.config</code> 发布用于<a href="/dotnet/articles/core/deploying/#self-contained-deployments-scd">独立部署</a>：</p>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;configuration&gt;
+  &lt;location path=&quot;.&quot; inheritInChildApplications=&quot;false&quot;&gt;
+    &lt;system.webServer&gt;
+      &lt;handlers&gt;
+        &lt;add name=&quot;aspNetCore&quot; path=&quot;*&quot; verb=&quot;*&quot; modules=&quot;AspNetCoreModuleV2&quot; resourceType=&quot;Unspecified&quot; /&gt;
+      &lt;/handlers&gt;
+      &lt;aspNetCore processPath=&quot;.\MyApp.exe&quot;
+                  stdoutLogEnabled=&quot;false&quot;
+                  stdoutLogFile=&quot;.\logs\stdout&quot;
+                  hostingModel=&quot;inprocess&quot; /&gt;
+    &lt;/system.webServer&gt;
+  &lt;/location&gt;
+&lt;/configuration&gt;
+</code></pre>
+<p>将 &lt;xref:System.Configuration.SectionInformation.InheritInChildApplications%2A&gt; 属性设置为 <code>false</code>，表示 <a href="/iis/manage/managing-your-configuration-settings/understanding-iis-configuration-delegation#the-concept-of-location"><code>&lt;location&gt;</code></a> 元素中指定的设置不会由驻留在应用子目录中的应用继承。</p>
+<p>将应用部署为 <a href="https://azure.microsoft.com/services/app-service/">Azure 应用服务</a>时，<code>stdoutLogFile</code> 路径将设置为 <code>\\?\%home%\LogFiles\stdout</code>。 该路径会将 stdout 日志保存到 <code>LogFiles</code> 文件夹，该文件夹是由服务自动创建的位置。</p>
+<p>有关 IIS 子应用程序配置的信息，请参阅<a class="xref" href="index.html#sub-applications">使用 IIS 在 Windows 上托管 ASP.NET Core</a>。</p>
+<h3 id="attributes-of-the-aspnetcore-element"><code>aspNetCore</code> 元素的属性</h3>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>arguments</code></td>
+<td><p>可选的字符串属性。</p><p><code>processPath</code> 中指定的可执行文件的参数。</p></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td><code>disableStartUpErrorPage</code></td>
+<td><p>可选布尔属性。</p><p>如果为 true，将禁止显示“502.5 - 进程失败”页面，而会优先显示 <code>web.config</code> 中配置的 502 状态代码页面。</p></td>
+<td style="text-align: center;"><code>false</code></td>
+</tr>
+<tr>
+<td><code>forwardWindowsAuthToken</code></td>
+<td><p>可选布尔属性。</p><p>如果为 true，会将令牌作为每个请求的标头“MS-ASPNETCORE-WINAUTHTOKEN”转发到在 <code>%ASPNETCORE_PORT%</code> 上侦听的子进程。 该进程负责在每个请求的此令牌上调用 CloseHandle。</p></td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><code>hostingModel</code></td>
+<td><p>可选的字符串属性。</p><p>将托管模型指定为进程内 (<code>InProcess</code>/<code>inprocess</code>) 或进程外 (<code>OutOfProcess</code>/<code>outofprocess</code>)。</p></td>
+<td style="text-align: center;"><code>InProcess</code><br><code>inprocess</code></td>
+</tr>
+<tr>
+<td><code>processesPerApplication</code></td>
+<td><p>可选的整数属性。</p><p>指定每个应用均可启动的 <code>processPath</code> 设置中指定的进程的实例数。</p><p>†对于进程内托管，值限制为 <code>1</code>。</p><p>不建议设置 <code>processesPerApplication</code>。 将来的版本将删除此属性。</p></td>
+<td style="text-align: center;">默认值：<code>1</code><br>最小值：<code>1</code><br>最大值：<code>100</code>†</td>
+</tr>
+<tr>
+<td><code>processPath</code></td>
+<td><p>必需的字符串属性。</p><p>为 HTTP 请求启动进程侦听的可执行文件的路径。 支持相对路径。 如果路径以 <code>.</code> 开头，则该路径被视为与站点根目录相对。</p></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td><code>rapidFailsPerMinute</code></td>
+<td><p>可选的整数属性。</p><p>指定允许 <code>processPath</code> 中指定的进程每分钟崩溃的次数。 如果超出了此限制，模块将在剩余分钟数内停止启动该进程。</p><p>不支持进程内托管。</p></td>
+<td style="text-align: center;">默认值：<code>10</code><br>最小值：<code>0</code><br>最大值：<code>100</code></td>
+</tr>
+<tr>
+<td><code>requestTimeout</code></td>
+<td><p>可选的 timespan 属性。</p><p>指定 ASP.NET Core 模块等待来自 %ASPNETCORE_PORT% 上侦听的进程的响应的持续时间。</p><p>在 ASP.NET Core 2.1 或更高版本附带的 ASP.NET Core 模块版本中，使用小时数、分钟数和秒数指定 <code>requestTimeout</code>。</p><p>不适用于进程内托管。 对于进程内托管，该模块等待应用处理该请求。</p><p>此字符串的分钟段和秒钟段的有效值在 0-59 之间。 在分钟或秒钟值中使用“<code>60</code>”会导致“500 - 内部服务器错误”。</p></td>
+<td style="text-align: center;">默认值：<code>00:02:00</code><br>最小值：<code>00:00:00</code><br>最大值：<code>360:00:00</code></td>
+</tr>
+<tr>
+<td><code>shutdownTimeLimit</code></td>
+<td><p>可选的整数属性。</p><p>检测到 <code>app_offline.htm</code> 文件时，模块等待可执行文件正常关闭的持续时间（以秒为单位）。</p></td>
+<td style="text-align: center;">默认值：<code>10</code><br>最小值：<code>0</code><br>最大值：<code>600</code></td>
+</tr>
+<tr>
+<td><code>startupTimeLimit</code></td>
+<td><p>可选的整数属性。</p><p>模块等待可执行文件启动端口上侦听的进程的持续时间（以秒为单位）。 如果超出了此时间限制，模块将终止该进程。</p><p>进程内托管时：不会重新启动该进程，也不会使用 <code>rapidFailsPerMinute</code> 设置 。</p><p>进程外托管时：模块在收到新请求时尝试重新启动该进程，并在收到后续传入请求时继续尝试重新启动该进程，除非应用在上一回滚分钟内无法启动 <code>rapidFailsPerMinute</code> 次。</p><p>值 0（零）不被视为无限超时。</p></td>
+<td style="text-align: center;">默认值：<code>120</code><br>最小值：<code>0</code><br>最大值：<code>3600</code></td>
+</tr>
+<tr>
+<td><code>stdoutLogEnabled</code></td>
+<td><p>可选布尔属性。</p><p>如果为 true，<code>processPath</code> 中指定的进程的 <code>stdout</code> 和 <code>stderr</code> 将重定向到 <code>stdoutLogFile</code> 中指定的文件。</p></td>
+<td style="text-align: center;"><code>false</code></td>
+</tr>
+<tr>
+<td><code>stdoutLogFile</code></td>
+<td><p>可选的字符串属性。</p><p>指定在其中记录 <code>processPath</code> 中指定进程的 <code>stdout</code> 和 <code>stderr</code> 的相对路径或绝对路径。 相对路径与站点根目录相对。 以 <code>.</code> 开头的任何路径均与站点根目录相对，所有其他路径被视为绝对路径。 创建日志文件时，模块会创建路径中提供的所有文件夹。 使用下划线分隔符，将时间戳、进程 ID 和文件扩展名 (<code>.log</code>) 添加到 <code>stdoutLogFile</code> 路径的最后一段。 如果 <code>.\logs\stdout</code> 作为值提供，则在示例 stdout 日志使用进程 ID 1934 于 2018 年 2 月 5 日 19:41:32 保存时，将在 <code>logs</code> 文件夹中保存为 <code>stdout_20180205194132_1934.log</code>。</p></td>
+<td style="text-align: center;"><code>aspnetcore-stdout</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="set-environment-variables">设置环境变量</h3>
+<p>可以为 <code>processPath</code> 属性中的进程指定环境变量。 使用 <code>&lt;environmentVariables&gt;</code> 集合元素的 <code>&lt;environmentVariable&gt;</code> 子元素指定环境变量。 本部分中设置的环境变量优先于系统环境变量。</p>
+<p>以下示例在 <code>web.config</code> 中设置了两个环境变量。 <code>ASPNETCORE_ENVIRONMENT</code> 将应用的环境配置为 <code>Development</code>。 开发人员可能会暂时在 <code>web.config</code> 文件中设置此值，以便在调试应用异常时强制加载<a class="xref" href="../../fundamentals/error-handling.html">开发人员异常页面</a>。 <code>CONFIG_DIR</code> 是用户定义的环境变量的一个示例，其中开发人员已写入可在启动时读取值的代码以便形成用于加载应用配置文件的路径。</p>
+<pre><code class="lang-xml">&lt;aspNetCore processPath=&quot;dotnet&quot;
+      arguments=&quot;.\MyApp.dll&quot;
+      stdoutLogEnabled=&quot;false&quot;
+      stdoutLogFile=&quot;.\logs\stdout&quot;
+      hostingModel=&quot;inprocess&quot;&gt;
+  &lt;environmentVariables&gt;
+    &lt;environmentVariable name=&quot;ASPNETCORE_ENVIRONMENT&quot; value=&quot;Development&quot; /&gt;
+    &lt;environmentVariable name=&quot;CONFIG_DIR&quot; value=&quot;f:\application_config&quot; /&gt;
+  &lt;/environmentVariables&gt;
+&lt;/aspNetCore&gt;
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>直接在 <code>web.config</code> 中设置环境的替代方法是将 <code>&lt;EnvironmentName&gt;</code> 属性包含在<a class="xref" href="../visual-studio-publish-profiles.html">发布配置文件 (<code>.pubxml</code>)</a> 或项目文件中。 此方法在发布项目时设置 <code>web.config</code> 中的环境：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;EnvironmentName&gt;Development&lt;/EnvironmentName&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>仅当不受信任的网络（如 Internet）无法访问暂存和测试服务器时，才能将 <code>ASPNETCORE_ENVIRONMENT</code> 环境变量设置为 <code>Development</code>。</p>
+</div>
+<h2 id="configuration-of-iis-with-webconfig">使用 <code>web.config</code> 配置 IIS</h2>
+<p>IIS 配置受用于 IIS 方案（适用于包含 ASP.NET Core 模块的 ASP.NET Core 应用）的 <code>web.config</code> 的 <code>&lt;system.webServer&gt;</code> 部分影响。 例如，IIS 配置适用于动态压缩。 如果在服务器一级将 IIS 配置为使用动态压缩，可通过应用的 <code>web.config</code> 文件中的 <code>&lt;urlCompression&gt;</code> 元素，对 ASP.NET Core 应用禁用它。</p>
+<p>有关详细信息，请参阅下列主题：</p>
+<ul>
+<li><a href="/iis/configuration/system.webServer/"><code>&lt;system.webServer&gt;</code> 的配置参考</a></li>
+<li><a class="xref" href="../aspnet-core-module.html">ASP.NET Core 模块</a></li>
+<li><a class="xref" href="modules.html">IIS 模块与 ASP.NET Core</a></li>
+</ul>
+<p>要为在独立应用池中运行的各应用设置环境变量（IIS 10.0 或更高版本中支持此操作），请参阅 IIS 参考文档中<a href="/iis/configuration/system.applicationHost/applicationPools/add/environmentVariables/#appcmdexe">环境变量 <code>&lt;environmentVariables&gt;</code></a> 主题下的“<code>AppCmd.exe</code> 命令”部分。</p>
+<h2 id="configuration-sections-of-webconfig"><code>web.config</code> 的配置节</h2>
+<p>ASP.NET Core 应用不会使用 <code>web.config</code> 中的 ASP.NET 4.x 应用的配置部分进行配置：</p>
+<ul>
+<li><code>&lt;system.web&gt;</code></li>
+<li><code>&lt;appSettings&gt;</code></li>
+<li><code>&lt;connectionStrings&gt;</code></li>
+<li><code>&lt;location&gt;</code></li>
+</ul>
+<p>会使用其他的配置提供程序配置 ASP.NET Core 应用。 有关详细信息，请参阅<a class="xref" href="../../fundamentals/configuration/index.html">配置</a>。</p>
+<h2 id="transform-webconfig">转换 web.config</h2>
+<p>如果在发布时需要转换 <code>web.config</code>，请参阅 <a class="xref" href="transform-webconfig.html">转换 web.config</a>。 你需要在发布时转换 <code>web.config</code>，以根据配置、配置文件或环境来设置环境变量。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/iis/configuration/system.webServer/">IIS &lt;system.webServer&gt;</a></li>
+<li><a class="xref" href="modules.html">IIS 模块与 ASP.NET Core</a></li>
+<li><a class="xref" href="transform-webconfig.html">转换 web.config</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

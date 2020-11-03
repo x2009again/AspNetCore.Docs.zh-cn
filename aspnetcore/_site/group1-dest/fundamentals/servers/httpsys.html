@@ -1,0 +1,1192 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; HTTP.sys Web &#26381;&#21153;&#22120;&#23454;&#29616; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; HTTP.sys Web &#26381;&#21153;&#22120;&#23454;&#29616; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/servers/httpsys">
+<h1 id="httpsys-web-server-implementation-in-aspnet-core">ASP.NET Core 中的 HTTP.sys Web 服务器实现</h1>
+
+<p>作者：<a href="https://github.com/tdykstra">Tom Dykstra</a> 和 <a href="https://github.com/Tratcher">Chris Ross</a></p>
+<div range="&gt;= aspnetcore-3.1">
+<p><a href="/iis/get-started/introduction-to-iis/introduction-to-iis-architecture#hypertext-transfer-protocol-stack-httpsys">HTTP.sys</a> 是仅在 Windows 上运行的<a class="xref" href="index.html">适用于 ASP.NET Core 的 Web 服务器</a>。 HTTP.sys 是 <a class="xref" href="kestrel.html">Kestrel</a> 服务器的替代选择，提供了一些 Kestrel 不提供的功能。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>HTTP.sys 与 <a class="xref" href="../../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>不兼容，无法与 IIS 或 IIS Express 结合使用。</p>
+</div>
+<p>HTTP.sys 支持以下功能：</p>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a></li>
+<li>端口共享</li>
+<li>具有 SNI 的 HTTPS</li>
+<li>基于 TLS 的 HTTP/2（Windows 10 或更高版本）</li>
+<li>直接文件传输</li>
+<li>响应缓存</li>
+<li>WebSocket（Windows 8 或更高版本）</li>
+</ul>
+<p>受支持的 Windows 版本：</p>
+<ul>
+<li>Windows 7 或更高版本</li>
+<li>Windows Server 2008 R2 或更高版本</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/servers/httpsys/samples">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="when-to-use-httpsys">何时使用 HTTP.sys</h2>
+<p>HTTP.sys 对于以下情形的部署来说很有用：</p>
+<ul>
+<li><p>需要将服务器直接公开到 Internet 而不使用 IIS 的部署。</p>
+<p><img src="httpsys/_static/httpsys-to-internet.png" alt="HTTP.sys 直接与 Internet 进行通信"></p>
+</li>
+<li><p>内部部署需要 Kestrel 中没有的功能，如 <a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a>。</p>
+<p><img src="httpsys/_static/httpsys-to-internal.png" alt="HTTP.sys 直接与内部网络进行通信"></p>
+</li>
+</ul>
+<p>HTTP.sys 是一项成熟的技术，可以抵御多种攻击，并提供可靠、安全、可伸缩的全功能 Web 服务器。 IIS 本身作为 HTTP.sys 之上的 HTTP 侦听器运行。</p>
+<h2 id="http2-support">HTTP/2 支持</h2>
+<p>如果满足以下基本要求，将为 ASP.NET Core 应用启用 <a href="https://httpwg.org/specs/rfc7540.html">HTTP/2</a>：</p>
+<ul>
+<li>Windows Server 2016/Windows 10 或更高版本</li>
+<li><a href="https://tools.ietf.org/html/rfc7301#section-3">应用程序层协议协商 (ALPN)</a> 连接</li>
+<li>TLS 1.2 或更高版本的连接</li>
+</ul>
+<p>如果已建立 HTTP/2 连接，<a href="xref:Microsoft.AspNetCore.Http.HttpRequest.Protocol*">HttpRequest.Protocol</a> 会报告 <code>HTTP/2</code>。</p>
+<p>默认情况下将启用 HTTP/2。 如果未建立 HTTP/2 连接，连接会回退到 HTTP/1.1。 在 Windows 的未来版本中，将提供 HTTP/2 配置标志，包括使用 HTTP.sys 禁用 HTTP/2 的功能。</p>
+<h2 id="kernel-mode-authentication-with-kerberos">对 Kerberos 进行内核模式身份验证</h2>
+<p>HTTP.sys 通过 Kerberos 身份验证协议委托给内核模式身份验证。 Kerberos 和 HTTP.sys 不支持用户模式身份验证。 必须使用计算机帐户来解密从 Active Directory 获取的并由客户端转发到服务器的 Kerberos 令牌/票证，以便对用户进行身份验证。 注册主机的服务主体名称 (SPN)，而不是应用的用户。</p>
+<h2 id="how-to-use-httpsys">如何使用 HTTP.sys</h2>
+<h3 id="configure-the-aspnet-core-app-to-use-httpsys">配置 ASP.NET Core 应用以使用 HTTP.sys</h3>
+<p>生成主机时调用 &lt;xref:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions.UseHttpSys*&gt; 扩展方法，指定所有必需的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions&gt;。 以下示例将选项设置为其默认值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过<a href="https://support.microsoft.com/help/820129/http-sys-registry-settings-for-windows">注册表设置</a>处理其他 HTTP.sys 配置。</p>
+<p><strong>HTTP.sys 选项</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>描述</th>
+<th style="text-align: center;">默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.AllowSynchronousIO">AllowSynchronousIO</a></td>
+<td>控制是否允许 <code>HttpContext.Request.Body</code> 和 <code>HttpContext.Response.Body</code> 的同步输入/输出。</td>
+<td style="text-align: center;"><code>false</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.AllowAnonymous">Authentication.AllowAnonymous</a></td>
+<td>允许匿名请求。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.Schemes">Authentication.Schemes</a></td>
+<td>指定允许的身份验证方案。 可能在处理侦听器之前随时修改。 通过 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes">AuthenticationSchemes 枚举</a><code>Basic</code>、<code>Kerberos</code>、<code>Negotiate</code>、<code>None</code> 和 <code>NTLM</code> 提供值。</td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.EnableResponseCaching">EnableResponseCaching</a></td>
+<td>尝试<a href="/windows-hardware/drivers/gettingstarted/user-mode-and-kernel-mode">内核模式</a>缓存，响应合格的标头。 该响应可能不包括 <code>Set-Cookie</code>、<code>Vary</code> 或 <code>Pragma</code> 标头。 它必须包括属性为 <code>public</code> 的 <code>Cache-Control</code> 标头和 <code>shared-max-age</code> 或 <code>max-age</code> 值，或 <code>Expires</code> 标头。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxAccepts&gt;</td>
+<td>最大并发接受数量。</td>
+<td style="text-align: center;">5 × <a href="xref:System.Environment.ProcessorCount">环境。<br>ProcessorCount</a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxConnections&gt;</td>
+<td>要接受的最大并发连接数。 使用 <code>-1</code> 实现无限。 通过 <code>null</code> 使用注册表的计算机范围内的设置。</td>
+<td style="text-align: center;"><code>null</code><br>（计算机范围内的<br>设置）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;</td>
+<td>请参阅 <a href="#maxrequestbodysize">MaxRequestBodySize</a> 部分。</td>
+<td style="text-align: center;">30000000 个字节<br>(~28.6 MB)</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.RequestQueueLimit&gt;</td>
+<td>队列中允许的最大请求数。</td>
+<td style="text-align: center;">1000</td>
+</tr>
+<tr>
+<td><code>RequestQueueMode</code></td>
+<td>这指示服务器是否负责创建和配置请求队列，或是否应附加到现有队列。<br>附加到现有队列时，大多数现有配置选项不适用。</td>
+<td style="text-align: center;"><code>RequestQueueMode.Create</code></td>
+</tr>
+<tr>
+<td><code>RequestQueueName</code></td>
+<td>HTTP.sys 请求队列的名称。</td>
+<td style="text-align: center;"><code>null</code>（匿名队列）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.ThrowWriteExceptions&gt;</td>
+<td>指示由于客户端断开连接而失败的响应主体写入应引发异常还是正常完成。</td>
+<td style="text-align: center;"><code>false</code><br>（正常完成）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.Timeouts&gt;</td>
+<td>公开 HTTP.sys &lt;xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager&gt; 配置，也可以在注册表中进行配置。 请访问 API 链接详细了解每个设置，包括默认值：<ul><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.DrainEntityBody">TimeoutManager.DrainEntityBody</a>：允许 HTTP 服务器 API 在保持活动的连接上排出实体正文的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.EntityBody">TimeoutManager.EntityBody</a>：允许请求实体正文到达的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.HeaderWait">TimeoutManager.HeaderWait</a>：允许 HTTP 服务器 API 分析请求头的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.IdleConnection">TimeoutManager.IdleConnection</a>：允许空闲连接的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.MinSendBytesPerSecond">TimeoutManager.MinSendBytesPerSecond</a>：响应的最小发送速率。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.RequestQueue">TimeoutManager.RequestQueue</a>：在应用选取请求前，允许请求在请求队列中停留的时间。</li></ul></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</td>
+<td>指定要向 HTTP.sys 注册的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection&gt;。 最有用的是 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection.Add*">UrlPrefixCollection.Add</a>，它用于将前缀添加到集合中。 可能在处理侦听器之前随时对这些设置进行修改。</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p><a name="maxrequestbodysize"></a></p>
+<p><strong>MaxRequestBodySize</strong></p>
+<p>允许的请求正文的最大大小（以字节计）。 当设置为 <code>null</code> 时，最大请求正文大小不受限制。 此限制不会影响升级后的连接，这始终不受限制。</p>
+<p>在 ASP.NET Core MVC 应用中为单个 <code>IActionResult</code> 替代限制的推荐方法是在操作方法上使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 属性：</p>
+<pre><code class="lang-csharp">[RequestSizeLimit(100000000)]
+public IActionResult MyActionMethod()
+</code></pre>
+<p>如果在应用开始读取请求后尝试配置请求限制，则会引发异常。 <code>IsReadOnly</code> 属性可用于指示 <code>MaxRequestBodySize</code> 属性是否处于只读状态。只读状态意味着已经太迟了，无法配置限制。</p>
+<p>如果应用应替代每个请求的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;，请使用 &lt;xref:Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果使用的是 Visual Studio，请确保应用未经配置以运行 IIS 或 IIS Express。</p>
+<p>在 Visual Studio 中，默认启动配置文件是针对 IIS Express 的。 若要作为控制台应用运行该项目，请手动更改所选配置文件，如以下屏幕截图中所示：</p>
+<p><img src="httpsys/_static/vs-choose-profile.png" alt="选择控制台应用配置文件"></p>
+<h3 id="configure-windows-server">配置 Windows Server</h3>
+<ol>
+<li><p>确定要为应用打开的端口，并使用 <a href="/windows/security/threat-protection/windows-firewall/create-an-inbound-port-rule">Windows 防火墙</a>或 <a href="/powershell/module/netsecurity/new-netfirewallrule">New-NetFirewallRule</a> PowerShell cmdlet 打开防火墙端口，以允许流量到达 HTTP.sys。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>在部署到 Azure VM 时，在<a href="/azure/virtual-machines/windows/nsg-quickstart-portal">网络安全组</a>中打开端口。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>如果需要，获取并安装 X.509 证书。</p>
+<p>在 Windows 上，可使用 <a href="/powershell/module/pkiclient/new-selfsignedcertificate">New-SelfSignedCertificate PowerShell cmdlet</a> 创建自签名证书。 有关不支持的示例，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/includes/make-x509-cert/UpdateIISExpressSSLForChrome.ps1">UpdateIISExpressSSLForChrome.ps1</a>。</p>
+<p>在服务器的“本地计算机”&gt;“个人”存储中，安装自签名证书或 CA 签名证书 。</p>
+</li>
+<li><p>如果应用为<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">框架相关部署</a>，则安装 .NET Core、.NET Framework 或两者（如果应用是面向 .NET Framework 的 .NET Core 应用）。</p>
+<ul>
+<li><strong>.NET Core</strong>：如果应用需要 .NET Core，请从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取并运行 .NET Core 运行时安装程序。 请勿在服务器上安装完整 SDK。</li>
+<li><strong>.NET Framework</strong>：如果应用需要 .NET Framework，请参阅 <a href="/dotnet/framework/install/">.NET Framework 安装指南</a>。 安装所需的 .NET Framework。 可以从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取最新 .NET Framework 的安装程序。</li>
+</ul>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立式部署</a>，应用在部署中包含运行时。 无需在服务器上安装任何框架。</p>
+</li>
+<li><p>在应用中配置 URL 和端口。</p>
+<p>默认情况下，ASP.NET Core 绑定到 <code>http://localhost:5000</code>。 若要配置 URL 前缀和端口，可采用以下方法：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseUrls*&gt;</li>
+<li><code>urls</code> 命令行参数</li>
+<li><code>ASPNETCORE_URLS</code> 环境变量</li>
+<li>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</li>
+</ul>
+<p>下面的代码示例展示了如何对端口 443 结合使用 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt; 和服务器的本地 IP 地址 <code>10.0.0.4</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>UrlPrefixes</code> 的一个优点是会为格式不正确的前缀立即生成一条错误消息。</p>
+<p><code>UrlPrefixes</code> 中的设置替代 <code>UseUrls</code>/<code>urls</code>/<code>ASPNETCORE_URLS</code> 设置。 因此，<code>UseUrls</code>、<code>urls</code> 和 <code>ASPNETCORE_URLS</code> 环境变量的一个优点是在 Kestrel 和 HTTP.sys 之间切换变得更加容易。</p>
+<p>HTTP.sys 使用 <a href="/windows/win32/http/urlprefix-strings">HTTP 服务器 API UrlPrefix 字符串格式</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不应使用顶级通配符绑定（<code>http://*:80/</code> 和 <code>http://+:80</code>）。 顶级通配符绑定会带来应用安全漏洞。 此行为同时适用于强通配符和弱通配符。 请使用显式主机名或 IP 地址，而不是通配符。 如果可控制整个父域（相对于易受攻击的 <code>*.com</code>），子域通配符绑定（例如，<code>*.mysub.com</code>）不会构成安全风险。 有关详细信息，请参阅 <a href="https://tools.ietf.org/html/rfc7230#section-5.4">RFC 7230：第 5.4 节：主机</a>。</p>
+</div>
+</li>
+<li><p>在服务器上预注册 URL 前缀。</p>
+<p>用于配置 HTTP.sys 的内置工具为 <em>netsh.exe</em>。 <em>netsh.exe</em> 用于保留 URL 前缀并分配 X.509 证书。 此工具需要管理员特权。</p>
+<p>使用 netsh.exe 工具为应用注册 URL：</p>
+<pre><code class="lang-console">netsh http add urlacl url=&lt;URL&gt; user=&lt;USER&gt;
+</code></pre>
+<ul>
+<li><code>&lt;URL&gt;</code>：完全限定的统一资源定位器 (URL)。 不要使用通配符绑定。 请使用有效主机名或本地 IP 地址。 URL 必须包含尾部反斜杠。</li>
+<li><code>&lt;USER&gt;</code>：指定用户名或用户组名称。</li>
+</ul>
+<p>在以下示例中，服务器的本地 IP 地址是 <code>10.0.0.4</code>：</p>
+<pre><code class="lang-console">netsh http add urlacl url=https://10.0.0.4:443/ user=Users
+</code></pre>
+<p>在 URL 注册后，工具响应返回 <code>URL reservation successfully added</code>。</p>
+<p>若要删除已注册的 URL，请使用 <code>delete urlacl</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete urlacl url=&lt;URL&gt;
+</code></pre>
+</li>
+<li><p>在服务器上注册 X.509 证书。</p>
+<p>使用 netsh.exe 工具为应用注册证书：</p>
+<pre><code class="lang-console">netsh http add sslcert ipport=&lt;IP&gt;:&lt;PORT&gt; certhash=&lt;THUMBPRINT&gt; appid=&quot;{&lt;GUID&gt;}&quot;
+</code></pre>
+<ul>
+<li><code>&lt;IP&gt;</code>：指定绑定的本地 IP 地址。 不要使用通配符绑定。 请使用有效 IP 地址。</li>
+<li><code>&lt;PORT&gt;</code>：指定绑定的端口。</li>
+<li><code>&lt;THUMBPRINT&gt;</code>：X.509 证书指纹。</li>
+<li><code>&lt;GUID&gt;</code>：开发人员生成的表示应用的 GUID，以供参考。</li>
+</ul>
+<p>为了便于参考，将 GUID 作为包标记存储在应用中：</p>
+<ul>
+<li>在 Visual Studio 中：
+<ul>
+<li>在“解决方案资源管理器”中，右键单击应用，并选择“属性”，以打开应用的项目属性。</li>
+<li>选择“包”选项卡。</li>
+<li>在“标记”字段中输入已创建的 GUID。</li>
+</ul>
+</li>
+<li>如果使用的不是 Visual Studio：
+<ul>
+<li><p>打开应用的项目文件。</p>
+</li>
+<li><p>使用已创建的 GUID，将 <code>&lt;PackageTags&gt;</code> 属性添加到新的或现有的 <code>&lt;PropertyGroup&gt;</code>：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;PackageTags&gt;9412ee86-c21b-4eb8-bd89-f650fbf44931&lt;/PackageTags&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>服务器的本地 IP 地址是 <code>10.0.0.4</code>。</li>
+<li>联机随机 GUID 生成器提供 <code>appid</code> 值。</li>
+</ul>
+<pre><code class="lang-console">netsh http add sslcert 
+    ipport=10.0.0.4:443 
+    certhash=b66ee04419d4ee37464ab8785ff02449980eae10 
+    appid=&quot;{9412ee86-c21b-4eb8-bd89-f650fbf44931}&quot;
+</code></pre>
+<p>在证书注册后，工具响应返回 <code>SSL Certificate successfully added</code>。</p>
+<p>若要删除证书注册，请使用 <code>delete sslcert</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete sslcert ipport=&lt;IP&gt;:&lt;PORT&gt;
+</code></pre>
+<p><em>netsh.exe</em> 的参考文档：</p>
+<ul>
+<li><a href="/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc725882(v=ws.10)">Netsh Commands for Hypertext Transfer Protocol (HTTP)</a>（超文本传输协议 (HTTP) 的 Netsh 命令）</li>
+<li><a href="/windows/win32/http/urlprefix-strings">UrlPrefix Strings</a>（UrlPrefix 字符串）</li>
+</ul>
+</li>
+<li><p>运行应用。</p>
+<p>结合使用 HTTP（而不是 HTTPS）和大于 1024 的端口号绑定到 localhost，无需管理员权限，即可运行应用。 对于其他配置（例如，使用本地 IP 地址或绑定到端口 443），必须有管理员权限才能运行应用。</p>
+<p>应用在服务器的公共 IP 地址处响应。 此示例在 Internet 上的公共 IP 地址 <code>104.214.79.47</code> 处访问服务器。</p>
+<p>此示例使用的是开发证书。 在绕过浏览器的不受信任证书警告后，页面安全加载。</p>
+<p><img src="httpsys/_static/browser.png" alt="显示应用索引页已加载的浏览器窗口"></p>
+</li>
+</ol>
+<h2 id="proxy-server-and-load-balancer-scenarios">代理服务器和负载均衡器方案</h2>
+<p>如果应用由 HTTP.sys 托管并且与来自 Internet 或公司网络的请求进行交互，当在代理服务器和负载均衡器后托管时，可能需要其他配置。 有关详细信息，请参阅<a class="xref" href="../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<h2 id="advanced-http2-features-to-support-grpc">用于支持 gRPC 的高级 HTTP/2 功能</h2>
+<p>HTTP.sys 中的其他 HTTP/2 功能支持 gRPC，包括对响应尾部和发送重置帧的支持。</p>
+<p>使用 HTTP.SYS 运行 gRPC 的要求：</p>
+<ul>
+<li>Windows 10，OS 内部版本 19041.508 或更高版本</li>
+<li>TLS 1.2 或更高版本的连接</li>
+</ul>
+<h3 id="trailers">预告片</h3>
+<p>HTTP 尾部类似于 HTTP 标头，只不过它是在发送响应正文后发送的。 IIS 和 HTTP.SYS 仅支持 HTTP/2 响应尾部。</p>
+<pre><code class="lang-csharp">if (httpContext.Response.SupportsTrailers())
+{
+    httpContext.Response.DeclareTrailer(&quot;trailername&quot;); 
+
+    // Write body
+    httpContext.Response.WriteAsync(&quot;Hello world&quot;);
+
+    httpContext.Response.AppendTrailer(&quot;trailername&quot;, &quot;TrailerValue&quot;);
+}
+</code></pre>
+<p>在前面的示例代码中：</p>
+<ul>
+<li><code>SupportsTrailers</code> 确保响应支持尾部。</li>
+<li><code>DeclareTrailer</code> 将给定的尾部名称添加到 <code>Trailer</code> 响应头。 虽然并不是必须要声明响应尾部，但是建议这样做。 如果要调用 <code>DeclareTrailer</code>，则必须在发送响应标头之前进行此操作。</li>
+<li><code>AppendTrailer</code> 追加尾部。</li>
+</ul>
+<h3 id="reset">重置</h3>
+<p>通过“Reset”，服务器可以使用指定的错误代码重置 HTTP/2 请求。 重置请求被视为中止。</p>
+<pre><code class="lang-csharp">var resetFeature = httpContext.Features.Get&lt;IHttpResetFeature&gt;();
+resetFeature.Reset(errorCode: 2);
+</code></pre>
+<p>前述代码示例中的 <code>Reset</code> 指定 <code>INTERNAL_ERROR</code> 错误代码。 有关 HTTP/2 错误代码的详细信息，请访问<a href="https://tools.ietf.org/html/rfc7540#page-50">“HTTP/2 规范错误代码”部分</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html#httpsys">使用 HTTP.sys 启用 Windows 身份验证</a></li>
+<li><a href="/windows/win32/http/http-api-start-page">HTTP 服务器 API</a></li>
+<li><a href="https://github.com/aspnet/HttpSysServer/">aspnet/HttpSysServer GitHub 存储库（源代码）</a></li>
+<li><a class="xref" href="../index.html#host">主机</a></li>
+<li><a class="xref" href="../../test/troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+</ul>
+</div>
+<div range="= aspnetcore-3.0">
+<p><a href="/iis/get-started/introduction-to-iis/introduction-to-iis-architecture#hypertext-transfer-protocol-stack-httpsys">HTTP.sys</a> 是仅在 Windows 上运行的<a class="xref" href="index.html">适用于 ASP.NET Core 的 Web 服务器</a>。 HTTP.sys 是 <a class="xref" href="kestrel.html">Kestrel</a> 服务器的替代选择，提供了一些 Kestrel 不提供的功能。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>HTTP.sys 与 <a class="xref" href="../../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>不兼容，无法与 IIS 或 IIS Express 结合使用。</p>
+</div>
+<p>HTTP.sys 支持以下功能：</p>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a></li>
+<li>端口共享</li>
+<li>具有 SNI 的 HTTPS</li>
+<li>基于 TLS 的 HTTP/2（Windows 10 或更高版本）</li>
+<li>直接文件传输</li>
+<li>响应缓存</li>
+<li>WebSocket（Windows 8 或更高版本）</li>
+</ul>
+<p>受支持的 Windows 版本：</p>
+<ul>
+<li>Windows 7 或更高版本</li>
+<li>Windows Server 2008 R2 或更高版本</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/servers/httpsys/samples">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="when-to-use-httpsys">何时使用 HTTP.sys</h2>
+<p>HTTP.sys 对于以下情形的部署来说很有用：</p>
+<ul>
+<li><p>需要将服务器直接公开到 Internet 而不使用 IIS 的部署。</p>
+<p><img src="httpsys/_static/httpsys-to-internet.png" alt="HTTP.sys 直接与 Internet 进行通信"></p>
+</li>
+<li><p>内部部署需要 Kestrel 中没有的功能，如 <a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a>。</p>
+<p><img src="httpsys/_static/httpsys-to-internal.png" alt="HTTP.sys 直接与内部网络进行通信"></p>
+</li>
+</ul>
+<p>HTTP.sys 是一项成熟的技术，可以抵御多种攻击，并提供可靠、安全、可伸缩的全功能 Web 服务器。 IIS 本身作为 HTTP.sys 之上的 HTTP 侦听器运行。</p>
+<h2 id="http2-support">HTTP/2 支持</h2>
+<p>如果满足以下基本要求，将为 ASP.NET Core 应用启用 <a href="https://httpwg.org/specs/rfc7540.html">HTTP/2</a>：</p>
+<ul>
+<li>Windows Server 2016/Windows 10 或更高版本</li>
+<li><a href="https://tools.ietf.org/html/rfc7301#section-3">应用程序层协议协商 (ALPN)</a> 连接</li>
+<li>TLS 1.2 或更高版本的连接</li>
+</ul>
+<p>如果已建立 HTTP/2 连接，<a href="xref:Microsoft.AspNetCore.Http.HttpRequest.Protocol*">HttpRequest.Protocol</a> 会报告 <code>HTTP/2</code>。</p>
+<p>默认情况下将启用 HTTP/2。 如果未建立 HTTP/2 连接，连接会回退到 HTTP/1.1。 在 Windows 的未来版本中，将提供 HTTP/2 配置标志，包括使用 HTTP.sys 禁用 HTTP/2 的功能。</p>
+<h2 id="kernel-mode-authentication-with-kerberos">对 Kerberos 进行内核模式身份验证</h2>
+<p>HTTP.sys 通过 Kerberos 身份验证协议委托给内核模式身份验证。 Kerberos 和 HTTP.sys 不支持用户模式身份验证。 必须使用计算机帐户来解密从 Active Directory 获取的并由客户端转发到服务器的 Kerberos 令牌/票证，以便对用户进行身份验证。 注册主机的服务主体名称 (SPN)，而不是应用的用户。</p>
+<h2 id="how-to-use-httpsys">如何使用 HTTP.sys</h2>
+<h3 id="configure-the-aspnet-core-app-to-use-httpsys">配置 ASP.NET Core 应用以使用 HTTP.sys</h3>
+<p>生成主机时调用 &lt;xref:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions.UseHttpSys*&gt; 扩展方法，指定所有必需的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions&gt;。 以下示例将选项设置为其默认值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过<a href="https://support.microsoft.com/help/820129/http-sys-registry-settings-for-windows">注册表设置</a>处理其他 HTTP.sys 配置。</p>
+<p><strong>HTTP.sys 选项</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>描述</th>
+<th style="text-align: center;">默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.AllowSynchronousIO">AllowSynchronousIO</a></td>
+<td>控制是否允许 <code>HttpContext.Request.Body</code> 和 <code>HttpContext.Response.Body</code> 的同步输入/输出。</td>
+<td style="text-align: center;"><code>false</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.AllowAnonymous">Authentication.AllowAnonymous</a></td>
+<td>允许匿名请求。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.Schemes">Authentication.Schemes</a></td>
+<td>指定允许的身份验证方案。 可能在处理侦听器之前随时修改。 通过 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes">AuthenticationSchemes 枚举</a><code>Basic</code>、<code>Kerberos</code>、<code>Negotiate</code>、<code>None</code> 和 <code>NTLM</code> 提供值。</td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.EnableResponseCaching">EnableResponseCaching</a></td>
+<td>尝试<a href="/windows-hardware/drivers/gettingstarted/user-mode-and-kernel-mode">内核模式</a>缓存，响应合格的标头。 该响应可能不包括 <code>Set-Cookie</code>、<code>Vary</code> 或 <code>Pragma</code> 标头。 它必须包括属性为 <code>public</code> 的 <code>Cache-Control</code> 标头和 <code>shared-max-age</code> 或 <code>max-age</code> 值，或 <code>Expires</code> 标头。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxAccepts&gt;</td>
+<td>最大并发接受数量。</td>
+<td style="text-align: center;">5 × <a href="xref:System.Environment.ProcessorCount">环境。<br>ProcessorCount</a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxConnections&gt;</td>
+<td>要接受的最大并发连接数。 使用 <code>-1</code> 实现无限。 通过 <code>null</code> 使用注册表的计算机范围内的设置。</td>
+<td style="text-align: center;"><code>null</code><br>（计算机范围内的<br>设置）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;</td>
+<td>请参阅 <a href="#maxrequestbodysize">MaxRequestBodySize</a> 部分。</td>
+<td style="text-align: center;">30000000 个字节<br>(~28.6 MB)</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.RequestQueueLimit&gt;</td>
+<td>队列中允许的最大请求数。</td>
+<td style="text-align: center;">1000</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.ThrowWriteExceptions&gt;</td>
+<td>指示由于客户端断开连接而失败的响应主体写入应引发异常还是正常完成。</td>
+<td style="text-align: center;"><code>false</code><br>（正常完成）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.Timeouts&gt;</td>
+<td>公开 HTTP.sys &lt;xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager&gt; 配置，也可以在注册表中进行配置。 请访问 API 链接详细了解每个设置，包括默认值：<ul><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.DrainEntityBody">TimeoutManager.DrainEntityBody</a>：允许 HTTP 服务器 API 在保持活动的连接上排出实体正文的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.EntityBody">TimeoutManager.EntityBody</a>：允许请求实体正文到达的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.HeaderWait">TimeoutManager.HeaderWait</a>：允许 HTTP 服务器 API 分析请求头的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.IdleConnection">TimeoutManager.IdleConnection</a>：允许空闲连接的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.MinSendBytesPerSecond">TimeoutManager.MinSendBytesPerSecond</a>：响应的最小发送速率。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.RequestQueue">TimeoutManager.RequestQueue</a>：在应用选取请求前，允许请求在请求队列中停留的时间。</li></ul></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</td>
+<td>指定要向 HTTP.sys 注册的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection&gt;。 最有用的是 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection.Add*">UrlPrefixCollection.Add</a>，它用于将前缀添加到集合中。 可能在处理侦听器之前随时对这些设置进行修改。</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p><a name="maxrequestbodysize"></a></p>
+<p><strong>MaxRequestBodySize</strong></p>
+<p>允许的请求正文的最大大小（以字节计）。 当设置为 <code>null</code> 时，最大请求正文大小不受限制。 此限制不会影响升级后的连接，这始终不受限制。</p>
+<p>在 ASP.NET Core MVC 应用中为单个 <code>IActionResult</code> 替代限制的推荐方法是在操作方法上使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 属性：</p>
+<pre><code class="lang-csharp">[RequestSizeLimit(100000000)]
+public IActionResult MyActionMethod()
+</code></pre>
+<p>如果在应用开始读取请求后尝试配置请求限制，则会引发异常。 <code>IsReadOnly</code> 属性可用于指示 <code>MaxRequestBodySize</code> 属性是否处于只读状态。只读状态意味着已经太迟了，无法配置限制。</p>
+<p>如果应用应替代每个请求的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;，请使用 &lt;xref:Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果使用的是 Visual Studio，请确保应用未经配置以运行 IIS 或 IIS Express。</p>
+<p>在 Visual Studio 中，默认启动配置文件是针对 IIS Express 的。 若要作为控制台应用运行该项目，请手动更改所选配置文件，如以下屏幕截图中所示：</p>
+<p><img src="httpsys/_static/vs-choose-profile.png" alt="选择控制台应用配置文件"></p>
+<h3 id="configure-windows-server">配置 Windows Server</h3>
+<ol>
+<li><p>确定要为应用打开的端口，并使用 <a href="/windows/security/threat-protection/windows-firewall/create-an-inbound-port-rule">Windows 防火墙</a>或 <a href="/powershell/module/netsecurity/new-netfirewallrule">New-NetFirewallRule</a> PowerShell cmdlet 打开防火墙端口，以允许流量到达 HTTP.sys。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>在部署到 Azure VM 时，在<a href="/azure/virtual-machines/windows/nsg-quickstart-portal">网络安全组</a>中打开端口。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>如果需要，获取并安装 X.509 证书。</p>
+<p>在 Windows 上，可使用 <a href="/powershell/module/pkiclient/new-selfsignedcertificate">New-SelfSignedCertificate PowerShell cmdlet</a> 创建自签名证书。 有关不支持的示例，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/includes/make-x509-cert/UpdateIISExpressSSLForChrome.ps1">UpdateIISExpressSSLForChrome.ps1</a>。</p>
+<p>在服务器的“本地计算机”&gt;“个人”存储中，安装自签名证书或 CA 签名证书 。</p>
+</li>
+<li><p>如果应用为<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">框架相关部署</a>，则安装 .NET Core、.NET Framework 或两者（如果应用是面向 .NET Framework 的 .NET Core 应用）。</p>
+<ul>
+<li><strong>.NET Core</strong>：如果应用需要 .NET Core，请从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取并运行 .NET Core 运行时安装程序。 请勿在服务器上安装完整 SDK。</li>
+<li><strong>.NET Framework</strong>：如果应用需要 .NET Framework，请参阅 <a href="/dotnet/framework/install/">.NET Framework 安装指南</a>。 安装所需的 .NET Framework。 可以从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取最新 .NET Framework 的安装程序。</li>
+</ul>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立式部署</a>，应用在部署中包含运行时。 无需在服务器上安装任何框架。</p>
+</li>
+<li><p>在应用中配置 URL 和端口。</p>
+<p>默认情况下，ASP.NET Core 绑定到 <code>http://localhost:5000</code>。 若要配置 URL 前缀和端口，可采用以下方法：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseUrls*&gt;</li>
+<li><code>urls</code> 命令行参数</li>
+<li><code>ASPNETCORE_URLS</code> 环境变量</li>
+<li>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</li>
+</ul>
+<p>下面的代码示例展示了如何对端口 443 结合使用 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt; 和服务器的本地 IP 地址 <code>10.0.0.4</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>UrlPrefixes</code> 的一个优点是会为格式不正确的前缀立即生成一条错误消息。</p>
+<p><code>UrlPrefixes</code> 中的设置替代 <code>UseUrls</code>/<code>urls</code>/<code>ASPNETCORE_URLS</code> 设置。 因此，<code>UseUrls</code>、<code>urls</code> 和 <code>ASPNETCORE_URLS</code> 环境变量的一个优点是在 Kestrel 和 HTTP.sys 之间切换变得更加容易。</p>
+<p>HTTP.sys 使用 <a href="/windows/win32/http/urlprefix-strings">HTTP 服务器 API UrlPrefix 字符串格式</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不应使用顶级通配符绑定（<code>http://*:80/</code> 和 <code>http://+:80</code>）。 顶级通配符绑定会带来应用安全漏洞。 此行为同时适用于强通配符和弱通配符。 请使用显式主机名或 IP 地址，而不是通配符。 如果可控制整个父域（相对于易受攻击的 <code>*.com</code>），子域通配符绑定（例如，<code>*.mysub.com</code>）不会构成安全风险。 有关详细信息，请参阅 <a href="https://tools.ietf.org/html/rfc7230#section-5.4">RFC 7230：第 5.4 节：主机</a>。</p>
+</div>
+</li>
+<li><p>在服务器上预注册 URL 前缀。</p>
+<p>用于配置 HTTP.sys 的内置工具为 <em>netsh.exe</em>。 <em>netsh.exe</em> 用于保留 URL 前缀并分配 X.509 证书。 此工具需要管理员特权。</p>
+<p>使用 netsh.exe 工具为应用注册 URL：</p>
+<pre><code class="lang-console">netsh http add urlacl url=&lt;URL&gt; user=&lt;USER&gt;
+</code></pre>
+<ul>
+<li><code>&lt;URL&gt;</code>：完全限定的统一资源定位器 (URL)。 不要使用通配符绑定。 请使用有效主机名或本地 IP 地址。 URL 必须包含尾部反斜杠。</li>
+<li><code>&lt;USER&gt;</code>：指定用户名或用户组名称。</li>
+</ul>
+<p>在以下示例中，服务器的本地 IP 地址是 <code>10.0.0.4</code>：</p>
+<pre><code class="lang-console">netsh http add urlacl url=https://10.0.0.4:443/ user=Users
+</code></pre>
+<p>在 URL 注册后，工具响应返回 <code>URL reservation successfully added</code>。</p>
+<p>若要删除已注册的 URL，请使用 <code>delete urlacl</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete urlacl url=&lt;URL&gt;
+</code></pre>
+</li>
+<li><p>在服务器上注册 X.509 证书。</p>
+<p>使用 netsh.exe 工具为应用注册证书：</p>
+<pre><code class="lang-console">netsh http add sslcert ipport=&lt;IP&gt;:&lt;PORT&gt; certhash=&lt;THUMBPRINT&gt; appid=&quot;{&lt;GUID&gt;}&quot;
+</code></pre>
+<ul>
+<li><code>&lt;IP&gt;</code>：指定绑定的本地 IP 地址。 不要使用通配符绑定。 请使用有效 IP 地址。</li>
+<li><code>&lt;PORT&gt;</code>：指定绑定的端口。</li>
+<li><code>&lt;THUMBPRINT&gt;</code>：X.509 证书指纹。</li>
+<li><code>&lt;GUID&gt;</code>：开发人员生成的表示应用的 GUID，以供参考。</li>
+</ul>
+<p>为了便于参考，将 GUID 作为包标记存储在应用中：</p>
+<ul>
+<li>在 Visual Studio 中：
+<ul>
+<li>在“解决方案资源管理器”中，右键单击应用，并选择“属性”，以打开应用的项目属性。</li>
+<li>选择“包”选项卡。</li>
+<li>在“标记”字段中输入已创建的 GUID。</li>
+</ul>
+</li>
+<li>如果使用的不是 Visual Studio：
+<ul>
+<li><p>打开应用的项目文件。</p>
+</li>
+<li><p>使用已创建的 GUID，将 <code>&lt;PackageTags&gt;</code> 属性添加到新的或现有的 <code>&lt;PropertyGroup&gt;</code>：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;PackageTags&gt;9412ee86-c21b-4eb8-bd89-f650fbf44931&lt;/PackageTags&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>服务器的本地 IP 地址是 <code>10.0.0.4</code>。</li>
+<li>联机随机 GUID 生成器提供 <code>appid</code> 值。</li>
+</ul>
+<pre><code class="lang-console">netsh http add sslcert 
+    ipport=10.0.0.4:443 
+    certhash=b66ee04419d4ee37464ab8785ff02449980eae10 
+    appid=&quot;{9412ee86-c21b-4eb8-bd89-f650fbf44931}&quot;
+</code></pre>
+<p>在证书注册后，工具响应返回 <code>SSL Certificate successfully added</code>。</p>
+<p>若要删除证书注册，请使用 <code>delete sslcert</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete sslcert ipport=&lt;IP&gt;:&lt;PORT&gt;
+</code></pre>
+<p><em>netsh.exe</em> 的参考文档：</p>
+<ul>
+<li><a href="/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc725882(v=ws.10)">Netsh Commands for Hypertext Transfer Protocol (HTTP)</a>（超文本传输协议 (HTTP) 的 Netsh 命令）</li>
+<li><a href="/windows/win32/http/urlprefix-strings">UrlPrefix Strings</a>（UrlPrefix 字符串）</li>
+</ul>
+</li>
+<li><p>运行应用。</p>
+<p>结合使用 HTTP（而不是 HTTPS）和大于 1024 的端口号绑定到 localhost，无需管理员权限，即可运行应用。 对于其他配置（例如，使用本地 IP 地址或绑定到端口 443），必须有管理员权限才能运行应用。</p>
+<p>应用在服务器的公共 IP 地址处响应。 此示例在 Internet 上的公共 IP 地址 <code>104.214.79.47</code> 处访问服务器。</p>
+<p>此示例使用的是开发证书。 在绕过浏览器的不受信任证书警告后，页面安全加载。</p>
+<p><img src="httpsys/_static/browser.png" alt="显示应用索引页已加载的浏览器窗口"></p>
+</li>
+</ol>
+<h2 id="proxy-server-and-load-balancer-scenarios">代理服务器和负载均衡器方案</h2>
+<p>如果应用由 HTTP.sys 托管并且与来自 Internet 或公司网络的请求进行交互，当在代理服务器和负载均衡器后托管时，可能需要其他配置。 有关详细信息，请参阅<a class="xref" href="../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html#httpsys">使用 HTTP.sys 启用 Windows 身份验证</a></li>
+<li><a href="/windows/win32/http/http-api-start-page">HTTP 服务器 API</a></li>
+<li><a href="https://github.com/aspnet/HttpSysServer/">aspnet/HttpSysServer GitHub 存储库（源代码）</a></li>
+<li><a class="xref" href="../index.html#host">主机</a></li>
+<li><a class="xref" href="../../test/troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+</ul>
+</div>
+<div range="= aspnetcore-2.2">
+<p><a href="/iis/get-started/introduction-to-iis/introduction-to-iis-architecture#hypertext-transfer-protocol-stack-httpsys">HTTP.sys</a> 是仅在 Windows 上运行的<a class="xref" href="index.html">适用于 ASP.NET Core 的 Web 服务器</a>。 HTTP.sys 是 <a class="xref" href="kestrel.html">Kestrel</a> 服务器的替代选择，提供了一些 Kestrel 不提供的功能。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>HTTP.sys 与 <a class="xref" href="../../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>不兼容，无法与 IIS 或 IIS Express 结合使用。</p>
+</div>
+<p>HTTP.sys 支持以下功能：</p>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a></li>
+<li>端口共享</li>
+<li>具有 SNI 的 HTTPS</li>
+<li>基于 TLS 的 HTTP/2（Windows 10 或更高版本）</li>
+<li>直接文件传输</li>
+<li>响应缓存</li>
+<li>WebSocket（Windows 8 或更高版本）</li>
+</ul>
+<p>受支持的 Windows 版本：</p>
+<ul>
+<li>Windows 7 或更高版本</li>
+<li>Windows Server 2008 R2 或更高版本</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/servers/httpsys/samples">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="when-to-use-httpsys">何时使用 HTTP.sys</h2>
+<p>HTTP.sys 对于以下情形的部署来说很有用：</p>
+<ul>
+<li><p>需要将服务器直接公开到 Internet 而不使用 IIS 的部署。</p>
+<p><img src="httpsys/_static/httpsys-to-internet.png" alt="HTTP.sys 直接与 Internet 进行通信"></p>
+</li>
+<li><p>内部部署需要 Kestrel 中没有的功能，如 <a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a>。</p>
+<p><img src="httpsys/_static/httpsys-to-internal.png" alt="HTTP.sys 直接与内部网络进行通信"></p>
+</li>
+</ul>
+<p>HTTP.sys 是一项成熟的技术，可以抵御多种攻击，并提供可靠、安全、可伸缩的全功能 Web 服务器。 IIS 本身作为 HTTP.sys 之上的 HTTP 侦听器运行。</p>
+<h2 id="http2-support">HTTP/2 支持</h2>
+<p>如果满足以下基本要求，将为 ASP.NET Core 应用启用 <a href="https://httpwg.org/specs/rfc7540.html">HTTP/2</a>：</p>
+<ul>
+<li>Windows Server 2016/Windows 10 或更高版本</li>
+<li><a href="https://tools.ietf.org/html/rfc7301#section-3">应用程序层协议协商 (ALPN)</a> 连接</li>
+<li>TLS 1.2 或更高版本的连接</li>
+</ul>
+<p>如果已建立 HTTP/2 连接，<a href="xref:Microsoft.AspNetCore.Http.HttpRequest.Protocol*">HttpRequest.Protocol</a> 会报告 <code>HTTP/2</code>。</p>
+<p>默认情况下将启用 HTTP/2。 如果未建立 HTTP/2 连接，连接会回退到 HTTP/1.1。 在 Windows 的未来版本中，将提供 HTTP/2 配置标志，包括使用 HTTP.sys 禁用 HTTP/2 的功能。</p>
+<h2 id="kernel-mode-authentication-with-kerberos">对 Kerberos 进行内核模式身份验证</h2>
+<p>HTTP.sys 通过 Kerberos 身份验证协议委托给内核模式身份验证。 Kerberos 和 HTTP.sys 不支持用户模式身份验证。 必须使用计算机帐户来解密从 Active Directory 获取的并由客户端转发到服务器的 Kerberos 令牌/票证，以便对用户进行身份验证。 注册主机的服务主体名称 (SPN)，而不是应用的用户。</p>
+<h2 id="how-to-use-httpsys">如何使用 HTTP.sys</h2>
+<h3 id="configure-the-aspnet-core-app-to-use-httpsys">配置 ASP.NET Core 应用以使用 HTTP.sys</h3>
+<p>使用 <a class="xref" href="../metapackage-app.html">Microsoft.AspNetCore.App metapackage</a> (<a href="https://www.nuget.org/packages/Microsoft.AspNetCore.App/">nuget.org</a>) 时，不需要项目文件中的包引用。 未使用 <code>Microsoft.AspNetCore.App</code> 元包时，向 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Server.HttpSys/">Microsoft.AspNetCore.Server.HttpSys</a> 添加包引用。</p>
+<p>生成主机时调用 &lt;xref:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions.UseHttpSys*&gt; 扩展方法，指定所有必需的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions&gt;。 以下示例将选项设置为其默认值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过<a href="https://support.microsoft.com/help/820129/http-sys-registry-settings-for-windows">注册表设置</a>处理其他 HTTP.sys 配置。</p>
+<p><strong>HTTP.sys 选项</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>描述</th>
+<th style="text-align: center;">默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.AllowSynchronousIO">AllowSynchronousIO</a></td>
+<td>控制是否允许 <code>HttpContext.Request.Body</code> 和 <code>HttpContext.Response.Body</code> 的同步输入/输出。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.AllowAnonymous">Authentication.AllowAnonymous</a></td>
+<td>允许匿名请求。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.Schemes">Authentication.Schemes</a></td>
+<td>指定允许的身份验证方案。 可能在处理侦听器之前随时修改。 通过 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes">AuthenticationSchemes 枚举</a><code>Basic</code>、<code>Kerberos</code>、<code>Negotiate</code>、<code>None</code> 和 <code>NTLM</code> 提供值。</td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.EnableResponseCaching">EnableResponseCaching</a></td>
+<td>尝试<a href="/windows-hardware/drivers/gettingstarted/user-mode-and-kernel-mode">内核模式</a>缓存，响应合格的标头。 该响应可能不包括 <code>Set-Cookie</code>、<code>Vary</code> 或 <code>Pragma</code> 标头。 它必须包括属性为 <code>public</code> 的 <code>Cache-Control</code> 标头和 <code>shared-max-age</code> 或 <code>max-age</code> 值，或 <code>Expires</code> 标头。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxAccepts&gt;</td>
+<td>最大并发接受数量。</td>
+<td style="text-align: center;">5 × <a href="xref:System.Environment.ProcessorCount">环境。<br>ProcessorCount</a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxConnections&gt;</td>
+<td>要接受的最大并发连接数。 使用 <code>-1</code> 实现无限。 通过 <code>null</code> 使用注册表的计算机范围内的设置。</td>
+<td style="text-align: center;"><code>null</code><br>（计算机范围内的<br>设置）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;</td>
+<td>请参阅 <a href="#maxrequestbodysize">MaxRequestBodySize</a> 部分。</td>
+<td style="text-align: center;">30000000 个字节<br>(~28.6 MB)</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.RequestQueueLimit&gt;</td>
+<td>队列中允许的最大请求数。</td>
+<td style="text-align: center;">1000</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.ThrowWriteExceptions&gt;</td>
+<td>指示由于客户端断开连接而失败的响应主体写入应引发异常还是正常完成。</td>
+<td style="text-align: center;"><code>false</code><br>（正常完成）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.Timeouts&gt;</td>
+<td>公开 HTTP.sys &lt;xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager&gt; 配置，也可以在注册表中进行配置。 请访问 API 链接详细了解每个设置，包括默认值：<ul><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.DrainEntityBody">TimeoutManager.DrainEntityBody</a>：允许 HTTP 服务器 API 在保持活动的连接上排出实体正文的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.EntityBody">TimeoutManager.EntityBody</a>：允许请求实体正文到达的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.HeaderWait">TimeoutManager.HeaderWait</a>：允许 HTTP 服务器 API 分析请求头的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.IdleConnection">TimeoutManager.IdleConnection</a>：允许空闲连接的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.MinSendBytesPerSecond">TimeoutManager.MinSendBytesPerSecond</a>：响应的最小发送速率。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.RequestQueue">TimeoutManager.RequestQueue</a>：在应用选取请求前，允许请求在请求队列中停留的时间。</li></ul></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</td>
+<td>指定要向 HTTP.sys 注册的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection&gt;。 最有用的是 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection.Add*">UrlPrefixCollection.Add</a>，它用于将前缀添加到集合中。 可能在处理侦听器之前随时对这些设置进行修改。</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p><a name="maxrequestbodysize"></a></p>
+<p><strong>MaxRequestBodySize</strong></p>
+<p>允许的请求正文的最大大小（以字节计）。 当设置为 <code>null</code> 时，最大请求正文大小不受限制。 此限制不会影响升级后的连接，这始终不受限制。</p>
+<p>在 ASP.NET Core MVC 应用中为单个 <code>IActionResult</code> 替代限制的推荐方法是在操作方法上使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 属性：</p>
+<pre><code class="lang-csharp">[RequestSizeLimit(100000000)]
+public IActionResult MyActionMethod()
+</code></pre>
+<p>如果在应用开始读取请求后尝试配置请求限制，则会引发异常。 <code>IsReadOnly</code> 属性可用于指示 <code>MaxRequestBodySize</code> 属性是否处于只读状态。只读状态意味着已经太迟了，无法配置限制。</p>
+<p>如果应用应替代每个请求的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;，请使用 &lt;xref:Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果使用的是 Visual Studio，请确保应用未经配置以运行 IIS 或 IIS Express。</p>
+<p>在 Visual Studio 中，默认启动配置文件是针对 IIS Express 的。 若要作为控制台应用运行该项目，请手动更改所选配置文件，如以下屏幕截图中所示：</p>
+<p><img src="httpsys/_static/vs-choose-profile.png" alt="选择控制台应用配置文件"></p>
+<h3 id="configure-windows-server">配置 Windows Server</h3>
+<ol>
+<li><p>确定要为应用打开的端口，并使用 <a href="/windows/security/threat-protection/windows-firewall/create-an-inbound-port-rule">Windows 防火墙</a>或 <a href="/powershell/module/netsecurity/new-netfirewallrule">New-NetFirewallRule</a> PowerShell cmdlet 打开防火墙端口，以允许流量到达 HTTP.sys。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>在部署到 Azure VM 时，在<a href="/azure/virtual-machines/windows/nsg-quickstart-portal">网络安全组</a>中打开端口。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>如果需要，获取并安装 X.509 证书。</p>
+<p>在 Windows 上，可使用 <a href="/powershell/module/pkiclient/new-selfsignedcertificate">New-SelfSignedCertificate PowerShell cmdlet</a> 创建自签名证书。 有关不支持的示例，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/includes/make-x509-cert/UpdateIISExpressSSLForChrome.ps1">UpdateIISExpressSSLForChrome.ps1</a>。</p>
+<p>在服务器的“本地计算机”&gt;“个人”存储中，安装自签名证书或 CA 签名证书 。</p>
+</li>
+<li><p>如果应用为<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">框架相关部署</a>，则安装 .NET Core、.NET Framework 或两者（如果应用是面向 .NET Framework 的 .NET Core 应用）。</p>
+<ul>
+<li><strong>.NET Core</strong>：如果应用需要 .NET Core，请从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取并运行 .NET Core 运行时安装程序。 请勿在服务器上安装完整 SDK。</li>
+<li><strong>.NET Framework</strong>：如果应用需要 .NET Framework，请参阅 <a href="/dotnet/framework/install/">.NET Framework 安装指南</a>。 安装所需的 .NET Framework。 可以从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取最新 .NET Framework 的安装程序。</li>
+</ul>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立式部署</a>，应用在部署中包含运行时。 无需在服务器上安装任何框架。</p>
+</li>
+<li><p>在应用中配置 URL 和端口。</p>
+<p>默认情况下，ASP.NET Core 绑定到 <code>http://localhost:5000</code>。 若要配置 URL 前缀和端口，可采用以下方法：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseUrls*&gt;</li>
+<li><code>urls</code> 命令行参数</li>
+<li><code>ASPNETCORE_URLS</code> 环境变量</li>
+<li>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</li>
+</ul>
+<p>下面的代码示例展示了如何对端口 443 结合使用 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt; 和服务器的本地 IP 地址 <code>10.0.0.4</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>UrlPrefixes</code> 的一个优点是会为格式不正确的前缀立即生成一条错误消息。</p>
+<p><code>UrlPrefixes</code> 中的设置替代 <code>UseUrls</code>/<code>urls</code>/<code>ASPNETCORE_URLS</code> 设置。 因此，<code>UseUrls</code>、<code>urls</code> 和 <code>ASPNETCORE_URLS</code> 环境变量的一个优点是在 Kestrel 和 HTTP.sys 之间切换变得更加容易。</p>
+<p>HTTP.sys 使用 <a href="/windows/win32/http/urlprefix-strings">HTTP 服务器 API UrlPrefix 字符串格式</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不应使用顶级通配符绑定（<code>http://*:80/</code> 和 <code>http://+:80</code>）。 顶级通配符绑定会带来应用安全漏洞。 此行为同时适用于强通配符和弱通配符。 请使用显式主机名或 IP 地址，而不是通配符。 如果可控制整个父域（相对于易受攻击的 <code>*.com</code>），子域通配符绑定（例如，<code>*.mysub.com</code>）不会构成安全风险。 有关详细信息，请参阅 <a href="https://tools.ietf.org/html/rfc7230#section-5.4">RFC 7230：第 5.4 节：主机</a>。</p>
+</div>
+</li>
+<li><p>在服务器上预注册 URL 前缀。</p>
+<p>用于配置 HTTP.sys 的内置工具为 <em>netsh.exe</em>。 <em>netsh.exe</em> 用于保留 URL 前缀并分配 X.509 证书。 此工具需要管理员特权。</p>
+<p>使用 netsh.exe 工具为应用注册 URL：</p>
+<pre><code class="lang-console">netsh http add urlacl url=&lt;URL&gt; user=&lt;USER&gt;
+</code></pre>
+<ul>
+<li><code>&lt;URL&gt;</code>：完全限定的统一资源定位器 (URL)。 不要使用通配符绑定。 请使用有效主机名或本地 IP 地址。 URL 必须包含尾部反斜杠。</li>
+<li><code>&lt;USER&gt;</code>：指定用户名或用户组名称。</li>
+</ul>
+<p>在以下示例中，服务器的本地 IP 地址是 <code>10.0.0.4</code>：</p>
+<pre><code class="lang-console">netsh http add urlacl url=https://10.0.0.4:443/ user=Users
+</code></pre>
+<p>在 URL 注册后，工具响应返回 <code>URL reservation successfully added</code>。</p>
+<p>若要删除已注册的 URL，请使用 <code>delete urlacl</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete urlacl url=&lt;URL&gt;
+</code></pre>
+</li>
+<li><p>在服务器上注册 X.509 证书。</p>
+<p>使用 netsh.exe 工具为应用注册证书：</p>
+<pre><code class="lang-console">netsh http add sslcert ipport=&lt;IP&gt;:&lt;PORT&gt; certhash=&lt;THUMBPRINT&gt; appid=&quot;{&lt;GUID&gt;}&quot;
+</code></pre>
+<ul>
+<li><code>&lt;IP&gt;</code>：指定绑定的本地 IP 地址。 不要使用通配符绑定。 请使用有效 IP 地址。</li>
+<li><code>&lt;PORT&gt;</code>：指定绑定的端口。</li>
+<li><code>&lt;THUMBPRINT&gt;</code>：X.509 证书指纹。</li>
+<li><code>&lt;GUID&gt;</code>：开发人员生成的表示应用的 GUID，以供参考。</li>
+</ul>
+<p>为了便于参考，将 GUID 作为包标记存储在应用中：</p>
+<ul>
+<li>在 Visual Studio 中：
+<ul>
+<li>在“解决方案资源管理器”中，右键单击应用，并选择“属性”，以打开应用的项目属性。</li>
+<li>选择“包”选项卡。</li>
+<li>在“标记”字段中输入已创建的 GUID。</li>
+</ul>
+</li>
+<li>如果使用的不是 Visual Studio：
+<ul>
+<li><p>打开应用的项目文件。</p>
+</li>
+<li><p>使用已创建的 GUID，将 <code>&lt;PackageTags&gt;</code> 属性添加到新的或现有的 <code>&lt;PropertyGroup&gt;</code>：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;PackageTags&gt;9412ee86-c21b-4eb8-bd89-f650fbf44931&lt;/PackageTags&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>服务器的本地 IP 地址是 <code>10.0.0.4</code>。</li>
+<li>联机随机 GUID 生成器提供 <code>appid</code> 值。</li>
+</ul>
+<pre><code class="lang-console">netsh http add sslcert 
+    ipport=10.0.0.4:443 
+    certhash=b66ee04419d4ee37464ab8785ff02449980eae10 
+    appid=&quot;{9412ee86-c21b-4eb8-bd89-f650fbf44931}&quot;
+</code></pre>
+<p>在证书注册后，工具响应返回 <code>SSL Certificate successfully added</code>。</p>
+<p>若要删除证书注册，请使用 <code>delete sslcert</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete sslcert ipport=&lt;IP&gt;:&lt;PORT&gt;
+</code></pre>
+<p><em>netsh.exe</em> 的参考文档：</p>
+<ul>
+<li><a href="/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc725882(v=ws.10)">Netsh Commands for Hypertext Transfer Protocol (HTTP)</a>（超文本传输协议 (HTTP) 的 Netsh 命令）</li>
+<li><a href="/windows/win32/http/urlprefix-strings">UrlPrefix Strings</a>（UrlPrefix 字符串）</li>
+</ul>
+</li>
+<li><p>运行应用。</p>
+<p>结合使用 HTTP（而不是 HTTPS）和大于 1024 的端口号绑定到 localhost，无需管理员权限，即可运行应用。 对于其他配置（例如，使用本地 IP 地址或绑定到端口 443），必须有管理员权限才能运行应用。</p>
+<p>应用在服务器的公共 IP 地址处响应。 此示例在 Internet 上的公共 IP 地址 <code>104.214.79.47</code> 处访问服务器。</p>
+<p>此示例使用的是开发证书。 在绕过浏览器的不受信任证书警告后，页面安全加载。</p>
+<p><img src="httpsys/_static/browser.png" alt="显示应用索引页已加载的浏览器窗口"></p>
+</li>
+</ol>
+<h2 id="proxy-server-and-load-balancer-scenarios">代理服务器和负载均衡器方案</h2>
+<p>如果应用由 HTTP.sys 托管并且与来自 Internet 或公司网络的请求进行交互，当在代理服务器和负载均衡器后托管时，可能需要其他配置。 有关详细信息，请参阅<a class="xref" href="../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html#httpsys">使用 HTTP.sys 启用 Windows 身份验证</a></li>
+<li><a href="/windows/win32/http/http-api-start-page">HTTP 服务器 API</a></li>
+<li><a href="https://github.com/aspnet/HttpSysServer/">aspnet/HttpSysServer GitHub 存储库（源代码）</a></li>
+<li><a class="xref" href="../index.html#host">主机</a></li>
+<li><a class="xref" href="../../test/troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-2.2">
+<p><a href="/iis/get-started/introduction-to-iis/introduction-to-iis-architecture#hypertext-transfer-protocol-stack-httpsys">HTTP.sys</a> 是仅在 Windows 上运行的<a class="xref" href="index.html">适用于 ASP.NET Core 的 Web 服务器</a>。 HTTP.sys 是 <a class="xref" href="kestrel.html">Kestrel</a> 服务器的替代选择，提供了一些 Kestrel 不提供的功能。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>HTTP.sys 与 <a class="xref" href="../../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>不兼容，无法与 IIS 或 IIS Express 结合使用。</p>
+</div>
+<p>HTTP.sys 支持以下功能：</p>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a></li>
+<li>端口共享</li>
+<li>具有 SNI 的 HTTPS</li>
+<li>基于 TLS 的 HTTP/2（Windows 10 或更高版本）</li>
+<li>直接文件传输</li>
+<li>响应缓存</li>
+<li>WebSocket（Windows 8 或更高版本）</li>
+</ul>
+<p>受支持的 Windows 版本：</p>
+<ul>
+<li>Windows 7 或更高版本</li>
+<li>Windows Server 2008 R2 或更高版本</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/servers/httpsys/samples">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="when-to-use-httpsys">何时使用 HTTP.sys</h2>
+<p>HTTP.sys 对于以下情形的部署来说很有用：</p>
+<ul>
+<li><p>需要将服务器直接公开到 Internet 而不使用 IIS 的部署。</p>
+<p><img src="httpsys/_static/httpsys-to-internet.png" alt="HTTP.sys 直接与 Internet 进行通信"></p>
+</li>
+<li><p>内部部署需要 Kestrel 中没有的功能，如 <a class="xref" href="../../security/authentication/windowsauth.html">Windows 身份验证</a>。</p>
+<p><img src="httpsys/_static/httpsys-to-internal.png" alt="HTTP.sys 直接与内部网络进行通信"></p>
+</li>
+</ul>
+<p>HTTP.sys 是一项成熟的技术，可以抵御多种攻击，并提供可靠、安全、可伸缩的全功能 Web 服务器。 IIS 本身作为 HTTP.sys 之上的 HTTP 侦听器运行。</p>
+<h2 id="http2-support">HTTP/2 支持</h2>
+<p>如果满足以下基本要求，将为 ASP.NET Core 应用启用 <a href="https://httpwg.org/specs/rfc7540.html">HTTP/2</a>：</p>
+<ul>
+<li>Windows Server 2016/Windows 10 或更高版本</li>
+<li><a href="https://tools.ietf.org/html/rfc7301#section-3">应用程序层协议协商 (ALPN)</a> 连接</li>
+<li>TLS 1.2 或更高版本的连接</li>
+</ul>
+<p>如果已建立 HTTP/2 连接，<a href="xref:Microsoft.AspNetCore.Http.HttpRequest.Protocol*">HttpRequest.Protocol</a> 会报告 <code>HTTP/1.1</code>。</p>
+<p>默认情况下将启用 HTTP/2。 如果未建立 HTTP/2 连接，连接会回退到 HTTP/1.1。 在 Windows 的未来版本中，将提供 HTTP/2 配置标志，包括使用 HTTP.sys 禁用 HTTP/2 的功能。</p>
+<h2 id="kernel-mode-authentication-with-kerberos">对 Kerberos 进行内核模式身份验证</h2>
+<p>HTTP.sys 通过 Kerberos 身份验证协议委托给内核模式身份验证。 Kerberos 和 HTTP.sys 不支持用户模式身份验证。 必须使用计算机帐户来解密从 Active Directory 获取的并由客户端转发到服务器的 Kerberos 令牌/票证，以便对用户进行身份验证。 注册主机的服务主体名称 (SPN)，而不是应用的用户。</p>
+<h2 id="how-to-use-httpsys">如何使用 HTTP.sys</h2>
+<h3 id="configure-the-aspnet-core-app-to-use-httpsys">配置 ASP.NET Core 应用以使用 HTTP.sys</h3>
+<p>使用 <a class="xref" href="../metapackage-app.html">Microsoft.AspNetCore.App metapackage</a> (<a href="https://www.nuget.org/packages/Microsoft.AspNetCore.App/">nuget.org</a>) 时，不需要项目文件中的包引用。 未使用 <code>Microsoft.AspNetCore.App</code> 元包时，向 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Server.HttpSys/">Microsoft.AspNetCore.Server.HttpSys</a> 添加包引用。</p>
+<p>生成主机时调用 &lt;xref:Microsoft.AspNetCore.Hosting.WebHostBuilderHttpSysExtensions.UseHttpSys*&gt; 扩展方法，指定所有必需的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions&gt;。 以下示例将选项设置为其默认值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过<a href="https://support.microsoft.com/help/820129/http-sys-registry-settings-for-windows">注册表设置</a>处理其他 HTTP.sys 配置。</p>
+<p><strong>HTTP.sys 选项</strong></p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>描述</th>
+<th style="text-align: center;">默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.AllowSynchronousIO">AllowSynchronousIO</a></td>
+<td>控制是否允许 <code>HttpContext.Request.Body</code> 和 <code>HttpContext.Response.Body</code> 的同步输入/输出。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.AllowAnonymous">Authentication.AllowAnonymous</a></td>
+<td>允许匿名请求。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationManager.Schemes">Authentication.Schemes</a></td>
+<td>指定允许的身份验证方案。 可能在处理侦听器之前随时修改。 通过 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes">AuthenticationSchemes 枚举</a><code>Basic</code>、<code>Kerberos</code>、<code>Negotiate</code>、<code>None</code> 和 <code>NTLM</code> 提供值。</td>
+<td style="text-align: center;"><code>None</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.EnableResponseCaching">EnableResponseCaching</a></td>
+<td>尝试<a href="/windows-hardware/drivers/gettingstarted/user-mode-and-kernel-mode">内核模式</a>缓存，响应合格的标头。 该响应可能不包括 <code>Set-Cookie</code>、<code>Vary</code> 或 <code>Pragma</code> 标头。 它必须包括属性为 <code>public</code> 的 <code>Cache-Control</code> 标头和 <code>shared-max-age</code> 或 <code>max-age</code> 值，或 <code>Expires</code> 标头。</td>
+<td style="text-align: center;"><code>true</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxAccepts&gt;</td>
+<td>最大并发接受数量。</td>
+<td style="text-align: center;">5 × <a href="xref:System.Environment.ProcessorCount">环境。<br>ProcessorCount</a></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxConnections&gt;</td>
+<td>要接受的最大并发连接数。 使用 <code>-1</code> 实现无限。 通过 <code>null</code> 使用注册表的计算机范围内的设置。</td>
+<td style="text-align: center;"><code>null</code><br>（计算机范围内的<br>设置）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;</td>
+<td>请参阅 <a href="#maxrequestbodysize">MaxRequestBodySize</a> 部分。</td>
+<td style="text-align: center;">30000000 个字节<br>(~28.6 MB)</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.RequestQueueLimit&gt;</td>
+<td>队列中允许的最大请求数。</td>
+<td style="text-align: center;">1000</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.ThrowWriteExceptions&gt;</td>
+<td>指示由于客户端断开连接而失败的响应主体写入应引发异常还是正常完成。</td>
+<td style="text-align: center;"><code>false</code><br>（正常完成）</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.Timeouts&gt;</td>
+<td>公开 HTTP.sys &lt;xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager&gt; 配置，也可以在注册表中进行配置。 请访问 API 链接详细了解每个设置，包括默认值：<ul><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.DrainEntityBody">TimeoutManager.DrainEntityBody</a>：允许 HTTP 服务器 API 在保持活动的连接上排出实体正文的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.EntityBody">TimeoutManager.EntityBody</a>：允许请求实体正文到达的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.HeaderWait">TimeoutManager.HeaderWait</a>：允许 HTTP 服务器 API 分析请求头的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.IdleConnection">TimeoutManager.IdleConnection</a>：允许空闲连接的时间。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.MinSendBytesPerSecond">TimeoutManager.MinSendBytesPerSecond</a>：响应的最小发送速率。</li><li><a href="xref:Microsoft.AspNetCore.Server.HttpSys.TimeoutManager.RequestQueue">TimeoutManager.RequestQueue</a>：在应用选取请求前，允许请求在请求队列中停留的时间。</li></ul></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</td>
+<td>指定要向 HTTP.sys 注册的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection&gt;。 最有用的是 <a href="xref:Microsoft.AspNetCore.Server.HttpSys.UrlPrefixCollection.Add*">UrlPrefixCollection.Add</a>，它用于将前缀添加到集合中。 可能在处理侦听器之前随时对这些设置进行修改。</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<p><a name="maxrequestbodysize"></a></p>
+<p><strong>MaxRequestBodySize</strong></p>
+<p>允许的请求正文的最大大小（以字节计）。 当设置为 <code>null</code> 时，最大请求正文大小不受限制。 此限制不会影响升级后的连接，这始终不受限制。</p>
+<p>在 ASP.NET Core MVC 应用中为单个 <code>IActionResult</code> 替代限制的推荐方法是在操作方法上使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 属性：</p>
+<pre><code class="lang-csharp">[RequestSizeLimit(100000000)]
+public IActionResult MyActionMethod()
+</code></pre>
+<p>如果在应用开始读取请求后尝试配置请求限制，则会引发异常。 <code>IsReadOnly</code> 属性可用于指示 <code>MaxRequestBodySize</code> 属性是否处于只读状态。只读状态意味着已经太迟了，无法配置限制。</p>
+<p>如果应用应替代每个请求的 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.MaxRequestBodySize&gt;，请使用 &lt;xref:Microsoft.AspNetCore.Http.Features.IHttpMaxRequestBodySizeFeature&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果使用的是 Visual Studio，请确保应用未经配置以运行 IIS 或 IIS Express。</p>
+<p>在 Visual Studio 中，默认启动配置文件是针对 IIS Express 的。 若要作为控制台应用运行该项目，请手动更改所选配置文件，如以下屏幕截图中所示：</p>
+<p><img src="httpsys/_static/vs-choose-profile.png" alt="选择控制台应用配置文件"></p>
+<h3 id="configure-windows-server">配置 Windows Server</h3>
+<ol>
+<li><p>确定要为应用打开的端口，并使用 <a href="/windows/security/threat-protection/windows-firewall/create-an-inbound-port-rule">Windows 防火墙</a>或 <a href="/powershell/module/netsecurity/new-netfirewallrule">New-NetFirewallRule</a> PowerShell cmdlet 打开防火墙端口，以允许流量到达 HTTP.sys。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>在部署到 Azure VM 时，在<a href="/azure/virtual-machines/windows/nsg-quickstart-portal">网络安全组</a>中打开端口。 在以下命令和应用配置中，使用的是端口 443。</p>
+</li>
+<li><p>如果需要，获取并安装 X.509 证书。</p>
+<p>在 Windows 上，可使用 <a href="/powershell/module/pkiclient/new-selfsignedcertificate">New-SelfSignedCertificate PowerShell cmdlet</a> 创建自签名证书。 有关不支持的示例，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/includes/make-x509-cert/UpdateIISExpressSSLForChrome.ps1">UpdateIISExpressSSLForChrome.ps1</a>。</p>
+<p>在服务器的“本地计算机”&gt;“个人”存储中，安装自签名证书或 CA 签名证书 。</p>
+</li>
+<li><p>如果应用为<a href="/dotnet/core/deploying/#framework-dependent-deployments-fdd">框架相关部署</a>，则安装 .NET Core、.NET Framework 或两者（如果应用是面向 .NET Framework 的 .NET Core 应用）。</p>
+<ul>
+<li><strong>.NET Core</strong>：如果应用需要 .NET Core，请从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取并运行 .NET Core 运行时安装程序。 请勿在服务器上安装完整 SDK。</li>
+<li><strong>.NET Framework</strong>：如果应用需要 .NET Framework，请参阅 <a href="/dotnet/framework/install/">.NET Framework 安装指南</a>。 安装所需的 .NET Framework。 可以从 <a href="https://dotnet.microsoft.com/download">.NET Core 下载</a>页获取最新 .NET Framework 的安装程序。</li>
+</ul>
+<p>如果应用是<a href="/dotnet/core/deploying/#self-contained-deployments-scd">独立式部署</a>，应用在部署中包含运行时。 无需在服务器上安装任何框架。</p>
+</li>
+<li><p>在应用中配置 URL 和端口。</p>
+<p>默认情况下，ASP.NET Core 绑定到 <code>http://localhost:5000</code>。 若要配置 URL 前缀和端口，可采用以下方法：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseUrls*&gt;</li>
+<li><code>urls</code> 命令行参数</li>
+<li><code>ASPNETCORE_URLS</code> 环境变量</li>
+<li>&lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt;</li>
+</ul>
+<p>下面的代码示例展示了如何对端口 443 结合使用 &lt;xref:Microsoft.AspNetCore.Server.HttpSys.HttpSysOptions.UrlPrefixes&gt; 和服务器的本地 IP 地址 <code>10.0.0.4</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>UrlPrefixes</code> 的一个优点是会为格式不正确的前缀立即生成一条错误消息。</p>
+<p><code>UrlPrefixes</code> 中的设置替代 <code>UseUrls</code>/<code>urls</code>/<code>ASPNETCORE_URLS</code> 设置。 因此，<code>UseUrls</code>、<code>urls</code> 和 <code>ASPNETCORE_URLS</code> 环境变量的一个优点是在 Kestrel 和 HTTP.sys 之间切换变得更加容易。</p>
+<p>HTTP.sys 使用 <a href="/windows/win32/http/urlprefix-strings">HTTP 服务器 API UrlPrefix 字符串格式</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不应使用顶级通配符绑定（<code>http://*:80/</code> 和 <code>http://+:80</code>）。 顶级通配符绑定会带来应用安全漏洞。 此行为同时适用于强通配符和弱通配符。 请使用显式主机名或 IP 地址，而不是通配符。 如果可控制整个父域（相对于易受攻击的 <code>*.com</code>），子域通配符绑定（例如，<code>*.mysub.com</code>）不会构成安全风险。 有关详细信息，请参阅 <a href="https://tools.ietf.org/html/rfc7230#section-5.4">RFC 7230：第 5.4 节：主机</a>。</p>
+</div>
+</li>
+<li><p>在服务器上预注册 URL 前缀。</p>
+<p>用于配置 HTTP.sys 的内置工具为 <em>netsh.exe</em>。 <em>netsh.exe</em> 用于保留 URL 前缀并分配 X.509 证书。 此工具需要管理员特权。</p>
+<p>使用 netsh.exe 工具为应用注册 URL：</p>
+<pre><code class="lang-console">netsh http add urlacl url=&lt;URL&gt; user=&lt;USER&gt;
+</code></pre>
+<ul>
+<li><code>&lt;URL&gt;</code>：完全限定的统一资源定位器 (URL)。 不要使用通配符绑定。 请使用有效主机名或本地 IP 地址。 URL 必须包含尾部反斜杠。</li>
+<li><code>&lt;USER&gt;</code>：指定用户名或用户组名称。</li>
+</ul>
+<p>在以下示例中，服务器的本地 IP 地址是 <code>10.0.0.4</code>：</p>
+<pre><code class="lang-console">netsh http add urlacl url=https://10.0.0.4:443/ user=Users
+</code></pre>
+<p>在 URL 注册后，工具响应返回 <code>URL reservation successfully added</code>。</p>
+<p>若要删除已注册的 URL，请使用 <code>delete urlacl</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete urlacl url=&lt;URL&gt;
+</code></pre>
+</li>
+<li><p>在服务器上注册 X.509 证书。</p>
+<p>使用 netsh.exe 工具为应用注册证书：</p>
+<pre><code class="lang-console">netsh http add sslcert ipport=&lt;IP&gt;:&lt;PORT&gt; certhash=&lt;THUMBPRINT&gt; appid=&quot;{&lt;GUID&gt;}&quot;
+</code></pre>
+<ul>
+<li><code>&lt;IP&gt;</code>：指定绑定的本地 IP 地址。 不要使用通配符绑定。 请使用有效 IP 地址。</li>
+<li><code>&lt;PORT&gt;</code>：指定绑定的端口。</li>
+<li><code>&lt;THUMBPRINT&gt;</code>：X.509 证书指纹。</li>
+<li><code>&lt;GUID&gt;</code>：开发人员生成的表示应用的 GUID，以供参考。</li>
+</ul>
+<p>为了便于参考，将 GUID 作为包标记存储在应用中：</p>
+<ul>
+<li>在 Visual Studio 中：
+<ul>
+<li>在“解决方案资源管理器”中，右键单击应用，并选择“属性”，以打开应用的项目属性。</li>
+<li>选择“包”选项卡。</li>
+<li>在“标记”字段中输入已创建的 GUID。</li>
+</ul>
+</li>
+<li>如果使用的不是 Visual Studio：
+<ul>
+<li><p>打开应用的项目文件。</p>
+</li>
+<li><p>使用已创建的 GUID，将 <code>&lt;PackageTags&gt;</code> 属性添加到新的或现有的 <code>&lt;PropertyGroup&gt;</code>：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;PackageTags&gt;9412ee86-c21b-4eb8-bd89-f650fbf44931&lt;/PackageTags&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>如下示例中：</p>
+<ul>
+<li>服务器的本地 IP 地址是 <code>10.0.0.4</code>。</li>
+<li>联机随机 GUID 生成器提供 <code>appid</code> 值。</li>
+</ul>
+<pre><code class="lang-console">netsh http add sslcert 
+    ipport=10.0.0.4:443 
+    certhash=b66ee04419d4ee37464ab8785ff02449980eae10 
+    appid=&quot;{9412ee86-c21b-4eb8-bd89-f650fbf44931}&quot;
+</code></pre>
+<p>在证书注册后，工具响应返回 <code>SSL Certificate successfully added</code>。</p>
+<p>若要删除证书注册，请使用 <code>delete sslcert</code> 命令：</p>
+<pre><code class="lang-console">netsh http delete sslcert ipport=&lt;IP&gt;:&lt;PORT&gt;
+</code></pre>
+<p><em>netsh.exe</em> 的参考文档：</p>
+<ul>
+<li><a href="/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc725882(v=ws.10)">Netsh Commands for Hypertext Transfer Protocol (HTTP)</a>（超文本传输协议 (HTTP) 的 Netsh 命令）</li>
+<li><a href="/windows/win32/http/urlprefix-strings">UrlPrefix Strings</a>（UrlPrefix 字符串）</li>
+</ul>
+</li>
+<li><p>运行应用。</p>
+<p>结合使用 HTTP（而不是 HTTPS）和大于 1024 的端口号绑定到 localhost，无需管理员权限，即可运行应用。 对于其他配置（例如，使用本地 IP 地址或绑定到端口 443），必须有管理员权限才能运行应用。</p>
+<p>应用在服务器的公共 IP 地址处响应。 此示例在 Internet 上的公共 IP 地址 <code>104.214.79.47</code> 处访问服务器。</p>
+<p>此示例使用的是开发证书。 在绕过浏览器的不受信任证书警告后，页面安全加载。</p>
+<p><img src="httpsys/_static/browser.png" alt="显示应用索引页已加载的浏览器窗口"></p>
+</li>
+</ol>
+<h2 id="proxy-server-and-load-balancer-scenarios">代理服务器和负载均衡器方案</h2>
+<p>如果应用由 HTTP.sys 托管并且与来自 Internet 或公司网络的请求进行交互，当在代理服务器和负载均衡器后托管时，可能需要其他配置。 有关详细信息，请参阅<a class="xref" href="../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../security/authentication/windowsauth.html#httpsys">使用 HTTP.sys 启用 Windows 身份验证</a></li>
+<li><a href="/windows/win32/http/http-api-start-page">HTTP 服务器 API</a></li>
+<li><a href="https://github.com/aspnet/HttpSysServer/">aspnet/HttpSysServer GitHub 存储库（源代码）</a></li>
+<li><a class="xref" href="../index.html#host">主机</a></li>
+<li><a class="xref" href="../../test/troubleshoot.html">ASP.NET Core 项目故障排除和调试</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

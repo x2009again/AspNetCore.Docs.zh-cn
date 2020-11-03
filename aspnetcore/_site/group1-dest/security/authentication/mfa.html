@@ -1,0 +1,580 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#22810;&#37325;&#36523;&#20221;&#39564;&#35777; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#22810;&#37325;&#36523;&#20221;&#39564;&#35777; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/mfa">
+<h1 id="multi-factor-authentication-in-aspnet-core">ASP.NET Core 中的多重身份验证</h1>
+
+<p>作者： <a href="https://github.com/damienbod">Damien Bowden</a></p>
+<p><a href="https://github.com/damienbod/AspNetCoreHybridFlowWithApi"> (damienbod/AspNetCoreHybridFlowWithApi GitHub 存储库查看或下载示例代码) </a></p>
+<p>多重身份验证 (MFA) 是在登录事件期间请求用户执行其他形式的标识的过程。 此提示可以是输入手机中的代码，使用 FIDO2 键，或提供指纹扫描。 当你需要另一种形式的身份验证时，安全性得到了增强。 攻击者无法轻松获取或复制额外的因素。</p>
+<p>本文涵盖以下几个方面：</p>
+<ul>
+<li>什么是 MFA 以及建议使用哪些 MFA 流</li>
+<li>使用为管理页配置 MFA ASP.NET Core Identity</li>
+<li>将 MFA 登录要求发送到 OpenID Connect 服务器</li>
+<li>强制 ASP.NET Core OpenID Connect 客户端要求 MFA</li>
+</ul>
+<h2 id="mfa-2fa">MFA，2FA</h2>
+<p>MFA 至少需要两种或更多类型的身份验证，如你知道的东西、你拥有的内容或对用户进行身份验证的生物识别验证。</p>
+<p>双因素身份验证 (2FA) 类似于 MFA 的子集，但不同之处在于，MFA 可能需要两个或多个因素来证明身份。</p>
+<h3 id="mfa-totp-time-based-one-time-password-algorithm">MFA TOTP (基于时间的一次性密码算法)</h3>
+<p>使用 TOTP 的 MFA 是受支持的实现 ASP.NET Core Identity 。 这可以与任何兼容的验证器应用一起使用，包括：</p>
+<ul>
+<li>Microsoft Authenticator 应用</li>
+<li>Google 验证器应用</li>
+</ul>
+<p>有关实现的详细信息，请参阅以下链接：</p>
+<p><a class="xref" href="identity-enable-qrcodes.html">为 ASP.NET Core 中的 TOTP 验证器应用启用 QR 代码生成</a></p>
+<h3 id="mfa-fido2-or-passwordless">MFA FIDO2 或无密码</h3>
+<p>FIDO2 目前：</p>
+<ul>
+<li>实现 MFA 的最安全方法。</li>
+<li>唯一防止仿冒攻击的 MFA 流。</li>
+</ul>
+<p>目前，ASP.NET Core 不能直接支持 FIDO2。 FIDO2 可用于 MFA 或无密码流。</p>
+<p>Azure Active Directory 提供对 FIDO2 和无密码流的支持。 有关详细信息，请参阅 <a href="/azure/active-directory/authentication/concept-authentication-passwordless">无密码 authentication options for Azure Active Directory</a>。</p>
+<h3 id="mfa-sms">MFA 短信</h3>
+<p>与密码身份验证相比，具有短信的 MFA 增加了高度的安全性 (单个因素) 。 但是，不再建议使用短信作为第二个因素。 此类型的实现存在太多已知攻击媒介。</p>
+<p><a href="https://pages.nist.gov/800-63-3/sp800-63b.html">NIST 指导原则</a></p>
+<h2 id="configure-mfa-for-administration-pages-using-no-locaspnet-core-identity">使用为管理页配置 MFA ASP.NET Core Identity</h2>
+<p>可以强制用户在应用中访问敏感页面 ASP.NET Core Identity 。 对于不同标识存在不同级别访问权限的应用，这可能很有用。 例如，用户可以使用密码登录名查看配置文件数据，但管理员需要使用 MFA 来访问管理页面。</p>
+<h3 id="extend-the-login-with-an-mfa-claim">使用 MFA 声明扩展登录名</h3>
+<p>演示代码是使用和页 ASP.NET Core 设置 Identity 的 Razor 。 <code>AddIdentity</code>使用方法而不是 <code>AddDefaultIdentity</code> 一个方法，因此，在 <code>IUserClaimsPrincipalFactory</code> 成功登录后，可以使用实现将声明添加到标识。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext&lt;ApplicationDbContext&gt;(options =&gt;
+        options.UseSqlite(
+            Configuration.GetConnectionString(&quot;DefaultConnection&quot;)));
+    
+    services.AddIdentity&lt;IdentityUser, IdentityRole&gt;(
+            options =&gt; options.SignIn.RequireConfirmedAccount = false)
+        .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()
+        .AddDefaultTokenProviders();
+
+    services.AddSingleton&lt;IEmailSender, EmailSender&gt;();
+    services.AddScoped&lt;IUserClaimsPrincipalFactory&lt;IdentityUser&gt;, 
+        AdditionalUserClaimsPrincipalFactory&gt;();
+
+    services.AddAuthorization(options =&gt;
+        options.AddPolicy(&quot;TwoFactorEnabled&quot;,
+            x =&gt; x.RequireClaim(&quot;amr&quot;, &quot;mfa&quot;)));
+
+    services.AddRazorPages();
+}
+</code></pre>
+<p><code>AdditionalUserClaimsPrincipalFactory</code>类 <code>amr</code> 仅在成功登录后将声明添加到用户声明。 将从数据库中读取声明的值。 此处添加了声明，因为如果该标识已使用 MFA 登录，则该用户只应访问受保护的视图。 如果直接从数据库中读取数据库视图而不是使用声明，则在激活 MFA 后，可以直接访问该视图，而无需进行 MFA。</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
+namespace IdentityStandaloneMfa
+{
+    public class AdditionalUserClaimsPrincipalFactory : 
+        UserClaimsPrincipalFactory&lt;IdentityUser, IdentityRole&gt;
+    {
+        public AdditionalUserClaimsPrincipalFactory( 
+            UserManager&lt;IdentityUser&gt; userManager,
+            RoleManager&lt;IdentityRole&gt; roleManager, 
+            IOptions&lt;IdentityOptions&gt; optionsAccessor) 
+            : base(userManager, roleManager, optionsAccessor)
+        {
+        }
+
+        public async override Task&lt;ClaimsPrincipal&gt; CreateAsync(IdentityUser user)
+        {
+            var principal = await base.CreateAsync(user);
+            var identity = (ClaimsIdentity)principal.Identity;
+
+            var claims = new List&lt;Claim&gt;();
+
+            if (user.TwoFactorEnabled)
+            {
+                claims.Add(new Claim(&quot;amr&quot;, &quot;mfa&quot;));
+            }
+            else
+            {
+                claims.Add(new Claim(&quot;amr&quot;, &quot;pwd&quot;));
+            }
+
+            identity.AddClaims(claims);
+            return principal;
+        }
+    }
+}
+</code></pre>
+<p>由于 Identity 服务设置在类中发生了更改 <code>Startup</code> ， Identity 需要更新的布局。 将 Identity 页面基架到应用。 在 <em>Identity /Account/Manage/_Layout cshtml</em> 文件中定义布局。</p>
+<pre><code class="lang-cshtml">@{
+    Layout = &quot;/Pages/Shared/_Layout.cshtml&quot;;
+}
+</code></pre>
+<p>同时为所有页面的 &quot;管理&quot; 页指定布局 Identity ：</p>
+<pre><code class="lang-cshtml">@{
+    Layout = &quot;_Layout.cshtml&quot;;
+}
+</code></pre>
+<h3 id="validate-the-mfa-requirement-in-the-administration-page">在管理页中验证 MFA 要求</h3>
+<p>&quot;管理&quot; Razor 页将验证用户是否已使用 MFA 登录。 在 <code>OnGet</code> 方法中，标识用于访问用户声明。 <code>amr</code>检查此声明的值 <code>mfa</code> 。 如果标识缺少此声明或为 <code>false</code> ，则页面重定向到 &quot;启用 MFA&quot; 页。 这是可能的，因为用户已登录，但没有 MFA。</p>
+<pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+namespace IdentityStandaloneMfa
+{
+    public class AdminModel : PageModel
+    {
+        public IActionResult OnGet()
+        {
+            var claimTwoFactorEnabled = 
+                User.Claims.FirstOrDefault(t =&gt; t.Type == &quot;amr&quot;);
+
+            if (claimTwoFactorEnabled != null &amp;&amp; 
+                &quot;mfa&quot;.Equals(claimTwoFactorEnabled.Value))
+            {
+                // You logged in with MFA, do the administrative stuff
+            }
+            else
+            {
+                return Redirect(
+                    &quot;/Identity/Account/Manage/TwoFactorAuthentication&quot;);
+            }
+
+            return Page();
+        }
+    }
+}
+</code></pre>
+<h3 id="ui-logic-to-toggle-user-login-information">用于切换用户登录信息的 UI 逻辑</h3>
+<p>在启动时添加了授权策略。 策略要求声明的 <code>amr</code> 值为 <code>mfa</code> 。</p>
+<pre><code class="lang-csharp">services.AddAuthorization(options =&gt;
+    options.AddPolicy(&quot;TwoFactorEnabled&quot;,
+        x =&gt; x.RequireClaim(&quot;amr&quot;, &quot;mfa&quot;)));
+</code></pre>
+<p>然后，可在视图中使用此策略 <code>_Layout</code> 来显示或隐藏带有警告的 <strong>管理</strong> 菜单：</p>
+<pre><code class="lang-cshtml">@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager&lt;IdentityUser&gt; SignInManager
+@inject UserManager&lt;IdentityUser&gt; UserManager
+@inject IAuthorizationService AuthorizationService
+</code></pre>
+<p>如果标识已使用 MFA 登录，则会显示 &quot; <strong>管理</strong> &quot; 菜单而不显示工具提示警告。 如果用户登录时未启用 MFA，将显示 &quot; <strong>管理员 (未启用&quot;)</strong> 菜单与工具提示一起显示，通知用户 (解释警告) 。</p>
+<pre><code class="lang-cshtml">@if (SignInManager.IsSignedIn(User))
+{
+    @if ((AuthorizationService.AuthorizeAsync(User, &quot;TwoFactorEnabled&quot;)).Result.Succeeded)
+    {
+        &lt;li class=&quot;nav-item&quot;&gt;
+            &lt;a class=&quot;nav-link text-dark&quot; asp-area=&quot;&quot; asp-page=&quot;/Admin&quot;&gt;Admin&lt;/a&gt;
+        &lt;/li&gt;
+    }
+    else
+    {
+        &lt;li class=&quot;nav-item&quot;&gt;
+            &lt;a class=&quot;nav-link text-dark&quot; asp-area=&quot;&quot; asp-page=&quot;/Admin&quot; 
+               id=&quot;tooltip-demo&quot;  
+               data-toggle=&quot;tooltip&quot; 
+               data-placement=&quot;bottom&quot; 
+               title=&quot;MFA is NOT enabled. This is required for the Admin Page. If you have activated MFA, then logout, login again.&quot;&gt;
+                Admin (Not Enabled)
+            &lt;/a&gt;
+        &lt;/li&gt;
+    }
+}
+</code></pre>
+<p>如果用户在没有 MFA 的情况下登录，将显示警告：</p>
+<p><img src="mfa/_static/identitystandalonemfa_01.png" alt="管理员 MFA 身份验证"></p>
+<p>单击 &quot; <strong>管理</strong> &quot; 链接时，用户将重定向到 &quot;MFA 启用&quot; 视图：</p>
+<p><img src="mfa/_static/identitystandalonemfa_02.png" alt="管理员激活 MFA 身份验证"></p>
+<h2 id="send-mfa-sign-in-requirement-to-openid-connect-server">将 MFA 登录要求发送到 OpenID Connect 服务器</h2>
+<p><code>acr_values</code>参数可用于 <code>mfa</code> 在身份验证请求中将所需的值从客户端传递到服务器。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>acr_values</code>需要在 OpenID connect 服务器上处理参数，此参数才有效。</p>
+</div>
+<h3 id="openid-connect-aspnet-core-client">OpenID Connect ASP.NET Core 客户端</h3>
+<p>ASP.NET Core Razor 页面 OpenID connect 客户端应用使用 <code>AddOpenIdConnect</code> 方法登录到 OpenID connect 服务器。 <code>acr_values</code>参数设置为 <code>mfa</code> 值，并随身份验证请求一起发送。 <code>OpenIdConnectEvents</code>用于添加此。</p>
+<p>有关推荐的 <code>acr_values</code> 参数值，请参阅 <a href="https://tools.ietf.org/html/draft-ietf-oauth-amr-values-08">身份验证方法引用值</a>。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddAuthentication(options =&gt;
+    {
+        options.DefaultScheme =
+            CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme =
+            OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddOpenIdConnect(options =&gt;
+    {
+        options.SignInScheme =
+            CookieAuthenticationDefaults.AuthenticationScheme;
+        options.Authority = &quot;&lt;OpenID Connect server URL&gt;&quot;;
+        options.RequireHttpsMetadata = true;
+        options.ClientId = &quot;&lt;OpenID Connect client ID&gt;&quot;;
+        options.ClientSecret = &quot;&lt;&gt;&quot;;
+        // Code with PKCE can also be used here
+        options.ResponseType = &quot;code id_token&quot;;
+        options.Scope.Add(&quot;profile&quot;);
+        options.Scope.Add(&quot;offline_access&quot;);
+        options.SaveTokens = true;
+        options.Events = new OpenIdConnectEvents
+        {
+            OnRedirectToIdentityProvider = context =&gt;
+            {
+                context.ProtocolMessage.SetParameter(&quot;acr_values&quot;, &quot;mfa&quot;);
+                return Task.FromResult(0);
+            }
+        };
+    });
+</code></pre>
+<h3 id="example-openid-connect-no-locidentityserver-4-server-with-no-locaspnet-core-identity">示例 OpenID Connect Identity server 4 服务器与 ASP.NET Core Identity</h3>
+<p>在使用 MVC 视图实现的 OpenID Connect 服务器上 ASP.NET Core Identity ，将创建一个名为 <em>ErrorEnable2FA</em> 的新视图。 视图：</p>
+<ul>
+<li>显示来自 Identity 需要 MFA 但用户未在中激活此应用程序的应用程序 Identity 。</li>
+<li>通知用户并添加一个用于激活此的链接。</li>
+</ul>
+<pre><code class="lang-cshtml">@{
+    ViewData[&quot;Title&quot;] = &quot;ErrorEnable2FA&quot;;
+}
+
+&lt;h1&gt;The client application requires you to have MFA enabled. Enable this, try login again.&lt;/h1&gt;
+
+&lt;br /&gt;
+
+You can enable MFA to login here:
+
+&lt;br /&gt;
+
+&lt;a asp-controller=&quot;Manage&quot; asp-action=&quot;TwoFactorAuthentication&quot;&gt;Enable MFA&lt;/a&gt;
+</code></pre>
+<p>在 <code>Login</code> 方法中， <code>IIdentityServerInteractionService</code> 接口实现 <code>_interaction</code> 用于访问 OpenID connect 请求参数。 <code>acr_values</code>使用属性访问参数 <code>AcrValues</code> 。 当客户端通过集发送此时 <code>mfa</code> ，可以检查此情况。</p>
+<p>如果需要 MFA，并且中的用户 ASP.NET Core Identity 启用了 mfa，则登录将继续。 如果用户未启用 MFA，则会将用户重定向到自定义视图 <em>ErrorEnable2FA</em> 。 然后 ASP.NET Core Identity 在中对用户进行签名。</p>
+<pre><code class="lang-csharp">//
+// POST: /Account/Login
+[HttpPost]
+[AllowAnonymous]
+[ValidateAntiForgeryToken]
+public async Task&lt;IActionResult&gt; Login(LoginInputModel model)
+{
+    var returnUrl = model.ReturnUrl;
+    var context = 
+        await _interaction.GetAuthorizationContextAsync(returnUrl);
+    var requires2Fa = 
+        context?.AcrValues.Count(t =&gt; t.Contains(&quot;mfa&quot;)) &gt;= 1;
+
+    var user = await _userManager.FindByNameAsync(model.Email);
+    if (user != null &amp;&amp; !user.TwoFactorEnabled &amp;&amp; requires2Fa)
+    {
+        return RedirectToAction(nameof(ErrorEnable2FA));
+    }
+
+    // code omitted for brevity
+</code></pre>
+<p><code>ExternalLoginCallback</code>方法的工作方式类似于 Identity 本地登录。 将 <code>AcrValues</code> 检查该属性的 <code>mfa</code> 值。 如果 <code>mfa</code> 值存在，则在登录完成之前强制执行 MFA (例如，重定向到) 的 <code>ErrorEnable2FA</code> 视图。</p>
+<pre><code class="lang-csharp">//
+// GET: /Account/ExternalLoginCallback
+[HttpGet]
+[AllowAnonymous]
+public async Task&lt;IActionResult&gt; ExternalLoginCallback(
+    string returnUrl = null,
+    string remoteError = null)
+{
+    var context =
+        await _interaction.GetAuthorizationContextAsync(returnUrl);
+    var requires2Fa =
+        context?.AcrValues.Count(t =&gt; t.Contains(&quot;mfa&quot;)) &gt;= 1;
+
+    if (remoteError != null)
+    {
+        ModelState.AddModelError(
+            string.Empty,
+            _sharedLocalizer[&quot;EXTERNAL_PROVIDER_ERROR&quot;, 
+            remoteError]);
+        return View(nameof(Login));
+    }
+    var info = await _signInManager.GetExternalLoginInfoAsync();
+
+    if (info == null)
+    {
+        return RedirectToAction(nameof(Login));
+    }
+
+    var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+
+    if (!string.IsNullOrEmpty(email))
+    {
+        var user = await _userManager.FindByNameAsync(email);
+        if (user != null &amp;&amp; !user.TwoFactorEnabled &amp;&amp; requires2Fa)
+        {
+            return RedirectToAction(nameof(ErrorEnable2FA));
+        }
+    }
+
+    // Sign in the user with this external login provider if the user already has a login.
+    var result = await _signInManager
+        .ExternalLoginSignInAsync(
+            info.LoginProvider, 
+            info.ProviderKey, 
+            isPersistent: 
+            false);
+
+    // code omitted for brevity
+</code></pre>
+<p>如果用户已登录，则客户端应用：</p>
+<ul>
+<li>仍验证 <code>amr</code> 声明。</li>
+<li>可以使用指向视图的链接来设置 MFA ASP.NET Core Identity 。</li>
+</ul>
+<p><img src="mfa/_static/acr_values-1.png" alt="acr_values-1"></p>
+<h2 id="force-aspnet-core-openid-connect-client-to-require-mfa">强制 ASP.NET Core OpenID Connect 客户端要求 MFA</h2>
+<p>此示例演示如何 Razor 使用 OpenID connect 登录的 ASP.NET Core 页面应用程序可能要求用户使用 MFA 进行身份验证。</p>
+<p>若要验证 MFA 要求，请 <code>IAuthorizationRequirement</code> 创建一个要求。 这将使用需要 MFA 的策略添加到页面中。</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Authorization;
+ 
+namespace AspNetCoreRequireMfaOidc
+{
+    public class RequireMfa : IAuthorizationRequirement{}
+}
+</code></pre>
+<p><code>AuthorizationHandler</code>实现，它将使用 <code>amr</code> 声明并检查值 <code>mfa</code> 。 <code>amr</code>在 <code>id_token</code> 身份验证成功的中返回，并且可以有多个不同的值，如<a href="https://tools.ietf.org/html/draft-ietf-oauth-amr-values-08">身份验证方法引用值</a>规范中所定义。</p>
+<p>返回的值取决于标识身份验证的方式，以及 OpenID Connect 服务器实现上的身份验证方式。</p>
+<p><code>AuthorizationHandler</code>使用 <code>RequireMfa</code> 要求并验证 <code>amr</code> 声明。 OpenID Connect 服务器可以通过使用服务器4来实现 Identity ASP.NET Core Identity 。 当用户使用 TOTP 登录时，将 <code>amr</code> 使用 MFA 值返回声明。 如果使用不同的 OpenID Connect 服务器实现或不同的 MFA 类型，则 <code>amr</code> 声明或可以具有不同的值。 要接受此代码，还必须对代码进行扩展。</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace AspNetCoreRequireMfaOidc
+{
+    public class RequireMfaHandler : AuthorizationHandler&lt;RequireMfa&gt;
+    {
+        protected override Task HandleRequirementAsync(
+            AuthorizationHandlerContext context, 
+            RequireMfa requirement)
+        {
+            if (context == null)
+                throw new ArgumentNullException(nameof(context));
+            if (requirement == null)
+                throw new ArgumentNullException(nameof(requirement));
+
+            var amrClaim =
+                context.User.Claims.FirstOrDefault(t =&gt; t.Type == &quot;amr&quot;);
+
+            if (amrClaim != null &amp;&amp; amrClaim.Value == Amr.Mfa)
+            {
+                context.Succeed(requirement);
+            }
+
+            return Task.CompletedTask;
+        }
+    }
+}
+</code></pre>
+<p>在 <code>Startup.ConfigureServices</code> 方法中，将 <code>AddOpenIdConnect</code> 方法用作默认质询方案。 用于检查声明的授权处理程序 <code>amr</code> 将添加到控制容器的反转。 然后，将创建一个策略来添加 <code>RequireMfa</code> 要求。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.ConfigureApplicationCookie(options =&gt;
+        options.Cookie.SecurePolicy =
+            CookieSecurePolicy.Always);
+
+    services.AddSingleton&lt;IAuthorizationHandler, RequireMfaHandler&gt;();
+
+    services.AddAuthentication(options =&gt;
+    {
+        options.DefaultScheme =
+            CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme =
+            OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddOpenIdConnect(options =&gt;
+    {
+        options.SignInScheme =
+            CookieAuthenticationDefaults.AuthenticationScheme;
+        options.Authority = &quot;https://localhost:44352&quot;;
+        options.RequireHttpsMetadata = true;
+        options.ClientId = &quot;AspNetCoreRequireMfaOidc&quot;;
+        options.ClientSecret = &quot;AspNetCoreRequireMfaOidcSecret&quot;;
+        options.ResponseType = &quot;code id_token&quot;;
+        options.Scope.Add(&quot;profile&quot;);
+        options.Scope.Add(&quot;offline_access&quot;);
+        options.SaveTokens = true;
+    });
+
+    services.AddAuthorization(options =&gt;
+    {
+        options.AddPolicy(&quot;RequireMfa&quot;, policyIsAdminRequirement =&gt;
+        {
+            policyIsAdminRequirement.Requirements.Add(new RequireMfa());
+        });
+    });
+
+    services.AddRazorPages();
+}
+</code></pre>
+<p>然后，将在页面中根据需要使用此策略 Razor 。 也可以全局为整个应用程序添加策略。</p>
+<pre><code class="lang-csharp">using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+
+namespace AspNetCoreRequireMfaOidc.Pages
+{
+    [Authorize(Policy= &quot;RequireMfa&quot;)]
+    public class IndexModel : PageModel
+    {
+        private readonly ILogger&lt;IndexModel&gt; _logger;
+
+        public IndexModel(ILogger&lt;IndexModel&gt; logger)
+        {
+            _logger = logger;
+        }
+
+        public void OnGet()
+        {
+        }
+    }
+}
+</code></pre>
+<p>如果用户不使用 MFA 进行身份验证，则 <code>amr</code> 声明可能具有 <code>pwd</code> 值。 请求不会被授权访问此页。 如果使用默认值，则用户将被重定向到 <em>Account/AccessDenied</em> 页。 此行为可以更改，也可以在此处实现自己的自定义逻辑。 在此示例中，添加了一个链接，以便有效的用户可以为其帐户设置 MFA。</p>
+<pre><code class="lang-cshtml">@page
+@model AspNetCoreRequireMfaOidc.AccessDeniedModel
+@{
+    ViewData[&quot;Title&quot;] = &quot;AccessDenied&quot;;
+    Layout = &quot;~/Pages/Shared/_Layout.cshtml&quot;;
+}
+
+&lt;h1&gt;AccessDenied&lt;/h1&gt;
+
+You require MFA to login here
+
+&lt;a href=&quot;https://localhost:44352/Manage/TwoFactorAuthentication&quot;&gt;Enable MFA&lt;/a&gt;
+</code></pre>
+<p>现在只有通过 MFA 进行身份验证的用户才能访问该页面或网站。 如果使用不同的 MFA 类型，或2FA 为正常，则 <code>amr</code> 声明将具有不同的值，并且需要正确处理。 不同的 OpenID Connect 服务器还为此声明返回不同的值，并且可能不遵循 <a href="https://tools.ietf.org/html/draft-ietf-oauth-amr-values-08">身份验证方法引用值</a> 规范。</p>
+<p>如果不使用 MFA 登录 (例如，只使用密码) ：</p>
+<ul>
+<li><p><code>amr</code>具有 <code>pwd</code> 值：</p>
+<p><img src="mfa/_static/require_mfa_oidc_02.png" alt="require_mfa_oidc_02.png"></p>
+</li>
+<li><p>拒绝访问：</p>
+<p><img src="mfa/_static/require_mfa_oidc_03.png" alt="require_mfa_oidc_03.png"></p>
+</li>
+</ul>
+<p>或者，使用 OTP 登录 Identity ：</p>
+<p><img src="mfa/_static/require_mfa_oidc_01.png" alt="require_mfa_oidc_01.png"></p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="identity-enable-qrcodes.html">为 ASP.NET Core 中的 TOTP 验证器应用启用 QR 代码生成</a></li>
+<li><a href="/azure/active-directory/authentication/concept-authentication-passwordless">Azure Active Directory 的无密码 authentication 选项</a></li>
+<li><a href="https://github.com/abergs/fido2-net-lib">FIDO2 .NET library for FIDO2/WebAuthn 证明和断言（使用 .NET）</a></li>
+<li><a href="https://github.com/herrjemand/awesome-webauthn">WebAuthn 出色</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

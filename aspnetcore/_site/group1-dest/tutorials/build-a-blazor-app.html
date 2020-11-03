@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#29983;&#25104; Blazor &#24453;&#21150;&#20107;&#39033;&#21015;&#34920;&#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#29983;&#25104; Blazor &#24453;&#21150;&#20107;&#39033;&#21015;&#34920;&#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/build-a-blazor-app">
+<h1 id="build-a-no-locblazor-todo-list-app">生成 Blazor 待办事项列表应用</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p>本教程演示如何生成和修改 Blazor 应用。 您将学习如何：</p>
+<div class="checklist">
+<ul>
+<li>创建待办事项列表 Blazor 应用项目</li>
+<li>修改 Razor 组件</li>
+<li>在组件中使用事件处理和数据绑定</li>
+<li>在 Blazor 应用中使用路由</li>
+</ul>
+</div>
+<p>在本教程结束时，你将拥有一个正常运行的待办事项列表应用。</p>
+<h2 id="prerequisites">必备条件</h2>
+<p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+<h2 id="create-a-todo-list-no-locblazor-app">创建待办事项列表 Blazor 应用</h2>
+<ol>
+<li><p>在命令行界面中创建名为 <code>TodoList</code> 的新 Blazor 应用：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorserver -o TodoList
+</code></pre>
+<p>上述命令将创建一个名为 <code>TodoList</code> 的文件夹来保存应用。 <code>TodoList</code> 文件夹是项目的根文件夹。 使用以下命令将目录切换到 <code>TodoList</code> 文件夹：</p>
+<pre><code class="lang-dotnetcli">cd TodoList
+</code></pre>
+</li>
+<li><p>使用以下命令向 <code>Pages</code> 文件夹中的应用添加一个新的 <code>Todo</code> Razor 组件：</p>
+<pre><code class="lang-dotnetcli">dotnet new razorcomponent -n Todo -o Pages
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Razor 组件文件名要求首字母大写。 打开 <code>Pages</code> 文件夹，确认 <code>Todo</code> 组件文件名以大写字母 <code>T</code> 开头。 文件名应为 <code>Todo.razor</code>。</p>
+</div>
+</li>
+<li><p>在 <code>Pages/Todo.razor</code> 中为组件提供初始标记：</p>
+<pre><code class="lang-razor">@page &quot;/todo&quot;
+
+&lt;h3&gt;Todo&lt;/h3&gt;
+</code></pre>
+</li>
+<li><p>将 <code>Todo</code> 组件添加到导航栏。</p>
+<p><code>NavMenu</code> 组件 (<code>Shared/NavMenu.razor</code>) 用于应用的布局。 布局是可以避免应用中出现重复内容的组件。</p>
+<p>通过在 <code>Shared/NavMenu.razor</code> 文件中的现有列表项下添加以下列表项标记，为 <code>Todo</code> 组件添加一个 <code>&lt;NavLink&gt;</code> 元素：</p>
+<pre><code class="lang-razor">&lt;li class=&quot;nav-item px-3&quot;&gt;
+    &lt;NavLink class=&quot;nav-link&quot; href=&quot;todo&quot;&gt;
+        &lt;span class=&quot;oi oi-list-rich&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt; Todo
+    &lt;/NavLink&gt;
+&lt;/li&gt;
+</code></pre>
+</li>
+<li><p>从 <code>TodoList</code> 文件夹，在命令行界面中执行的 <code>dotnet run</code> 命令，以生成并运行应用。 访问新的“待办事项”页面，确认指向 <code>Todo</code> 组件的链接有效。</p>
+</li>
+<li><p>向项目的根目录添加 <code>TodoItem.cs</code> 文件（<code>TodoList</code> 文件夹），以保存一个用于表示待办项的类。 为 <code>TodoItem</code> 类使用以下 C# 代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>返回到 <code>Todo</code> 组件 (<code>Pages/Todo.razor</code>)：</p>
+<ul>
+<li>在 <code>@code</code> 块中为待办项添加一个字段。 <code>Todo</code> 组件使用此字段来维护待办项列表的状态。</li>
+<li>添加无序列表标记和 <code>foreach</code> 循环，以将每个待办项呈现为列表项 (<code>&lt;li&gt;</code>)。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>该应用需要 UI 元素来将待办项添加到列表。 在未排序列表 (<code>&lt;ul&gt;...&lt;/ul&gt;</code>) 下方添加一个文本输入 (<code>&lt;input&gt;</code>) 和一个按钮 (<code>&lt;button&gt;</code>)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>在命令行界面中停止运行的应用。 许多命令行界面接受键盘命令 <kbd>Ctrl</kbd>+<kbd>c</kbd> 来停止应用。 使用 <code>dotnet run</code> 命令重新生成并运行此应用。 选择“<code>Add todo</code>”按钮时没有任何反应，因为没有事件处理程序连接到该按钮。</p>
+</li>
+<li><p>向 <code>Todo</code> 组件添加 <code>AddTodo</code> 方法，并使用 <code>@onclick</code> 属性注册该方法以选择按钮。 选择按钮时，会调用 <code>AddTodo</code> C# 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>要获得新待办项标题，请在 <code>@code</code> 块顶部添加 <code>newTodo</code> 字符串字段，并使用 <code>&lt;input&gt;</code> 元素中的 <code>bind</code> 属性将其绑定到文本输入的值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<pre><code class="lang-razor">&lt;input placeholder=&quot;Something todo&quot; @bind=&quot;newTodo&quot; /&gt;
+</code></pre>
+</li>
+<li><p>更新 <code>AddTodo</code> 方法，将具有指定标题的 <code>TodoItem</code> 添加到列表。 通过将 <code>newTodo</code> 设置为空字符串来清除文本输入的值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>在命令行界面中停止运行的应用。 使用 <code>dotnet run</code> 命令重新生成并运行此应用。 在待办项列表中添加一些待办项以测试新代码。</p>
+</li>
+<li><p>每个待办项的标题文本都可以编辑，复选框可以帮助用户跟踪已完成的项。 为每个待办项添加一个复选框输入，并将它的值绑定到 <code>IsDone</code> 属性。 将 <code>@todo.Title</code> 更改为绑定到 <code>@todo.Title</code> 的 <code>&lt;input&gt;</code> 元素：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>若要验证这些值是否已绑定，请更新 <code>&lt;h3&gt;</code> 标头以显示尚未完成的待办项计数（<code>IsDone</code> 是 <code>false</code>）。</p>
+<pre><code class="lang-razor">&lt;h3&gt;Todo (@todos.Count(todo =&gt; !todo.IsDone))&lt;/h3&gt;
+</code></pre>
+</li>
+<li><p>已完成的 <code>Todo</code> 组件 (<code>Pages/Todo.razor</code>)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>在命令行界面中停止运行的应用。 使用 <code>dotnet run</code> 命令重新生成并运行此应用。 添加待办项以测试新代码。</p>
+</li>
+</ol>
+<h2 id="next-steps">后续步骤</h2>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>创建待办事项列表 Blazor 应用项目</li>
+<li>修改 Razor 组件</li>
+<li>在组件中使用事件处理和数据绑定</li>
+<li>在 Blazor 应用中使用路由</li>
+</ul>
+</div>
+<p>了解用于 ASP.NET Core Blazor 的工具：</p>
+<div class="nextstepaction">
+<p><a class="xref" href="../blazor/tooling.html">用于 ASP.NET Core Blazor 的工具</a></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

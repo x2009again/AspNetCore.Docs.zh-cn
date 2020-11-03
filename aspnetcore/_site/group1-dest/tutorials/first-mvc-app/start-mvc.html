@@ -1,0 +1,640 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core MVC &#20837;&#38376; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core MVC &#20837;&#38376; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/first-mvc-app/start-mvc">
+<h1 id="get-started-with-aspnet-core-mvc">ASP.NET Core MVC 入门</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<p>本教程介绍具有控制器和视图的 ASP.NET Core MVC Web 开发。 如果你是初次接触 ASP.NET Core Web 开发，请考虑本教程的 <a class="xref" href="../razor-pages/razor-pages-start.html">Razor Pages</a> 版本，此版本提供了更简单的起点。</p>
+
+<p>本教程介绍构建 ASP.NET Core MVC Web 应用的基础知识。</p>
+<p>该应用管理电影标题的数据库。 您将学习如何：</p>
+<div class="checklist">
+<ul>
+<li>创建 Web 应用。</li>
+<li>添加和构架模型。</li>
+<li>使用数据库。</li>
+<li>添加搜索和验证。</li>
+</ul>
+</div>
+<p>在结束时，你会获得可以管理和显示电影数据的应用。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/first-mvc-app/start-mvc/sample">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+<h2 id="prerequisites">先决条件</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+<ul>
+<li>具有“ASP.NET 和 Web 开发”工作负载的 <a href="https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&amp;utm_source=docs.microsoft.com&amp;utm_campaign=inline+link&amp;utm_content=download+vs2019">Visual Studio 2019 16.4 或更高版本</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可在任何平台（macOS、Linux 或 Windows）上或在任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。 有关在 macOS 上安装 Visual Studio Code 的详细信息，请参阅<a href="https://code.visualstudio.com/docs/setup/mac">macOS 上的 Visual Studio Code</a>。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://visualstudio.microsoft.com/vs/mac/">Visual Studio for Mac 版本 8.4 或更高版本</a></li>
+<li><p><a href="https://dotnet.microsoft.com/download/dotnet-core/3.1">.NET Core 3.1 SDK 或更高版本</a></p>
+</li>
+</ul>
+</section>
+</div>
+<h2 id="create-a-web-app">创建 Web 应用</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li><p>在 Visual Studio 中，选择“创建新项目”。</p>
+</li>
+<li><p>选择“ASP.NET Core Web 应用程序”&gt;“下一步”。</p>
+</li>
+</ul>
+<p><img src="start-mvc/_static/np_2.1.png" alt="新建 ASP.NET Core Web 应用程序"></p>
+<ul>
+<li><p>将项目命名为“MvcMovie”，然后选择“创建” 。 将项目命名为“MvcMovie”非常重要，这样在复制代码时，命名空间才会匹配。</p>
+<p><img src="start-mvc/_static/config.png" alt="新建 ASP.NET Core Web 应用程序"></p>
+</li>
+<li><p>选择“Web 应用(模型-视图-控制器)”。 在下拉框中，选择“.NET Core”和“ASP.NET Core 3.1”，然后选择“创建”。</p>
+</li>
+</ul>
+<p><img src="start-mvc/_static/new_project30.png" alt="“新建项目”对话框，左窗格中的“.NET Core”，ASP.NET Core Web "></p>
+<p>Visual Studio 为刚刚创建的 MVC 项目使用默认模板。 输入项目名称并选择几个选项后，就拥有了一个可正常运行的应用。 这是一个基本的入门项目。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>本教程假定用户熟悉 VS Code。 有关详细信息，请参阅 <a href="https://code.visualstudio.com/docs">VS Code 入门</a> 和 <a href="#visual-studio-code-help">Visual Studio Code 帮助</a>。</p>
+<ul>
+<li><p>打开<a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a>。</p>
+</li>
+<li><p>将目录更改为 (<code>cd</code>) 包含项目的文件夹。</p>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new mvc -o MvcMovie
+code -r MvcMovie
+</code></pre>
+<ul>
+<li><p>一个对话框随即出现，其中包含：“‘MvcMovie’中缺少进行生成和调试所需的资产。是否添加它们?”  选择“是”</p>
+</li>
+<li><p><code>dotnet new mvc -o MvcMovie</code>：在 MvcMovie 文件夹中创建一个新的 ASP.NET Core MVC 项目。</p>
+</li>
+<li><p><code>code -r MvcMovie</code>：在 Visual Studio Code 中加载 MvcMovie.csproj 项目文件。</p>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>选择“文件”&gt;“新建解决方案” 。</p>
+<p><img src="start-mvc/_static/new_project_vsmac.png" alt="macOS 新建解决方案"></p>
+</li>
+<li><p>在版本 8.6 之前的 Visual Studio for Mac 中，依次选择“.NET Core” &gt; “应用” &gt; “Web 应用程序(模型-视图-控制器)” &gt; “下一步”。    在版本 8.6 或更高版本中，依次选择“Web 和控制台” &gt; “应用” &gt; “Web 应用程序(模型-视图-控制器)” &gt; “下一步”。</p>
+<p><img src="start-mvc/_static/web_app_template_vsmac.png" alt="macOS Web 应用模板选择"></p>
+</li>
+<li><p>在“配置新的 Web 应用”对话框中：</p>
+<ul>
+<li>确认已将“身份验证”设置为“无身份验证”。</li>
+<li>如果看到用于选择“目标框架”的选项，请选择最新的 3.x 版本。</li>
+</ul>
+<p>选择“下一步”。</p>
+</li>
+<li><p>将项目命名为“MvcMovie”，然后选择“创建”。</p>
+<p><img src="start-mvc/_static/MvcMovie.png" alt="macOS 命名项目"></p>
+</li>
+</ul>
+</section>
+</div>
+<h3 id="run-the-app">运行应用</h3>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>选择 Ctrl+F5 以在非调试模式下运行应用。</p>
+<p>Visual Studio 会显示以下对话框：</p>
+<p><img src="../../getting-started/_static/trustCert.png" alt="此项目配置为使用 SSL。 要避免浏览器中出现 SSL 警告，可以选择信任 IIS Express 生成的自签名证书。 要信任 IIS Express SSL 证书吗？"></p>
+<p>如果信任 IIS Express SSL 证书，请选择“是”  。</p>
+<p>将显示以下对话框：</p>
+<p><img src="../../getting-started/_static/cert.png" alt="安全警告对话"></p>
+<p>如果你同意信任开发证书，请选择“是”。</p>
+
+<ul>
+<li><p>Visual Studio 启动 <a href="/iis/extensions/introduction-to-iis-express/iis-express-overview">IIS Express</a> 并运行应用。 请注意，地址栏显示 <code>localhost:port#</code>，而不显示 <code>example.com</code> 之类的内容。 这是因为 <code>localhost</code> 是本地计算机的标准主机名。 Visual Studio 创建 Web 项目时，Web 服务器使用的是随机端口。</p>
+</li>
+<li><p>使用 Ctrl+F5 启动应用（非调试模式）后，可执行代码更改、保存文件、刷新浏览器和查看代码更改等操作。 许多开发人员更喜欢使用非调试模式快速启动应用并查看更改。</p>
+</li>
+<li><p>可以从“调试”菜单项中以调试或非调试模式启动应用：</p>
+<p><img src="start-mvc/_static/debug_menu.png" alt="调试菜单"></p>
+</li>
+<li><p>可以通过选择“IIS Express”按钮来调试应用</p>
+<p><img src="start-mvc/_static/iis_express.png" alt="IIS Express"></p>
+<p>下图显示该应用：</p>
+<p><img src="start-mvc/_static/home2.2.png" alt="主页或索引页"></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>按 Ctrl+F5 以在不使用调试程序的情况下运行。</p>
+<ul>
+<li><p>通过运行以下命令来信任 HTTPS 开发证书：</p>
+<pre><code class="lang-dotnetcli">dotnet dev-certs https --trust
+</code></pre>
+<p>上述命令在 Linux 上无效。 有关信任证书的详细信息，请参阅 Linux 发行版的文档。</p>
+<p>以上命令会显示以下对话：</p>
+<p><img src="../../getting-started/_static/cert.png" alt="安全警告对话"></p>
+</li>
+<li><p>如果你同意信任开发证书，请选择“是”。</p>
+<p>有关详细信息，请参阅<a class="xref" href="../../security/enforcing-ssl.html#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos">信任 ASP.NET Core HTTPS 开发证书</a>。</p>
+</li>
+</ul>
+
+<p>Visual Studio Code 启动 <a class="xref" href="../../fundamentals/servers/kestrel.html">Kestrel</a>，启动浏览器并导航到 <code>https://localhost:5001</code>。 地址栏显示 <code>localhost:port:5001</code>，而不是显示 <code>example.com</code>。 这是因为 <code>localhost</code> 是本地计算机的标准主机名。 Localhost 仅为来自本地计算机的 Web 请求提供服务。</p>
+<p>使用 Ctrl+F5 启动应用（非调试模式）后，可执行代码更改、保存文件、刷新浏览器和查看代码更改等操作。 许多开发人员更喜欢使用非调试模式刷新页面并查看更改。</p>
+<p><img src="start-mvc/_static/home2.2.png" alt="主页或索引页"></p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>选择“运行” &gt; “开始执行(不调试)”以启动应用 。 Visual Studio for Mac 启动 <a class="xref" href="../../fundamentals/servers/index.html#kestrel">Kestrel</a> 服务器，启动浏览器并导航到 <code>http://localhost:port</code>，其中的 port 是随机选择的端口号。</p>
+<p>Visual Studio for Mac 会显示以下弹出窗口：</p>
+<p><img src="../../getting-started/_static/trustCertMac.png" alt="找不到 HTTPS 开发证书。 是否要安装并信任此证书?"></p>
+<p>如果你信任开发证书，请选择“是”。</p>
+<p>将显示以下对话框：</p>
+<p><img src="../../getting-started/_static/certMac.png" alt="安全警告对话"></p>
+<p>输入你的密码，然后选择“确定”</p>
+<p>如果你同意信任开发证书，请选择“是”。</p>
+<p>有关详细信息，请参阅<a class="xref" href="../../security/enforcing-ssl.html#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos">信任 ASP.NET Core HTTPS 开发证书</a></p>
+
+<ul>
+<li><p>地址栏显示 <code>localhost:port#</code>，而不是显示 <code>example.com</code>。 这是因为 <code>localhost</code> 是本地计算机的标准主机名。 Visual Studio 创建 Web 项目时，Web 服务器使用的是随机端口。 运行应用时，将看到不同的端口号。</p>
+</li>
+<li><p>可以从“运行”菜单中以调试或非调试模式启动应用。</p>
+<p>下图显示该应用：</p>
+<p><img src="./start-mvc/_static/output_macos.png" alt="主页或索引页"></p>
+</li>
+</ul>
+</section>
+</div>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+<h2 id="visual-studio-help">Visual Studio 帮助</h2>
+<ul>
+<li><a href="/visualstudio/debugger/getting-started-with-the-debugger?view=vs-2017">了解如何使用 Visual Studio 调试 C# 代码</a></li>
+<li><a href="/visualstudio/ide/visual-studio-ide?view=vs-2017">Visual Studio IDE 简介</a></li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<h2 id="visual-studio-code-help">Visual Studio Code 帮助</h2>
+<ul>
+<li><p><a href="https://code.visualstudio.com/docs">入门</a></p>
+</li>
+<li><p><a href="https://code.visualstudio.com/docs/editor/debugging">调试</a></p>
+</li>
+<li><p><a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a></p>
+</li>
+<li><p><a href="https://code.visualstudio.com/docs/getstarted/keybindings#_keyboard-shortcuts-reference">键盘快捷键</a></p>
+<ul>
+<li><a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf">macOS 键盘快捷方式</a></li>
+<li><a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf">Linux 键盘快捷键</a></li>
+<li><a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf">Windows 键盘快捷键</a></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<h2 id="visual-studio-for-mac-help">Visual Studio for Mac 帮助</h2>
+<ul>
+<li><a href="/visualstudio/mac/ide-tour">Visual Studio for Mac 教程</a></li>
+<li><a href="/visualstudio/mac/">Visual Studio for Mac 介绍</a></li>
+</ul>
+</section>
+</div>
+
+<p>在本教程的下一部分中，你将了解 MVC 并开始撰写一些代码。</p>
+<div class="step-by-step">
+<p><a href="adding-controller.html">下一页</a></p>
+</div>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>本教程介绍具有控制器和视图的 ASP.NET Core MVC Web 开发。 如果你是初次接触 ASP.NET Core Web 开发，请考虑本教程的 <a class="xref" href="../razor-pages/razor-pages-start.html">Razor Pages</a> 版本，此版本提供了更简单的起点。</p>
+
+<p>本教程介绍构建 ASP.NET Core MVC Web 应用的基础知识。</p>
+<p>该应用管理电影标题的数据库。 您将学习如何：</p>
+<div class="checklist">
+<ul>
+<li>创建 Web 应用。</li>
+<li>添加和构架模型。</li>
+<li>使用数据库。</li>
+<li>添加搜索和验证。</li>
+</ul>
+</div>
+<p>在结束时，你会获得可以管理和显示电影数据的应用。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/tutorials/first-mvc-app/start-mvc/sample">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。</p>
+<h2 id="prerequisites">先决条件</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio" role="tabpanel" data-tab="visual-studio">
+<ul>
+<li>带有 ASP.NET 和 Web 开发工作负荷的 <a href="https://visualstudio.microsoft.com/downloads/?utm_medium=microsoft&amp;utm_source=docs.microsoft.com&amp;utm_campaign=inline+link&amp;utm_content=download+vs2019">Visual Studio 2019</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果使用 Visual Studio 2017，请参阅 <a href="https://github.com/dotnet/sdk/issues/3124">dotnet/sdk 问题 #3124</a>，以了解无法与 Visual Studio 一起使用的 .NET Core SDK 版本的信息。</p>
+</div>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://code.visualstudio.com/download">Visual Studio Code</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp">用于 Visual Studio Code 的 C#（最新版本）</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+<p>Visual Studio Code 说明使用用于 ASP.NET Core 的 .NET Core CLI 开发功能，如项目创建。 可在任何平台（macOS、Linux 或 Windows）上或在任何代码编辑器中遵循这些说明。 如果使用 Visual Studio Code 以外的其他内容，则可能需要进行少量更改。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<ul>
+<li><a href="https://visualstudio.microsoft.com/downloads/">Visual Studio for Mac 版本 8.0 或更高版本</a></li>
+<li><a href="https://dotnet.microsoft.com/download/dotnet-core">.NET Core SDK 2.2 或更高版本</a></li>
+</ul>
+</section>
+</div>
+<h2 id="create-a-web-app">创建 Web 应用</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li><p>在 Visual Studio 中，选择“创建新项目”。</p>
+</li>
+<li><p>选择“ASP.NET Core Web 应用程序”，然后选择“下一步” 。</p>
+</li>
+</ul>
+<p><img src="start-mvc/_static/np_2.1.png" alt="新建 ASP.NET Core Web 应用程序"></p>
+<ul>
+<li><p>将项目命名为“MvcMovie”，然后选择“创建” 。 将项目命名为“MvcMovie”非常重要，这样在复制代码时，命名空间才会匹配。</p>
+<p><img src="start-mvc/_static/config.png" alt="新建 ASP.NET Core Web 应用程序"></p>
+</li>
+<li><p>选择“Web 应用程序(模型-视图-控制器)”，然后选择“创建” 。</p>
+</li>
+</ul>
+<p><img src="start-mvc/_static/new_project22-21.png" alt="“新建项目”对话框，左窗格中的“.NET Core”，ASP.NET Core Web "></p>
+<p>Visual Studio 为刚刚创建的 MVC 项目使用默认模板。 输入项目名称并选择几个选项后，就拥有了一个可正常运行的应用。 这是一个基本的初学者项目，适合入门使用。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>本教程假定用户熟悉 VS Code。 有关详细信息，请参阅 <a href="https://code.visualstudio.com/docs">VS Code 入门</a> 和 <a href="#visual-studio-code-help">Visual Studio Code 帮助</a>。</p>
+<ul>
+<li><p>打开<a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a>。</p>
+</li>
+<li><p>将目录更改为 (<code>cd</code>) 包含项目的文件夹。</p>
+</li>
+<li><p>运行下面的命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new mvc -o MvcMovie
+code -r MvcMovie
+</code></pre>
+<ul>
+<li><p>一个对话框随即出现，其中包含：“‘MvcMovie’中缺少进行生成和调试所需的资产。是否添加它们?”  选择“是”</p>
+</li>
+<li><p><code>dotnet new mvc -o MvcMovie</code>：在 MvcMovie 文件夹中创建一个新的 ASP.NET Core MVC 项目。</p>
+</li>
+<li><p><code>code -r MvcMovie</code>：在 Visual Studio Code 中加载 MvcMovie.csproj 项目文件。</p>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<ul>
+<li><p>选择“文件”&gt;“新建解决方案” 。</p>
+<p><img src="./start-mvc/_static/new_project_vsmac.png" alt="macOS 新建解决方案"></p>
+</li>
+<li><p>在版本 8.6 之前的 Visual Studio for Mac 中，依次选择“.NET Core” &gt; “应用” &gt; “Web 应用程序(模型-视图-控制器)” &gt; “下一步”。    在版本 8.6 或更高版本中，依次选择“Web 和控制台” &gt; “应用” &gt; “Web 应用程序(模型-视图-控制器)” &gt; “下一步”。</p>
+</li>
+<li><p>在“配置新的 Web 应用”对话框中：</p>
+<ul>
+<li>确认已将“身份验证”设置为“无身份验证”。</li>
+<li>如果看到用于选择“目标框架”的选项，请选择最新的 2.x 版本。</li>
+</ul>
+<p>选择“下一步”。</p>
+</li>
+<li><p>将项目命名为“MvcMovie”，然后选择“创建”。</p>
+</li>
+</ul>
+</section>
+</div>
+<h3 id="run-the-app">运行应用</h3>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-5">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>选择 Ctrl+F5 以在非调试模式下运行应用。</p>
+<p>Visual Studio 会显示以下对话框：</p>
+<p><img src="../../getting-started/_static/trustCert.png" alt="此项目配置为使用 SSL。 要避免浏览器中出现 SSL 警告，可以选择信任 IIS Express 生成的自签名证书。 要信任 IIS Express SSL 证书吗？"></p>
+<p>如果信任 IIS Express SSL 证书，请选择“是”  。</p>
+<p>将显示以下对话框：</p>
+<p><img src="../../getting-started/_static/cert.png" alt="安全警告对话"></p>
+<p>如果你同意信任开发证书，请选择“是”。</p>
+
+<ul>
+<li><p>Visual Studio 启动 <a href="/iis/extensions/introduction-to-iis-express/iis-express-overview">IIS Express</a> 并运行应用。 请注意，地址栏显示 <code>localhost:port#</code>，而不显示 <code>example.com</code> 之类的内容。 这是因为 <code>localhost</code> 是本地计算机的标准主机名。 Visual Studio 创建 Web 项目时，Web 服务器使用的是随机端口。</p>
+</li>
+<li><p>使用 Ctrl+F5 启动应用（非调试模式）后，可执行代码更改、保存文件、刷新浏览器和查看代码更改等操作。 许多开发人员更喜欢使用非调试模式快速启动应用并查看更改。</p>
+</li>
+<li><p>可以从“调试”菜单项中以调试或非调试模式启动应用：</p>
+<p><img src="start-mvc/_static/debug_menu.png" alt="调试菜单"></p>
+</li>
+<li><p>可以通过选择“IIS Express”按钮来调试应用</p>
+<p><img src="start-mvc/_static/iis_express.png" alt="IIS Express"></p>
+</li>
+<li><p>选择“接受”以同意跟踪。 此应用不会跟踪个人信息。 模板生成的代码包含有助于符合<a class="xref" href="../../security/gdpr.html">一般数据保护条例 (GDPR)</a> 的资产。</p>
+<p><img src="start-mvc/_static/privacy.png" alt="主页或索引页"></p>
+<p>下图展示了接受跟踪后的应用：</p>
+<p><img src="start-mvc/_static/home2.2.png" alt="主页或索引页"></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+
+<p>按 Ctrl+F5 以在不使用调试程序的情况下运行。</p>
+<ul>
+<li><p>通过运行以下命令来信任 HTTPS 开发证书：</p>
+<pre><code class="lang-dotnetcli">dotnet dev-certs https --trust
+</code></pre>
+<p>上述命令在 Linux 上无效。 有关信任证书的详细信息，请参阅 Linux 发行版的文档。</p>
+<p>以上命令会显示以下对话：</p>
+<p><img src="../../getting-started/_static/cert.png" alt="安全警告对话"></p>
+</li>
+<li><p>如果你同意信任开发证书，请选择“是”。</p>
+<p>有关详细信息，请参阅<a class="xref" href="../../security/enforcing-ssl.html#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos">信任 ASP.NET Core HTTPS 开发证书</a>。</p>
+</li>
+</ul>
+
+<p>Visual Studio Code 启动 <a class="xref" href="../../fundamentals/servers/kestrel.html">Kestrel</a>，启动浏览器并导航到 <code>https://localhost:5001</code>。 地址栏显示 <code>localhost:port:5001</code>，而不是显示 <code>example.com</code>。 这是因为 <code>localhost</code> 是本地计算机的标准主机名。 Localhost 仅为来自本地计算机的 Web 请求提供服务。</p>
+<p>使用 Ctrl+F5 启动应用（非调试模式）后，可执行代码更改、保存文件、刷新浏览器和查看代码更改等操作。 许多开发人员更喜欢使用非调试模式刷新页面并查看更改。</p>
+<ul>
+<li><p>选择“接受”以同意跟踪。 此应用不会跟踪个人信息。 模板生成的代码包含有助于符合<a class="xref" href="../../security/gdpr.html">一般数据保护条例 (GDPR)</a> 的资产。</p>
+<p><img src="start-mvc/_static/privacy.png" alt="主页或索引页"></p>
+<p>下图展示了接受跟踪后的应用：</p>
+<p><img src="start-mvc/_static/home2.2.png" alt="主页或索引页"></p>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>选择“运行” &gt; “开始执行(不调试)”以启动应用 。 Visual Studio for Mac 启动 <a class="xref" href="../../fundamentals/servers/index.html#kestrel">Kestrel</a> 服务器，启动浏览器并导航到 <code>http://localhost:port</code>，其中的 port 是随机选择的端口号。</p>
+<p>Visual Studio for Mac 会显示以下弹出窗口：</p>
+<p><img src="../../getting-started/_static/trustCertMac.png" alt="找不到 HTTPS 开发证书。 是否要安装并信任此证书?"></p>
+<p>如果你信任开发证书，请选择“是”。</p>
+<p>将显示以下对话框：</p>
+<p><img src="../../getting-started/_static/certMac.png" alt="安全警告对话"></p>
+<p>输入你的密码，然后选择“确定”</p>
+<p>如果你同意信任开发证书，请选择“是”。</p>
+<p>有关详细信息，请参阅<a class="xref" href="../../security/enforcing-ssl.html#trust-the-aspnet-core-https-development-certificate-on-windows-and-macos">信任 ASP.NET Core HTTPS 开发证书</a></p>
+
+<ul>
+<li><p>地址栏显示 <code>localhost:port#</code>，而不是显示 <code>example.com</code>。 这是因为 <code>localhost</code> 是本地计算机的标准主机名。 Visual Studio 创建 Web 项目时，Web 服务器使用的是随机端口。 运行应用时，将看到不同的端口号。</p>
+</li>
+<li><p>可以从“运行”菜单中以调试或非调试模式启动应用。</p>
+</li>
+<li><p>选择“接受”以同意跟踪。 此应用不会跟踪个人信息。 模板生成的代码包含有助于符合<a class="xref" href="../../security/gdpr.html">一般数据保护条例 (GDPR)</a> 的资产。</p>
+<p><img src="./start-mvc/_static/output_privacy_macos.png" alt="主页或索引页"></p>
+<p>下图展示了接受跟踪后的应用：</p>
+<p><img src="./start-mvc/_static/output_macos.png" alt="主页或索引页"></p>
+</li>
+</ul>
+</section>
+</div>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code" data-tab="visual-studio-code" tabindex="-1">Visual Studio Code</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+<h2 id="visual-studio-help">Visual Studio 帮助</h2>
+<ul>
+<li><a href="/visualstudio/debugger/getting-started-with-the-debugger?view=vs-2017">了解如何使用 Visual Studio 调试 C# 代码</a></li>
+<li><a href="/visualstudio/ide/visual-studio-ide?view=vs-2017">Visual Studio IDE 简介</a></li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code" role="tabpanel" data-tab="visual-studio-code" aria-hidden="true" hidden="hidden">
+<h2 id="visual-studio-code-help">Visual Studio Code 帮助</h2>
+<ul>
+<li><p><a href="https://code.visualstudio.com/docs">入门</a></p>
+</li>
+<li><p><a href="https://code.visualstudio.com/docs/editor/debugging">调试</a></p>
+</li>
+<li><p><a href="https://code.visualstudio.com/docs/editor/integrated-terminal">集成终端</a></p>
+</li>
+<li><p><a href="https://code.visualstudio.com/docs/getstarted/keybindings#_keyboard-shortcuts-reference">键盘快捷键</a></p>
+<ul>
+<li><a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-macos.pdf">macOS 键盘快捷方式</a></li>
+<li><a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf">Linux 键盘快捷键</a></li>
+<li><a href="https://code.visualstudio.com/shortcuts/keyboard-shortcuts-windows.pdf">Windows 键盘快捷键</a></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+<h2 id="visual-studio-for-mac-help">Visual Studio for Mac 帮助</h2>
+<ul>
+<li><a href="/visualstudio/mac/ide-tour">Visual Studio for Mac 教程</a></li>
+<li><a href="/visualstudio/mac/">Visual Studio for Mac 介绍</a></li>
+</ul>
+</section>
+</div>
+
+<p>在本教程的下一部分中，你将了解 MVC 并开始撰写一些代码。</p>
+<div class="step-by-step">
+<p><a href="adding-controller.html">下一页</a></p>
+</div>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

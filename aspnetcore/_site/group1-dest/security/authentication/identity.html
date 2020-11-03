@@ -1,0 +1,566 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#31616;&#20171; Identity </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#31616;&#20171; Identity ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/identity">
+<h1 id="introduction-to-no-locidentity-on-aspnet-core">ASP.NET Core 简介 Identity</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>ASP.NET Core Identity:</p>
+<ul>
+<li>是一个 API，它支持用户界面) 登录功能 (UI。</li>
+<li>管理用户、密码、配置文件数据、角色、声明、令牌、电子邮件确认等。</li>
+</ul>
+<p>用户可以使用存储在中的登录信息创建一个帐户， Identity 也可以使用外部登录提供程序。 支持的外部登录提供程序包括 <a class="xref" href="social/index.html">Facebook、Google、Microsoft 帐户和 Twitter</a>。</p>
+<p>有关如何全局要求所有用户进行身份验证的信息，请参阅<a class="xref" href="../authorization/secure-data.html#rau">需要经过身份验证的用户</a>。</p>
+
+<p>GitHub 上提供了<a href="https://github.com/dotnet/AspNetCore/tree/master/src/Identity"> Identity 源代码</a>。 <a class="xref" href="scaffold-identity.html">基架 Identity </a>并查看生成的文件以查看与的模板交互 Identity 。</p>
+<p>Identity 通常使用 SQL Server 数据库配置以存储用户名、密码和配置文件数据。 另外，还可以使用另一个永久性存储，例如 Azure 表存储。</p>
+<p>在本主题中，你将了解如何使用 Identity 注册、登录和注销用户。 注意：这些模板将用户的用户名和电子邮件视为相同。 有关创建使用的应用程序的更多详细说明 Identity ，请参阅 <a href="#next">后续步骤</a>。</p>
+<p><a href="/azure/active-directory/develop/">Microsoft 标识平台</a> 是：</p>
+<ul>
+<li>) 开发人员平台 Azure AD Azure Active Directory (的演变。</li>
+<li>与无关 ASP.NET Core Identity 。</li>
+</ul>
+<p>ASP.NET Core 标识将用户界面 (UI) 登录功能添加到 ASP.NET Core Web 应用。 若要保护 Web API 和 SPA，请使用以下项之一：</p>
+<ul>
+<li><a href="/azure/api-management/api-management-howto-protect-backend-with-aad">Azure Active Directory</a></li>
+<li><a href="/azure/active-directory-b2c/active-directory-b2c-custom-rest-api-netfw">Azure Active Directory B2C</a> (Azure AD B2C)</li>
+<li><a href="https://identityserver.io">IdentityServer4</a></li>
+</ul>
+<p>IdentityServer4 是适用于 ASP.NET Core 的 OpenID Connect 和 OAuth 2.0 框架。 IdentityServer4 支持以下安全功能：</p>
+<ul>
+<li>身份验证即服务 (AaaS)</li>
+<li>跨多个应用程序类型的单一登录/注销 (SSO)</li>
+<li>API 的访问控制</li>
+<li>Federation Gateway</li>
+</ul>
+<p>有关详细信息，请参阅<a href="https://docs.identityserver.io/en/latest/index.html">欢迎使用 IdentityServer4</a>。</p>
+
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/authentication/identity/sample">查看或下载示例代码</a> (<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>) 。</p>
+<p><a name="adi"></a></p>
+<h2 id="create-a-web-app-with-authentication">创建具有身份验证的 Web 应用</h2>
+<p>使用单独的用户帐户创建 ASP.NET Core Web 应用程序项目。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>选择 &quot; <strong>文件</strong> &quot; &quot; &gt; <strong>新建</strong> &gt; <strong>项目</strong> &quot;。</li>
+<li>选择“ASP.NET Core Web 应用程序”。 将项目命名为 <strong>WebApp1</strong> ，使其命名空间与项目下载相同。 单击“确定”。</li>
+<li>选择 ASP.NET Core <strong>Web 应用程序</strong> ，然后选择 &quot; <strong>更改身份验证</strong> &quot;。</li>
+<li>选择 <strong>单个用户帐户</strong> ，然后单击 <strong>&quot;确定&quot;</strong> 。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-dotnetcli">dotnet new webapp --auth Individual -o WebApp1
+</code></pre>
+<p>上述命令 Razor 使用 SQLite 创建 web 应用。 若要创建具有 LocalDB 的 web 应用，请运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet new webapp --auth Individual -uld -o WebApp1
+</code></pre>
+</section>
+</div>
+
+<p>生成的项目 <a class="xref" href="identity.html">ASP.NET Core Identity</a> 以类库形式<a class="xref" href="../../razor-pages/ui-class.html"> Razor </a>提供。 类库 Identity Razor 公开的终结点 <code>Identity</code> 。 例如： 。</p>
+<ul>
+<li>/Identity/Account/Login</li>
+<li>/Identity/Account/Logout</li>
+<li>/Identity/Account/Manage</li>
+</ul>
+<h3 id="apply-migrations">应用迁移</h3>
+<p>应用迁移以初始化数据库。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>在包管理器控制台中运行以下命令 (PMC) ：</p>
+<p><code>PM&gt; Update-Database</code></p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>使用 SQLite 时，此步骤不需要迁移。</p>
+<p>如果尚未 <code>dotnet ef</code> 安装，请将其安装为全局工具：</p>
+<pre><code class="lang-dotnetcli">  dotnet tool install --global dotnet-ef
+</code></pre>
+<p>有关 EF Core 的 CLI 的详细信息，请参阅 <a href="/ef/core/miscellaneous/cli/dotnet">.Net CLI 的 EF Core 工具引用</a>。</p>
+
+<p>对于 LocalDB，请运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet ef database update
+</code></pre>
+</section>
+</div>
+<h3 id="test-register-and-login">测试注册和登录</h3>
+<p>运行应用并注册用户。 根据屏幕大小，你可能需要选择 &quot;导航&quot; 切换按钮以查看 &quot; <strong>寄存器</strong> &quot; 和 &quot; <strong>登录</strong> &quot; 链接。</p>
+<h3 id="view-the-identity-database">查看标识数据库</h3>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>从 &quot;<strong>视图</strong>&quot; 菜单中选择 &quot; <strong>SQL Server 对象资源管理器</strong>&quot; （SSOX）。</li>
+<li>导航到 <strong>（localdb） MSSQLLocalDB （SQL Server 13）</strong>。 右键单击 &quot; <strong>dbo&quot;。</strong>  &gt;  <strong>查看数据</strong>AspNetUsers：</li>
+</ul>
+<p><img src="accconfirm/_static/ssox.png" alt="SQL Server 对象资源管理器中的 AspNetUsers 表上的上下文菜单"></p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>您可以下载许多第三方工具来管理和查看 SQLite 数据库，例如<a href="https://sqlitebrowser.org/">DB Browser For sqlite</a>。</p>
+</section>
+</div>
+
+<p><a name="pw"></a></p>
+<h3 id="configure-no-locidentity-services">配置 Identity 服务</h3>
+<p>中添加了服务 <code>ConfigureServices</code> 。 典型模式是调用所有 <code>Add{Service}</code> 方法，然后调用所有 <code>services.Configure{Service}</code> 方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面突出显示的代码 Identity 用默认选项值进行配置。 服务通过 <a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>提供给应用程序。</p>
+<p>Identity 通过调用启用 &lt;xref:Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication*&gt; 。 <code>UseAuthentication</code> 将身份验证 <a class="xref" href="../../fundamentals/middleware/index.html">中间件</a> 添加到请求管道。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>模板生成的应用不使用 <a class="xref" href="../authorization/secure-data.html">授权</a>。 <code>app.UseAuthorization</code> 包括，以确保在应用添加授权时，按正确的顺序添加。 <code>UseRouting</code>、 <code>UseAuthentication</code> 、 <code>UseAuthorization</code> 和 <code>UseEndpoints</code> 必须按前面的代码中所示的顺序调用。</p>
+<p>有关和的详细 <code>IdentityOptions</code> 信息 <code>Startup</code> ，请参阅 &lt;xref:Microsoft.AspNetCore.Identity.IdentityOptions&gt; 和 <a class="xref" href="../../fundamentals/startup.html">应用程序启动</a>。</p>
+<h2 id="scaffold-register-login-logout-and-registerconfirmation">基架注册、登录、注销和 RegisterConfirmation</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>添加 <code>Register</code> 、 <code>Login</code> 、 <code>LogOut</code> 和 <code>RegisterConfirmation</code> 文件。 将 <a class="xref" href="scaffold-identity.html#scaffold-identity-into-a-razor-project-with-authorization">基架标识置于 Razor 具有授权</a> 说明的项目中，以生成本部分中所示的代码。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>如果创建的项目的名称为 <strong>WebApp1</strong> ，请运行以下命令。 否则，请使用正确的命名空间 <code>ApplicationDbContext</code> ：</p>
+<pre><code class="lang-dotnetcli">dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet aspnet-codegenerator identity -dc WebApp1.Data.ApplicationDbContext --files &quot;Account.Register;Account.Login;Account.Logout;Account.RegisterConfirmation&quot;
+</code></pre>
+<p>PowerShell 使用分号作为命令分隔符。 使用 PowerShell 时，请对文件列表中的分号进行转义，或将文件列表置于双引号中，如前面的示例所示。</p>
+<p>有关基架的详细信息 Identity ，请参阅 <a class="xref" href="scaffold-identity.html#scaffold-identity-into-a-razor-project-with-authorization"> Razor 使用授权将基架标识转换为项目</a>。</p>
+</section>
+</div>
+<h3 id="examine-register">检查注册</h3>
+<p>当用户单击页面上的 &quot; <strong>注册</strong> &quot; 按钮时 <code>Register</code> ，将 <code>RegisterModel.OnPostAsync</code> 调用该操作。 用户由 <a href="/dotnet/api/microsoft.aspnetcore.identity.usermanager-1.createasync#Microsoft_AspNetCore_Identity_UserManager_1_CreateAsync__0_System_String_">CreateAsync</a> 在对象上创建 <code>_userManager</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><!-- .NET 5 fixes this, see
+https://github.com/dotnet/aspnetcore/blob/master/src/Identity/UI/src/Areas/Identity/Pages/V4/Account/RegisterConfirmation.cshtml.cs#L74-L77
+-->
+<p><a name="ddav"></a></p>
+<h3 id="disable-default-account-verification">禁用默认帐户验证</h3>
+<p>使用默认模板时，会将用户重定向到用户 <code>Account.RegisterConfirmation</code> 可以在其中选择要确认帐户的链接。 默认值 <code>Account.RegisterConfirmation</code> <em><strong>仅</strong></em>用于测试，应在生产应用中禁用自动帐户验证。</p>
+<p>若要在注册时要求确认帐户并阻止立即登录，请 <code>DisplayConfirmAccountLink = false</code> 在 <em>/Areas/Identity/Pages/Account/RegisterConfirmation.cshtml.cs</em>中设置：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="log-in">登录</h3>
+<p>当出现以下情况时，将显示登录窗体：</p>
+<ul>
+<li>选择 &quot; <strong>登录</strong> &quot; 链接。</li>
+<li>用户尝试访问他们无权访问的受限制的页面， <strong>或</strong> 未经系统的身份验证。</li>
+</ul>
+<p>提交登录页上的窗体时，将 <code>OnPostAsync</code> 调用该操作。 <code>PasswordSignInAsync</code> 对 <code>_signInManager</code> 对象调用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关如何做出授权决策的信息，请参阅 <a class="xref" href="../authorization/introduction.html">ASP.NET Core 中的授权简介</a> 。</p>
+<h3 id="log-out">注销</h3>
+<p>&quot; <strong>注销</strong> &quot; 链接将调用该 <code>LogoutModel.OnPost</code> 操作。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，代码 <code>return RedirectToPage();</code> 需要是重定向，以便浏览器执行新请求并更新用户的标识。</p>
+<p><a href="/dotnet/api/microsoft.aspnetcore.identity.signinmanager-1.signoutasync#Microsoft_AspNetCore_Identity_SignInManager_1_SignOutAsync">SignOutAsync</a> 清除存储在中的用户声明 cookie 。</p>
+<p>Post 在 <em>Pages/Shared/_LoginPartial 中指定。 cshtml</em> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="test-no-locidentity">考试 Identity</h2>
+<p>默认 web 项目模板允许匿名访问主页。 若要测试 Identity ，请添加 <a href="xref:Microsoft.AspNetCore.Authorization.AuthorizeAttribute"><code>[Authorize]</code></a> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果已登录，请注销。运行应用并选择 &quot; <strong>隐私</strong> &quot; 链接。 将被重定向到登录页。</p>
+<h3 id="explore-no-locidentity">浏览 Identity</h3>
+<p>Identity了解更多详细信息：</p>
+<ul>
+<li><a class="xref" href="scaffold-identity.html#create-full-identity-ui-source">创建完全标识 UI 源</a></li>
+<li>检查每个页面的源，并单步执行调试程序。</li>
+</ul>
+<h2 id="no-locidentity-components">Identity 组分</h2>
+<p>所有 Identity 相关的 NuGet 包都包含在 <a class="xref" href="../../release-notes/aspnetcore-3.0.html#use-the-aspnet-core-shared-framework">ASP.NET Core 共享框架</a>中。</p>
+<p>的主包为 Identity <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/">AspNetCore。 Identity </a> 此包包含的核心接口集 ASP.NET Core Identity ，由提供 <code>Microsoft.AspNetCore.Identity.EntityFrameworkCore</code> 。</p>
+<h2 id="migrating-to-no-locaspnet-core-identity">迁移到 ASP.NET Core Identity</h2>
+<p>有关迁移现有存储的详细信息和指南 Identity ，请参阅<a class="xref" href="../../migration/identity.html">迁移身份验证 Identity 和</a>。</p>
+<h2 id="setting-password-strength">设置密码强度</h2>
+<p>有关设置最小密码要求的示例，请参阅 <a href="#pw">配置</a> 。</p>
+<h2 id="adddefaultno-locidentity-and-addno-locidentity">AddDefault Identity 并添加Identity</h2>
+<p>&lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServiceCollectionUIExtensions.AddDefaultIdentity*&gt; 是在 ASP.NET Core 2.1 中引入的。 调用 <code>AddDefaultIdentity</code> 类似于调用以下内容：</p>
+<ul>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServiceCollectionExtensions.AddIdentity*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Identity.IdentityBuilderUIExtensions.AddDefaultUI*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Identity.IdentityBuilderExtensions.AddDefaultTokenProviders*&gt;</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="https://github.com/dotnet/AspNetCore/blob/release/3.1/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs#L47-L63">AddDefault Identity 源</a> 。</p>
+<h2 id="prevent-publish-of-static-no-locidentity-assets">禁止发布静态 Identity 资产</h2>
+<p>若要防止将静态 Identity 资产发布 (用于 UI) 的用户的样式和 JavaScript 文件 Identity ，请将以下 <code>ResolveStaticWebAssetsInputsDependsOn</code> 属性和目标添加 <code>RemoveIdentityAssets</code> 到应用的项目文件中：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;ResolveStaticWebAssetsInputsDependsOn&gt;RemoveIdentityAssets&lt;/ResolveStaticWebAssetsInputsDependsOn&gt;
+&lt;/PropertyGroup&gt;
+
+&lt;Target Name=&quot;RemoveIdentityAssets&quot;&gt;
+  &lt;ItemGroup&gt;
+    &lt;StaticWebAsset Remove=&quot;@(StaticWebAsset)&quot; Condition=&quot;%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'&quot; /&gt;
+  &lt;/ItemGroup&gt;
+&lt;/Target&gt;
+</code></pre>
+<p><a name="next"></a></p>
+<h2 id="next-steps">后续步骤</h2>
+<ul>
+<li><a href="https://github.com/dotnet/aspnetcore/tree/master/src/Identity">ASP.NET Core Identity 源代码</a></li>
+<li>有关使用 SQLite 进行配置的信息，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/issues/5131">此 GitHub 问题</a> Identity 。</li>
+<li><a class="xref" href="identity-configuration.html">配置 Identity</a></li>
+<li><a class="xref" href="../authorization/secure-data.html">使用授权保护的用户数据创建 ASP.NET Core 应用</a></li>
+<li><a class="xref" href="add-user-data.html">在 ASP.NET Core 项目中添加、下载和删除用户数据 Identity</a></li>
+<li><a class="xref" href="identity-enable-qrcodes.html">为 ASP.NET Core 中的 TOTP 验证器应用启用 QR 代码生成</a></li>
+<li><a class="xref" href="../../migration/identity.html">迁移身份验证和 Identity ASP.NET Core</a></li>
+<li><a class="xref" href="accconfirm.html">ASP.NET Core 中的帐户确认和密码恢复</a></li>
+<li><a class="xref" href="2fa.html">在 ASP.NET Core 中通过 SMS 进行双因素身份验证</a></li>
+<li><a class="xref" href="../../host-and-deploy/web-farm.html">在 Web 场中托管 ASP.NET Core</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>ASP.NET Core Identity 是将登录功能添加到 ASP.NET Core 应用的成员资格系统。 用户可以使用存储在中的登录信息创建一个帐户， Identity 也可以使用外部登录提供程序。 支持的外部登录提供程序包括 <a class="xref" href="social/index.html">Facebook、Google、Microsoft 帐户和 Twitter</a>。</p>
+<p>Identity 可以使用 SQL Server 数据库配置以存储用户名、密码和配置文件数据。 另外，还可以使用另一个永久性存储，例如 Azure 表存储。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/authentication/identity/sample/src/ASPNETCore-IdentityDemoComplete/">查看或下载示例代码</a> (<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>) 。</p>
+<p>在本主题中，你将了解如何使用 Identity 注册、登录和注销用户。 有关创建使用的应用程序的更多详细说明 Identity ，请参阅本文末尾的后续步骤部分。</p>
+<p><a name="adi"></a></p>
+<h2 id="adddefaultno-locidentity-and-addno-locidentity">AddDefault Identity 并添加Identity</h2>
+<p>&lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServiceCollectionUIExtensions.AddDefaultIdentity*&gt; 是在 ASP.NET Core 2.1 中引入的。 调用 <code>AddDefaultIdentity</code> 类似于调用以下内容：</p>
+<ul>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServiceCollectionExtensions.AddIdentity*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Identity.IdentityBuilderUIExtensions.AddDefaultUI*&gt;</li>
+<li>&lt;xref:Microsoft.AspNetCore.Identity.IdentityBuilderExtensions.AddDefaultTokenProviders*&gt;</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="https://github.com/dotnet/AspNetCore/blob/release/2.1/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs#L47-L63">AddDefault Identity 源</a> 。</p>
+<h2 id="create-a-web-app-with-authentication">创建具有身份验证的 Web 应用</h2>
+<p>使用单独的用户帐户创建 ASP.NET Core Web 应用程序项目。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>选择 &quot; <strong>文件</strong> &quot; &quot; &gt; <strong>新建</strong> &gt; <strong>项目</strong> &quot;。</li>
+<li>选择“ASP.NET Core Web 应用程序”。 将项目命名为 <strong>WebApp1</strong> ，使其命名空间与项目下载相同。 单击“确定”。</li>
+<li>选择 ASP.NET Core <strong>Web 应用程序</strong> ，然后选择 &quot; <strong>更改身份验证</strong> &quot;。</li>
+<li>选择 <strong>单个用户帐户</strong> ，然后单击 <strong>&quot;确定&quot;</strong> 。</li>
+</ul>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-dotnetcli">dotnet new webapp --auth Individual -o WebApp1
+</code></pre>
+</section>
+</div>
+
+<p>生成的项目 <a class="xref" href="identity.html">ASP.NET Core Identity</a> 以类库形式<a class="xref" href="../../razor-pages/ui-class.html"> Razor </a>提供。 类库 Identity Razor 公开的终结点 <code>Identity</code> 。 例如： 。</p>
+<ul>
+<li>/Identity/Account/Login</li>
+<li>/Identity/Account/Logout</li>
+<li>/Identity/Account/Manage</li>
+</ul>
+<h3 id="apply-migrations">应用迁移</h3>
+<p>应用迁移以初始化数据库。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>在包管理器控制台中运行以下命令 (PMC) ：</p>
+<pre><code class="lang-powershell">Update-Database
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-dotnetcli">dotnet ef database update
+</code></pre>
+</section>
+</div>
+<h3 id="test-register-and-login">测试注册和登录</h3>
+<p>运行应用并注册用户。 根据屏幕大小，你可能需要选择 &quot;导航&quot; 切换按钮以查看 &quot; <strong>寄存器</strong> &quot; 和 &quot; <strong>登录</strong> &quot; 链接。</p>
+<h3 id="view-the-identity-database">查看标识数据库</h3>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ul>
+<li>从 &quot;<strong>视图</strong>&quot; 菜单中选择 &quot; <strong>SQL Server 对象资源管理器</strong>&quot; （SSOX）。</li>
+<li>导航到 <strong>（localdb） MSSQLLocalDB （SQL Server 13）</strong>。 右键单击 &quot; <strong>dbo&quot;。</strong>  &gt;  <strong>查看数据</strong>AspNetUsers：</li>
+</ul>
+<p><img src="accconfirm/_static/ssox.png" alt="SQL Server 对象资源管理器中的 AspNetUsers 表上的上下文菜单"></p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>您可以下载许多第三方工具来管理和查看 SQLite 数据库，例如<a href="https://sqlitebrowser.org/">DB Browser For sqlite</a>。</p>
+</section>
+</div>
+
+<p><a name="pw"></a></p>
+<h3 id="configure-no-locidentity-services">配置 Identity 服务</h3>
+<p>中添加了服务 <code>ConfigureServices</code> 。 典型模式是调用所有 <code>Add{Service}</code> 方法，然后调用所有 <code>services.Configure{Service}</code> 方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码 Identity 用默认选项值进行配置。 服务通过 <a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>提供给应用程序。</p>
+<p>Identity 通过调用 <a href="/dotnet/api/microsoft.aspnetcore.builder.authappbuilderextensions.useauthentication#Microsoft_AspNetCore_Builder_AuthAppBuilderExtensions_UseAuthentication_Microsoft_AspNetCore_Builder_IApplicationBuilder_">UseAuthentication</a>启用。 <code>UseAuthentication</code> 将身份验证 <a class="xref" href="../../fundamentals/middleware/index.html">中间件</a> 添加到请求管道。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关详细信息，请参阅<a href="/dotnet/api/microsoft.aspnetcore.identity.identityoptions"> Identity Options 类</a>和<a class="xref" href="../../fundamentals/startup.html">应用程序启动</a>。</p>
+<h2 id="scaffold-register-login-and-logout">基架注册、登录和注销</h2>
+<p>将 <a class="xref" href="scaffold-identity.html#scaffold-identity-into-a-razor-project-with-authorization">基架标识置于 Razor 具有授权</a> 说明的项目中，以生成本部分中所示的代码。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-5">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-5_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q-5_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-5_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>添加注册、登录和注销文件。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-5_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>如果创建的项目的名称为 <strong>WebApp1</strong> ，请运行以下命令。 否则，请使用正确的命名空间 <code>ApplicationDbContext</code> ：</p>
+<pre><code class="lang-dotnetcli">dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design
+dotnet aspnet-codegenerator identity -dc WebApp1.Data.ApplicationDbContext --files &quot;Account.Register;Account.Login;Account.Logout&quot;
+</code></pre>
+<p>PowerShell 使用分号作为命令分隔符。 使用 PowerShell 时，请对文件列表中的分号进行转义，或将文件列表置于双引号中，如前面的示例所示。</p>
+</section>
+</div>
+<h3 id="examine-register">检查注册</h3>
+<p>当用户单击 &quot; <strong>注册</strong> &quot; 链接时，将 <code>RegisterModel.OnPostAsync</code> 调用该操作。 用户由 <a href="/dotnet/api/microsoft.aspnetcore.identity.usermanager-1.createasync#Microsoft_AspNetCore_Identity_UserManager_1_CreateAsync__0_System_String_">CreateAsync</a> 在对象上创建 <code>_userManager</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果用户已成功创建，则对的调用会登录该用户 <code>_signInManager.SignInAsync</code> 。</p>
+<p><strong>注意：</strong> 请参阅 <a class="xref" href="accconfirm.html#prevent-login-at-registration">帐户确认</a> 以了解在注册时要阻止立即登录的步骤。</p>
+<h3 id="log-in">登录</h3>
+<p>当出现以下情况时，将显示登录窗体：</p>
+<ul>
+<li>选择 &quot; <strong>登录</strong> &quot; 链接。</li>
+<li>用户尝试访问他们无权访问的受限制的页面， <strong>或</strong> 未经系统的身份验证。</li>
+</ul>
+<p>提交登录页上的窗体时，将 <code>OnPostAsync</code> 调用该操作。 <code>PasswordSignInAsync</code> 对 <code>_signInManager</code> 对象调用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>有关如何做出授权决策的信息，请参阅 <a class="xref" href="../authorization/introduction.html">ASP.NET Core 中的授权简介</a> 。</p>
+<h3 id="log-out">注销</h3>
+<p>&quot; <strong>注销</strong> &quot; 链接将调用该 <code>LogoutModel.OnPost</code> 操作。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><a href="/dotnet/api/microsoft.aspnetcore.identity.signinmanager-1.signoutasync#Microsoft_AspNetCore_Identity_SignInManager_1_SignOutAsync">SignOutAsync</a> 清除存储在中的用户声明 cookie 。</p>
+<p>Post 在 <em>Pages/Shared/_LoginPartial 中指定。 cshtml</em> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="test-no-locidentity">考试 Identity</h2>
+<p>默认 web 项目模板允许匿名访问主页。 若要进行测试 Identity ，请将添加 <a href="/dotnet/api/microsoft.aspnetcore.authorization.authorizeattribute"><code>[Authorize]</code></a> 到 &quot;隐私&quot; 页。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果已登录，请注销。运行应用并选择 &quot; <strong>隐私</strong> &quot; 链接。 将被重定向到登录页。</p>
+<h3 id="explore-no-locidentity">浏览 Identity</h3>
+<p>Identity了解更多详细信息：</p>
+<ul>
+<li><a class="xref" href="scaffold-identity.html#create-full-identity-ui-source">创建完全标识 UI 源</a></li>
+<li>检查每个页面的源，并单步执行调试程序。</li>
+</ul>
+<h2 id="no-locidentity-components">Identity 组分</h2>
+<p>所有 Identity 相关 NuGet 包都包含在 <a class="xref" href="../../fundamentals/metapackage-app.html">AspNetCore 元包</a>中。</p>
+<p>的主包为 Identity <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Identity/">AspNetCore。 Identity </a> 此包包含的核心接口集 ASP.NET Core Identity ，由提供 <code>Microsoft.AspNetCore.Identity.EntityFrameworkCore</code> 。</p>
+<h2 id="migrating-to-no-locaspnet-core-identity">迁移到 ASP.NET Core Identity</h2>
+<p>有关迁移现有存储的详细信息和指南 Identity ，请参阅<a class="xref" href="../../migration/identity.html">迁移身份验证 Identity 和</a>。</p>
+<h2 id="setting-password-strength">设置密码强度</h2>
+<p>有关设置最小密码要求的示例，请参阅 <a href="#pw">配置</a> 。</p>
+<h2 id="next-steps">后续步骤</h2>
+<ul>
+<li>有关使用 SQLite 进行配置的信息，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/issues/5131">此 GitHub 问题</a> Identity 。</li>
+<li><a class="xref" href="identity-configuration.html">配置 Identity</a></li>
+<li><a class="xref" href="../authorization/secure-data.html">使用授权保护的用户数据创建 ASP.NET Core 应用</a></li>
+<li><a class="xref" href="add-user-data.html">在 ASP.NET Core 项目中添加、下载和删除用户数据 Identity</a></li>
+<li><a class="xref" href="identity-enable-qrcodes.html">为 ASP.NET Core 中的 TOTP 验证器应用启用 QR 代码生成</a></li>
+<li><a class="xref" href="../../migration/identity.html">迁移身份验证和 Identity ASP.NET Core</a></li>
+<li><a class="xref" href="accconfirm.html">ASP.NET Core 中的帐户确认和密码恢复</a></li>
+<li><a class="xref" href="2fa.html">在 ASP.NET Core 中通过 SMS 进行双因素身份验证</a></li>
+<li><a class="xref" href="../../host-and-deploy/web-farm.html">在 Web 场中托管 ASP.NET Core</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

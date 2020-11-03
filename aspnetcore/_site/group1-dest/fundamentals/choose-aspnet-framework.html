@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET 4.x &#21644; ASP.NET Core &#20043;&#38388;&#36827;&#34892;&#36873;&#25321; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET 4.x &#21644; ASP.NET Core &#20043;&#38388;&#36827;&#34892;&#36873;&#25321; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/choose-between-aspnet-and-aspnetcore">
+<h1 id="choose-between-aspnet-4x-and-aspnet-core">在 ASP.NET 4.x 和 ASP.NET Core 之间进行选择</h1>
+
+<p>ASP.NET Core 是 ASP.NET 4.x 的重新设计。 本文列出了两者之间的区别。</p>
+<h2 id="aspnet-core">ASP.NET Core</h2>
+<p>ASP.NET Core 是一个跨平台的开源框架，用于在 Windows、macOS 或 Linux 上生成基于云的新式 Web 应用。</p>
+<p>ASP.NET Core 具有如下优点：</p>
+<ul>
+<li>生成 Web UI 和 Web API 的统一场景。</li>
+<li>针对可测试性进行构建。</li>
+<li><a class="xref" href="../razor-pages/index.html">Razor Pages</a> 可以使基于页面的编码方式更简单高效。</li>
+<li><a class="xref" href="../blazor/index.html">Blazor</a> 允许你在浏览器中使用 C# 和 JavaScript。 共享全部使用 .NET 编写的服务器端和客户端应用逻辑。</li>
+<li>能够在 Windows、macOS 和 Linux 上进行开发和运行。</li>
+<li>开放源代码和<a href="https://live.asp.net/">以社区为中心</a>。</li>
+<li>集成<a class="xref" href="../blazor/index.html">新式客户端框架</a>和开发工作流。</li>
+<li>支持使用 <a class="xref" href="../grpc/index.html">gRPC</a> 托管远程过程调用 (RPC)。</li>
+<li>基于环境的云就绪<a class="xref" href="configuration/index.html">配置系统</a>。</li>
+<li>内置<a class="xref" href="dependency-injection.html">依赖项注入</a>。</li>
+<li>轻型的<a href="https://github.com/aspnet/benchmarks">高性能</a>模块化 HTTP 请求管道。</li>
+<li>能够托管于以下各项：
+<ul>
+<li><a class="xref" href="servers/kestrel.html">Kestrel</a></li>
+<li><a class="xref" href="../host-and-deploy/iis/index.html">IIS</a></li>
+<li><a class="xref" href="servers/httpsys.html">HTTP.sys</a></li>
+<li><a class="xref" href="../host-and-deploy/linux-nginx.html">Nginx</a></li>
+<li><a class="xref" href="../host-and-deploy/linux-apache.html">Apache</a></li>
+<li><a class="xref" href="../host-and-deploy/docker/index.html">Docker</a></li>
+</ul>
+</li>
+<li><a href="/dotnet/standard/choosing-core-framework-server#side-by-side-net-versions-per-application-level">并行版本控制</a>。</li>
+<li>简化新式 Web 开发的工具。</li>
+</ul>
+<h2 id="aspnet-4x">ASP.NET 4.x</h2>
+<p>ASP.NET 4.x 是一个成熟的框架，提供在 Windows 上生成基于服务器的企业级 Web 应用所需的服务。</p>
+<h2 id="framework-selection">框架选择</h2>
+<p>下表将 ASP.NET Core 与 ASP.NET 4.x 进行比较。</p>
+<table>
+<thead>
+<tr>
+<th>ASP.NET Core</th>
+<th>ASP.NET 4.x</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>针对 Windows、macOS 或 Linux 进行生成</td>
+<td>针对 Windows 进行生成</td>
+</tr>
+<tr>
+<td><a class="xref" href="../razor-pages/index.html">Razor Pages</a> 是在 ASP.NET Core 2.x 及更高版本中创建 Web UI 时建议使用的方法。 另请参阅 <a class="xref" href="../mvc/overview.html">MVC</a>、<a class="xref" href="../tutorials/first-web-api.html">Web API</a> 和 <a class="xref" href="../signalr/introduction.html">SignalR</a>。</td>
+<td>使用 <a href="/aspnet/web-forms">Web Forms</a>、<a href="/aspnet/signalr">SignalR</a>、<a href="/aspnet/mvc">MVC</a>、<a href="/aspnet/web-api/">Web API</a>、<a href="/aspnet/webhooks/">WebHook</a> 或<a href="/aspnet/web-pages">网页</a></td>
+</tr>
+<tr>
+<td>每个计算机多个版本</td>
+<td>每个计算机一个版本</td>
+</tr>
+<tr>
+<td>使用 C# 或 F# 通过 <a href="https://visualstudio.microsoft.com/vs/">Visual Studio</a>、<a href="https://visualstudio.microsoft.com/vs/mac/">Visual Studio for Mac</a> 或 <a href="https://code.visualstudio.com/">Visual Studio Code</a> 进行开发</td>
+<td>使用 C#、VB 或 F# 通过 <a href="https://visualstudio.microsoft.com/vs/">Visual Studio</a> 进行开发</td>
+</tr>
+<tr>
+<td>比 ASP.NET 4.x 性能更高</td>
+<td>良好的性能</td>
+</tr>
+<tr>
+<td><a href="/dotnet/standard/choosing-core-framework-server">使用 .NET Core 运行时</a></td>
+<td>使用 .NET Framework 运行时</td>
+</tr>
+</tbody>
+</table>
+<p>有关 .NET Framework 上的 ASP.NET Core 2.x 支持的信息，请参阅<a class="xref" href="../introduction-to-aspnet-core.html#target-framework">面向 .NET Framework 的 ASP.NET Core</a>。</p>
+<h2 id="aspnet-core-scenarios">ASP.NET Core 方案</h2>
+<ul>
+<li><a class="xref" href="../tutorials/first-mvc-app/index.html">网站</a></li>
+<li><a class="xref" href="../tutorials/first-web-api.html">API</a></li>
+<li><a class="xref" href="../signalr/introduction.html">实时</a></li>
+<li><a href="/azure/app-service/app-service-web-get-started-dotnet">将 ASP.NET Core 应用部署到 Azure</a></li>
+</ul>
+<h2 id="aspnet-4x-scenarios">ASP.NET 4.x 方案</h2>
+<ul>
+<li><a href="/aspnet/mvc">网站</a></li>
+<li><a href="/aspnet/web-api">API</a></li>
+<li><a href="/aspnet/signalr">实时</a></li>
+<li><a href="/azure/app-service/app-service-web-get-started-dotnet-framework">在 Azure 中创建 ASP.NET 4.x Web 应用</a></li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/aspnet/overview">ASP.NET 简介</a></li>
+<li><a class="xref" href="../introduction-to-aspnet-core.html">ASP.NET Core 简介</a></li>
+<li><a class="xref" href="../host-and-deploy/azure-apps/index.html">将 ASP.NET Core 应用部署到 Azure 应用服务</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

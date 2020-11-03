@@ -1,0 +1,167 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#26367;&#25442; ASP.NET Core &#20013;&#30340; ASP.NET machineKey </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#26367;&#25442; ASP.NET Core &#20013;&#30340; ASP.NET machineKey ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/data-protection/compatibility/replacing-machinekey">
+<h1 id="replace-the-aspnet-machinekey-in-aspnet-core">替换 ASP.NET Core 中的 ASP.NET machineKey</h1>
+
+<p><a name="compatibility-replacing-machinekey"></a></p>
+<p><code>&lt;machineKey&gt;</code>ASP.NET 中元素的实现<a href="https://blogs.msdn.microsoft.com/webdev/2012/10/23/cryptographic-improvements-in-asp-net-4-5-pt-2/">是可替换</a>的。 这样，就可以通过一种替代数据保护机制（包括新的数据保护系统）来路由对 ASP.NET 加密例程的大多数调用。</p>
+<h2 id="package-installation">包安装</h2>
+<div class="NOTE">
+<h5>Note</h5>
+<p>新的数据保护系统只能安装到面向 .NET 4.5.1 或更高版本的现有 ASP.NET 应用程序中。 如果应用程序面向 .NET 4.5 或更低版本，则安装将失败。</p>
+</div>
+<p>若要在现有的 ASP.NET 4.5.1 + 项目中安装新的数据保护系统，请 Microsoft.AspNetCore.DataProtection.SystemWeb 安装包。 这将使用 <a class="xref" href="../configuration/default-settings.html">默认配置</a> 设置来实例化数据保护系统。</p>
+<p>安装包时，它会在 <em>Web.config</em> 中插入一行，告诉 ASP.NET 将其用于 <a href="https://blogs.msdn.microsoft.com/webdev/2012/10/23/cryptographic-improvements-in-asp-net-4-5-pt-2/">大多数加密操作</a>，包括 forms 身份验证、视图状态和对 MachineKey 的调用。 插入的行如下所示。</p>
+<pre><code class="lang-xml">&lt;machineKey compatibilityMode=&quot;Framework45&quot; dataProtectorType=&quot;...&quot; /&gt;
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>可以通过检查 <code>__VIEWSTATE</code> （如下面的示例中应以 &quot;CfDJ8&quot; 开头）等字段来判断新的数据保护系统是否处于活动状态。 &quot;CfDJ8&quot; 是用于标识受数据保护系统保护的有效负载的幻 &quot;09 F0 C9 F0&quot; 标头的 base64 表示形式。</p>
+</div>
+<pre><code class="lang-html">&lt;input type=&quot;hidden&quot; name=&quot;__VIEWSTATE&quot; id=&quot;__VIEWSTATE&quot; value=&quot;CfDJ8AWPr2EQPTBGs3L2GCZOpk...&quot;&gt;
+</code></pre>
+<h2 id="package-configuration">包配置</h2>
+<p>数据保护系统使用默认的零安装配置进行实例化。 但是，由于默认情况下会将密钥保存到本地文件系统，因此，这不能用于在场中部署的应用程序。 若要解决此问题，可以通过创建子类 DataProtectionStartup 并重写其 ConfigureServices 方法的类型来提供配置。</p>
+<p>下面是一个自定义数据保护启动类型的示例，该类型配置了两个密钥的保存位置和静态加密方式。 它还通过提供自己的应用程序名称来替代默认应用隔离策略。</p>
+<pre><code class="lang-csharp">using System;
+using System.IO;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.SystemWeb;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace DataProtectionDemo
+{
+    public class MyDataProtectionStartup : DataProtectionStartup
+    {
+        public override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDataProtection()
+                .SetApplicationName(&quot;my-app&quot;)
+                .PersistKeysToFileSystem(new DirectoryInfo(@&quot;\\server\share\myapp-keys\&quot;))
+                .ProtectKeysWithCertificate(&quot;thumbprint&quot;);
+        }
+    }
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>你还可以使用 <code>&lt;machineKey applicationName=&quot;my-app&quot; ... /&gt;</code> 来代替对 SetApplicationName 的显式调用。 这是一种简便的机制，可避免开发人员在要配置的所有应用程序名称设置的情况下，强制创建 DataProtectionStartup 派生的类型。</p>
+</div>
+<p>若要启用此自定义配置，请返回 Web.config，并查找 <code>&lt;appSettings&gt;</code> 包安装添加到配置文件中的元素。 它将类似于以下标记：</p>
+<pre><code class="lang-xml">&lt;appSettings&gt;
+  &lt;!--
+  If you want to customize the behavior of the ASP.NET Core Data Protection stack, set the
+  &quot;aspnet:dataProtectionStartupType&quot; switch below to be the fully-qualified name of a
+  type which subclasses Microsoft.AspNetCore.DataProtection.SystemWeb.DataProtectionStartup.
+  --&gt;
+  &lt;add key=&quot;aspnet:dataProtectionStartupType&quot; value=&quot;&quot; /&gt;
+&lt;/appSettings&gt;
+</code></pre>
+<p>用刚刚创建的 DataProtectionStartup 派生类型的程序集限定名称填充空白值。 如果应用程序的名称为 DataProtectionDemo，则如下所示。</p>
+<pre><code class="lang-xml">&lt;add key=&quot;aspnet:dataProtectionStartupType&quot;
+     value=&quot;DataProtectionDemo.MyDataProtectionStartup, DataProtectionDemo&quot; /&gt;
+</code></pre>
+<p>新配置的数据保护系统现在可以在应用程序内部使用。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

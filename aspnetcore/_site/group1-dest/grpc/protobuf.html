@@ -1,0 +1,542 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20026; .NET &#24212;&#29992;&#21019;&#24314; Protobuf &#28040;&#24687; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20026; .NET &#24212;&#29992;&#21019;&#24314; Protobuf &#28040;&#24687; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/protobuf">
+<h1 id="create-protobuf-messages-for-net-apps">为 .NET 应用创建 Protobuf 消息</h1>
+
+<p>作者：<a href="https://twitter.com/jamesnk">James Newton-King</a> 和 <a href="https://twitter.com/markrendle">Mark Rendle</a></p>
+<p>gRPC 使用 <a href="https://developers.google.com/protocol-buffers">Protobuf</a> 作为其接口定义语言 (IDL)。 Protobuf IDL 是一种中性语言格式，用于指定 gRPC 服务发送和接收的消息。 Protobuf 消息在 <code>.proto</code> 文件中定义。 本文档介绍如何将 Protobuf 概念映射到 .NET。</p>
+<h2 id="protobuf-messages">Protobuf 消息</h2>
+<p>消息是 Protobuf 中的主要数据传输对象。 它们在概念上类似于 .NET 类。</p>
+<pre><code class="lang-protobuf">syntax = &quot;proto3&quot;;
+
+option csharp_namespace = &quot;Contoso.Messages&quot;;
+
+message Person {
+    int32 id = 1;
+    string first_name = 2;
+    string last_name = 3;
+}  
+</code></pre>
+<p>前面的消息定义将三个字段指定为名称/值对。 与 .NET 类型上的属性类似，每个字段都有名称和类型。 字段类型可以是 <a href="#scalar-value-types">Protobuf 标量值类型</a>（如 <code>int32</code>），也可以是其他消息。</p>
+<p>包括名称，消息定义中的每个字段都有一个唯一的编号。 消息序列化为 Protobuf 时，字段编号用于标识字段。 序列化一个小编号比序列化整个字段名称要快。 因为字段编号标识字段，所以在更改编号时务必小心。 有关更改 Protobuf 消息的详细信息，请参阅 <a class="xref" href="versioning.html">版本控制 gRPC 服务</a>。</p>
+<p>生成应用时，Protobuf 工具将从 <code>.proto</code> 文件生成 .NET 类型。 <code>Person</code> 消息生成 .NET 类：</p>
+<pre><code class="lang-csharp">public class Person
+{
+    public int Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+}
+</code></pre>
+<p>有关 Protobuf 消息的详细信息，请参阅 <a href="https://developers.google.com/protocol-buffers/docs/proto3#simple">Protobuf 语言指南</a>。</p>
+<h2 id="scalar-value-types">标量值类型</h2>
+<p>Protobuf 支持一系列本机标量值类型。 下表列出了全部本机标量值类型及其等效 C# 类型：</p>
+<table>
+<thead>
+<tr>
+<th>Protobuf 类型</th>
+<th>C# 类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>double</code></td>
+<td><code>double</code></td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>int32</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>int64</code></td>
+<td><code>long</code></td>
+</tr>
+<tr>
+<td><code>uint32</code></td>
+<td><code>uint</code></td>
+</tr>
+<tr>
+<td><code>uint64</code></td>
+<td><code>ulong</code></td>
+</tr>
+<tr>
+<td><code>sint32</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>sint64</code></td>
+<td><code>long</code></td>
+</tr>
+<tr>
+<td><code>fixed32</code></td>
+<td><code>uint</code></td>
+</tr>
+<tr>
+<td><code>fixed64</code></td>
+<td><code>ulong</code></td>
+</tr>
+<tr>
+<td><code>sfixed32</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>sfixed64</code></td>
+<td><code>long</code></td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>bool</code></td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>bytes</code></td>
+<td><code>ByteString</code></td>
+</tr>
+</tbody>
+</table>
+<p>标量值始终具有默认值，并且该默认值不能设置为 <code>null</code>。 此约束包括 <code>string</code> 和 <code>ByteString</code>，它们都属于 C# 类。 <code>string</code> 默认为空字符串值，<code>ByteString</code> 默认为空字节值。 尝试将它们设置为 <code>null</code> 会引发错误。</p>
+<p><a href="#nullable-types">可为 null 的包装器类型</a>可用于支持 null 值。</p>
+<h3 id="dates-and-times">日期和时间</h3>
+<p>本机标量类型不提供与 .NET 的 &lt;xref:System.DateTimeOffset&gt;、&lt;xref:System.DateTime&gt; 和 &lt;xref:System.TimeSpan&gt; 等效的日期和时间值。 可使用 Protobuf 的一些“已知类型”扩展来指定这些类型。 这些扩展为受支持平台中的复杂字段类型提供代码生成和运行时支持。</p>
+<p>下表显示日期和时间类型：</p>
+<table>
+<thead>
+<tr>
+<th>.NET 类型</th>
+<th>Protobuf 已知类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DateTimeOffset</code></td>
+<td><code>google.protobuf.Timestamp</code></td>
+</tr>
+<tr>
+<td><code>DateTime</code></td>
+<td><code>google.protobuf.Timestamp</code></td>
+</tr>
+<tr>
+<td><code>TimeSpan</code></td>
+<td><code>google.protobuf.Duration</code></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-protobuf">syntax = &quot;proto3&quot;
+
+import &quot;google/protobuf/duration.proto&quot;;  
+import &quot;google/protobuf/timestamp.proto&quot;;
+
+message Meeting {
+    string subject = 1;
+    google.protobuf.Timestamp start = 2;
+    google.protobuf.Duration duration = 3;
+}  
+</code></pre>
+<p>C# 类中生成的属性不是 .NET 日期和时间类型。 属性使用 <code>Google.Protobuf.WellKnownTypes</code> 命名空间中的 <code>Timestamp</code> 和 <code>Duration</code> 类。 这些类提供在 <code>DateTimeOffset</code>、<code>DateTime</code> 和 <code>TimeSpan</code> 之间进行转换的方法。</p>
+<pre><code class="lang-csharp">// Create Timestamp and Duration from .NET DateTimeOffset and TimeSpan.
+var meeting = new Meeting
+{
+    Time = Timestamp.FromDateTimeOffset(meetingTime), // also FromDateTime()
+    Duration = Duration.FromTimeSpan(meetingLength)
+};
+
+// Convert Timestamp and Duration to .NET DateTimeOffset and TimeSpan.
+var time = meeting.Time.ToDateTimeOffset();
+var duration = meeting.Duration?.ToTimeSpan();
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>Timestamp</code> 类型适用于 UTC 时间。 <code>DateTimeOffset</code> 值的偏移量始终为零，并且 <code>DateTime.Kind</code> 属性始终为 <code>DateTimeKind.Utc</code>。</p>
+</div>
+<h3 id="nullable-types">可为 null 的类型</h3>
+<p>C# 的 Protobuf 代码生成使用本机类型，如 <code>int</code> 表示 <code>int32</code>。 因此这些值始终包括在内，不能为 <code>null</code>。</p>
+<p>对于需要显式 <code>null</code> 的值（例如在 C# 代码中使用 <code>int?</code>），Protobuf 的“已知类型”包括编译为可以为 null 的 C# 类型的包装器。 若要使用它们，请将 <code>wrappers.proto</code> 导入到 <code>.proto</code> 文件中，如以下代码所示：</p>
+<pre><code class="lang-protobuf">syntax = &quot;proto3&quot;
+
+import &quot;google/protobuf/wrappers.proto&quot;
+
+message Person {
+    // ...
+    google.protobuf.Int32Value age = 5;
+}
+</code></pre>
+<p><code>wrappers.proto</code> 类型不会在生成的属性中公开。 Protobuf 会自动将它们映射到 C# 消息中相应的可为 null 的 .NET 类型。 例如，<code>google.protobuf.Int32Value</code> 字段生成 <code>int?</code> 属性。 引用类型属性（如 <code>string</code> 和 <code>ByteString</code> ）保持不变，但可以向它们分配 <code>null</code>，这不会引发错误。</p>
+<p>下表完整列出了包装器类型以及它们的等效 C# 类型：</p>
+<table>
+<thead>
+<tr>
+<th>C# 类型</th>
+<th>已知类型包装器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bool?</code></td>
+<td><code>google.protobuf.BoolValue</code></td>
+</tr>
+<tr>
+<td><code>double?</code></td>
+<td><code>google.protobuf.DoubleValue</code></td>
+</tr>
+<tr>
+<td><code>float?</code></td>
+<td><code>google.protobuf.FloatValue</code></td>
+</tr>
+<tr>
+<td><code>int?</code></td>
+<td><code>google.protobuf.Int32Value</code></td>
+</tr>
+<tr>
+<td><code>long?</code></td>
+<td><code>google.protobuf.Int64Value</code></td>
+</tr>
+<tr>
+<td><code>uint?</code></td>
+<td><code>google.protobuf.UInt32Value</code></td>
+</tr>
+<tr>
+<td><code>ulong?</code></td>
+<td><code>google.protobuf.UInt64Value</code></td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>google.protobuf.StringValue</code></td>
+</tr>
+<tr>
+<td><code>ByteString</code></td>
+<td><code>google.protobuf.BytesValue</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="bytes">字节</h3>
+<p>Protobuf 支持标量值类型为 <code>bytes</code> 的二进制有效负载。 C# 中生成的属性使用 <code>ByteString</code> 作为属性类型。</p>
+<p>使用 <code>ByteString.CopyFrom(byte[] data)</code> 从字节数组创建新实例：</p>
+<pre><code class="lang-csharp">var data = await File.ReadAllBytesAsync(path);
+
+var payload = new PayloadResponse();
+payload.Data = ByteString.CopyFrom(data);
+</code></pre>
+<p>使用 <code>ByteString.Span</code> 或 <code>ByteString.Memory</code> 直接访问 <code>ByteString</code> 数据。 或调用 <code>ByteString.ToByteArray()</code> 将实例转换回字节数组：</p>
+<pre><code class="lang-csharp">var payload = await client.GetPayload(new PayloadRequest());
+
+await File.WriteAllBytesAsync(path, payload.Data.ToByteArray());
+</code></pre>
+<h3 id="decimals">小数</h3>
+<p>Protobuf 本身不支持 .NET <code>decimal</code> 类型，只支持 <code>double</code> 和 <code>float</code>。 在 Protobuf 项目中，我们正在探讨这样一种可能性：将标准 decimal 类型添加到已知类型，并为支持它的语言和框架添加平台支持。 尚未实现任何内容。</p>
+<p>可以创建消息定义来表示 <code>decimal</code> 类型，以便在 .NET 客户端和服务器之间实现安全序列化。 但其他平台上的开发人员必须了解所使用的格式，并能够实现自己对其的处理。</p>
+<h4 id="creating-a-custom-decimal-type-for-protobuf">为 Protobuf 创建自定义 decimal 类型</h4>
+<pre><code class="lang-protobuf">package CustomTypes;
+
+// Example: 12345.6789 -&gt; { units = 12345, nanos = 678900000 }
+message DecimalValue {
+
+    // Whole units part of the amount
+    int64 units = 1;
+
+    // Nano units of the amount (10^-9)
+    // Must be same sign as units
+    sfixed32 nanos = 2;
+}
+</code></pre>
+<p><code>nanos</code> 字段表示从 <code>0.999_999_999</code> 到 <code>-0.999_999_999</code> 的值。 例如，<code>decimal</code> 值 <code>1.5m</code> 将表示为 <code>{ units = 1, nanos = 500_000_000 }</code>。 这就是此示例中的 <code>nanos</code> 字段使用 <code>sfixed32</code> 类型的原因：对于较大的值，其编码效率比 <code>int32</code> 更高。 如果 <code>units</code> 字段为负，则 <code>nanos</code> 字段也应为负。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>还有多个其他算法可将 <code>decimal</code> 值编码为字节字符串，但此消息比其他任何字符串都易于理解。 在不同平台上，这些值不受 big-endian 或 little-endian 影响。</p>
+</div>
+<p>此类型与 BCL <code>decimal</code> 类型之间的转换可能会在 C# 中实现，如下所示：</p>
+<pre><code class="lang-csharp">namespace CustomTypes
+{
+    public partial class DecimalValue
+    {
+        private const decimal NanoFactor = 1_000_000_000;
+        public DecimalValue(long units, int nanos)
+        {
+            Units = units;
+            Nanos = nanos;
+        }
+
+        public long Units { get; }
+        public int Nanos { get; }
+
+        public static implicit operator decimal(CustomTypes.DecimalValue grpcDecimal)
+        {
+            return grpcDecimal.Units + grpcDecimal.Nanos / NanoFactor;
+        }
+
+        public static implicit operator CustomTypes.DecimalValue(decimal value)
+        {
+            var units = decimal.ToInt64(value);
+            var nanos = decimal.ToInt32((value - units) * NanoFactor);
+            return new CustomTypes.DecimalValue(units, nanos);
+        }
+    }
+}
+</code></pre>
+<h2 id="collections">集合</h2>
+<h3 id="lists">列表</h3>
+<p>Protobuf 中，在字段上使用 <code>repeated</code> 前缀关键字指定列表。 以下示例演示如何创建列表：</p>
+<pre><code class="lang-protobuf">message Person {
+    // ...
+    repeated string roles = 8;
+}
+</code></pre>
+<p>在生成的代码中，<code>repeated</code> 字段由 <code>Google.Protobuf.Collections.RepeatedField&lt;T&gt;</code> 泛型类型表示。</p>
+<pre><code class="lang-csharp">public class Person
+{
+    // ...
+    public RepeatedField&lt;string&gt; Roles { get; }
+}
+</code></pre>
+<p><code>RepeatedField&lt;T&gt;</code> 可实现 &lt;xref:System.Collections.Generic.IList%601&gt;。 因此你可使用 LINQ 查询，或者将其转换为数组或列表。 <code>RepeatedField&lt;T&gt;</code> 属性没有公共 setter。 项应添加到现有集合中。</p>
+<pre><code class="lang-csharp">var person = new Person();
+
+// Add one item.
+person.Roles.Add(&quot;user&quot;);
+
+// Add all items from another collection.
+var roles = new [] { &quot;admin&quot;, &quot;manager&quot; };
+person.Roles.Add(roles);
+</code></pre>
+<h3 id="dictionaries">字典</h3>
+<p>.NET &lt;xref:System.Collections.Generic.IDictionary%602&gt; 类型在 Protobuf 中使用 <code>map&lt;key_type, value_type&gt;</code> 表示。</p>
+<pre><code class="lang-protobuf">message Person {
+    // ...
+    map&lt;string, string&gt; attributes = 9;
+}
+</code></pre>
+<p>在生成的 .NET 代码中，<code>map</code> 字段由 <code>Google.Protobuf.Collections.MapField&lt;TKey, TValue&gt;</code> 泛型类型表示。 <code>MapField&lt;TKey, TValue&gt;</code> 可实现 &lt;xref:System.Collections.Generic.IDictionary%602&gt;。 与 <code>repeated</code> 属性一样，<code>map</code> 属性没有公共 setter。 项应添加到现有集合中。</p>
+<pre><code class="lang-csharp">var person = new Person();
+
+// Add one item.
+person.Attributes[&quot;created_by&quot;] = &quot;James&quot;;
+
+// Add all items from another collection.
+var attributes = new Dictionary&lt;string, string&gt;
+{
+    [&quot;last_modified&quot;] = DateTime.UtcNow.ToString()
+};
+person.Attributes.Add(attributes);
+</code></pre>
+<h2 id="unstructured-and-conditional-messages">无结构的条件消息</h2>
+<p>Protobuf 是一种协定优先的消息传递格式。 构建应用时，必须在 <code>.proto</code> 文件中指定应用的消息，包括其字段和类型。 Protobuf 的协定优先设计非常适合强制执行消息内容，但可能会限制不需要严格协定的情况：</p>
+<ul>
+<li>包含未知有效负载的消息。 例如，具有可以包含任何消息的字段的消息。</li>
+<li>条件消息。 例如，从 gRPC 服务返回的消息可能是成功结果或错误结果。</li>
+<li>动态值。 例如，具有包含非结构化值集合的字段的消息，类似于 JSON。</li>
+</ul>
+<p>Protobuf 提供语言功能和类型来支持这些情况。</p>
+<h3 id="any">任意</h3>
+<p>利用 <code>Any</code> 类型，可以将消息作为嵌入类型使用，而无需 <code>.proto</code> 定义。 若要使用 <code>Any</code> 类型，请导入 <code>any.proto</code>。</p>
+<pre><code class="lang-protobuf">import &quot;google/protobuf/any.proto&quot;;
+
+message Status {
+    string message = 1;
+    google.protobuf.Any detail = 2;
+}
+</code></pre>
+<pre><code class="lang-csharp">// Create a status with a Person message set to detail.
+var status = new ErrorStatus();
+status.Detail = Any.Pack(new Person { FirstName = &quot;James&quot; });
+
+// Read Person message from detail.
+if (status.Detail.Is(Person.Descriptor))
+{
+    var person = status.Detail.Unpack&lt;Person&gt;();
+    // ...
+}
+</code></pre>
+<h3 id="oneof">Oneof</h3>
+<p><code>oneof</code> 字段是一种语言特性。 编译器在生成消息类时处理 <code>oneof</code> 关键字。 使用 <code>oneof</code> 指定可能返回 <code>Person</code> 或 <code>Error</code> 的响应消息可能如下所示：</p>
+<pre><code class="lang-protobuf">message Person {
+    // ...
+}
+
+message Error {
+    // ...
+}
+
+message ResponseMessage {
+  oneof result {
+    Error error = 1;
+    Person person = 2;
+  }
+}
+</code></pre>
+<p>在整个消息声明中，<code>oneof</code> 集内的字段必须具有唯一的字段编号。</p>
+<p>使用 <code>oneof</code> 时，生成的 C# 代码包括一个枚举，用于指定哪些字段已设置。 可以测试枚举来查找已设置的字段。 未设置的字段将返回 <code>null</code> 或默认值，而不是引发异常。</p>
+<pre><code class="lang-csharp">var response = await client.GetPersonAsync(new RequestMessage());
+
+switch (response.ResultCase)
+{
+    case ResponseMessage.ResultOneofCase.Person:
+        HandlePerson(response.Person);
+        break;
+    case ResponseMessage.ResultOneofCase.Error:
+        HandleError(response.Error);
+        break;
+    default:
+        throw new ArgumentException(&quot;Unexpected result.&quot;);
+}
+</code></pre>
+<h3 id="value">“值”</h3>
+<p><code>Value</code> 类型表示动态类型的值。 它可以是 <code>null</code>、数字、字符串、布尔值、值字典 (<code>Struct</code>) 或值列表 (<code>ValueList</code>)。 <code>Value</code> 是一个 Protobuf 已知类型，它使用前面讨论的 <code>oneof</code> 功能。 若要使用 <code>Value</code> 类型，请导入 <code>struct.proto</code>。</p>
+<pre><code class="lang-protobuf">import &quot;google/protobuf/struct.proto&quot;;
+
+message Status {
+    // ...
+    google.protobuf.Value data = 3;
+}
+</code></pre>
+<pre><code class="lang-csharp">// Create dynamic values.
+var status = new Status();
+status.Data = Value.FromStruct(new Struct
+{
+    Fields =
+    {
+        [&quot;enabled&quot;] = Value.ForBoolean(true),
+        [&quot;metadata&quot;] = Value.ForList(
+            Value.FromString(&quot;value1&quot;),
+            Value.FromString(&quot;value2&quot;))
+    }
+});
+
+// Read dynamic values.
+switch (status.Data.KindCase)
+{
+    case Value.KindOneofCase.StructValue:
+        foreach (var field in status.Data.StructValue.Fields)
+        {
+            // Read struct fields...
+        }
+        break;
+    // ...
+}
+</code></pre>
+<p>直接使用 <code>Value</code> 可能很冗长。 使用 <code>Value</code> 的替代方法是通过 Protobuf 的内置支持，将消息映射到 JSON。 Protobuf 的 <code>JsonFormatter</code> 和 <code>JsonWriter</code> 类型可用于任何 Protobuf 消息。 <code>Value</code> 特别适用于与 JSON 进行转换。</p>
+<p>以下是与之前的代码等效的 JSON：</p>
+<pre><code class="lang-csharp">// Create dynamic values from JSON.
+var status = new Status();
+status.Data = Value.Parser.ParseJson(@&quot;{
+    &quot;&quot;enabled&quot;&quot;: true,
+    &quot;&quot;metadata&quot;&quot;: [ &quot;&quot;value1&quot;&quot;, &quot;&quot;value2&quot;&quot; ]
+}&quot;);
+
+// Convert dynamic values to JSON.
+// JSON can be read with a library like System.Text.Json or Newtonsoft.Json
+var json = JsonFormatter.Default.Format(status.Metadata);
+var document = JsonDocument.Parse(json);
+</code></pre>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://developers.google.com/protocol-buffers/docs/proto3#simple">Protobuf 语言指南</a></li>
+<li><a class="xref" href="versioning.html">版本控制 gRPC 服务</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

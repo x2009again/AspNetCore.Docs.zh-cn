@@ -1,0 +1,359 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20174; ASP.NET &#25104;&#21592;&#36523;&#20221;&#39564;&#35777;&#36801;&#31227;&#21040; ASP.NET Core 2&#12290;0 Identity </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20174; ASP.NET &#25104;&#21592;&#36523;&#20221;&#39564;&#35777;&#36801;&#31227;&#21040; ASP.NET Core 2&#12290;0 Identity ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="migration/proper-to-2x/membership-to-core-identity">
+<h1 id="migrate-from-aspnet-membership-authentication-to-aspnet-core-20-no-locidentity">从 ASP.NET 成员身份验证迁移到 ASP.NET Core 2。0 Identity</h1>
+
+<p>作者：<a href="https://isaaclevin.com">Isaac Levin</a></p>
+<p>本文演示了如何使用成员身份验证将 ASP.NET 应用的数据库架构迁移到 ASP.NET Core 2.0 Identity 。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>本文档提供将基于 ASP.NET 成员身份的应用程序的数据库架构迁移到用于的数据库架构所需的步骤 ASP.NET Core Identity 。 有关从基于 ASP.NET 的基于成员身份的身份验证迁移到 ASP.NET 的详细信息 Identity ，请参阅<a href="/aspnet/identity/overview/migrations/migrating-an-existing-website-from-sql-membership-to-aspnet-identity">将现有应用从 Identity SQL 成员身份迁移到 ASP.NET </a>。 有关的详细信息 ASP.NET Core Identity ，请参阅 <a class="xref" href="../../security/authentication/identity.html"> Identity ASP.NET Core 上的简介</a>。</p>
+</div>
+<h2 id="review-of-membership-schema">成员资格架构评审</h2>
+<p>在 ASP.NET 2.0 之前，开发人员负责为其应用创建整个身份验证和授权过程。 使用 ASP.NET 2.0，引入了成员身份，提供了一个样本解决方案来处理 ASP.NET 应用中的安全性。 开发人员现在可以使用命令将架构启动到 SQL Server 数据库中 <a href="https://docs.microsoft.com/previous-versions/ms229862(v=vs.140)">https://docs.microsoft.com/previous-versions/ms229862(v=vs.140)</a> 。 运行此命令后，将在数据库中创建以下表。</p>
+<p><img src="identity/_static/membership-tables.png" alt="成员资格表"></p>
+<p>若要将现有应用迁移到 ASP.NET Core 2.0 Identity ，需要将这些表中的数据迁移到新架构使用的表中 Identity 。</p>
+<h2 id="no-locaspnet-core-identity-20-schema">ASP.NET Core Identity 2.0 架构</h2>
+<p>ASP.NET Core 2.0 遵循 <a href="/aspnet/identity/index">Identity</a> ASP.NET 4.5 中引入的原则。 尽管原则是共享的，但在不同版本的 ASP.NET Core 中，框架之间的实现是不同的 (请参阅 <a class="xref" href="../1x-to-2x/index.html">迁移身份验证和 Identity ASP.NET Core 2.0</a>) 。</p>
+<p>查看 ASP.NET Core 2.0 的架构的最快方法 Identity 是创建新的 ASP.NET Core 2.0 应用。 在 Visual Studio 2017 中执行以下步骤：</p>
+<ol>
+<li><p>选择“文件” &gt; “新建” &gt; “项目”  。</p>
+</li>
+<li><p>创建名为 <em>Core Identity Sample</em> 的新 <strong>ASP.NET Core Web 应用程序</strong> 项目。</p>
+</li>
+<li><p>在下拉列表中选择 <strong>ASP.NET Core 2.0</strong> ，然后选择 &quot; <strong>Web 应用程序</strong> &quot;。 此模板生成<a class="xref" href="../../razor-pages/index.html"> Razor 页面</a>应用。 单击 <strong>&quot;确定&quot;</strong> 之前，请单击 &quot; <strong>更改身份验证</strong> &quot;。</p>
+</li>
+<li><p>为模板选择 <strong>单个用户帐户</strong> Identity 。 最后，单击 <strong>&quot;确定</strong> &quot;，然后单击 <strong>&quot;确定&quot;</strong> 。 Visual Studio 将使用模板创建一个项目 ASP.NET Core Identity 。</p>
+</li>
+<li><p>选择 &quot; <strong>工具</strong> &quot; &quot;  &gt;  <strong>NuGet 包管理器</strong> &quot; &quot;  &gt;  <strong>包管理器控制台</strong> &quot; 打开 <strong>包管理器控制台</strong> (PMC) &quot;窗口。</p>
+</li>
+<li><p>导航到 PMC 中的项目根，并运行 <a href="/ef/core">实体框架 (EF) Core</a> <code>Update-Database</code> 命令。</p>
+<p>ASP.NET Core 2.0 Identity 使用 EF Core 与存储身份验证数据的数据库进行交互。 为了使新创建的应用程序正常工作，需要有数据库来存储此数据。 创建新应用后，在数据库环境中检查架构的最快方法是使用 <a href="/ef/core/managing-schemas/migrations/">EF Core 迁移</a>来创建数据库。 此过程将创建一个在本地或其他位置模拟该架构的数据库。 有关详细信息，请查看前面的文档。</p>
+<p>EF Core 命令使用中指定的数据库的连接字符串 <em>appsettings.json</em> 。 以下连接字符串针对名为 <em>.asp 的</em> <em>localhost</em> 上的数据库。 在此设置中，EF Core 配置为使用 <code>DefaultConnection</code> 连接字符串。</p>
+<pre><code class="lang-json">{
+  &quot;ConnectionStrings&quot;: {
+    &quot;DefaultConnection&quot;: &quot;Server=localhost;Database=aspnet-core-identity;Trusted_Connection=True;MultipleActiveResultSets=true&quot;
+  }
+}
+</code></pre>
+</li>
+<li><p>选择 &quot; <strong>查看</strong>  &gt;  <strong>SQL Server 对象资源管理器</strong> &quot;。 展开与的属性中指定的数据库名称相对应的节点 <code>ConnectionStrings:DefaultConnection</code> <em>appsettings.json</em> 。</p>
+<p>该 <code>Update-Database</code> 命令创建了用架构指定的数据库以及应用初始化所需的任何数据。 下图描绘了在前面的步骤中创建的表结构。</p>
+<p><img src="identity/_static/identity-tables.png" alt="：： no (Identity) ：：： Tables"></p>
+</li>
+</ol>
+<h2 id="migrate-the-schema">迁移架构</h2>
+<p>对于成员身份和的表结构和字段存在细微的差异 ASP.NET Core Identity 。 此模式已因 ASP.NET 和 ASP.NET Core 应用的身份验证/授权而发生了重大更改。 仍用于的关键对象 Identity 是 <em>用户</em> 和 <em>角色</em> 。 下面是 <em>用户</em> 、 <em>角色</em> 和 <em>UserRoles</em> 的映射表。</p>
+<h3 id="users">用户</h3>
+<table>
+<thead>
+<tr>
+<th>Identity<br> (<code>dbo.AspNetUsers</code>) 列</th>
+<th>类型</th>
+<th>Membership<br> (<code>dbo.aspnet_Users</code>  /  <code>dbo.aspnet_Membership</code>) 列</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Id</code></td>
+<td><code>string</code></td>
+<td><code>aspnet_Users.UserId</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>UserName</code></td>
+<td><code>string</code></td>
+<td><code>aspnet_Users.UserName</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>Email</code></td>
+<td><code>string</code></td>
+<td><code>aspnet_Membership.Email</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>NormalizedUserName</code></td>
+<td><code>string</code></td>
+<td><code>aspnet_Users.LoweredUserName</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>NormalizedEmail</code></td>
+<td><code>string</code></td>
+<td><code>aspnet_Membership.LoweredEmail</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>PhoneNumber</code></td>
+<td><code>string</code></td>
+<td><code>aspnet_Users.MobileAlias</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>LockoutEnabled</code></td>
+<td><code>bit</code></td>
+<td><code>aspnet_Membership.IsLockedOut</code></td>
+<td><code>bit</code></td>
+</tr>
+</tbody>
+</table>
+<div class="NOTE">
+<h5>Note</h5>
+<p>并非所有字段映射都类似于从成员身份到的一对一关系 ASP.NET Core Identity 。 上表采用默认的成员资格用户架构，并将其映射到 ASP.NET Core Identity 架构。 需要手动映射用于成员身份的任何其他自定义字段。 在此映射中，无密码映射，因为密码条件和密码 salts 不会在两者之间迁移。 <strong>建议将密码保留为 null 并要求用户重置其密码。</strong> 在中 ASP.NET Core Identity ， <code>LockoutEnd</code> 如果用户被锁定，则应设置为将来的某个日期。这会显示在迁移脚本中。</p>
+</div>
+<h3 id="roles">角色</h3>
+<table>
+<thead>
+<tr>
+<th>Identity<br> (<code>dbo.AspNetRoles</code>) 列</th>
+<th>类型</th>
+<th>Membership<br> (<code>dbo.aspnet_Roles</code>) 列</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Id</code></td>
+<td><code>string</code></td>
+<td><code>RoleId</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>Name</code></td>
+<td><code>string</code></td>
+<td><code>RoleName</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>NormalizedName</code></td>
+<td><code>string</code></td>
+<td><code>LoweredRoleName</code></td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="user-roles">用户角色</h3>
+<table>
+<thead>
+<tr>
+<th>Identity<br> (<code>dbo.AspNetUserRoles</code>) 列</th>
+<th>类型</th>
+<th>Membership<br> (<code>dbo.aspnet_UsersInRoles</code>) 列</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RoleId</code></td>
+<td><code>string</code></td>
+<td><code>RoleId</code></td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>UserId</code></td>
+<td><code>string</code></td>
+<td><code>UserId</code></td>
+<td><code>string</code></td>
+</tr>
+</tbody>
+</table>
+<p>创建 <em>用户</em> 和 <em>角色</em> 的迁移脚本时引用前面的映射表。 下面的示例假定数据库服务器上有两个数据库。 一个数据库包含现有的 ASP.NET 成员身份架构和数据。 其他 <em>核心 Identity 示例</em> 数据库是使用前面所述的步骤创建的。 有关详细信息，请以内联方式包含注释。</p>
+<pre><code class="lang-sql">-- THIS SCRIPT NEEDS TO RUN FROM THE CONTEXT OF THE MEMBERSHIP DB
+BEGIN TRANSACTION MigrateUsersAndRoles
+USE aspnetdb
+
+-- INSERT USERS
+INSERT INTO CoreIdentitySample.dbo.AspNetUsers
+            (Id,
+             UserName,
+             NormalizedUserName,
+             PasswordHash,
+             SecurityStamp,
+             EmailConfirmed,
+             PhoneNumber,
+             PhoneNumberConfirmed,
+             TwoFactorEnabled,
+             LockoutEnd,
+             LockoutEnabled,
+             AccessFailedCount,
+             Email,
+             NormalizedEmail)
+SELECT aspnet_Users.UserId,
+       aspnet_Users.UserName,
+       -- The NormalizedUserName value is upper case in ASP.NET Core Identity
+       UPPER(aspnet_Users.UserName),
+       -- Creates an empty password since passwords don't map between the 2 schemas
+       '',
+       /*
+        The SecurityStamp token is used to verify the state of an account and
+        is subject to change at any time. It should be initialized as a new ID.
+       */
+       NewID(),
+       /*
+        EmailConfirmed is set when a new user is created and confirmed via email.
+        Users must have this set during migration to reset passwords.
+       */
+       1,
+       aspnet_Users.MobileAlias,
+       CASE
+         WHEN aspnet_Users.MobileAlias IS NULL THEN 0
+         ELSE 1
+       END,
+       -- 2FA likely wasn't setup in Membership for users, so setting as false.
+       0,
+       CASE
+         -- Setting lockout date to time in the future (1,000 years)
+         WHEN aspnet_Membership.IsLockedOut = 1 THEN Dateadd(year, 1000,
+                                                     Sysutcdatetime())
+         ELSE NULL
+       END,
+       aspnet_Membership.IsLockedOut,
+       /*
+        AccessFailedAccount is used to track failed logins. This is stored in
+        Membership in multiple columns. Setting to 0 arbitrarily.
+       */
+       0,
+       aspnet_Membership.Email,
+       -- The NormalizedEmail value is upper case in ASP.NET Core Identity
+       UPPER(aspnet_Membership.Email)
+FROM   aspnet_Users
+       LEFT OUTER JOIN aspnet_Membership
+                    ON aspnet_Membership.ApplicationId =
+                       aspnet_Users.ApplicationId
+                       AND aspnet_Users.UserId = aspnet_Membership.UserId
+       LEFT OUTER JOIN CoreIdentitySample.dbo.AspNetUsers
+                    ON aspnet_Membership.UserId = AspNetUsers.Id
+WHERE  AspNetUsers.Id IS NULL
+
+-- INSERT ROLES
+INSERT INTO CoreIdentitySample.dbo.AspNetRoles(Id, Name)
+SELECT RoleId, RoleName
+FROM aspnet_Roles;
+
+-- INSERT USER ROLES
+INSERT INTO CoreIdentitySample.dbo.AspNetUserRoles(UserId, RoleId)
+SELECT UserId, RoleId
+FROM aspnet_UsersInRoles;
+
+IF @@ERROR &lt;&gt; 0
+  BEGIN
+    ROLLBACK TRANSACTION MigrateUsersAndRoles
+    RETURN
+  END
+
+COMMIT TRANSACTION MigrateUsersAndRoles
+</code></pre>
+<p>完成上述脚本后，将 ASP.NET Core Identity 向成员资格用户填充先前创建的应用。 用户需要在登录之前更改密码。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>如果成员资格系统中的用户的用户名与其电子邮件地址不匹配，则需要对之前创建的应用进行更改，以满足此要求。 默认模板需要 <code>UserName</code> 和 <code>Email</code> 相同。 对于不同的情况，需要将登录过程修改为使用 <code>UserName</code> 而不是 <code>Email</code> 。</p>
+</div>
+<p>在登录页的 &quot;Pages\Account\Login.cshtml.cs&quot; 中， <code>PageModel</code> 从 &quot; <em>Pages\Account\Login.cshtml.cs</em> <code>[EmailAddress]</code> <em>电子邮件</em> &quot; 属性中删除该属性。 将其重命名为 <em>UserName</em> 。 这需要 <code>EmailAddress</code> 在 <em>视图</em> 和 <em>PageModel</em> 中提到的任何位置进行更改。 结果应类似如下所示：</p>
+<p><img src="identity/_static/fixed-login.png" alt="固定登录"></p>
+<h2 id="next-steps">后续步骤</h2>
+<p>在本教程中，已了解如何将用户从 SQL 成员身份移植到 ASP.NET Core 2.0 Identity 。 有关的详细信息 ASP.NET Core Identity ，请参阅<a class="xref" href="../../security/authentication/identity.html">介绍 Identity </a>。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

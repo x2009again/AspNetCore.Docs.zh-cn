@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#24212;&#29992;&#33073;&#26426;&#25991;&#20214; (app_offline.htm) </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#24212;&#29992;&#33073;&#26426;&#25991;&#20214; (app_offline.htm) ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="host-and-deploy/iis/app-offline">
+<h1 id="app-offline-file-app_offlinehtm">应用脱机文件 (<code>app_offline.htm</code>)</h1>
+
+<p>ASP.NET Core 模块使用应用脱机文件 (<code>app_offline.htm</code>) 来关闭应用。</p>
+<p>如果在应用的根目录中检测到名为“<code>app_offline.htm</code>”的文件，ASP.NET Core 模块将尝试正常关闭应用并停止处理传入请求。 如果应用在 <code>shutdownTimeLimit</code> 中定义的秒数之后仍在运行，ASP.NET Core 模块将停止正在运行的进程。</p>
+<p>存在 <code>app_offline.htm</code> 文件时，ASP.NET Core 模块会通过发送回 <code>app_offline.htm</code> 文件的内容来响应请求。 删除 <code>app_offline.htm</code> 文件后，下一个请求将启动应用。</p>
+<p>使用进程外托管模型时，如果有已打开的连接，则应用可能不会立即关闭。 例如，WebSocket 连接可能会延迟应用关闭。</p>
+<h2 id="locked-deployment-files">锁定的部署文件</h2>
+<p>如果应用正在运行，部署文件夹中的文件会被锁定。 在部署期间，无法覆盖已锁定的文件。</p>
+<p><code>app_offline.htm</code> 是释放锁定文件的主要机制。 <code>app_offline.htm</code> 供 Web 部署用于正确地停止和启动应用。</p>
+<p>可以手动将 <code>app_offline.htm</code> 用于启动和停止应用（需要 PowerShell 5 或更高版本）：</p>
+<pre><code class="lang-powershell">$pathToApp = '{PATH TO APP}'
+
+New-Item -Path $pathToApp app_offline.htm
+
+# Provide script commands here to deploy the app
+
+Remove-Item -Path $pathToApp app_offline.htm
+</code></pre>
+<p>在上述 PowerShell 脚本中：</p>
+<ul>
+<li>占位符 <code>{PATH TO APP}</code> 是指向应用的路径。</li>
+<li><code>New-Item</code> 命令停止应用池。</li>
+<li><code>Remove-Item</code> 命令启动应用池。</li>
+<li>开发人员提供 <code>New-Item</code> 命令和 <code>Remove-Item</code> 命令之间的命令来部署应用。</li>
+</ul>
+<p>还可以通过在服务器上的 IIS 管理器中手动停止应用池来解锁文件。 使用 IIS 管理器停止和重新启动应用池时，请勿使用 <code>app_offine.htm</code> 文件。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

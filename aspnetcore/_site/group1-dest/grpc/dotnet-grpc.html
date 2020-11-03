@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#36890;&#36807; dotnet-grpc &#31649;&#29702; Protobuf &#21442;&#32771; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#36890;&#36807; dotnet-grpc &#31649;&#29702; Protobuf &#21442;&#32771; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/dotnet-grpc">
+<h1 id="manage-protobuf-references-with-dotnet-grpc">通过 dotnet-grpc 管理 Protobuf 参考</h1>
+
+<p>作者：<a href="https://github.com/juntaoluo">John Luo</a></p>
+<p><code>dotnet-grpc</code> 是一种 .NET Core 全局工具，用于在 .NET gRPC 项目中管理 <a class="xref" href="basics.html#proto-file">Protobuf (.proto)</a> 引用。 该工具可以用于添加、刷新、删除和列出 Protobuf 引用。</p>
+<h2 id="installation">安装</h2>
+<p>若要安装 <code>dotnet-grpc</code> <a href="/dotnet/core/tools/global-tools">.NET Core 全局工具</a>，请运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g dotnet-grpc
+</code></pre>
+<h2 id="add-references">添加引用</h2>
+<p><code>dotnet-grpc</code> 可以用于将 Protobuf 引用作为 <code>&lt;Protobuf /&gt;</code> 项添加到 .csproj 文件：</p>
+<pre><code class="lang-xml">&lt;Protobuf Include=&quot;Protos\greet.proto&quot; GrpcServices=&quot;Server&quot; /&gt;
+</code></pre>
+<p>Protobuf 引用用于生成 C# 客户端和/或服务器资产。 <code>dotnet-grpc</code> 工具可以：</p>
+<ul>
+<li>从磁盘上的本地文件创建 Protobuf 引用。</li>
+<li>从 URL 指定的远程文件创建 Protobuf 引用。</li>
+<li>确保将正确的 gRPC 包依赖项添加到项目。</li>
+</ul>
+<p>例如，将 <code>Grpc.AspNetCore</code> 包添加到 Web 应用。 <code>Grpc.AspNetCore</code> 包含 gRPC 服务器和客户端库以及工具支持。 或者，将 <code>Grpc.Net.Client</code>、<code>Grpc.Tools</code> 和 <code>Google.Protobuf</code> 包（其中仅包含 gRPC 客户端库和工具支持）添加到控制台应用。</p>
+<h3 id="add-file">添加文件</h3>
+<p><code>add-file</code> 命令用于将磁盘上的本地文件添加为 Protobuf 引用。 提供的文件路径：</p>
+<ul>
+<li>可以是当前目录的相对路径，也可以是绝对路径。</li>
+<li>可以包含用于基于模式的文件<a href="https://wikipedia.org/wiki/Glob_(programming)">通配</a>的通配符。</li>
+</ul>
+<p>如果任何文件处于项目目录之外，则会添加一个 <code>Link</code> 元素，以在 Visual Studio 中的文件夹 <code>Protos</code> 下显示该文件。</p>
+<h3 id="usage">用法</h3>
+<pre><code class="lang-dotnetcli">dotnet grpc add-file [options] &lt;files&gt;...
+</code></pre>
+<h4 id="arguments">自变量</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件</td>
+<td>Protobuf 文件引用。 这些可以是本地 protobuf 文件的 glob 的路径。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="options">选项</h4>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--project</td>
+<td>要操作的项目文件的路径。 如果未指定文件，则该命令会在当前目录中搜索一个文件。</td>
+</tr>
+<tr>
+<td>-S</td>
+<td>--services</td>
+<td>应生成的 gRPC 服务的类型。 如果指定 <code>Default</code>，则 <code>Both</code> 用于 Web 项目，而 <code>Client</code> 用于非 Web 项目。 接受的值包括 <code>Both</code>、<code>Client</code>、<code>Default</code>、<code>None</code> 和 <code>Server</code>。</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>--additional-import-dirs</td>
+<td>解析 protobuf 文件的导入时要使用的其他目录。 这是以分号分隔的路径列表。</td>
+</tr>
+<tr>
+<td></td>
+<td>--access</td>
+<td>要用于生成的 C# 类的访问修饰符。 默认值为 <code>Public</code>。 接受的值为 <code>Internal</code> 和 <code>Public</code>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="add-url">添加 URL</h3>
+<p><code>add-url</code> 命令用于将源 URL 指定的远程文件添加为 Protobuf 引用。 必须提供文件路径才能指定下载远程文件的位置。 文件路径可以是当前目录的相对路径，也可以是绝对路径。 如果文件路径处于项目目录之外，则会添加一个 <code>Link</code> 元素，以在 Visual Studio 中的虚拟文件夹 <code>Protos</code> 下显示该文件。</p>
+<h3 id="usage">用法</h3>
+<pre><code class="lang-dotnetcli">dotnet-grpc add-url [options] &lt;url&gt;
+</code></pre>
+<h4 id="arguments">自变量</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>URL</td>
+<td>远程 protobuf 文件的 URL。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="options">选项</h4>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-o</td>
+<td>--output</td>
+<td>指定远程 protobuf 文件的下载路径。 这是必需选项。</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>--project</td>
+<td>要操作的项目文件的路径。 如果未指定文件，则该命令会在当前目录中搜索一个文件。</td>
+</tr>
+<tr>
+<td>-S</td>
+<td>--services</td>
+<td>应生成的 gRPC 服务的类型。 如果指定 <code>Default</code>，则 <code>Both</code> 用于 Web 项目，而 <code>Client</code> 用于非 Web 项目。 接受的值包括 <code>Both</code>、<code>Client</code>、<code>Default</code>、<code>None</code> 和 <code>Server</code>。</td>
+</tr>
+<tr>
+<td>-o</td>
+<td>--additional-import-dirs</td>
+<td>解析 protobuf 文件的导入时要使用的其他目录。 这是以分号分隔的路径列表。</td>
+</tr>
+<tr>
+<td></td>
+<td>--access</td>
+<td>要用于生成的 C# 类的访问修饰符。 默认值是 <code>Public</code>。 接受的值为 <code>Internal</code> 和 <code>Public</code>。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="remove">删除</h2>
+<p><code>remove</code> 命令用于从 .csproj 文件中删除 Protobuf 引用。 该命令接受路径参数和源 URL 作为参数。 工具：</p>
+<ul>
+<li>仅删除 Protobuf 引用。</li>
+<li>不会删除 .proto 文件，即使它最初是从远程 URL 下载也是如此。</li>
+</ul>
+<h3 id="usage">用法</h3>
+<pre><code class="lang-dotnetcli">dotnet-grpc remove [options] &lt;references&gt;...
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>引用</td>
+<td>要删除的 protobuf 引用的 URL 或文件路径。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="options">选项</h3>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--project</td>
+<td>要操作的项目文件的路径。 如果未指定文件，则该命令会在当前目录中搜索一个文件。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="refresh">刷新</h2>
+<p><code>refresh</code> 命令用于使用来自源 URL 的最新内容更新远程引用。 下载文件路径和源 URL 都可以用于指定要更新的引用。 注意：</p>
+<ul>
+<li>会比较文件内容的哈希，以确定是否应更新本地文件。</li>
+<li>不会比较时间戳信息。</li>
+</ul>
+<p>如果需要更新，则该工具始终将本地文件替换为远程文件。</p>
+<h3 id="usage">用法</h3>
+<pre><code class="lang-dotnetcli">dotnet-grpc refresh [options] [&lt;references&gt;...]
+</code></pre>
+<h3 id="arguments">自变量</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>引用</td>
+<td>应更新的远程 protobuf 引用的 URL 或文件路径。 将此参数保留为空，以刷新所有远程引用。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="options">选项</h3>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--project</td>
+<td>要操作的项目文件的路径。 如果未指定文件，则该命令会在当前目录中搜索一个文件。</td>
+</tr>
+<tr>
+<td></td>
+<td>--dry-run</td>
+<td>输出将更新的文件的列表，而不下载任何新内容。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="list">列表</h2>
+<p><code>list</code> 命令用于显示项目文件中的所有 Protobuf 引用。 如果某列的所有值都是默认值，则可以省略该列。</p>
+<h3 id="usage">用法</h3>
+<pre><code class="lang-dotnetcli">dotnet-grpc list [options]
+</code></pre>
+<h3 id="options">选项</h3>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--project</td>
+<td>要操作的项目文件的路径。 如果未指定文件，则该命令会在当前目录中搜索一个文件。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="index.html">.NET Core 上的 gRPC 的简介</a></li>
+<li><a class="xref" href="basics.html">使用 C# 的 gRPC 服务</a></li>
+<li><a class="xref" href="aspnetcore.html">使用 ASP.NET Core 的 gRPC 服务</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

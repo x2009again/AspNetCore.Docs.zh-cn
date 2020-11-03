@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#38459;&#27490; ASP.NET Core &#20013;&#30340;&#24320;&#25918;&#37325;&#23450;&#21521;&#25915;&#20987; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#38459;&#27490; ASP.NET Core &#20013;&#30340;&#24320;&#25918;&#37325;&#23450;&#21521;&#25915;&#20987; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/preventing-open-redirects">
+<h1 id="prevent-open-redirect-attacks-in-aspnet-core">阻止 ASP.NET Core 中的开放重定向攻击</h1>
+
+<p>重定向到通过请求（如 querystring 或窗体数据）指定的 URL 的 web 应用可能会被篡改，以将用户重定向到外部恶意 URL。 这种篡改称为 &quot;开放重定向攻击&quot;。</p>
+<p>每当应用程序逻辑重定向到指定的 URL 时，必须验证重定向 URL 是否未被篡改。 ASP.NET Core 提供内置功能，可帮助保护应用程序的打开重定向 (也称为 &quot;开放重定向) 攻击&quot;。</p>
+<h2 id="what-is-an-open-redirect-attack">什么是开放重定向攻击？</h2>
+<p>Web 应用程序在访问需要身份验证的资源时经常将用户重定向到登录页。 重定向通常包括 <code>returnUrl</code> 查询字符串参数，以便用户在成功登录后可以返回到最初请求的 URL。 用户进行身份验证后，会重定向到最初请求的 URL。</p>
+<p>由于目标 URL 是在请求的查询字符串中指定的，因此恶意用户可能会篡改 querystring。 篡改的 querystring 可能允许站点将用户重定向到外部的恶意站点。 此方法称为 &quot; (重定向&quot; 或 &quot;重定向) 攻击&quot;。</p>
+<h3 id="an-example-attack">示例攻击</h3>
+<p>恶意用户可能会受到攻击，目的是允许恶意用户访问用户的凭据或敏感信息。 若要开始攻击，恶意用户结论用户单击指向站点登录页的链接，并将 <code>returnUrl</code> 查询字符串值添加到 URL。 例如，请考虑一个在上 <code>contoso.com</code> 包含登录页的应用 <code>http://contoso.com/Account/LogOn?returnUrl=/Home/About</code> 。 攻击执行以下步骤：</p>
+<ol>
+<li>用户单击恶意链接 <code>http://contoso.com/Account/LogOn?returnUrl=http://contoso1.com/Account/LogOn</code> (第二个 URL 为 &quot;contoso <strong>1</strong> .com&quot;，而不是 &quot;contoso.com&quot; ) 。</li>
+<li>用户已成功登录。</li>
+<li>站点)  (重定向用户， <code>http://contoso1.com/Account/LogOn</code> (与真实站点) 完全相同的恶意网站。</li>
+<li>用户再次登录 (向恶意网站提供凭据) 并被重定向回真实站点。</li>
+</ol>
+<p>用户可能认为他们第一次尝试登录失败，第二次尝试成功。 用户很可能仍不知道他们的凭据已泄露。</p>
+<p><img src="preventing-open-redirects/_static/open-redirection-attack-process.png" alt="打开重定向攻击过程"></p>
+<p>除了登录页以外，某些站点还提供重定向页面或终结点。 假设你的应用程序有一个页面，其中包含一个打开的重定向 <code>/Home/Redirect</code> 。 例如，攻击者可以创建发送到的电子邮件中的链接 <code>[yoursite]/Home/Redirect?url=http://phishingsite.com/Home/Login</code> 。 典型用户将查看 URL，并将其以你的站点名称开头。 信任这一点，他们将单击该链接。 然后，打开的重定向会将用户发送到仿冒网站，该网站看上去与你的站点相同，并且用户可能会登录到他们认为是你的网站。</p>
+<h2 id="protecting-against-open-redirect-attacks">防范开放重定向攻击</h2>
+<p>开发 web 应用程序时，将所有用户提供的数据视为不可信。 如果你的应用程序具有基于 URL 内容重定向用户的功能，请确保此类重定向仅在你的应用程序中本地执行 (或到已知 URL，而不是在 querystring) 中提供的任何 URL。</p>
+<h3 id="localredirect">LocalRedirect</h3>
+<p>使用 <code>LocalRedirect</code> 基类中的 helper 方法 <code>Controller</code> ：</p>
+<pre><code class="lang-csharp">public IActionResult SomeAction(string redirectUrl)
+{
+    return LocalRedirect(redirectUrl);
+}
+</code></pre>
+<p><code>LocalRedirect</code> 如果指定了一个非本地 URL，则将引发异常。 否则，它的行为与 <code>Redirect</code> 方法相同。</p>
+<h3 id="islocalurl">IsLocalUrl</h3>
+<p>重定向之前，请使用 <a href="/dotnet/api/Microsoft.AspNetCore.Mvc.IUrlHelper.islocalurl#Microsoft_AspNetCore_Mvc_IUrlHelper_IsLocalUrl_System_String_">IsLocalUrl</a> 方法测试 url：</p>
+<p>下面的示例演示如何在重定向前检查 URL 是否是本地的。</p>
+<pre><code class="lang-csharp">private IActionResult RedirectToLocal(string returnUrl)
+{
+    if (Url.IsLocalUrl(returnUrl))
+    {
+        return Redirect(returnUrl);
+    }
+    else
+    {
+        return RedirectToAction(nameof(HomeController.Index), &quot;Home&quot;);
+    }
+}
+</code></pre>
+<p>此 <code>IsLocalUrl</code> 方法可防止用户无意中重定向到恶意网站。 您可以记录在您需要本地 URL 的情况下提供非本地 URL 时提供的 URL 的详细信息。 记录重定向 Url 有助于诊断重定向攻击。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

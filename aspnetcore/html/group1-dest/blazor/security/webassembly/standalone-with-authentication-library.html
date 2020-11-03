@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992;&#36523;&#20221;&#39564;&#35777;&#24211;&#20445;&#25252; ASP.NET Core Blazor WebAssembly &#29420;&#31435;&#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992;&#36523;&#20221;&#39564;&#35777;&#24211;&#20445;&#25252; ASP.NET Core Blazor WebAssembly &#29420;&#31435;&#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/security/webassembly/standalone-with-authentication-library">
+<h1 id="secure-an-aspnet-core-no-locblazor-webassembly-standalone-app-with-the-authentication-library">使用身份验证库保护 ASP.NET Core Blazor WebAssembly 独立应用</h1>
+
+<p>作者：<a href="https://github.com/javiercn">Javier Calvarro Nelson</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p>对于 Azure Active Directory (AAD) 和 Azure Active Directory B2C (AAD B2C)，请勿按照本主题中的指南进行操作。请参阅此目录节点中的 AAD 和 AAD B2C 主题。</p>
+<p>若要创建使用 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 库的<a class="xref" href="../../hosting-models.html#blazor-webassembly">独立 Blazor WebAssembly 应用</a>，请按照适用于所选工具的指南操作。</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code+netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code+netcore-cli" data-tab="visual-studio-code+netcore-cli" tabindex="-1">Visual Studio Code/.NET Core CLI</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-mac" data-tab="visual-studio-mac" tabindex="-1">Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p>新建具有身份验证机制的 Blazor WebAssembly 项目：</p>
+<ol>
+<li><p>在“新建 ASP.NET Core Web 应用”对话框中选择“Blazor WebAssembly应用”模板后，选择“身份验证”下的“更改”。</p>
+</li>
+<li><p>通过“存储应用内的用户帐户”选项选择“单个用户帐户”，以使用 ASP.NET Core 的 <a class="xref" href="../../../security/authentication/identity.html">Identity</a> 系统存储应用内的用户。</p>
+</li>
+</ol>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code+netcore-cli" role="tabpanel" data-tab="visual-studio-code+netcore-cli" aria-hidden="true" hidden="hidden">
+
+<p>在空文件夹中新建具有身份验证机制的 Blazor WebAssembly项目。 通过 <code>-au|--auth</code> 选项指定 <code>Individual</code> 身份验证机制，以使用 ASP.NET Core 的 <a class="xref" href="../../../security/authentication/identity.html">Identity</a> 系统存储应用内的用户：</p>
+<pre><code class="lang-dotnetcli">dotnet new blazorwasm -au Individual -o {APP NAME}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>占位符</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{APP NAME}</code></td>
+<td><code>BlazorSample</code></td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>-o|--output</code> 选项指定的输出位置将创建一个项目文件夹（如果该文件夹不存在）并成为应用程序名称的一部分。</p>
+<p>有关详细信息，请参阅 .NET Core 指南中的 <a href="/dotnet/core/tools/dotnet-new"><code>dotnet new</code></a> 命令。</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-mac" role="tabpanel" data-tab="visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>新建具有身份验证机制的 Blazor WebAssembly 项目：</p>
+<ol>
+<li><p>在“配置新的 Blazor WebAssembly应用”步骤中，从“身份验证”下拉列表中选择“个人身份验证(应用内)”。</p>
+</li>
+<li><p>此应用是使用 ASP.NET Core <a class="xref" href="../../../security/authentication/identity.html">Identity</a> 为应用中存储的个人用户创建的。</p>
+</li>
+</ol>
+</section>
+</div>
+<h2 id="authentication-package">身份验证包</h2>
+<p>创建应用以使用个人用户帐户时，该应用会在其项目文件中自动接收 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 包的包引用。 此包提供了一组基元，可帮助应用验证用户身份并获取令牌以调用受保护的 API。</p>
+<p>如果向应用添加身份验证，请手动将包添加到应用的项目文件中：</p>
+<pre><code class="lang-xml">&lt;PackageReference 
+  Include=&quot;Microsoft.AspNetCore.Components.WebAssembly.Authentication&quot; 
+  Version=&quot;{VERSION}&quot; /&gt;
+</code></pre>
+<p>对于占位符 <code>{VERSION}</code>，可在包的版本历史记录（位于 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication">NuGet.org</a>）中找到与应用的共享框架版本匹配的最新稳定版本的包。</p>
+<h2 id="authentication-service-support">身份验证服务支持</h2>
+<p>使用由 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 包提供的 &lt;xref:Microsoft.Extensions.DependencyInjection.WebAssemblyAuthenticationServiceCollectionExtensions.AddOidcAuthentication%2A&gt; 扩展方法在服务容器中注册用户身份验证支持。 此方法设置应用与 Identity 提供者 (IP) 交互所需的服务。</p>
+<p><code>Program.cs</code>:</p>
+<pre><code class="lang-csharp">builder.Services.AddOidcAuthentication(options =&gt;
+{
+    builder.Configuration.Bind(&quot;Local&quot;, options.ProviderOptions);
+});
+</code></pre>
+<p>配置由 <code>wwwroot/appsettings.json</code> 文件提供：</p>
+<pre><code class="lang-json">{
+    &quot;Local&quot;: {
+        &quot;Authority&quot;: &quot;{AUTHORITY}&quot;,
+        &quot;ClientId&quot;: &quot;{CLIENT ID}&quot;
+    }
+}
+</code></pre>
+<p>使用 OpenID Connect (OIDC) 提供对独立应用的身份验证支持。 &lt;xref:Microsoft.Extensions.DependencyInjection.WebAssemblyAuthenticationServiceCollectionExtensions.AddOidcAuthentication%2A&gt; 方法接受回叫，以配置使用 OIDC 验证应用所需的参数。 可以从 OIDC 兼容的 IP 中获取配置应用所需的值。 注册应用时获取值，通常在其在线门户中执行此操作。</p>
+<h2 id="access-token-scopes">访问令牌作用域</h2>
+<p>Blazor WebAssembly 模板自动为 <code>openid</code> 和 <code>profile</code> 配置默认作用域。</p>
+<p>Blazor WebAssembly 模板不会自动将应用配置为请求安全 API 的访问令牌。 要将访问令牌作为登录流程的一部分进行预配，请将作用域添加到 &lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.OidcProviderOptions&gt; 的默认令牌作用域中：</p>
+<pre><code class="lang-csharp">builder.Services.AddOidcAuthentication(options =&gt;
+{
+    ...
+    options.ProviderOptions.DefaultScopes.Add(&quot;{SCOPE URI}&quot;);
+});
+</code></pre>
+<p>有关详细信息，请参阅“其他方案”一文的以下部分：</p>
+<ul>
+<li><a class="xref" href="additional-scenarios.html#request-additional-access-tokens">请求其他访问令牌</a></li>
+<li><a class="xref" href="additional-scenarios.html#attach-tokens-to-outgoing-requests">将令牌附加到传出请求</a></li>
+</ul>
+<h2 id="imports-file">导入文件</h2>
+<p>整个应用通过 <code>_Imports.razor</code> 文件提供 &lt;xref:Microsoft.AspNetCore.Components.Authorization?displayProperty=fullName&gt; 命名空间：</p>
+<div range="&gt;= aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-5.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h2 id="index-page">索引页</h2>
+<p>索引页 (<code>wwwroot/index.html</code>) 包含一个脚本，用于在 JavaScript 中定义 <code>AuthenticationService</code>。 <code>AuthenticationService</code> 处理 OIDC 协议的低级别详细信息。 应用从内部调用脚本中定义的方法以执行身份验证操作。</p>
+<pre><code class="lang-html">&lt;script src=&quot;_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/
+    AuthenticationService.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<h2 id="app-component">应用组件</h2>
+<p><code>App</code> 组件 (<code>App.razor</code>) 类似于 Blazor Server 应用中的 <code>App</code> 组件：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Components.Authorization.CascadingAuthenticationState&gt; 组件管理向应用的其余部分公开 &lt;xref:Microsoft.AspNetCore.Components.Authorization.AuthenticationState&gt;。</li>
+<li>&lt;xref:Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView&gt; 组件确保当前用户有权访问给定页面或以其他方式呈现 <code>RedirectToLogin</code> 组件。</li>
+<li><code>RedirectToLogin</code> 组件管理将未经授权的用户重定向到登录页。</li>
+</ul>
+<pre><code class="lang-razor">&lt;CascadingAuthenticationState&gt;
+    &lt;Router AppAssembly=&quot;@typeof(Program).Assembly&quot;&gt;
+        &lt;Found Context=&quot;routeData&quot;&gt;
+            &lt;AuthorizeRouteView RouteData=&quot;@routeData&quot; 
+                DefaultLayout=&quot;@typeof(MainLayout)&quot;&gt;
+                &lt;NotAuthorized&gt;
+                    @if (!context.User.Identity.IsAuthenticated)
+                    {
+                        &lt;RedirectToLogin /&gt;
+                    }
+                    else
+                    {
+                        &lt;p&gt;
+                            You are not authorized to access 
+                            this resource.
+                        &lt;/p&gt;
+                    }
+                &lt;/NotAuthorized&gt;
+            &lt;/AuthorizeRouteView&gt;
+        &lt;/Found&gt;
+        &lt;NotFound&gt;
+            &lt;LayoutView Layout=&quot;@typeof(MainLayout)&quot;&gt;
+                &lt;p&gt;Sorry, there's nothing at this address.&lt;/p&gt;
+            &lt;/LayoutView&gt;
+        &lt;/NotFound&gt;
+    &lt;/Router&gt;
+&lt;/CascadingAuthenticationState&gt;
+</code></pre>
+<h2 id="redirecttologin-component">RedirectToLogin 组件</h2>
+<p><code>RedirectToLogin</code> 组件 (<code>Shared/RedirectToLogin.razor</code>)：</p>
+<ul>
+<li>管理将未经授权的用户重定向到登录页。</li>
+<li>保留用户尝试访问的当前 URL，以便在身份验证成功时可以将其返回到该页。</li>
+</ul>
+<pre><code class="lang-razor">@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo(
+            $&quot;authentication/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}&quot;);
+    }
+}
+</code></pre>
+<h2 id="logindisplay-component">LoginDisplay 组件</h2>
+<p><code>LoginDisplay</code> 组件 (<code>Shared/LoginDisplay.razor</code>) 在 <code>MainLayout</code> 组件 (<code>Shared/MainLayout.razor</code>) 中呈现并管理以下行为：</p>
+<ul>
+<li>对于经过身份验证的用户：
+<ul>
+<li>显示当前用户名。</li>
+<li>提供用于注销应用的按钮。</li>
+</ul>
+</li>
+<li>对于匿名用户，提供登录选项。</li>
+</ul>
+<pre><code class="lang-razor">@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+&lt;AuthorizeView&gt;
+    &lt;Authorized&gt;
+        Hello, @context.User.Identity.Name!
+        &lt;button class=&quot;nav-link btn btn-link&quot; @onclick=&quot;BeginSignOut&quot;&gt;
+            Log out
+        &lt;/button&gt;
+    &lt;/Authorized&gt;
+    &lt;NotAuthorized&gt;
+        &lt;a href=&quot;authentication/login&quot;&gt;Log in&lt;/a&gt;
+    &lt;/NotAuthorized&gt;
+&lt;/AuthorizeView&gt;
+
+@code {
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo(&quot;authentication/logout&quot;);
+    }
+}
+</code></pre>
+<h2 id="authentication-component">身份验证组件</h2>
+<p><code>Authentication</code> 组件 (<code>Pages/Authentication.razor</code>) 生成的页面定义了处理各种身份验证阶段所需的路由。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Components.WebAssembly.Authentication.RemoteAuthenticatorView&gt; 组件：</p>
+<ul>
+<li>由 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.Authentication/"><code>Microsoft.AspNetCore.Components.WebAssembly.Authentication</code></a> 包提供。</li>
+<li>管理在每个身份验证阶段执行适当的操作。</li>
+</ul>
+<pre><code class="lang-razor">@page &quot;/authentication/{action}&quot;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+&lt;RemoteAuthenticatorView Action=&quot;@Action&quot; /&gt;
+
+@code {
+    [Parameter]
+    public string Action { get; set; }
+}
+</code></pre>
+<h2 id="troubleshoot">疑难解答</h2>
+<h3 id="cookies-and-site-data">Cookie 和站点数据</h3>
+<p>Cookie 和站点数据在经过应用更新后仍可保持不变，并且会干扰测试和故障排除。 在更改应用代码、更改提供程序的用户帐户或更改提供程序的应用配置时，请清除以下内容：</p>
+<ul>
+<li>用户登录 Cookie</li>
+<li>应用 Cookie</li>
+<li>缓存和存储的站点数据</li>
+</ul>
+<p>防止存留的 Cookie 和站点数据干扰测试和故障排除的一种方法是：</p>
+<ul>
+<li>配置浏览器
+<ul>
+<li>使用浏览器测试是否可以配置为在每次关闭浏览器时删除所有 Cookie 和站点数据。</li>
+<li>对于应用、测试用户或提供程序配置的任何更改，请确保浏览器是手动关闭的或由 IDE 关闭的。</li>
+</ul>
+</li>
+<li>在 Visual Studio 中使用自定义命令以 incognito 或 private 模式打开浏览器：
+<ul>
+<li>通过 Visual Studio 的“运行”按钮打开“浏览工具”对话框 。</li>
+<li>选择“添加”按钮。</li>
+<li>在“程序”字段中提供浏览器的路径。 以下可执行路径是适用于 Windows 10 的典型安装位置。 如果浏览器安装在其他位置，或者未使用 Windows 10，请提供浏览器可执行文件的路径。
+<ul>
+<li>Microsoft Edge：<code>C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe</code></li>
+<li>Google Chrome：<code>C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</code></li>
+<li>Mozilla Firefox：<code>C:\Program Files\Mozilla Firefox\firefox.exe</code></li>
+</ul>
+</li>
+<li>在“参数”字段中，提供浏览器用来在 incognito 或 private 模式下执行打开操作的命令行选项。 某些浏览器需要应用的 URL。
+<ul>
+<li>Microsoft Edge：请使用 <code>-inprivate</code>。</li>
+<li>Google Chrome：使用 <code>--incognito --new-window {URL}</code>，其中占位符 <code>{URL}</code> 是要打开的 URL（例如，<code>https://localhost:5001</code>）。</li>
+<li>Mozilla Firefox：使用 <code>-private -url {URL}</code>，其中占位符 <code>{URL}</code> 是要打开的 URL（例如，<code>https://localhost:5001</code>）。</li>
+</ul>
+</li>
+<li>在“友好名称”字段中提供名称。 例如 <code>Firefox Auth Testing</code>。</li>
+<li>选择“确定”按钮。</li>
+<li>若要避免在每次迭代使用应用进行测试时必须选择浏览器配置文件，请使用“设置为默认值”按钮将配置文件设置为默认值。</li>
+<li>对于应用、测试用户或提供程序配置的任何更改，请确保浏览器是由 IDE 关闭的。</li>
+</ul>
+</li>
+</ul>
+<h3 id="run-the-server-app">运行 Server 应用</h3>
+<p>在对托管的 Blazor 应用进行测试和故障排除时，请确保从 <code>Server</code> 项目运行应用。 例如，在 Visual Studio 中，确认在用以下任一方法启动应用之前，解决方案资源管理器中突出显示了 Server 项目：</p>
+<ul>
+<li>选择“运行”按钮。</li>
+<li>从菜单栏中，依次使用“调试” &gt; “开始调试” 。</li>
+<li>按 F5 <kbd></kbd>。</li>
+</ul>
+<h3 id="inspect-the-content-of-a-json-web-token-jwt">检查 JSON Web 令牌 (JWT) 的内容</h3>
+<p>若要对 JSON Web 令牌 (JWT) 进行解码，请使用 Microsoft 的 <a href="https://jwt.ms/">jwt.ms</a> 工具。 UI 中的值永远不会离开浏览器。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="additional-scenarios.html">ASP.NET Core Blazor WebAssembly 其他安全方案</a></li>
+<li><a class="xref" href="additional-scenarios.html#unauthenticated-or-unauthorized-web-api-requests-in-an-app-with-a-secure-default-client">使用安全默认客户端的应用中未经身份验证或未经授权的 Web API 请求</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

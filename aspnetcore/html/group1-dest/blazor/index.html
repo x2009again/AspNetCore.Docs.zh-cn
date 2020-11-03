@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#31616;&#20171; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#31616;&#20171; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/index">
+<h1 id="introduction-to-aspnet-core-no-locblazor">ASP.NET Core Blazor 简介</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/guardrex">Luke Latham</a></p>
+<p><em>欢迎使用 Blazor！</em></p>
+<p>Blazor 是一个使用 <a href="/dotnet/standard/tour">.NET</a> 生成交互式客户端 Web UI 的框架：</p>
+<ul>
+<li>使用 <a href="/dotnet/csharp/">C#</a> 代替 <a href="https://www.javascript.com">JavaScript</a> 来创建信息丰富的交互式 UI。</li>
+<li>共享使用 .NET 编写的服务器端和客户端应用逻辑。</li>
+<li>将 UI 呈现为 HTML 和 CSS，以支持众多浏览器，其中包括移动浏览器。</li>
+<li>与新式托管平台（如 <a href="/dotnet/standard/microservices-architecture/container-docker-introduction/index">Docker</a>）集成。</li>
+</ul>
+<p>使用 .NET 进行客户端 Web 开发可提供以下优势：</p>
+<ul>
+<li>使用 C# 代替 JavaScript 来编写代码。</li>
+<li>利用现有的 <a href="/dotnet/standard/class-libraries">.NET 库</a>生态系统。</li>
+<li>在服务器和客户端之间共享应用逻辑。</li>
+<li>受益于 .NET 的性能、可靠性和安全性。</li>
+<li>在 Windows、Linux 和 macOS 上使用 <a href="https://visualstudio.microsoft.com">Visual Studio</a> 保持高效工作。</li>
+<li>以一组稳定、功能丰富且易用的通用语言、框架和工具为基础来进行生成。</li>
+</ul>
+<h2 id="components">组件</h2>
+<p>Blazor应用基于组件。 Blazor 中的组件是指 UI 元素，例如页面、对话框或数据输入窗体。</p>
+<p>组件是内置到 <a href="/dotnet/standard/assembly/">.NET 程序集</a>的 .NET C# 类，它们用于：</p>
+<ul>
+<li>定义灵活的 UI 呈现逻辑。</li>
+<li>处理用户事件。</li>
+<li>可以嵌套和重用。</li>
+<li>可作为 <a class="xref" href="../razor-pages/ui-class.html">Razor 类库</a>或 <a href="/nuget/what-is-nuget">NuGet 包</a>共享和分发。</li>
+</ul>
+<p>组件类通常以 <a class="xref" href="../mvc/views/razor.html">Razor</a> 标记页（文件扩展名为 <code>.razor</code>）的形式编写。 Blazor 中的组件有时被称为 Razor 组件。 Razor 是一种语法，用于将 HTML 标记与专为提高开发人员工作效率而设计的 C# 代码结合在一起。 借助 Razor，可使用 Visual Studio 中的 <a href="/visualstudio/ide/using-intellisense">IntelliSense</a> 编程支持在同一文件中的 HTML 标记与 C# 之间切换。 Razor Pages 和 MVC 也使用 Razor。 与基于请求/响应模型生成的 Razor Pages 和 MVC 不同，组件专门用于处理客户端 UI 逻辑和构成。</p>
+<p>Blazor 使用 UI 构成的自然 HTML 标记。 下面的 Razor 标记演示了一个组件 (<code>Dialog.razor</code>)，它显示一个对话框，并处理在用户选择按钮时发生的事件：</p>
+<pre><code class="lang-razor">&lt;div class=&quot;card&quot; style=&quot;width:22rem&quot;&gt;
+    &lt;div class=&quot;card-body&quot;&gt;
+        &lt;h3 class=&quot;card-title&quot;&gt;@Title&lt;/h3&gt;
+        &lt;p class=&quot;card-text&quot;&gt;@ChildContent&lt;/p&gt;
+        &lt;button @onclick=&quot;OnYes&quot;&gt;Yes!&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    private void OnYes()
+    {
+        Console.WriteLine(&quot;Write to the console in C#! 'Yes' button selected.&quot;);
+    }
+}
+</code></pre>
+<p>在上述示例中，<code>OnYes</code> 是由按钮的 <code>onclick</code> 事件触发的 C# 方法。 对话框的文本 (<code>ChildContent</code>) 和标题 (<code>Title</code>) 由在其 UI 中使用此组件的下述组件提供。</p>
+<p>使用 HTML 标记将 <code>Dialog</code> 组件嵌入到另一个组件中。 在以下示例中，<code>Index</code> 组件 (<code>Pages/Index.razor</code>) 使用前面的 <code>Dialog</code> 组件。 标记的 <code>Title</code> 属性向 <code>Dialog</code> 组件的 <code>Title</code> 属性传递标题的值。  <code>Dialog</code> 组件的文本 (<code>ChildContent</code>) 由 <code>&lt;Dialog&gt;</code> 元素的内容设置。 向 <code>Index</code> 组件添加 <code>Dialog</code> 组件后，<a href="/visualstudio/ide/using-intellisense">Visual Studio 中的 IntelliSense</a> 可加快使用语法和参数补全进行开发的速度。</p>
+<pre><code class="lang-razor">@page &quot;/&quot;
+
+&lt;h1&gt;Hello, world!&lt;/h1&gt;
+
+&lt;p&gt;
+    Welcome to your new app.
+&lt;/p&gt;
+
+&lt;Dialog Title=&quot;Learn More&quot;&gt;
+    Do you want to &lt;i&gt;learn more&lt;/i&gt; about Blazor?
+&lt;/Dialog&gt;
+</code></pre>
+<p>在浏览器中访问父级 <code>Index</code> 组件时，将呈现该对话框。 当用户选择此按钮时，浏览器的开发人员工具控制台会显示由 <code>OnYes</code> 方法编写的消息：</p>
+<p><img src="index/_static/dialog.png" alt="在 Index 组件中嵌入的浏览器内呈现 Dialog 组件。 当用户在 UI 中选择 Yes! 按钮时，浏览器开发人员工具控制台会显示由 C# 代码 编写的消息。"></p>
+<p>组件呈现为浏览器<a href="https://developer.mozilla.org/docs/Web/API/Document_Object_Model/Introduction">文档对象模型 (DOM)</a> 的内存中表现形式，它被称为“呈现树”，用于以灵活高效的方式更新 UI。</p>
+<h2 id="blazor-webassembly">Blazor WebAssembly</h2>
+<p>Blazor WebAssembly 是<a href="/dotnet/architecture/modern-web-apps-azure/choose-between-traditional-web-and-single-page-apps">单页应用 (SPA) 框架</a>，用于使用 .NET 生成交互式客户端 Web 应用。 Blazor WebAssembly 使用无插件或将代码重新编译为其他语言的开放式 Web 标准。 Blazor WebAssembly 适用于所有新式 Web 浏览器，包括移动浏览器。</p>
+<p>通过 <a href="https://webassembly.org">WebAssembly</a>（缩写为 <code>wasm</code>），可在 Web 浏览器内运行 .NET 代码。 WebAssembly 是针对快速下载和最大执行速度优化的压缩字节码格式。 WebAssembly 是开放的 Web 标准，支持用于无插件的 Web 浏览器。</p>
+<p>WebAssembly 代码可通过 JavaScript（称为 JavaScript 互操作性，通常简称为 JavaScript 互操作或 JS 互操作）访问浏览器的完整功能  。 通过浏览器中的 WebAssembly 执行的 .NET 代码在浏览器的 JavaScript 沙盒中运行，沙盒提供的保护可防御客户端计算机上的恶意操作。</p>
+<p><img src="index/_static/blazor-webassembly.png" alt="Blazor WebAssembly 使用 WebAssembly 在浏览器中运行 .NET 代码。"></p>
+<p>当 Blazor WebAssembly 应用生成并在浏览器中运行时：</p>
+<ul>
+<li>C# 代码文件和 Razor 文件将被编译为 .NET 程序集。</li>
+<li>该程序集和 <a href="/dotnet/framework/get-started/overview">.NET 运行时</a>将被下载到浏览器。</li>
+<li>Blazor WebAssembly 启动 .NET 运行时，并配置运行时，以为应用加载程序集。 Blazor WebAssembly 运行时使用 JavaScript 互操作来处理 DOM 操作和浏览器 API 调用。</li>
+</ul>
+<p>已发布应用的大小（其有效负载大小）是应用可用性的关键性能因素。 大型应用需要相对较长的时间才能下载到浏览器，这会损害用户体验。 Blazor WebAssembly 优化有效负载大小，以缩短下载时间：</p>
+<div range="&gt;= aspnetcore-5.0">
+<ul>
+<li>在<a class="xref" href="host-and-deploy/configure-trimmer.html">中间语言 (IL) 裁边器</a>发布应用时，会从应用删除未使用的代码。</li>
+<li>压缩 HTTP 响应。</li>
+<li>.NET 运行时和程序集缓存在浏览器中。</li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-5.0">
+<ul>
+<li>在<a class="xref" href="host-and-deploy/configure-linker.html">中间语言 (IL) 链接器</a>发布应用时，会从应用删除未使用的代码。</li>
+<li>压缩 HTTP 响应。</li>
+<li>.NET 运行时和程序集缓存在浏览器中。</li>
+</ul>
+</div>
+<h2 id="blazor-server">Blazor Server</h2>
+<p>Blazor 将组件呈现逻辑从 UI 更新的应用方式中分离出来。 Blazor Server在 ASP.NET Core 应用中支持在服务器上托管 Razor 组件。 可通过 <a class="xref" href="../signalr/introduction.html">SignalR</a> 连接处理 UI 更新。</p>
+<p>运行时会处理以下事件：</p>
+<ul>
+<li>将 UI 事件从浏览器发送到服务器。</li>
+<li>将 UI 更新应用于服务器发送回的已呈现的组件。</li>
+</ul>
+<p>Blazor Server用于与浏览器通信的连接还用于处理 JavaScript 互操作调用。</p>
+<p><img src="index/_static/blazor-server.png" alt="Blazor 服务器在服务器上运行 .NET 代码，并通过 SignalR 连接与客户端上的文档对象模型进行交互"></p>
+<h2 id="javascript-interop">JavaScript 互操作</h2>
+<p>对于需要第三方 JavaScript 库和访问浏览器 API 的应用，组件与 JavaScript 进行互操作。 组件能够使用 JavaScript 能够使用的任何库或 API。 C# 代码可<a class="xref" href="call-javascript-from-dotnet.html">调用到 JavaScript 代码</a>，而 JavaScript 代码可<a class="xref" href="call-dotnet-from-javascript.html">调用到 C# 代码</a>。</p>
+<h2 id="code-sharing-and-net-standard">代码共享和 .NET Standard</h2>
+<p>Blazor 实现 <a href="/dotnet/standard/net-standard">.NET Standard</a>，它使 Blazor 项目引用符合 .NET Standard 规范的库。 .NET Standard 是正式的 .NET API 规范，常见于 .NET 实现中。 .NET Standard 类库可以在不同 .NET 平台之间共享，例如 Blazor、.NET Framework、.NET Core、Xamarin、Mono 和 Unity。</p>
+<p>不适用于 Web 浏览器内部的 API（例如，访问文件系统、打开套接字和线程处理）将引发 &lt;xref:System.PlatformNotSupportedException&gt;。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://webassembly.org">WebAssembly</a></li>
+<li><a class="xref" href="hosting-models.html">ASP.NET Core Blazor 托管模型</a></li>
+<li><a class="xref" href="../tutorials/signalr-blazor-webassembly.html">结合使用 ASP.NET Core SignalR 和 Blazor WebAssembly</a></li>
+<li><a class="xref" href="call-javascript-from-dotnet.html">在 ASP.NET Core Blazor 中从 .NET 方法调用 JavaScript 函数</a></li>
+<li><a class="xref" href="call-dotnet-from-javascript.html">从 ASP.NET Core Blazor 中的 JavaScript 函数调用 .NET 方法</a></li>
+<li><a href="/dotnet/csharp/">C# 指南</a></li>
+<li><a class="xref" href="../mvc/views/razor.html">razor 语法参考 ASP.NET Core</a></li>
+<li><a href="https://www.w3.org/html/">HTML</a></li>
+<li><a href="https://github.com/AdrienTorris/awesome-blazor">令人惊叹的 Blazor</a> 社区链接</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

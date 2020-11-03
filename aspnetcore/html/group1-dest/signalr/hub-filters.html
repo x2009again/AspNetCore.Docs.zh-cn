@@ -1,0 +1,319 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#20351;&#29992;&#38598;&#32447;&#22120;&#31579;&#36873;&#22120; SignalR </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#20351;&#29992;&#38598;&#32447;&#22120;&#31579;&#36873;&#22120; SignalR ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/hub-filters">
+<h1 id="use-hub-filters-in-aspnet-core-no-locsignalr">在 ASP.NET Core 中使用集线器筛选器 SignalR</h1>
+
+<p>中心筛选器：</p>
+<ul>
+<li>在 ASP.NET Core 5.0 或更高版本中可用。</li>
+<li>允许在客户端调用中心方法之前和之后运行逻辑。</li>
+</ul>
+<p>本文提供了有关编写和使用集线器筛选器的指南。</p>
+<h2 id="configure-hub-filters">配置中心筛选器</h2>
+<p>可以全局或按中心类型应用中心筛选器。 添加筛选器的顺序是筛选器的运行顺序。 全局集线器筛选器在本地中心筛选器之前运行。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSignalR(options =&gt;
+    {
+        // Global filters will run first
+        options.AddFilter&lt;CustomFilter&gt;();
+    }).AddHubOptions&lt;ChatHub&gt;(options =&gt;
+    {
+        // Local filters will run second
+        options.AddFilter&lt;CustomFilter2&gt;();
+    });
+}
+</code></pre>
+<p>可以通过以下方式之一添加集线器筛选器：</p>
+<ul>
+<li><p>按具体类型添加筛选器：</p>
+<pre><code class="lang-csharp">hubOptions.AddFilter&lt;TFilter&gt;();
+</code></pre>
+<p>这将从依赖关系注入中解析 (DI) 或类型已激活。</p>
+</li>
+<li><p>按运行时类型添加筛选器：</p>
+<pre><code class="lang-csharp">hubOptions.AddFilter(typeof(TFilter));
+</code></pre>
+<p>这将从 DI 或激活的类型进行解析。</p>
+</li>
+<li><p>按实例添加筛选器：</p>
+<pre><code class="lang-csharp">hubOptions.AddFilter(new MyFilter());
+</code></pre>
+<p>此实例将像单一实例一样使用。 所有集线器方法调用都将使用相同的实例。</p>
+</li>
+</ul>
+<p>中心筛选器按中心调用创建和释放。 如果要将全局状态存储在筛选器中或不是状态，请将中心筛选器类型作为单一实例添加到 DI，以获得更好的性能。 或者，将筛选器添加为实例（如果可以）。</p>
+<h2 id="create-hub-filters">创建中心筛选器</h2>
+<p>通过声明从继承的类来创建筛选器 <code>IHubFilter</code> ，并添加 <code>InvokeMethodAsync</code> 方法。 此外，还 <code>OnConnectedAsync</code> <code>OnDisconnectedAsync</code> 可以选择实现来 <code>OnConnectedAsync</code> 分别包装和 <code>OnDisconnectedAsync</code> 中心方法。</p>
+<pre><code class="lang-csharp">public class CustomFilter : IHubFilter
+{
+    public async ValueTask&lt;object&gt; InvokeMethodAsync(
+        HubInvocationContext invocationContext, Func&lt;HubInvocationContext, ValueTask&lt;object&gt;&gt; next)
+    {
+        Console.WriteLine($&quot;Calling hub method '{invocationContext.HubMethodName}'&quot;);
+        try
+        {
+            return await next(invocationContext);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($&quot;Exception calling '{invocationContext.HubMethodName}'&quot;);
+            throw ex;
+        }
+    }
+
+    // Optional method
+    public Task OnConnectedAsync(HubLifetimeContext context, Func&lt;HubLifetimeContext, Task&gt; next)
+    {
+        return next(context);
+    }
+
+    // Optional method
+    public Task OnDisconnectedAsync(
+        HubLifetimeContext context, Exception exception, Func&lt;HubLifetimeContext, Exception, Task&gt; next)
+    {
+        return next(context, exception);
+    }
+}
+</code></pre>
+<p>筛选器与中间件非常类似。 <code>next</code>方法调用下一个筛选器。 最终筛选器将调用中心方法。 筛选器还可以存储在 <code>next</code> 调用中心方法之前调用的结果，然后再从返回结果 <code>next</code> 。</p>
+<p>若要跳过筛选器中的集线器方法调用，请引发类型为的异常， <code>HubException</code> 而不是调用 <code>next</code> 。 如果要求，客户端将收到错误消息。</p>
+<h2 id="use-hub-filters">使用中心筛选器</h2>
+<p>编写筛选器逻辑时，请尝试使用集线器方法上的属性而不是检查中心方法名称，使其成为泛型。</p>
+<p>假设有一个筛选器，它将检查禁止的短语的集线器方法参数，并替换它所找到的任何短语 <code>***</code> 。
+对于本示例，假定定义了一个 <code>LanguageFilterAttribute</code> 类。 类具有一个名为 <code>FilterArgument</code> 的属性，该属性可在使用特性时进行设置。</p>
+<ol>
+<li><p>将属性放置在具有要清理的字符串参数的 hub 方法上：</p>
+<pre><code class="lang-csharp">public class ChatHub
+{
+    [LanguageFilter(filterArgument: 0)]
+    public async Task SendMessage(string message, string username)
+    {
+        await Clients.All.SendAsync(&quot;SendMessage&quot;, $&quot;{username} says: {message}&quot;);
+    }
+}
+</code></pre>
+</li>
+<li><p>定义一个中心筛选器来检查属性，并将集线器方法参数中的禁止的短语替换为 <code>**_</code> ：</p>
+<pre><code class="lang-csharp">public class LanguageFilter : IHubFilter
+{
+    // populated from a file or inline
+    private List&lt;string&gt; bannedPhrases = new List&lt;string&gt; { &quot;async void&quot;, &quot;.Result&quot; };
+
+    public async ValueTask&lt;object&gt; InvokeMethodAsync(HubInvocationContext invocationContext, 
+        Func&lt;HubInvocationContext, ValueTask&lt;object&gt;&gt; next)
+    {
+        var languageFilter = (LanguageFilterAttribute)Attribute.GetCustomAttribute(
+            invocationContext.HubMethod, typeof(LanguageFilterAttribute));
+        if (languageFilter != null &amp;&amp;
+            invocationContext.HubMethodArguments.Count &gt; languageFilter.FilterArgument &amp;&amp;
+            invocationContext.HubMethodArguments[languageFilter.FilterArgument] is string str)
+        {
+            foreach (var bannedPhrase in bannedPhrases)
+            {
+                str = str.Replace(bannedPhrase, &quot;_**&quot;);
+            }
+
+            arguments = invocationContext.HubMethodArguments.ToArray();
+            arguments[languageFilter.FilterArgument] = str;
+            invocationContext = new HubInvocationContext(invocationContext.Context,
+                invocationContext.ServiceProvider,
+                invocationContext.Hub,
+                invocationContext.HubMethod,
+                arguments);
+        }
+
+        return await next(invocationContext);
+    }
+}
+</code></pre>
+</li>
+<li><p>在方法中注册集线器筛选器 <code>Startup.ConfigureServices</code> 。 为了避免为每个调用重新初始化禁止使用的词组列表，将中心筛选器注册为单一实例：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSignalR(hubOptions =&gt;
+    {
+        hubOptions.AddFilter&lt;LanguageFilter&gt;();
+    });
+
+    services.AddSingleton&lt;LanguageFilter&gt;();
+}
+</code></pre>
+</li>
+</ol>
+<h2 id="the-hubinvocationcontext-object">HubInvocationContext 对象</h2>
+<p><code>HubInvocationContext</code>包含当前集线器方法调用的信息。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Context </code></td>
+<td><code>HubCallerContext</code>包含有关连接的信息。</td>
+<td><code>HubCallerContext</code></td>
+</tr>
+<tr>
+<td><code>Hub</code></td>
+<td>正在用于此集线器方法调用的集线器的实例。</td>
+<td><code>Hub</code></td>
+</tr>
+<tr>
+<td><code>HubMethodName</code></td>
+<td>正在调用的集线器方法的名称。</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>HubMethodArguments</code></td>
+<td>要传递到中心方法的参数的列表。</td>
+<td><code>IReadOnlyList&lt;string&gt;</code></td>
+</tr>
+<tr>
+<td><code>ServiceProvider</code></td>
+<td>此中心方法调用的作用域内服务提供程序。</td>
+<td><code>IServiceProvider</code></td>
+</tr>
+<tr>
+<td><code>HubMethod</code></td>
+<td>集线器方法信息。</td>
+<td><code>MethodInfo</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-hublifetimecontext-object">HubLifetimeContext 对象</h2>
+<p><code>HubLifetimeContext</code>包含 <code>OnConnectedAsync</code> 和集线器方法的信息 <code>OnDisconnectedAsync</code> 。</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Context </code></td>
+<td><code>HubCallerContext</code>包含有关连接的信息。</td>
+<td><code>HubCallerContext</code></td>
+</tr>
+<tr>
+<td><code>Hub</code></td>
+<td>正在用于此集线器方法调用的集线器的实例。</td>
+<td><code>Hub</code></td>
+</tr>
+<tr>
+<td><code>ServiceProvider</code></td>
+<td>此中心方法调用的作用域内服务提供程序。</td>
+<td><code>IServiceProvider</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="authorization-and-filters">授权和筛选器</h2>
+<p>在中心筛选器之前，<a class="xref" href="authn-and-authz.html#use-authorization-handlers-to-customize-hub-method-authorization">对集线器方法上的属性授权</a>。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

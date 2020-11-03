@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; WebSocket &#25903;&#25345; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; WebSocket &#25903;&#25345; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/websockets">
+<h1 id="websockets-support-in-aspnet-core">ASP.NET Core 中的 WebSocket 支持</h1>
+
+<p>作者：<a href="https://github.com/tdykstra">Tom Dykstra</a> 和 <a href="https://github.com/anurse">Andrew Stanton-Nurse</a></p>
+<p>本文介绍 ASP.NET Core 中 WebSocket 的入门方法。 <a href="https://wikipedia.org/wiki/WebSocket">WebSocket</a> (<a href="https://tools.ietf.org/html/rfc6455">RFC 6455</a>) 是一个协议，支持通过 TCP 连接建立持久的双向信道。 它用于从快速实时通信中获益的应用，如聊天、仪表板和游戏应用。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/websockets/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）。 <a href="#sample-app">如何运行</a>。</p>
+<h2 id="signalr">SignalR</h2>
+<p><a class="xref" href="../signalr/introduction.html">ASP.NET Core SignalR</a> 是一个库，可用于简化向应用添加实时 Web 功能。 它会尽可能地使用 WebSocket。</p>
+<p>对于大多数应用程序，我们建议使用 SignalR，而不是原始 WebSocket。 SignalR 可为 WebSocket 不可用的环境提供传输回退。 它还可提供简单的远程过程调用应用模型。 并且在大多数情况下，与使用原始 WebSocket 相比，SignalR 没有显著的性能缺点。</p>
+<h2 id="prerequisites">先决条件</h2>
+<ul>
+<li><p>ASP.NET Core 1.1 或更高版本</p>
+</li>
+<li><p>支持 ASP.NET Core 的任何操作系统：</p>
+<ul>
+<li>Windows 7/Windows Server 2008 或更高版本</li>
+<li>Linux</li>
+<li>macOS</li>
+</ul>
+</li>
+<li><p>如果应用在安装了 IIS 的 Windows 上运行：</p>
+<ul>
+<li>Windows 8 / Windows Server 2012 及更高版本</li>
+<li>IIS 8 / IIS 8 Express</li>
+<li>必须启用 WebSocket（请参阅 <a href="#iisiis-express-support">IIS/IIS Express 支持</a>部分。）。</li>
+</ul>
+</li>
+<li><p>如果应用在 <a class="xref" href="servers/httpsys.html">HTTP.sys</a> 上运行：</p>
+<ul>
+<li>Windows 8 / Windows Server 2012 及更高版本</li>
+</ul>
+</li>
+<li><p>有关支持的浏览器，请参阅 <a href="https://caniuse.com/#feat=websockets">https://caniuse.com/#feat=websockets</a> 。</p>
+</li>
+</ul>
+<div range="&lt; aspnetcore-2.1">
+<h2 id="nuget-package">NuGet 程序包</h2>
+<p>安装 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.WebSockets/">Microsoft.AspNetCore.WebSockets</a> 包。</p>
+</div>
+<h2 id="configure-the-middleware">配置中间件</h2>
+<p>在 <code>Startup</code> 类的 <code>Configure</code> 方法中添加 WebSocket 中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><div range="&lt; aspnetcore-2.2">
+<p>可配置以下设置：</p>
+<ul>
+<li><code>KeepAliveInterval</code> - 向客户端发送“ping”帧的频率，以确保代理保持连接处于打开状态。 默认值为 2 分钟。</li>
+<li><code>ReceiveBufferSize</code> - 用于接收数据的缓冲区的大小。 高级用户可能需要对其进行更改，以便根据数据大小调整性能。 默认值为 4 KB。</li>
+</ul>
+</div>
+<div range="&gt;= aspnetcore-2.2">
+<p>可配置以下设置：</p>
+<ul>
+<li><code>KeepAliveInterval</code> - 向客户端发送“ping”帧的频率，以确保代理保持连接处于打开状态。 默认值为 2 分钟。</li>
+<li>&lt;xref:Microsoft.AspNetCore.Builder.WebSocketOptions.ReceiveBufferSize&gt; - 用于接收数据的缓冲区的大小。 高级用户可能需要对其进行更改，以便根据数据大小调整性能。 默认值为 4 KB。</li>
+<li><code>AllowedOrigins</code> - 用于 WebSocket 请求的允许的 Origin 标头值列表。 默认情况下，允许使用所有源。 有关详细信息，请参阅以下“WebSocket 源限制”。</li>
+</ul>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="accept-websocket-requests">接受 WebSocket 请求</h2>
+<p>在请求生命周期后期（例如在 <code>Configure</code> 方法或操作方法的后期），检查它是否是 WebSocket 请求并接受 WebSocket 请求。</p>
+<p>以下示例来自 <code>Configure</code> 方法的后期：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>WebSocket 请求可以来自任何 URL，但此示例代码只接受 <code>/ws</code> 的请求。</p>
+<p>使用 WebSocket 时，“必须”在连接期间保持中间件管道运行。 如果在中间件管道结束后尝试发送或接收 WebSocket 消息，可能会遇到以下异常情况：</p>
+<pre><code>System.Net.WebSockets.WebSocketException (0x80004005): The remote party closed the WebSocket connection without completing the close handshake. ---&gt; System.ObjectDisposedException: Cannot write to the response body, the response has completed.
+Object name: 'HttpResponseStream'.
+</code></pre>
+<p>如果使用后台服务将数据写入 WebSocket，请确保保持中间件管道运行。 通过使用 &lt;xref:System.Threading.Tasks.TaskCompletionSource%601&gt; 执行此操作。 传递 <code>TaskCompletionSource</code> 到背景服务，并在通过 WebSocket 完成时让其调用 &lt;xref:System.Threading.Tasks.TaskCompletionSource%601.TrySetResult%2A&gt;。 在请求期间对 &lt;xref:System.Threading.Tasks.TaskCompletionSource%601.Task&gt; 执行 <code>await</code>，如下面的示例所示：</p>
+<pre><code class="lang-csharp">app.Use(async (context, next) =&gt; {
+    var socket = await context.WebSockets.AcceptWebSocketAsync();
+    var socketFinishedTcs = new TaskCompletionSource&lt;object&gt;();
+
+    BackgroundSocketProcessor.AddSocket(socket, socketFinishedTcs); 
+
+    await socketFinishedTcs.Task;
+});
+</code></pre>
+<p>如果从操作方法返回过快，则还可能发生 WebSocket 关闭异常。 如果接受操作方法中的套接字，请等待使用套接字的代码完成运行，然后再从操作方法返回。</p>
+<p>坚决不要使用 <code>Task.Wait()</code>、<code>Task.Result</code> 或类似阻塞调用来等待套接字完成，因为这可能导致严重的线程处理问题。 请始终使用 <code>await</code>。</p>
+<h2 id="send-and-receive-messages">发送和接收消息</h2>
+<p><code>AcceptWebSocketAsync</code> 方法将 TCP 连接升级到 WebSocket 连接，并提供 <a href="/dotnet/core/api/system.net.websockets.websocket">WebSocket</a> 对象。 使用 <code>WebSocket</code> 对象发送和接收消息。</p>
+<p>之前显示的接受 WebSocket 请求的代码将 <code>WebSocket</code> 对象传递给 <code>Echo</code> 方法。 代码接收消息并立即发回相同的消息。 循环发送和接收消息，直到客户端关闭连接：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果在开始循环之前接受 WebSocket 连接，中间件管道会结束。 关闭套接字后，管道展开。 即接受 WebSocket 时，请求停止在管道中推进。 循环结束且套接字关闭时，请求继续回到管道。</p>
+<div range="&gt;= aspnetcore-2.2">
+<h2 id="handle-client-disconnects">处理客户端连接断开</h2>
+<p>当客户端由于失去连接而断开连接时不会自动向服务器发送通知。 服务器只有在客户端发送通知时才会收到断开连接消息，而此操作无法在失去 Internet 连接的情况下进行。 如果想要在发生此情况时采取某个操作，在特定时间范围内未收到来自客户端的任何消息后设置超时。</p>
+<p>如果客户端并非总是发送消息且不希望仅由于连接进入空闲状态就设置超时，则让客户端使用一个计时器并每隔 X 秒发送一条 ping 消息。 在服务器上，如果某条消息在上一条消息发出后的 2*X 秒内尚未到达，则终止连接并报告客户端已断开连接。 等待两次预测的时间间隔，以便为可能延迟 ping 消息的网络延迟提供额外的时间。</p>
+<h2 id="websocket-origin-restriction">WebSocket 源限制</h2>
+<p>CORS 提供的保护不适用于 WebSocket。 浏览器不会：</p>
+<ul>
+<li>执行 CORS 预检请求。</li>
+<li>在发出 WebSocket 请求时，遵守 <code>Access-Control</code> 标头中指定的限制。</li>
+</ul>
+<p>但是，浏览器在发出 WebSocket 请求时会发送 <code>Origin</code> 标头。 应将应用程序配置为验证这些标头，以确保只允许来自预期来源的 WebSocket。</p>
+<p>如果在“https://server.com ”上托管服务器并在“https://client.com”上托管客户端，请将“https://client.com”添加到 <code>AllowedOrigins</code> 列表以验证 WebSocket。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>与 <code>Referer</code> 标头一样，<code>Origin</code> 标头由客户端控制，并可以伪造。 请勿将这些标头用作身份验证机制。</p>
+</div>
+</div>
+<h2 id="iisiis-express-support">IIS/IIS Express 支持</h2>
+<p>安装了 IIS/IIS Express 8 或更高版本的 Windows Server 2012 或更高版本以及 Windows 8 或更高版本支持 WebSocket 协议。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>使用 IIS Express 时始终启用 WebSocket。</p>
+</div>
+<h3 id="enabling-websockets-on-iis">在 IIS 上启用 Websocket</h3>
+<p>在 Windows Server 2012 或更高版本上启用对 WebSocket 协议的支持：</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>使用 IIS Express 时无需执行这些步骤</p>
+</div>
+<ol>
+<li>通过“管理”菜单或“服务器管理器”中的链接使用“添加角色和功能”向导。</li>
+<li>选择“基于角色或基于功能的安装”。 选择“下一步”。</li>
+<li>选择适当的服务器（默认情况下选择本地服务器）。 选择“下一步”。</li>
+<li>在“角色”树中展开“Web 服务器 (IIS)”、然后依次展开“Web 服务器”和“应用程序开发”   。</li>
+<li>选择“WebSocket 协议”。 选择“下一步”。</li>
+<li>如果无需其他功能，请选择“下一步”。</li>
+<li>选择“安装” 。</li>
+<li>安装完成后，选择“关闭”以退出向导。</li>
+</ol>
+<p>在 Windows 8 或更高版本上启用对 WebSocket 协议的支持：</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>使用 IIS Express 时无需执行这些步骤</p>
+</div>
+<ol>
+<li>导航到“控制面板” &gt; “程序” &gt; “程序和功能” &gt; “启用或禁用 Windows 功能”（位于屏幕左侧）   。</li>
+<li>打开以下节点：“Internet Information Services” &gt; “万维网服务” &gt; “应用程序开发功能”  。</li>
+<li>选择“WebSocket 协议”功能。 选择“确定”。</li>
+</ol>
+<h3 id="disable-websocket-when-using-socketio-on-nodejs">在 Node.js 上使用 socket.io 时禁用 WebSocket</h3>
+<p>如果在 <a href="https://nodejs.org/">Node.js</a> 的 <a href="https://socket.io/">socket.io</a> 中使用 WebSocket 支持，请使用 web.config 或 applicationHost.config 中的 <code>webSocket</code> 元素禁用默认的 IIS WebSocket 模块 。如果不执行此步骤，IIS WebSocket 模块将尝试处理 WebSocket 通信而不是 Node.js 和应用。</p>
+<pre><code class="lang-xml">&lt;system.webServer&gt;
+  &lt;webSocket enabled=&quot;false&quot; /&gt;
+&lt;/system.webServer&gt;
+</code></pre>
+<h2 id="sample-app">示例应用</h2>
+<p>本文附带的<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/websockets/samples">示例应用</a>是一个 echo 应用。 它有一个可建立 WebSocket 连接的网页，且服务器将其收到的消息重新发回到客户端。 从命令提示符运行该应用（它未设置为在安装了 IIS Express 的 Visual Studio 中运行）并导航到 http://localhost:5000 。 该网页的左上方显示连接状态：</p>
+<p><img src="websockets/_static/start.png" alt="网页的初始状态"></p>
+<p>选择“连接”，向显示的 URL 发送 WebSocket 请求。 输入测试消息并选择“发送”。 完成后，请选择“关闭套接字”。 “通信日志”部分会报告每一个发生的“打开”、“发送”和“关闭”操作。</p>
+<p><img src="websockets/_static/end.png" alt="网页的初始状态"></p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

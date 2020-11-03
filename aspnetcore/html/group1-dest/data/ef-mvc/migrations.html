@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#25945;&#31243;&#65306;&#20351;&#29992;&#36801;&#31227;&#21151;&#33021; - ASP.NET MVC &#21644; EF Core </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#25945;&#31243;&#65306;&#20351;&#29992;&#36801;&#31227;&#21151;&#33021; - ASP.NET MVC &#21644; EF Core ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="data/ef-mvc/migrations">
+<h1 id="tutorial-using-the-migrations-feature---aspnet-mvc-with-ef-core">教程：使用迁移功能 - ASP.NET MVC 和 EF Core</h1>
+
+<p>本教程使用 EF Core 迁移功能管理数据模型更改。 后续教程将在更改数据模型时添加更多迁移。</p>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>了解迁移相关信息</li>
+<li>更改连接字符串</li>
+<li>创建初始迁移</li>
+<li>检查 Up 和 Down 方法</li>
+<li>了解数据模型快照</li>
+<li>应用迁移</li>
+</ul>
+</div>
+<h2 id="prerequisites">先决条件</h2>
+<ul>
+<li><a href="sort-filter-page.html">排序、筛选和分页</a></li>
+</ul>
+<h2 id="about-migrations">关于迁移</h2>
+<p>开发新应用程序时，数据模型会频繁更改。每当模型更改时，模型都无法与数据库保持同步。 本系列教程首先配置 Entity Framework 以创建数据库（如果不存在）。 之后，每当更改数据模型（添加、删除或更改实体类或更改 DbContext 类）时，你都可以删除数据库，EF 将创建匹配该模型的新数据库并用测试数据为其设定种子。</p>
+<p>这种使数据库与数据模型保持同步的方法适用于多种情况，但将应用程序部署到生产环境的情况除外。 当应用程序在生产环境中运行时，它通常会存储要保留的数据，以便不会在每次更改（如添加新列）时丢失所有数据。 EF Core 迁移功能可通过使 EF 更新数据库 架构而不是创建新数据库来解决此问题。</p>
+<p>要使用迁移，可使用“包管理器控制台”(PMC) 或 CLI 。  以下教程演示如何使用 CLI 命令。 有关 PMC 的信息，请转到<a href="#pmc">本教程末尾</a>。</p>
+<h2 id="change-the-connection-string">更改连接字符串</h2>
+<p>在 appsettings.json 文件中，将连接字符串中的数据库的名称更改为 ContosoUniversity2 或正在使用的计算机上未使用过的其他名称。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此更改将设置项目，以便初始迁移创建新的数据库。 这并不是开始使用迁移的必要操作，但稍后你便会了解这样做的好处。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>除更改数据库名称外，删除数据库同样可行。 使用 SQL Server 对象资源管理器 (SSOX) 或 <code>database drop</code> CLI 命令：</p>
+<pre><code class="lang-dotnetcli">dotnet ef database drop
+</code></pre>
+<p>下面的部分说明如何运行 CLI 命令。</p>
+</div>
+<h2 id="create-an-initial-migration">创建初始迁移</h2>
+<p>保存更改并生成项目。 然后打开命令窗口并导航到项目文件夹。 下面是执行此操作的快速方法：</p>
+<ul>
+<li><p>在解决方案资源管理器中，右键单击项目，然后从上下文菜单中选择“在文件资源管理器中打开文件夹”。</p>
+<p><img src="migrations/_static/open-in-file-explorer.png" alt="“在文件资源管理器中打开”菜单项"></p>
+</li>
+<li><p>在地址栏中输入“cmd”，然后按 Enter。</p>
+<p><img src="migrations/_static/open-command-window.png" alt="打开命令窗口"></p>
+</li>
+</ul>
+<p>在命令窗口中输入以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install --global dotnet-ef
+dotnet ef migrations add InitialCreate
+</code></pre>
+<p><code>dotnet tool install --global dotnet-ef</code> 将 <code>dotnet ef</code> 作为<a href="/ef/core/miscellaneous/cli/dotnet">全局工具</a>安装。</p>
+<p>在前面的命令中，会显示类似于以下内容的输出：</p>
+<pre><code class="lang-console">info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 2.2.0-rtm-35687 initialized 'SchoolContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer' with options: None
+Done. To undo this action, use 'ef migrations remove'
+</code></pre>
+<p>如果看到错误消息“无法访问文件...ContosoUniversity.dll，因为它正被另一个进程使用。”，请在 Windows 系统托盘中找到 IIS Express 图标并右键单击，然后单击“ContosoUniversity”&gt;“停止站点”。</p>
+<h2 id="examine-up-and-down-methods">检查 Up 和 Down 方法</h2>
+<p>执行 <code>migrations add</code> 命令时，EF 已生成将用于从头创建数据库的代码。 此代码位于“Migrations”文件夹中名为 &lt;timestamp&gt;_InitialCreate.cs 的文件中 。 <code>InitialCreate</code> 类的 <code>Up</code> 的方法将创建与数据模型实体集相对应的数据库表，<code>Down</code> 方法将删除这些表，如下面的示例所示。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>迁移调用 <code>Up</code> 方法为迁移实现数据模型更改。 输入用于回退更新的命令时，迁移调用 <code>Down</code> 方法。</p>
+<p>此代码适用于输入 <code>migrations add InitialCreate</code> 命令时所创建的初始迁移。 迁移名称参数（本示例中为“InitialCreate”）用于指定文件名，并且你可以按需使用任何名称。 最好选择能概括迁移中所执行操作的字词或短语。 例如，可将后面的迁移命名为“AddDepartmentTable”。</p>
+<p>如果创建初始迁移时已存在数据库，则会生成数据库创建代码，但此代码不必运行，因为数据库已与数据库模型相匹配。 将应用部署到其中尚不存在数据库的其他环境时，此代码将运行以创建数据库，因此最好提前进行测试。 这也是提前更改连接字符串中数据库的名称的原因，这样迁移才能从头创建新数据库。</p>
+<h2 id="the-data-model-snapshot">数据模型快照</h2>
+<p>迁移在 Migrations/SchoolContextModelSnapshot.cs 中创建当前数据库架构的快照 。 添加迁移时，EF 会通过将数据模型与快照文件进行对比来确定已更改的内容。</p>
+<p>使用 <a href="/ef/core/miscellaneous/cli/dotnet#dotnet-ef-migrations-remove">dotnet ef migrations remove</a> 命令删除迁移。 <code>dotnet ef migrations remove</code> 删除迁移，并确保正确重置快照。 如果 <code>dotnet ef migrations remove</code> 失败，使用 <code>dotnet ef migrations remove -v</code> 获取失败的详细信息。</p>
+<p>有关如何使用快照文件的详细信息，请参阅<a href="/ef/core/managing-schemas/migrations/teams">团队环境中的 EF Core 迁移</a>。</p>
+<h2 id="apply-the-migration">应用迁移</h2>
+<p>在命令窗口中，输入以下命令以创建数据库并在其中创建表。</p>
+<pre><code class="lang-dotnetcli">dotnet ef database update
+</code></pre>
+<p>该命令的输出与 <code>migrations add</code> 命令的输出相似，但其中还包含设置该数据库的 SQL 命令的日志。 下面的示例输出中省略了大部分日志。 如果希望日志消息中不使用此详细级别，则可更改 appsettings.Development.json 文件中的日志级别。 有关详细信息，请参阅 <a class="xref" href="../../fundamentals/logging/index.html">.NET Core 和 ASP.NET Core 中的日志记录</a>。</p>
+<pre><code class="lang-text">info: Microsoft.EntityFrameworkCore.Infrastructure[10403]
+      Entity Framework Core 2.2.0-rtm-35687 initialized 'SchoolContext' using provider 'Microsoft.EntityFrameworkCore.SqlServer' with options: None
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (274ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+      CREATE DATABASE [ContosoUniversity2];
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (60ms) [Parameters=[], CommandType='Text', CommandTimeout='60']
+      IF SERVERPROPERTY('EngineEdition') &lt;&gt; 5
+      BEGIN
+          ALTER DATABASE [ContosoUniversity2] SET READ_COMMITTED_SNAPSHOT ON;
+      END;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (15ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE [__EFMigrationsHistory] (
+          [MigrationId] nvarchar(150) NOT NULL,
+          [ProductVersion] nvarchar(32) NOT NULL,
+          CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+      );
+
+&lt;logs omitted for brevity&gt;
+
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+      VALUES (N'20190327172701_InitialCreate', N'2.2.0-rtm-35687');
+Done.
+</code></pre>
+<p>使用 SQL Server 对象资源管理器检查数据库（与第一个教程中的做法相同）。  你会发现添加了 __EFMigrationsHistory 表，该表可用于跟踪已应用到数据库的迁移。 查看该表中的数据，其中显示对应初始迁移的一行数据。 （上面的 CLI 输出示例中最后部分的日志显示了创建此行的 INSERT 语句。）</p>
+<p>运行应用程序以验证所有内容照旧运行。</p>
+<p><img src="migrations/_static/students-index.png" alt="“学生索引”页"></p>
+<p><a id="pmc"></a></p>
+<h2 id="compare-cli-and-pmc">比较 CLI 和 PMC</h2>
+<p>可通过 .NET Core CLI 命令或 Visual Studio 包管理器控制台 (PMC) 窗口中的 PowerShell cmdlet 使用可管理迁移的 EF 工具。 本教程演示如何使用 CLI，但也可以根据喜好使用 PMC。</p>
+<p>适用于 PMC 命令的 EF 命令位于 <a href="https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools">Microsoft.EntityFrameworkCore.Tools</a> 程序包中。 此包包含在 <a class="xref" href="../../fundamentals/metapackage-app.html">Microsoft.AspNetCore.App 元包</a>中，因此，如果应用具有对 <code>Microsoft.AspNetCore.App</code> 的包引用，则无需添加包引用。</p>
+<p><strong>重要提示：</strong> 此包与通过编辑 .csproj 文件为 CLI 安装的包不同。 此程序包的名称以 <code>Tools</code> 结尾，而 CLI 程序包的名称以 <code>Tools.DotNet</code> 结尾。</p>
+<p>有关 CLI 命令的详细信息，请参阅 <a href="/ef/core/miscellaneous/cli/dotnet">.NET Core CLI</a>。</p>
+<p>有关 PMC 命令的详细信息，请参阅<a href="/ef/core/miscellaneous/cli/powershell">包管理器控制台 (Visual Studio)</a>。</p>
+<h2 id="get-the-code">获取代码</h2>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/data/ef-mvc/intro/samples/cu-final">下载或查看已完成的应用程序。</a></p>
+<h2 id="next-step">下一步</h2>
+<p>在本教程中，你将了解：</p>
+<div class="checklist">
+<ul>
+<li>已了解迁移相关信息</li>
+<li>已了解 NuGet 迁移包</li>
+<li>已更改连接字符串</li>
+<li>已创建初始迁移</li>
+<li>已检查 Up 和 Down 方法</li>
+<li>已了解数据模型快照</li>
+<li>已应用迁移</li>
+</ul>
+</div>
+<p>请继续阅读下一篇教程，开始了解有关展开数据模型的更高级主题。 同时还将介绍创建并应用其他迁移的方法。</p>
+<div class="nextstepaction">
+<p><a href="complex-data-model.html">创建并应用其他迁移</a></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,375 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#23558; ASP.NET Core Razor &#32452;&#20214;&#38598;&#25104;&#21040; Razor Pages &#21644; MVC &#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#23558; ASP.NET Core Razor &#32452;&#20214;&#38598;&#25104;&#21040; Razor Pages &#21644; MVC &#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/components/integrate-components-into-razor-pages-and-mvc-apps">
+<h1 id="integrate-aspnet-core-no-locrazor-components-into-no-locrazor-pages-and-mvc-apps">将 ASP.NET Core Razor 组件集成到 Razor Pages 和 MVC 应用</h1>
+
+<p>作者：<a href="https://github.com/guardrex">Luke Latham</a> 和 <a href="https://github.com/danroth27">Daniel Roth</a></p>
+<p>Razor 组件可以集成到 Razor Pages 和 MVC 应用。 呈现页面或视图时，可以同时预呈现组件。</p>
+<p><a href="#prepare-the-app">准备好应用</a>后，根据应用的要求按照下列部分中的指南操作：</p>
+<ul>
+<li>可路由组件：针对可直接通过用户请求进行路由的组件。 如果访问者应该能够使用 <a class="xref" href="../../mvc/views/razor.html#page"><code>@page</code></a> 指令在浏览器中为组件发出 HTTP 请求，则按照此指南操作。
+<ul>
+<li><a href="#use-routable-components-in-a-razor-pages-app">在 Razor Pages 应用中使用可路由组件</a></li>
+<li><a href="#use-routable-components-in-an-mvc-app">在 MVC 应用中使用可路由组件</a></li>
+</ul>
+</li>
+<li><a href="#render-components-from-a-page-or-view">从页面或视图呈现组件</a>：针对无法直接通过用户请求进行路由的组件。 如果应用使用<a class="xref" href="../../mvc/views/tag-helpers/built-in/component-tag-helper.html">组件标记帮助程序</a>将组件嵌入到现有页面和视图，则按照此指南操作。</li>
+</ul>
+<h2 id="prepare-the-app">准备应用</h2>
+<p>现有 Razor Pages 或 MVC 应用可以将 Razor 组件集成到页面和视图中：</p>
+<ol>
+<li><p>在应用的布局文件 (<code>_Layout.cshtml</code>) 中：</p>
+<ul>
+<li><p>将以下 <code>&lt;base&gt;</code> 标记添加到 <code>&lt;head&gt;</code> 元素：</p>
+<pre><code class="lang-html">&lt;base href=&quot;~/&quot; /&gt;
+</code></pre>
+<p>前面示例中的 <code>href</code> 值（应用基路径）假设应用驻留在根 URL 路径 (<code>/</code>) 处。 如果应用是子应用程序，请按照 <a class="xref" href="../host-and-deploy/index.html#app-base-path">托管和部署 ASP.NET Core Blazor</a> 一文的“应用基路径”部分中的指导进行操作。</p>
+<p><code>_Layout.cshtml</code> 文件位于 Razor Pages 应用的 Pages/Shared 文件夹中，或 MVC 应用的 Views/Shared 文件夹中 。</p>
+</li>
+<li><p>紧接在 <code>&lt;/body&gt;</code> 结束标记前面，添加 blazor.server.js 脚本的 <code>&lt;script&gt;</code> 标记：</p>
+<pre><code class="lang-html">&lt;script src=&quot;_framework/blazor.server.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>框架会将 blazor.server.js 脚本添加到应用。 无需手动将脚本添加到应用。</p>
+</li>
+</ul>
+</li>
+<li><p>将 <code>_Imports.razor</code> 文件添加到项目的根文件夹，其中包含以下内容（将最后一个命名空间 <code>MyAppNamespace</code> 更改为应用的命名空间）：</p>
+<pre><code class="lang-razor">@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using MyAppNamespace
+</code></pre>
+</li>
+<li><p>在 <code>Startup.ConfigureServices</code>中，注册 Blazor Server 服务：</p>
+<pre><code class="lang-csharp">services.AddServerSideBlazor();
+</code></pre>
+</li>
+<li><p>在 <code>Startup.Configure</code> 中，将 Blazor 中心终结点添加到 <code>app.UseEndpoints</code>：</p>
+<pre><code class="lang-csharp">endpoints.MapBlazorHub();
+</code></pre>
+</li>
+<li><p>将组件集成到任何页面或视图。 有关详细信息，请参阅<a href="#render-components-from-a-page-or-view">从页面或视图呈现组件</a>部分。</p>
+</li>
+</ol>
+<h2 id="use-routable-components-in-a-no-locrazor-pages-app">在 Razor Pages 应用中使用可路由组件</h2>
+<p>本部分介绍如何添加可直接从用户请求路由的组件。</p>
+<p>在 Razor Pages 应用中支持可路由 Razor 组件：</p>
+<ol>
+<li><p>按照<a href="#prepare-the-app">准备应用</a>部分中的指南进行操作。</p>
+</li>
+<li><p>将具有以下内容的 <code>App.razor</code> 文件添加到项目根：</p>
+<pre><code class="lang-razor">@using Microsoft.AspNetCore.Components.Routing
+
+&lt;Router AppAssembly=&quot;@typeof(Program).Assembly&quot;&gt;
+    &lt;Found Context=&quot;routeData&quot;&gt;
+        &lt;RouteView RouteData=&quot;routeData&quot; /&gt;
+    &lt;/Found&gt;
+    &lt;NotFound&gt;
+        &lt;h1&gt;Page not found&lt;/h1&gt;
+        &lt;p&gt;Sorry, but there's nothing here!&lt;/p&gt;
+    &lt;/NotFound&gt;
+&lt;/Router&gt;
+</code></pre>
+</li>
+<li><p>将具有以下内容的 <code>_Host.cshtml</code> 文件添加到 <code>Pages</code> 文件夹：</p>
+<pre><code class="lang-cshtml">@page &quot;/blazor&quot;
+@{
+    Layout = &quot;_Layout&quot;;
+}
+
+&lt;app&gt;
+    &lt;component type=&quot;typeof(App)&quot; render-mode=&quot;ServerPrerendered&quot; /&gt;
+&lt;/app&gt;
+</code></pre>
+<p>组件将共享 <code>_Layout.cshtml</code> 文件用于布局。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode&gt; 会配置 <code>App</code> 组件是否：</p>
+<ul>
+<li>在页面中预呈现。</li>
+<li>在页面上呈现为静态 HTML，或者包含从用户代理启动 Blazor 应用所需的信息。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>呈现模式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode.ServerPrerendered&gt;</td>
+<td>在静态 HTML 中呈现 <code>App</code> 组件，并包含 Blazor Server 应用的标记。 用户代理启动时，此标记用于启动 Blazor 应用。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Server&gt;</td>
+<td>呈现 Blazor Server 应用的标记。 不包括 <code>App</code> 组件的输出。 用户代理启动时，此标记用于启动 Blazor 应用。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Static&gt;</td>
+<td>在静态 HTML 中呈现 <code>App</code> 组件。</td>
+</tr>
+</tbody>
+</table>
+<p>要详细了解组件标记帮助程序，请查看 <a class="xref" href="../../mvc/views/tag-helpers/built-in/component-tag-helper.html">ASP.NET Core 中的组件标记帮助程序</a>。</p>
+</li>
+<li><p>在 <code>Startup.Configure</code> 中，将 <code>_Host.cshtml</code> 页的低优先级路由添加到终结点配置：</p>
+<pre><code class="lang-csharp">app.UseEndpoints(endpoints =&gt;
+{
+    ...
+
+    endpoints.MapFallbackToPage(&quot;/_Host&quot;);
+});
+</code></pre>
+</li>
+<li><p>将可路由组件添加到应用。 例如：</p>
+<pre><code class="lang-razor">@page &quot;/counter&quot;
+
+&lt;h1&gt;Counter&lt;/h1&gt;
+
+...
+</code></pre>
+</li>
+</ol>
+<p>有关命名空间的详细信息，请参阅<a href="#component-namespaces">组件命名空间</a>部分。</p>
+<h2 id="use-routable-components-in-an-mvc-app">在 MVC 应用中使用可路由组件</h2>
+<p>本部分介绍如何添加可直接从用户请求路由的组件。</p>
+<p>在 MVC 应用中支持可路由 Razor 组件：</p>
+<ol>
+<li><p>按照<a href="#prepare-the-app">准备应用</a>部分中的指南进行操作。</p>
+</li>
+<li><p>将具有以下内容的 <code>App.razor</code> 文件添加到项目根：</p>
+<pre><code class="lang-razor">@using Microsoft.AspNetCore.Components.Routing
+
+&lt;Router AppAssembly=&quot;@typeof(Program).Assembly&quot;&gt;
+    &lt;Found Context=&quot;routeData&quot;&gt;
+        &lt;RouteView RouteData=&quot;routeData&quot; /&gt;
+    &lt;/Found&gt;
+    &lt;NotFound&gt;
+        &lt;h1&gt;Page not found&lt;/h1&gt;
+        &lt;p&gt;Sorry, but there's nothing here!&lt;/p&gt;
+    &lt;/NotFound&gt;
+&lt;/Router&gt;
+</code></pre>
+</li>
+<li><p>将具有以下内容的 <code>_Host.cshtml</code> 文件添加到 <code>Views/Home</code> 文件夹：</p>
+<pre><code class="lang-cshtml">@{
+    Layout = &quot;_Layout&quot;;
+}
+
+&lt;app&gt;
+    &lt;component type=&quot;typeof(App)&quot; render-mode=&quot;ServerPrerendered&quot; /&gt;
+&lt;/app&gt;
+</code></pre>
+<p>组件将共享 <code>_Layout.cshtml</code> 文件用于布局。</p>
+<p>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode&gt; 会配置 <code>App</code> 组件是否：</p>
+<ul>
+<li>在页面中预呈现。</li>
+<li>在页面上呈现为静态 HTML，或者包含从用户代理启动 Blazor 应用所需的信息。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>呈现模式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode.ServerPrerendered&gt;</td>
+<td>在静态 HTML 中呈现 <code>App</code> 组件，并包含 Blazor Server 应用的标记。 用户代理启动时，此标记用于启动 Blazor 应用。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Server&gt;</td>
+<td>呈现 Blazor Server 应用的标记。 不包括 <code>App</code> 组件的输出。 用户代理启动时，此标记用于启动 Blazor 应用。</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.Rendering.RenderMode.Static&gt;</td>
+<td>在静态 HTML 中呈现 <code>App</code> 组件。</td>
+</tr>
+</tbody>
+</table>
+<p>要详细了解组件标记帮助程序，请查看 <a class="xref" href="../../mvc/views/tag-helpers/built-in/component-tag-helper.html">ASP.NET Core 中的组件标记帮助程序</a>。</p>
+</li>
+<li><p>向主控制器添加操作：</p>
+<pre><code class="lang-csharp">public IActionResult Blazor()
+{
+   return View(&quot;_Host&quot;);
+}
+</code></pre>
+</li>
+<li><p>在 <code>Startup.Configure</code> 中，将返回 <code>_Host.cshtml</code> 视图的控制器操作的低优先级路由添加到终结点配置：</p>
+<pre><code class="lang-csharp">app.UseEndpoints(endpoints =&gt;
+{
+    ...
+
+    endpoints.MapFallbackToController(&quot;Blazor&quot;, &quot;Home&quot;);
+});
+</code></pre>
+</li>
+<li><p>创建 <code>Pages</code> 文件夹并将可路由组件添加到应用。 例如：</p>
+<pre><code class="lang-razor">@page &quot;/counter&quot;
+
+&lt;h1&gt;Counter&lt;/h1&gt;
+
+...
+</code></pre>
+</li>
+</ol>
+<p>有关命名空间的详细信息，请参阅<a href="#component-namespaces">组件命名空间</a>部分。</p>
+<h2 id="render-components-from-a-page-or-view">从页面或视图呈现组件</h2>
+<p>本部分介绍如何在无法从用户请求直接路由组件的情况下，将组件添加到页面或视图。</p>
+<p>若要从页面或视图呈现组件，请使用<a class="xref" href="../../mvc/views/tag-helpers/built-in/component-tag-helper.html">组件标记帮助程序</a>。</p>
+<h3 id="render-stateful-interactive-components">呈现有状态交互式组件</h3>
+<p>可以将有状态的交互式组件添加到 Razor 页面或视图。</p>
+<p>呈现页面或视图时：</p>
+<ul>
+<li>该组件通过页面或视图预呈现。</li>
+<li>用于预呈现的初始组件状态丢失。</li>
+<li>建立 SignalR 连接时，将创建新的组件状态。</li>
+</ul>
+<p>以下 Razor 页面将呈现 <code>Counter</code> 组件：</p>
+<pre><code class="lang-cshtml">&lt;h1&gt;My Razor Page&lt;/h1&gt;
+
+&lt;component type=&quot;typeof(Counter)&quot; render-mode=&quot;ServerPrerendered&quot; 
+    param-InitialValue=&quot;InitialValue&quot; /&gt;
+
+@functions {
+    [BindProperty(SupportsGet=true)]
+    public int InitialValue { get; set; }
+}
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../../mvc/views/tag-helpers/built-in/component-tag-helper.html">ASP.NET Core 中的组件标记帮助程序</a>。</p>
+<h3 id="render-noninteractive-components">呈现非交互式组件</h3>
+<p>在以下 Razor 页面中，使用以下格式通过指定的初始值静态呈现 <code>Counter</code> 组件。 由于该组件是以静态方式呈现的，因此它不是交互式组件：</p>
+<pre><code class="lang-cshtml">&lt;h1&gt;My Razor Page&lt;/h1&gt;
+
+&lt;form&gt;
+    &lt;input type=&quot;number&quot; asp-for=&quot;InitialValue&quot; /&gt;
+    &lt;button type=&quot;submit&quot;&gt;Set initial value&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;component type=&quot;typeof(Counter)&quot; render-mode=&quot;Static&quot; 
+    param-InitialValue=&quot;InitialValue&quot; /&gt;
+
+@functions {
+    [BindProperty(SupportsGet=true)]
+    public int InitialValue { get; set; }
+}
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../../mvc/views/tag-helpers/built-in/component-tag-helper.html">ASP.NET Core 中的组件标记帮助程序</a>。</p>
+<h2 id="component-namespaces">组件命名空间</h2>
+<p>使用自定义文件夹保存应用的组件时，将表示文件夹的命名空间添加到页面/视图或 <code>_ViewImports.cshtml</code> 文件。 如下示例中：</p>
+<ul>
+<li>将 <code>MyAppNamespace</code> 更改为应用的命名空间。</li>
+<li>如果不使用名为 Components 的文件夹来保存组件，请将 <code>Components</code> 更改为组件所在的文件夹。</li>
+</ul>
+<pre><code class="lang-cshtml">@using MyAppNamespace.Components
+</code></pre>
+<p><code>_ViewImports.cshtml</code> 文件位于 Razor Pages 应用的 <code>Pages</code> 文件夹中，或是 MVC 应用的 <code>Views</code> 文件夹中。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="index.html#namespaces">创建和使用 ASP.NET Core Razor 组件</a>。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

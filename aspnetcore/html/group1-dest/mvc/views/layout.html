@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#24067;&#23616; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#24067;&#23616; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="mvc/views/layout">
+<h1 id="layout-in-aspnet-core">ASP.NET Core 中的布局</h1>
+
+<p>作者：<a href="https://ardalis.com/">Steve Smith</a> 和 <a href="https://twitter.com/daveabrock">Dave Brock</a></p>
+<p>页面和视图经常共享视觉对象和程序元素。 本文演示了以下内容的操作方法：</p>
+<ul>
+<li>使用通用布局。</li>
+<li>共享指令。</li>
+<li>在呈现页面或视图之前运行通用代码。</li>
+</ul>
+<p>本文档讨论了两种不同方法 ASP.NET Core MVC： Razor 页面和控制器与视图的布局。 在本主题中，差异很小：</p>
+<ul>
+<li>Razor 页面位于 &quot; <em>页面</em> &quot; 文件夹中。</li>
+<li>具有视图的控制器使用视图的“视图”文件夹。</li>
+</ul>
+<h2 id="what-is-a-layout">什么是布局</h2>
+<p>大多数 Web 应用都有一个通用布局，可在页面间切换时为用户提供一致体验。 该布局通常包括应用标头、导航或菜单元素以及页脚等常见的用户界面元素。</p>
+<p><img src="layout/_static/page-layout.png" alt="页面布局示例"></p>
+<p>应用中的许多页面也经常使用常见的 HTML 结构，如脚本和样式表。 所有这些共享元素都可以在 <em>布局</em> 文件中定义，该文件随后可由应用中使用的任何视图引用。 布局可减少视图中的重复代码。</p>
+<p>按照约定，ASP.NET Core 应用的默认布局名为 _Layout.cshtml。  使用模板创建的新 ASP.NET Core 项目的布局文件为：</p>
+<ul>
+<li><p>Razor 页面： <em>pages/Shared/_Layout cshtml</em></p>
+<p><img src="layout/_static/rp-web-project-views.png" alt="解决方案资源管理器中的页面文件夹"></p>
+</li>
+<li><p>包含视图的控制器：Views/Shared/_Layout.cshtml</p>
+<p><img src="layout/_static/mvc-web-project-views.png" alt="解决方案资源管理器中的视图文件夹"></p>
+</li>
+</ul>
+<p>布局定义应用中的视图的最高级别模板。 应用不需要布局。 应用可以定义多个布局，其中不同的视图指定不同的布局。</p>
+<p>下面的代码演示了使用控制器和视图创建的项目模板的布局文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="specifying-a-layout">指定布局</h2>
+<p>Razor 视图具有 <code>Layout</code> 属性。 单个视图通过设置此属性来指定布局：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>指定的布局可以使用完整路径（例如 /Pages/Shared/_Layout.cshtml 或 /Views/Shared/_Layout.cshtml）或部分名称（示例：<code>_Layout</code>）。  如果提供了部分名称， Razor 视图引擎将使用其标准发现进程搜索布局文件。 首先搜索处理程序方法（或控制器）所在的文件夹，然后搜索 Shared 文件夹。  此发现过程与用于发现<a class="xref" href="partial.html#partial-view-discovery">分部视图</a>的过程相同。</p>
+<p>默认情况下，每个布局必须调用 <code>RenderBody</code>。 无论在何处调用 <code>RenderBody</code>，都会呈现视图的内容。</p>
+<p><a name="layout-sections-label"></a></p>
+<!-- https://stackoverflow.com/questions/23327578 -->
+<h3 id="sections">部分</h3>
+<p>布局可以通过调用 <code>RenderSection</code> 来选择引用一个或多个节  。 节提供一种方法来组织某些页面元素应当放置的位置。 每次调用 <code>RenderSection</code> 时都可指定该部分是必需还是可选：</p>
+<pre><code class="lang-html">&lt;script type=&quot;text/javascript&quot; src=&quot;~/scripts/global.js&quot;&gt;&lt;/script&gt;
+
+@RenderSection(&quot;Scripts&quot;, required: false)
+</code></pre>
+<p>如果找不到所需的节，将引发异常。 单个视图使用语法指定要在节中呈现的内容 <code>@section</code> Razor 。 如果某个页面或视图定义了一个部分，则必须呈现该部分（否则将发生错误）。</p>
+<p><code>@section</code>页面视图中的示例定义 Razor ：</p>
+<pre><code class="lang-html">@section Scripts {
+     &lt;script type=&quot;text/javascript&quot; src=&quot;~/scripts/main.js&quot;&gt;&lt;/script&gt;
+}
+</code></pre>
+<p>在上面的代码中，scripts / main.js 添加到了页面或视图的 <code>scripts</code> 部分  。 相同应用中的其他页面或视图可能不需要此脚本且不会定义脚本部分。</p>
+<p>以下标记使用</p>
+<pre><code class="lang-html">@section Scripts {
+    &lt;partial name=&quot;_ValidationScriptsPartial&quot; /&gt;
+}
+</code></pre>
+<p>上述标记是由<a class="xref" href="../../security/authentication/scaffold-identity.html">基架 Identity </a>生成的。</p>
+<p>在页面或视图中定义的部分仅在其即时布局页面中可用。 不能从部分、视图组件或视图系统的其他部分引用它们。</p>
+<h3 id="ignoring-sections">忽略节</h3>
+<p>默认情况下，必须由布局页面呈现内容页中的正文和所有节。 Razor视图引擎通过跟踪正文和每个部分是否已呈现来强制执行此方法。</p>
+<p>要让视图引擎忽略正文或节，请调用 <code>IgnoreBody</code> 和 <code>IgnoreSection</code> 方法。</p>
+<p>页面中的正文和每个节 Razor 必须呈现或忽略。</p>
+<p><a name="viewimports"></a></p>
+<h2 id="importing-shared-directives">导入共享指令</h2>
+<p>视图和页面可以使用 Razor 指令导入命名空间和使用 <a href="dependency-injection.html">依赖关系注入</a>。 由多个视图共享的指令可以在通用 _ViewImports.cshtml 文件中进行指定。  <code>_ViewImports</code> 文件支持以下指令：</p>
+<ul>
+<li><code>@addTagHelper</code></li>
+<li><code>@removeTagHelper</code></li>
+<li><code>@tagHelperPrefix</code></li>
+<li><code>@using</code></li>
+<li><code>@model</code></li>
+<li><code>@inherits</code></li>
+<li><code>@inject</code></li>
+</ul>
+<p>文件不支持其他 Razor 功能，例如函数和节定义。</p>
+<p>示例 <code>_ViewImports.cshtml</code> 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>ASP.NET Core MVC 应用的 _ViewImports.cshtml 文件通常放在“页面”（或“视图”）文件夹中。  _ViewImports.cshtml 文件可以放在任何文件夹中，在这种情况下，它只会应用于该文件夹及其子文件夹中的页面或视图。  从根级别开始处理 <code>_ViewImports</code> 文件，然后处理在页面或视图本身的位置之前的每个文件夹。 可以在文件夹级别覆盖根级别指定的 <code>_ViewImports</code> 设置。</p>
+<p>例如，假设：</p>
+<ul>
+<li>根级别 _ViewImports.cshtml 文件包含 <code>@model MyModel1</code> 和 <code>@addTagHelper *, MyTagHelper1</code>。</li>
+<li>子文件夹 _ViewImports.cshtml 文件包含 <code>@model MyModel2</code> 和 <code>@addTagHelper *, MyTagHelper2</code>。</li>
+</ul>
+<p>子文件夹中的页面和视图将有权访问标记帮助程序和 <code>MyModel2</code> 模型。</p>
+<p>如果在文件层次结构中找到多个 _ViewImports.cshtml 文件，指令的合并行为是：</p>
+<ul>
+<li><code>@addTagHelper``@removeTagHelper</code>：按顺序全部运行</li>
+<li><code>@tagHelperPrefix</code>：最接近视图的文件会替代任何其他文件</li>
+<li><code>@model</code>：最接近视图的文件会替代任何其他文件</li>
+<li><code>@inherits</code>：最接近视图的文件会替代任何其他文件</li>
+<li><code>@using</code>：全部包括在内；忽略重复项</li>
+<li><code>@inject</code>：针对每个属性，最接近视图的属性会替代具有相同属性名的任何其他属性</li>
+</ul>
+<p><a name="viewstart"></a></p>
+<h2 id="running-code-before-each-view">在呈现每个视图之前运行代码</h2>
+<p>需要在每个视图或页面之前运行的代码应置于 _ViewStart.cshtml 文件中。  按照约定，_ViewStart.cshtml 文件位于“页面”（或“视图”）文件夹。  在呈现每个完整视图（不是布局，也不是分部视图）之前运行 _ViewStart.cshtml 中列出的语句。  与  如果在视图或页面文件夹中定义了 _ViewStart.cshtml 文件，则它将在页面（或视图）的根目录中定义的文件之后运行）文件夹（如果有）。</p>
+<p>一个示例 _ViewStart.cshtml 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述文件指定所有视图都将使用 _Layout.cshtml 布局。</p>
+<p>_ViewStart.cshtml 和 _ViewImports.cshtml 通常不置于 /Pages/Shared（或 /Views/Shared）文件夹中。  这些应用级别版本的文件应直接放置在 /Pages（或 /Views）文件夹中。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

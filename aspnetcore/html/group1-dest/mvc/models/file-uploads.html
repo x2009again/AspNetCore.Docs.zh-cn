@@ -1,0 +1,1946 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#19978;&#20256;&#25991;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#19978;&#20256;&#25991;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="mvc/models/file-uploads">
+<h1 id="upload-files-in-aspnet-core">在 ASP.NET Core 中上传文件</h1>
+
+<p>作者： <a href="https://ardalis.com/">Steve Smith</a> 和 <a href="https://github.com/rutix">Rutger 风暴</a></p>
+<div range="&gt;= aspnetcore-5.0">
+<p>ASP.NET Core 支持使用缓冲的模型绑定（针对较小文件）和无缓冲的流式传输（针对较大文件）上传一个或多个文件。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="security-considerations">安全注意事项</h2>
+<p>向用户提供向服务器上传文件的功能时，必须格外小心。 攻击者可能会尝试执行以下操作：</p>
+<ul>
+<li>执行<a href="/windows-hardware/drivers/ifs/denial-of-service">拒绝服务</a>攻击。</li>
+<li>上传病毒或恶意软件。</li>
+<li>以其他方式破坏网络和服务器。</li>
+</ul>
+<p>降低成功攻击可能性的安全措施如下：</p>
+<ul>
+<li>将文件上传到专用文件上传区域，最好是非系统驱动器。 使用专用位置便于对上传的文件实施安全限制。 禁用对文件上传位置的执行权限。†</li>
+<li>请勿将上传的文件保存在与应用相同的目录树中  。†</li>
+<li>使用应用确定的安全的文件名。 请勿使用用户提供的文件名或上载文件的不受信任的文件名。 † 显示时，HTML 对不受信任的文件名进行编码。 例如，记录文件名或在 UI 中显示 (Razor 会自动对输出) 进行 HTML 编码。</li>
+<li>仅允许应用设计规范的已批准文件扩展名。† <!-- * Check the file format signature to prevent a user from uploading a masqueraded file.&dagger; For example, don't permit a user to upload an *.exe* file with a *.txt* extension. Add this back when we get instructions how to do this.  --></li>
+<li>验证是否在服务器上执行了客户端检查。 † 客户端检查很容易规避。</li>
+<li>检查已上传文件的大小。 设置大小上限以防止上传大型文件。†</li>
+<li>文件不应该被具有相同名称的上传文件覆盖时，先在数据库或物理存储上检查文件名，然后再上传文件。</li>
+<li><strong>先对上传的内容运行病毒/恶意软件扫描程序，然后再存储文件。</strong></li>
+</ul>
+<p>†示例应用演示了符合条件的方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>将恶意代码上传到系统通常是执行代码的第一步，这些代码可以：</p>
+<ul>
+<li>完全获得对系统的控制权限。</li>
+<li>重载系统，导致系统崩溃。</li>
+<li>泄露用户或系统数据。</li>
+<li>将涂鸦应用于公共 UI。</li>
+</ul>
+<p>有关在接受用户文件时减少攻击外围应用的信息，请参阅以下资源：</p>
+<ul>
+<li><a href="https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload">Unrestricted File Upload</a>（不受限制的文件上传）</li>
+<li><a href="/azure/security/azure-security-threat-modeling-tool-input-validation#controls-users">Azure 安全性：确保在接受用户文件时采取适当的控制措施</a></li>
+</ul>
+</div>
+<p>有关实现安全措施（包括示例应用中的示例）的详细信息，请参阅<a href="#validation">验证</a>部分。</p>
+<h2 id="storage-scenarios">存储方案</h2>
+<p>常见的文件存储选项有：</p>
+<ul>
+<li><p>数据库</p>
+<ul>
+<li>对于小型文件上传，数据库通常快于物理存储（文件系统或网络共享）选项。</li>
+<li>相对于物理存储选项，数据库通常更为便利，因为检索数据库记录来获取用户数据可同时提供文件内容（如头像图像）。</li>
+<li>相对于使用数据存储服务，数据库的成本可能更低。</li>
+</ul>
+</li>
+<li><p>物理存储（文件系统或网络共享）</p>
+<ul>
+<li>对于大型文件上传：
+<ul>
+<li>数据库限制可能会限制上传的大小。</li>
+<li>相对于数据库存储，物理存储通常成本更高。</li>
+</ul>
+</li>
+<li>相对于使用数据存储服务，物理存储的成本可能更低。</li>
+<li>应用的进程必须具有存储位置的读写权限。 切勿授予执行权限。</li>
+</ul>
+</li>
+<li><p>数据存储服务（例如，<a href="https://azure.microsoft.com/services/storage/blobs/">Azure Blob 存储</a>）</p>
+<ul>
+<li>服务通常通过本地解决方案提供提升的可伸缩性和复原能力，而它们往往受单一故障点的影响。</li>
+<li>在大型存储基础结构方案中，服务的成本可能更低。</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="/azure/storage/blobs/storage-quickstart-blobs-dotnet">快速入门：使用 .net 在对象存储中创建 blob</a>。</p>
+</li>
+</ul>
+<h2 id="file-upload-scenarios">文件上传方案</h2>
+<p>缓冲和流式传输是上传文件的两种常见方法。</p>
+<p><strong>缓冲</strong></p>
+<p>整个文件读入 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;，它是文件的 C# 表示形式，用于处理或保存文件。</p>
+<p>文件上传所用的资源（磁盘、内存）取决于并发文件上传的数量和大小。 如果应用尝试缓冲过多上传，站点就会在内存或磁盘空间不足时崩溃。 如果文件上传的大小或频率会消耗应用资源，请使用流式传输。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>会将大于 64 KB 的所有单个缓冲文件从内存移到磁盘的临时文件。</p>
+</div>
+<p>本主题的以下部分介绍了如何缓冲小型文件：</p>
+<ul>
+<li><a href="#upload-small-files-with-buffered-model-binding-to-physical-storage">物理存储</a></li>
+<li><a href="#upload-small-files-with-buffered-model-binding-to-a-database">Database</a></li>
+</ul>
+<p><strong>流式处理</strong></p>
+<p>从多部分请求收到文件，然后应用直接处理或保存它。 流式传输无法显著提高性能。 流式传输可降低上传文件时对内存或磁盘空间的需求。</p>
+<p><a href="#upload-large-files-with-streaming">通过流式传输上传大型文件</a>部分介绍了如何流式传输大型文件。</p>
+<h3 id="upload-small-files-with-buffered-model-binding-to-physical-storage">通过缓冲的模型绑定将小型文件上传到物理存储</h3>
+<p>要上传小文件，请使用多部分窗体或使用 JavaScript 构造 POST 请求。</p>
+<p>下面的示例演示 Razor 如何使用页面窗体上传示例应用) 中的单个文件 ( <em>Pages/BufferedSingleFileUploadPhysical</em> ：</p>
+<pre><code class="lang-cshtml">&lt;form enctype=&quot;multipart/form-data&quot; method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label asp-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input asp-for=&quot;FileUpload.FormFile&quot; type=&quot;file&quot;&gt;
+            &lt;span asp-validation-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/span&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;input asp-page-handler=&quot;Upload&quot; class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot; /&gt;
+&lt;/form&gt;
+</code></pre>
+<p>下面的示例与前面的示例类似，不同之处在于：</p>
+<ul>
+<li>使用 JavaScript (<a href="https://developer.mozilla.org/docs/Web/API/Fetch_API">Fetch API</a>) 提交窗体的数据。</li>
+<li>无验证。</li>
+</ul>
+<pre><code class="lang-cshtml">&lt;form action=&quot;BufferedSingleFileUploadPhysical/?handler=Upload&quot; 
+      enctype=&quot;multipart/form-data&quot; onsubmit=&quot;AJAXSubmit(this);return false;&quot; 
+      method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label for=&quot;FileUpload_FormFile&quot;&gt;File&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input id=&quot;FileUpload_FormFile&quot; type=&quot;file&quot; 
+                name=&quot;FileUpload.FormFile&quot; /&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+
+    &lt;input class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot; /&gt;
+
+    &lt;div style=&quot;margin-top:15px&quot;&gt;
+        &lt;output name=&quot;result&quot;&gt;&lt;/output&gt;
+    &lt;/div&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  async function AJAXSubmit (oFormElement) {
+    var resultElement = oFormElement.elements.namedItem(&quot;result&quot;);
+    const formData = new FormData(oFormElement);
+
+    try {
+    const response = await fetch(oFormElement.action, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      window.location.href = '/';
+    }
+
+    resultElement.value = 'Result: ' + response.status + ' ' + 
+      response.statusText;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+&lt;/script&gt;
+</code></pre>
+<p>若要使用 JavaScript 为<a href="https://caniuse.com/#feat=fetch">不支持 Fetch API</a> 的客户端执行窗体发布，请使用以下方法之一：</p>
+<ul>
+<li><p>使用 Fetch Polyfill（例如，<a href="https://github.com/github/fetch">window.fetch polyfill (github/fetch)</a>）。</p>
+</li>
+<li><p>请使用 <code>XMLHttpRequest</code>。 例如： 。</p>
+<pre><code class="lang-javascript">&lt;script&gt;
+  &quot;use strict&quot;;
+
+  function AJAXSubmit (oFormElement) {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function(e) { 
+    oFormElement.elements.namedItem(&quot;result&quot;).value = 
+      'Result: ' + this.status + ' ' + this.statusText;
+    };
+    oReq.open(&quot;post&quot;, oFormElement.action);
+    oReq.send(new FormData(oFormElement));
+  }
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<p>为支持文件上传，HTML 窗体必须指定 <code>multipart/form-data</code> 的编码类型 (<code>enctype</code>)。</p>
+<p>要使 <code>files</code> 输入元素支持上传多个文件，请在 <code>&lt;input&gt;</code> 元素上提供 <code>multiple</code> 属性：</p>
+<pre><code class="lang-cshtml">&lt;input asp-for=&quot;FileUpload.FormFiles&quot; type=&quot;file&quot; multiple&gt;
+</code></pre>
+<p>上传到服务器的单个文件可使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 接口通过<a class="xref" href="model-binding.html">模型绑定</a>进行访问。 示例应用演示了数据库和物理存储方案的多个缓冲文件上传。</p>
+<p><a name="filename"></a></p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>除了显示和日志记录用途外，请勿使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的 <code>FileName</code> 属性  。 显示或日志记录时，HTML 对文件名进行编码。 攻击者可以提供恶意文件名，包括完整路径或相对路径。 应用程序应：</p>
+<ul>
+<li>从用户提供的文件名中删除路径。</li>
+<li>为 UI 或日志记录保存经 HTML 编码、已删除路径的文件名。</li>
+<li>生成新的随机文件名进行存储。</li>
+</ul>
+<p>以下代码可从文件名中删除路径：</p>
+<pre><code class="lang-csharp">string untrustedFileName = Path.GetFileName(pathName);
+</code></pre>
+<p>目前提供的示例未考虑安全注意事项。 以下各节及<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">示例应用</a>提供了其他信息：</p>
+<ul>
+<li><a href="#security-considerations">安全注意事项</a></li>
+<li><a href="#validation">验证</a></li>
+</ul>
+</div>
+<p>使用模型绑定和 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 上传文件时，操作方法可以接受以下内容：</p>
+<ul>
+<li>单个 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;。</li>
+<li>以下任何表示多个文件的集合：
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Http.IFormFileCollection&gt;</li>
+<li>&lt;xref:System.Collections.IEnumerable&gt;&lt;&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;&gt;</li>
+<li><a href="xref:System.Collections.Generic.List%601">成员列表</a>&lt;&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;&gt;</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>绑定根据名称匹配窗体文件。 例如，<code>&lt;input type=&quot;file&quot; name=&quot;formFile&quot;&gt;</code> 中的 HTML <code>name</code> 值必须与 C# 参数/属性绑定 (<code>FormFile</code>) 匹配。 有关详细信息，请参阅<a href="#match-name-attribute-value-to-parameter-name-of-post-method">使名称属性值与 POST 方法的参数名匹配</a>部分。</p>
+</div>
+<p>如下示例中：</p>
+<ul>
+<li>循环访问一个或多个上传的文件。</li>
+<li>使用 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 返回文件的完整路径，包括文件名称。</li>
+<li>使用应用生成的文件名将文件保存到本地文件系统。</li>
+<li>返回上传的文件的总数量和总大小。</li>
+</ul>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync(List&lt;IFormFile&gt; files)
+{
+    long size = files.Sum(f =&gt; f.Length);
+
+    foreach (var formFile in files)
+    {
+        if (formFile.Length &gt; 0)
+        {
+            var filePath = Path.GetTempFileName();
+
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+        }
+    }
+
+    // Process uploaded files
+    // Don't rely on or trust the FileName property without validation.
+
+    return Ok(new { count = files.Count, size });
+}
+</code></pre>
+<p>使用 <code>Path.GetRandomFileName</code> 生成文件名（不含路径）。 在下面的示例中，从配置获取路径：</p>
+<pre><code class="lang-csharp">foreach (var formFile in files)
+{
+    if (formFile.Length &gt; 0)
+    {
+        var filePath = Path.Combine(_config[&quot;StoredFilesPath&quot;], 
+            Path.GetRandomFileName());
+
+        using (var stream = System.IO.File.Create(filePath))
+        {
+            await formFile.CopyToAsync(stream);
+        }
+    }
+}
+</code></pre>
+<p>传递到  的路径必须包含文件名&lt;xref:System.IO.FileStream&gt;  。 如果未提供文件名，则会在运行时引发 &lt;xref:System.UnauthorizedAccessException&gt;。</p>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 技术上传的文件在处理之前会缓冲在内存中或服务器的磁盘中。 在操作方法中，&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 内容可作为 &lt;xref:System.IO.Stream&gt; 访问。 除本地文件系统之外，还可以将文件保存到网络共享或文件存储服务，如 <a href="/azure/visual-studio/vs-storage-aspnet5-getting-started-blobs">Azure Blob 存储</a>。</p>
+<p>若要查看循环访问要上传的多个文件并且使用安全文件名的其他示例，请参阅示例应用中的 Pages/BufferedMultipleFileUploadPhysical.cshtml.cs。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果在未删除先前临时文件的情况下创建了 65,535 个以上的文件，则 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 将抛出一个 &lt;xref:System.IO.IOException&gt;。 65,535 个文件限制是每个服务器的限制。 有关 Windows 操作系统上的此限制的详细信息，请参阅以下主题中的说明：</p>
+<ul>
+<li><a href="/windows/desktop/api/fileapi/nf-fileapi-gettempfilenamea#remarks">GetTempFileNameA 函数</a></li>
+<li>&lt;xref:System.IO.Path.GetTempFileName*&gt;</li>
+</ul>
+</div>
+<h3 id="upload-small-files-with-buffered-model-binding-to-a-database">使用缓冲的模型绑定将小型文件上传到数据库</h3>
+<p>要使用<a href="/ef/core/index">实体框架</a>将二进制文件数据存储在数据库中，请在实体上定义 &lt;xref:System.Byte&gt; 数组属性：</p>
+<pre><code class="lang-csharp">public class AppFile
+{
+    public int Id { get; set; }
+    public byte[] Content { get; set; }
+}
+</code></pre>
+<p>为包括 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的类指定页模型属性：</p>
+<pre><code class="lang-csharp">public class BufferedSingleFileUploadDbModel : PageModel
+{
+    ...
+
+    [BindProperty]
+    public BufferedSingleFileUploadDb FileUpload { get; set; }
+
+    ...
+}
+
+public class BufferedSingleFileUploadDb
+{
+    [Required]
+    [Display(Name=&quot;File&quot;)]
+    public IFormFile FormFile { get; set; }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 可以直接用作操作方法参数或绑定模型属性。 前面的示例使用绑定模型属性。</p>
+</div>
+<p><code>FileUpload</code>在 Razor 页面窗体中使用：</p>
+<pre><code class="lang-cshtml">&lt;form enctype=&quot;multipart/form-data&quot; method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label asp-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input asp-for=&quot;FileUpload.FormFile&quot; type=&quot;file&quot;&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;input asp-page-handler=&quot;Upload&quot; class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot;&gt;
+&lt;/form&gt;
+</code></pre>
+<p>将窗体发布到服务器后，将 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 复制到流，并将它作为字节数组保存在数据库中。 在下面的示例中，<code>_dbContext</code> 存储应用的数据库上下文：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync()
+{
+    using (var memoryStream = new MemoryStream())
+    {
+        await FileUpload.FormFile.CopyToAsync(memoryStream);
+
+        // Upload the file if less than 2 MB
+        if (memoryStream.Length &lt; 2097152)
+        {
+            var file = new AppFile()
+            {
+                Content = memoryStream.ToArray()
+            };
+
+            _dbContext.File.Add(file);
+
+            await _dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            ModelState.AddModelError(&quot;File&quot;, &quot;The file is too large.&quot;);
+        }
+    }
+
+    return Page();
+}
+</code></pre>
+<p>上面的示例与示例应用中演示的方案相似：</p>
+<ul>
+<li><em>Pages/BufferedSingleFileUploadDb.cshtml</em></li>
+<li><em>Pages/BufferedSingleFileUploadDb.cshtml.cs</em></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>在关系数据库中存储二进制数据时要格外小心，因为它可能对性能产生不利影响。</p>
+<p>切勿依赖或信任未经验证的 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的 <code>FileName</code> 属性。 只应将 <code>FileName</code> 属性用于显示用途，并且只应在进行 HTML 编码后使用它。</p>
+<p>提供的示例未考虑安全注意事项。 以下各节及<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">示例应用</a>提供了其他信息：</p>
+<ul>
+<li><a href="#security-considerations">安全注意事项</a></li>
+<li><a href="#validation">验证</a></li>
+</ul>
+</div>
+<h3 id="upload-large-files-with-streaming">通过流式传输上传大型文件</h3>
+<p>以下示例演示如何使用 JavaScript 将文件流式传输到控制器操作。 使用自定义筛选器属性生成文件的防伪令牌，并将其传递到客户端 HTTP 头中（而不是在请求正文中传递）。 由于操作方法直接处理上传的数据，所以其他自定义筛选器会禁用窗体模型绑定。 在该操作中，使用 <code>MultipartReader</code> 读取窗体的内容，它会读取每个单独的 <code>MultipartSection</code>，从而根据需要处理文件或存储内容。 读取多部分节后，该操作会执行自己的模型绑定。</p>
+<p>初始页面响应会加载窗体，并 cookie 通过属性) 将防伪标记保存在 (中 <code>GenerateAntiforgeryTokenCookieAttribute</code> 。 属性使用 ASP.NET Core 的内置 <a class="xref" href="../../security/anti-request-forgery.html">防伪支持</a> 来设置 cookie 具有请求令牌的：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 <code>DisableFormValueModelBindingAttribute</code> 禁用模型绑定：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中， <code>GenerateAntiforgeryTokenCookieAttribute</code> 和 <code>DisableFormValueModelBindingAttribute</code> <code>/StreamedSingleFileUploadDb</code> <code>/StreamedSingleFileUploadPhysical</code> <code>Startup.ConfigureServices</code> 使用<a class="xref" href="../../razor-pages/razor-pages-conventions.html"> Razor 页面约定</a>作为筛选器应用于和的页面应用程序模型：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>由于模型绑定不读取窗体，因此不绑定从窗体绑定的参数（查询、路由和标头继续运行）。 操作方法直接使用 <code>Request</code> 属性。 <code>MultipartReader</code> 用于读取每个节。 在 <code>KeyValueAccumulator</code> 中存储键值数据。 读取多部分节后，系统会使用 <code>KeyValueAccumulator</code> 的内容将窗体数据绑定到模型类型。</p>
+<p>使用 EF Core 流式传输到数据库的完整 <code>StreamingController.UploadDatabase</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MultipartRequestHelper</code> (Utilities/MultipartRequestHelper.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>流式传输到物理位置的完整 <code>StreamingController.UploadPhysical</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中，由 <code>FileHelpers.ProcessStreamedFile</code> 处理验证检查。</p>
+<h2 id="validation">验证</h2>
+<p>示例应用的 <code>FileHelpers</code> 类演示对缓冲 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 和流式传输文件上传的多项检查。 有关示例应用如何处理 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 缓冲文件上传的信息，请参阅 Utilities/FileHelpers.cs 文件中的 <code>ProcessFormFile</code> 方法。  有关如何处理流式传输的文件的信息，请参阅同一个文件中的 <code>ProcessStreamedFile</code> 方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>示例应用演示的验证处理方法不扫描上传的文件的内容。 在多数生产方案中，会先将病毒/恶意软件扫描程序 API 用于文件，然后再向用户或其他系统提供文件。</p>
+<p>尽管主题示例提供了验证技巧工作示例，但是如果不满足以下情况，请勿在生产应用中实现 <code>FileHelpers</code> 类：</p>
+<ul>
+<li>完全理解此实现。</li>
+<li>根据应用的环境和规范修改实现。</li>
+</ul>
+<p><strong>切勿未处理这些要求即随意在应用中实现安全代码。</strong></p>
+</div>
+<h3 id="content-validation">内容验证</h3>
+<p><strong>将第三方病毒/恶意软件扫描 API 用于上传的内容</strong> 。</p>
+<p>在大容量方案中，在服务器资源上扫描文件较为困难。 若文件扫描导致请求处理性能降低，请考虑将扫描工作卸载到<a class="xref" href="../../fundamentals/host/hosted-services.html">后台服务</a>，该服务可以是在应用服务器之外的服务器上运行的服务。 通常会将卸载的文件保留在隔离区，直至后台病毒扫描程序检查它们。 文件通过检查时，会将相应的文件移到常规的文件存储位置。 通常在执行这些步骤的同时，会提供指示文件扫描状态的数据库记录。 通过此方法，应用和应用服务器可以持续以响应请求为重点。</p>
+<h3 id="file-extension-validation">文件扩展名验证</h3>
+<p>应在允许的扩展名列表中查找上传的文件的扩展名。 例如： 。</p>
+<pre><code class="lang-csharp">private string[] permittedExtensions = { &quot;.txt&quot;, &quot;.pdf&quot; };
+
+var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
+
+if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+{
+    // The extension is invalid ... discontinue processing the file
+}
+</code></pre>
+<h3 id="file-signature-validation">文件签名验证</h3>
+<p>文件的签名由文件开头部分中的前几个字节确定。 可以使用这些字节指示扩展名是否与文件内容匹配。 示例应用检查一些常见文件类型的文件签名。 在下面的示例中，在文件上检查 JPEG 图像的文件签名：</p>
+<pre><code class="lang-csharp">private static readonly Dictionary&lt;string, List&lt;byte[]&gt;&gt; _fileSignature = 
+    new Dictionary&lt;string, List&lt;byte[]&gt;&gt;
+{
+    { &quot;.jpeg&quot;, new List&lt;byte[]&gt;
+        {
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 },
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE2 },
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE3 },
+        }
+    },
+};
+
+using (var reader = new BinaryReader(uploadedFileData))
+{
+    var signatures = _fileSignature[ext];
+    var headerBytes = reader.ReadBytes(signatures.Max(m =&gt; m.Length));
+
+    return signatures.Any(signature =&gt; 
+        headerBytes.Take(signature.Length).SequenceEqual(signature));
+}
+</code></pre>
+<p>若要获取其他文件签名，请参阅<a href="https://www.filesignatures.net/">文件签名数据库</a>和官方文件规范。</p>
+<h3 id="file-name-security">文件名安全</h3>
+<p>切勿使用客户端提供的文件名来将文件保存到物理存储。 使用 <a href="xref:System.IO.Path.GetRandomFileName*">Path.GetRandomFileName</a> 或 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 为文件创建安全的文件名，以创建完整路径（包括文件名）来执行临时存储。</p>
+<p>Razor 自动对属性值进行 HTML 编码以便显示。 以下代码安全可用：</p>
+<pre><code class="lang-cshtml">@foreach (var file in Model.DatabaseFiles) {
+    &lt;tr&gt;
+        &lt;td&gt;
+            @file.UntrustedName
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}
+</code></pre>
+<p>在之外 Razor ，始终 &lt;xref:System.Net.WebUtility.HtmlEncode*&gt; 根据用户的请求来命名内容。</p>
+<p>许多实现都必须包含关于文件是否存在的检查；否则文件会被使用相同名称的文件覆盖。 提供其他逻辑以符合应用的规范。</p>
+<h3 id="size-validation">大小验证</h3>
+<p>限制上传的文件的大小。</p>
+<p>在示例应用中，文件大小限制为 2 MB（以字节为单位）。 此限制是通过以下文件的 <a class="xref" href="../../fundamentals/configuration/index.html">配置</a> 提供的 <em>appsettings.json</em> ：</p>
+<pre><code class="lang-json">{
+  &quot;FileSizeLimit&quot;: 2097152
+}
+</code></pre>
+<p>将 <code>FileSizeLimit</code> 注入到 <code>PageModel</code> 类：</p>
+<pre><code class="lang-csharp">public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    private readonly long _fileSizeLimit;
+
+    public BufferedSingleFileUploadPhysicalModel(IConfiguration config)
+    {
+        _fileSizeLimit = config.GetValue&lt;long&gt;(&quot;FileSizeLimit&quot;);
+    }
+
+    ...
+}
+</code></pre>
+<p>文件大小超出限制时，将拒绝文件：</p>
+<pre><code class="lang-csharp">if (formFile.Length &gt; _fileSizeLimit)
+{
+    // The file is too large ... discontinue processing the file
+}
+</code></pre>
+<h3 id="match-name-attribute-value-to-parameter-name-of-post-method">使名称属性值与 POST 方法的参数名称匹配</h3>
+<p>在 Razor 发布窗体数据或直接使用 JavaScript 的非窗体中 <code>FormData</code> ，在窗体的元素中指定的名称或 <code>FormData</code> 必须与控制器的操作中参数的名称匹配。</p>
+<p>如下示例中：</p>
+<ul>
+<li><p>使用 <code>&lt;input&gt;</code> 元素时，将 <code>name</code> 属性设置为值 <code>battlePlans</code>：</p>
+<pre><code class="lang-html">&lt;input type=&quot;file&quot; name=&quot;battlePlans&quot; multiple&gt;
+</code></pre>
+</li>
+<li><p>使用 JavaScript <code>FormData</code> 时，将名称设置为值 <code>battlePlans</code>：</p>
+<pre><code class="lang-javascript">var formData = new FormData();
+
+for (var file in files) {
+  formData.append(&quot;battlePlans&quot;, file, file.name);
+}
+</code></pre>
+</li>
+</ul>
+<p>将匹配的名称用于 C# 方法的参数 (<code>battlePlans</code>)：</p>
+<ul>
+<li><p>对于名为的页 Razor 页面处理程序方法 <code>Upload</code> ：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync(List&lt;IFormFile&gt; battlePlans)
+</code></pre>
+</li>
+<li><p>对于 MVC POST 控制器操作方法：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; Post(List&lt;IFormFile&gt; battlePlans)
+</code></pre>
+</li>
+</ul>
+<h2 id="server-and-app-configuration">服务器和应用程序配置</h2>
+<h3 id="multipart-body-length-limit">多部分正文长度限制</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt; 设置每个多部分正文的长度限制。 分析超出此限制的窗体部分时，会引发 &lt;xref:System.IO.InvalidDataException&gt;。 默认值为 134,217,728 (128 MB)。 使用 <code>Startup.ConfigureServices</code> 中的 &lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt; 设置自定义此限制：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.Configure&lt;FormOptions&gt;(options =&gt;
+    {
+        // Set the limit to 256 MB
+        options.MultipartBodyLengthLimit = 268435456;
+    });
+}
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestFormLimitsAttribute&gt; 设置单个页面或操作的 &lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt;。</p>
+<p>在 Razor 页面应用中，将筛选器应用于中的 <a class="xref" href="../../razor-pages/razor-pages-conventions.html">约定</a> <code>Startup.ConfigureServices</code> ：</p>
+<pre><code class="lang-csharp">services.AddRazorPages(options =&gt;
+{
+    options.Conventions
+        .AddPageApplicationModelConvention(&quot;/FileUploadPage&quot;,
+            model.Filters.Add(
+                new RequestFormLimitsAttribute()
+                {
+                    // Set the limit to 256 MB
+                    MultipartBodyLengthLimit = 268435456
+                });
+});
+</code></pre>
+<p>在 Razor 页面应用或 MVC 应用中，将筛选器应用于页面模型或操作方法：</p>
+<pre><code class="lang-csharp">// Set the limit to 256 MB
+[RequestFormLimits(MultipartBodyLengthLimit = 268435456)]
+public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    ...
+}
+</code></pre>
+<h3 id="kestrel-maximum-request-body-size">Kestrel 最大请求正文大小</h3>
+<p>对于 Kestrel 托管的应用，默认的最大请求正文大小为 30,000,000 个字节，约为 28.6 MB。 使用 <a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-request-body-size">MaxRequestBodySize</a> Kestrel 服务器选项自定义限制：</p>
+<pre><code class="lang-csharp">public static IHostBuilder CreateHostBuilder(string[] args) =&gt;
+    Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webBuilder =&gt;
+        {
+            webBuilder.ConfigureKestrel((context, options) =&gt;
+            {
+                // Handle requests up to 50 MB
+                options.Limits.MaxRequestBodySize = 52428800;
+            })
+            .UseStartup&lt;Startup&gt;();
+        });
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 设置单个页面或操作的 <a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-request-body-size">MaxRequestBodySize</a>。</p>
+<p>在 Razor 页面应用中，将筛选器应用于中的 <a class="xref" href="../../razor-pages/razor-pages-conventions.html">约定</a> <code>Startup.ConfigureServices</code> ：</p>
+<pre><code class="lang-csharp">services.AddRazorPages(options =&gt;
+{
+    options.Conventions
+        .AddPageApplicationModelConvention(&quot;/FileUploadPage&quot;,
+            model =&gt;
+            {
+                // Handle requests up to 50 MB
+                model.Filters.Add(
+                    new RequestSizeLimitAttribute(52428800));
+            });
+});
+</code></pre>
+<p>在 Razor 页面应用或 MVC 应用中，将筛选器应用于页面处理程序类或操作方法：</p>
+<pre><code class="lang-csharp">// Handle requests up to 50 MB
+[RequestSizeLimit(52428800)]
+public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    ...
+}
+</code></pre>
+<p><code>RequestSizeLimitAttribute</code>还可以使用 <a class="xref" href="../views/razor.html#attribute"><code>@attribute</code></a> Razor 指令应用：</p>
+<pre><code class="lang-cshtml">@attribute [RequestSizeLimitAttribute(52428800)]
+</code></pre>
+<h3 id="other-kestrel-limits">其他 Kestrel 限制</h3>
+<p>其他 Kestrel 限制可能适用于 Kestrel 托管的应用：</p>
+<ul>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-client-connections">客户端最大连接数</a></li>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#minimum-request-body-data-rate">请求和响应数据速率</a></li>
+</ul>
+<h3 id="iis">IIS</h3>
+<p>默认请求限制 (<code>maxAllowedContentLength</code>) 为30000000字节，即约 28.6 MB。 自定义文件中的限制 <code>web.config</code> 。 在下面的示例中，将限制设置为 50 MB (52428800 字节) ：</p>
+<pre><code class="lang-xml">&lt;system.webServer&gt;
+  &lt;security&gt;
+    &lt;requestFiltering&gt;
+      &lt;requestLimits maxAllowedContentLength=&quot;52428800&quot; /&gt;
+    &lt;/requestFiltering&gt;
+  &lt;/security&gt;
+&lt;/system.webServer&gt;
+</code></pre>
+<p>此 <code>maxAllowedContentLength</code> 设置仅适用于 IIS。 有关详细信息，请参阅<a href="/iis/configuration/system.webServer/security/requestFiltering/requestLimits/">请求 <code>&lt;requestLimits&gt;</code> 限制</a>。</p>
+<h2 id="troubleshoot">疑难解答</h2>
+<p>以下是上传文件时遇到的一些常见问题及其可能的解决方案。</p>
+<h3 id="not-found-error-when-deployed-to-an-iis-server">部署到 IIS 服务器时出现“找不到”错误</h3>
+<p>以下错误表示上传的文件超过服务器配置的内容长度：</p>
+<pre><code>HTTP 404.13 - Not Found
+The request filtering module is configured to deny a request that exceeds the request content length.
+</code></pre>
+<p>有关详细信息，请参阅 <a href="#iis">IIS</a> 部分。</p>
+<h3 id="connection-failure">连接失败</h3>
+<p>连接错误和重置服务器连接可能表示上传的文件超出 Kestrel 的最大请求正文大小。 有关详细信息，请参阅 <a href="#kestrel-maximum-request-body-size">Kestrel 最大请求正文大小</a>部分。 可能还需要调整 Kestrel 客户端连接限制。</p>
+<h3 id="null-reference-exception-with-iformfile">IFormFile 的空引用异常</h3>
+<p>如果控制器正在接受使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 上传的文件，但该值为 <code>null</code>，请确认 HTML 窗体指定的 <code>multipart/form-data</code> 值是否为 <code>enctype</code>。 如果未在 <code>&lt;form&gt;</code> 元素上设置此属性，则不会发生文件上传，并且任何绑定的 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 参数都为 <code>null</code>。 此外，请确认<a href="#match-name-attribute-value-to-parameter-name-of-post-method">窗体数据中的上传命名是否与应用的命名相匹配</a>。</p>
+<h3 id="stream-was-too-long">数据流太长</h3>
+<p>本主题中的示例依赖于 &lt;xref:System.IO.MemoryStream&gt; 来保存已上传的文件的内容。 <code>MemoryStream</code> 的大小限制为 <code>int.MaxValue</code>。 如果应用的文件上传方案要求保存大于 50 MB 的文件内容，请使用另一种方法，该方法不依赖单个 <code>MemoryStream</code> 来保存已上传文件的内容。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0 &lt; aspnetcore-5.0">
+<p>ASP.NET Core 支持使用缓冲的模型绑定（针对较小文件）和无缓冲的流式传输（针对较大文件）上传一个或多个文件。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="security-considerations">安全注意事项</h2>
+<p>向用户提供向服务器上传文件的功能时，必须格外小心。 攻击者可能会尝试执行以下操作：</p>
+<ul>
+<li>执行<a href="/windows-hardware/drivers/ifs/denial-of-service">拒绝服务</a>攻击。</li>
+<li>上传病毒或恶意软件。</li>
+<li>以其他方式破坏网络和服务器。</li>
+</ul>
+<p>降低成功攻击可能性的安全措施如下：</p>
+<ul>
+<li>将文件上传到专用文件上传区域，最好是非系统驱动器。 使用专用位置便于对上传的文件实施安全限制。 禁用对文件上传位置的执行权限。†</li>
+<li>请勿将上传的文件保存在与应用相同的目录树中  。†</li>
+<li>使用应用确定的安全的文件名。 请勿使用用户提供的文件名或上载文件的不受信任的文件名。 † 显示时，HTML 对不受信任的文件名进行编码。 例如，记录文件名或在 UI 中显示 (Razor 会自动对输出) 进行 HTML 编码。</li>
+<li>仅允许应用设计规范的已批准文件扩展名。† <!-- * Check the file format signature to prevent a user from uploading a masqueraded file.&dagger; For example, don't permit a user to upload an *.exe* file with a *.txt* extension. Add this back when we get instructions how to do this.  --></li>
+<li>验证是否在服务器上执行了客户端检查。 † 客户端检查很容易规避。</li>
+<li>检查已上传文件的大小。 设置大小上限以防止上传大型文件。†</li>
+<li>文件不应该被具有相同名称的上传文件覆盖时，先在数据库或物理存储上检查文件名，然后再上传文件。</li>
+<li><strong>先对上传的内容运行病毒/恶意软件扫描程序，然后再存储文件。</strong></li>
+</ul>
+<p>†示例应用演示了符合条件的方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>将恶意代码上传到系统通常是执行代码的第一步，这些代码可以：</p>
+<ul>
+<li>完全获得对系统的控制权限。</li>
+<li>重载系统，导致系统崩溃。</li>
+<li>泄露用户或系统数据。</li>
+<li>将涂鸦应用于公共 UI。</li>
+</ul>
+<p>有关在接受用户文件时减少攻击外围应用的信息，请参阅以下资源：</p>
+<ul>
+<li><a href="https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload">Unrestricted File Upload</a>（不受限制的文件上传）</li>
+<li><a href="/azure/security/azure-security-threat-modeling-tool-input-validation#controls-users">Azure 安全性：确保在接受用户文件时采取适当的控制措施</a></li>
+</ul>
+</div>
+<p>有关实现安全措施（包括示例应用中的示例）的详细信息，请参阅<a href="#validation">验证</a>部分。</p>
+<h2 id="storage-scenarios">存储方案</h2>
+<p>常见的文件存储选项有：</p>
+<ul>
+<li><p>数据库</p>
+<ul>
+<li>对于小型文件上传，数据库通常快于物理存储（文件系统或网络共享）选项。</li>
+<li>相对于物理存储选项，数据库通常更为便利，因为检索数据库记录来获取用户数据可同时提供文件内容（如头像图像）。</li>
+<li>相对于使用数据存储服务，数据库的成本可能更低。</li>
+</ul>
+</li>
+<li><p>物理存储（文件系统或网络共享）</p>
+<ul>
+<li>对于大型文件上传：
+<ul>
+<li>数据库限制可能会限制上传的大小。</li>
+<li>相对于数据库存储，物理存储通常成本更高。</li>
+</ul>
+</li>
+<li>相对于使用数据存储服务，物理存储的成本可能更低。</li>
+<li>应用的进程必须具有存储位置的读写权限。 切勿授予执行权限。</li>
+</ul>
+</li>
+<li><p>数据存储服务（例如，<a href="https://azure.microsoft.com/services/storage/blobs/">Azure Blob 存储</a>）</p>
+<ul>
+<li>服务通常通过本地解决方案提供提升的可伸缩性和复原能力，而它们往往受单一故障点的影响。</li>
+<li>在大型存储基础结构方案中，服务的成本可能更低。</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="/azure/storage/blobs/storage-quickstart-blobs-dotnet">快速入门：使用 .net 在对象存储中创建 blob</a>。</p>
+</li>
+</ul>
+<h2 id="file-upload-scenarios">文件上传方案</h2>
+<p>缓冲和流式传输是上传文件的两种常见方法。</p>
+<p><strong>缓冲</strong></p>
+<p>整个文件读入 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;，它是文件的 C# 表示形式，用于处理或保存文件。</p>
+<p>文件上传所用的资源（磁盘、内存）取决于并发文件上传的数量和大小。 如果应用尝试缓冲过多上传，站点就会在内存或磁盘空间不足时崩溃。 如果文件上传的大小或频率会消耗应用资源，请使用流式传输。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>会将大于 64 KB 的所有单个缓冲文件从内存移到磁盘的临时文件。</p>
+</div>
+<p>本主题的以下部分介绍了如何缓冲小型文件：</p>
+<ul>
+<li><a href="#upload-small-files-with-buffered-model-binding-to-physical-storage">物理存储</a></li>
+<li><a href="#upload-small-files-with-buffered-model-binding-to-a-database">Database</a></li>
+</ul>
+<p><strong>流式处理</strong></p>
+<p>从多部分请求收到文件，然后应用直接处理或保存它。 流式传输无法显著提高性能。 流式传输可降低上传文件时对内存或磁盘空间的需求。</p>
+<p><a href="#upload-large-files-with-streaming">通过流式传输上传大型文件</a>部分介绍了如何流式传输大型文件。</p>
+<h3 id="upload-small-files-with-buffered-model-binding-to-physical-storage">通过缓冲的模型绑定将小型文件上传到物理存储</h3>
+<p>要上传小文件，请使用多部分窗体或使用 JavaScript 构造 POST 请求。</p>
+<p>下面的示例演示 Razor 如何使用页面窗体上传示例应用) 中的单个文件 ( <em>Pages/BufferedSingleFileUploadPhysical</em> ：</p>
+<pre><code class="lang-cshtml">&lt;form enctype=&quot;multipart/form-data&quot; method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label asp-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input asp-for=&quot;FileUpload.FormFile&quot; type=&quot;file&quot;&gt;
+            &lt;span asp-validation-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/span&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;input asp-page-handler=&quot;Upload&quot; class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot; /&gt;
+&lt;/form&gt;
+</code></pre>
+<p>下面的示例与前面的示例类似，不同之处在于：</p>
+<ul>
+<li>使用 JavaScript (<a href="https://developer.mozilla.org/docs/Web/API/Fetch_API">Fetch API</a>) 提交窗体的数据。</li>
+<li>无验证。</li>
+</ul>
+<pre><code class="lang-cshtml">&lt;form action=&quot;BufferedSingleFileUploadPhysical/?handler=Upload&quot; 
+      enctype=&quot;multipart/form-data&quot; onsubmit=&quot;AJAXSubmit(this);return false;&quot; 
+      method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label for=&quot;FileUpload_FormFile&quot;&gt;File&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input id=&quot;FileUpload_FormFile&quot; type=&quot;file&quot; 
+                name=&quot;FileUpload.FormFile&quot; /&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+
+    &lt;input class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot; /&gt;
+
+    &lt;div style=&quot;margin-top:15px&quot;&gt;
+        &lt;output name=&quot;result&quot;&gt;&lt;/output&gt;
+    &lt;/div&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  async function AJAXSubmit (oFormElement) {
+    var resultElement = oFormElement.elements.namedItem(&quot;result&quot;);
+    const formData = new FormData(oFormElement);
+
+    try {
+    const response = await fetch(oFormElement.action, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      window.location.href = '/';
+    }
+
+    resultElement.value = 'Result: ' + response.status + ' ' + 
+      response.statusText;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+&lt;/script&gt;
+</code></pre>
+<p>若要使用 JavaScript 为<a href="https://caniuse.com/#feat=fetch">不支持 Fetch API</a> 的客户端执行窗体发布，请使用以下方法之一：</p>
+<ul>
+<li><p>使用 Fetch Polyfill（例如，<a href="https://github.com/github/fetch">window.fetch polyfill (github/fetch)</a>）。</p>
+</li>
+<li><p>请使用 <code>XMLHttpRequest</code>。 例如： 。</p>
+<pre><code class="lang-javascript">&lt;script&gt;
+  &quot;use strict&quot;;
+
+  function AJAXSubmit (oFormElement) {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function(e) { 
+    oFormElement.elements.namedItem(&quot;result&quot;).value = 
+      'Result: ' + this.status + ' ' + this.statusText;
+    };
+    oReq.open(&quot;post&quot;, oFormElement.action);
+    oReq.send(new FormData(oFormElement));
+  }
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<p>为支持文件上传，HTML 窗体必须指定 <code>multipart/form-data</code> 的编码类型 (<code>enctype</code>)。</p>
+<p>要使 <code>files</code> 输入元素支持上传多个文件，请在 <code>&lt;input&gt;</code> 元素上提供 <code>multiple</code> 属性：</p>
+<pre><code class="lang-cshtml">&lt;input asp-for=&quot;FileUpload.FormFiles&quot; type=&quot;file&quot; multiple&gt;
+</code></pre>
+<p>上传到服务器的单个文件可使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 接口通过<a class="xref" href="model-binding.html">模型绑定</a>进行访问。 示例应用演示了数据库和物理存储方案的多个缓冲文件上传。</p>
+<p><a name="filename"></a></p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>除了显示和日志记录用途外，请勿使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的 <code>FileName</code> 属性  。 显示或日志记录时，HTML 对文件名进行编码。 攻击者可以提供恶意文件名，包括完整路径或相对路径。 应用程序应：</p>
+<ul>
+<li>从用户提供的文件名中删除路径。</li>
+<li>为 UI 或日志记录保存经 HTML 编码、已删除路径的文件名。</li>
+<li>生成新的随机文件名进行存储。</li>
+</ul>
+<p>以下代码可从文件名中删除路径：</p>
+<pre><code class="lang-csharp">string untrustedFileName = Path.GetFileName(pathName);
+</code></pre>
+<p>目前提供的示例未考虑安全注意事项。 以下各节及<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">示例应用</a>提供了其他信息：</p>
+<ul>
+<li><a href="#security-considerations">安全注意事项</a></li>
+<li><a href="#validation">验证</a></li>
+</ul>
+</div>
+<p>使用模型绑定和 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 上传文件时，操作方法可以接受以下内容：</p>
+<ul>
+<li>单个 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;。</li>
+<li>以下任何表示多个文件的集合：
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Http.IFormFileCollection&gt;</li>
+<li>&lt;xref:System.Collections.IEnumerable&gt;&lt;&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;&gt;</li>
+<li><a href="xref:System.Collections.Generic.List%601">成员列表</a>&lt;&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;&gt;</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>绑定根据名称匹配窗体文件。 例如，<code>&lt;input type=&quot;file&quot; name=&quot;formFile&quot;&gt;</code> 中的 HTML <code>name</code> 值必须与 C# 参数/属性绑定 (<code>FormFile</code>) 匹配。 有关详细信息，请参阅<a href="#match-name-attribute-value-to-parameter-name-of-post-method">使名称属性值与 POST 方法的参数名匹配</a>部分。</p>
+</div>
+<p>如下示例中：</p>
+<ul>
+<li>循环访问一个或多个上传的文件。</li>
+<li>使用 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 返回文件的完整路径，包括文件名称。</li>
+<li>使用应用生成的文件名将文件保存到本地文件系统。</li>
+<li>返回上传的文件的总数量和总大小。</li>
+</ul>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync(List&lt;IFormFile&gt; files)
+{
+    long size = files.Sum(f =&gt; f.Length);
+
+    foreach (var formFile in files)
+    {
+        if (formFile.Length &gt; 0)
+        {
+            var filePath = Path.GetTempFileName();
+
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+        }
+    }
+
+    // Process uploaded files
+    // Don't rely on or trust the FileName property without validation.
+
+    return Ok(new { count = files.Count, size });
+}
+</code></pre>
+<p>使用 <code>Path.GetRandomFileName</code> 生成文件名（不含路径）。 在下面的示例中，从配置获取路径：</p>
+<pre><code class="lang-csharp">foreach (var formFile in files)
+{
+    if (formFile.Length &gt; 0)
+    {
+        var filePath = Path.Combine(_config[&quot;StoredFilesPath&quot;], 
+            Path.GetRandomFileName());
+
+        using (var stream = System.IO.File.Create(filePath))
+        {
+            await formFile.CopyToAsync(stream);
+        }
+    }
+}
+</code></pre>
+<p>传递到  的路径必须包含文件名&lt;xref:System.IO.FileStream&gt;  。 如果未提供文件名，则会在运行时引发 &lt;xref:System.UnauthorizedAccessException&gt;。</p>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 技术上传的文件在处理之前会缓冲在内存中或服务器的磁盘中。 在操作方法中，&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 内容可作为 &lt;xref:System.IO.Stream&gt; 访问。 除本地文件系统之外，还可以将文件保存到网络共享或文件存储服务，如 <a href="/azure/visual-studio/vs-storage-aspnet5-getting-started-blobs">Azure Blob 存储</a>。</p>
+<p>若要查看循环访问要上传的多个文件并且使用安全文件名的其他示例，请参阅示例应用中的 Pages/BufferedMultipleFileUploadPhysical.cshtml.cs。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果在未删除先前临时文件的情况下创建了 65,535 个以上的文件，则 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 将抛出一个 &lt;xref:System.IO.IOException&gt;。 65,535 个文件限制是每个服务器的限制。 有关 Windows 操作系统上的此限制的详细信息，请参阅以下主题中的说明：</p>
+<ul>
+<li><a href="/windows/desktop/api/fileapi/nf-fileapi-gettempfilenamea#remarks">GetTempFileNameA 函数</a></li>
+<li>&lt;xref:System.IO.Path.GetTempFileName*&gt;</li>
+</ul>
+</div>
+<h3 id="upload-small-files-with-buffered-model-binding-to-a-database">使用缓冲的模型绑定将小型文件上传到数据库</h3>
+<p>要使用<a href="/ef/core/index">实体框架</a>将二进制文件数据存储在数据库中，请在实体上定义 &lt;xref:System.Byte&gt; 数组属性：</p>
+<pre><code class="lang-csharp">public class AppFile
+{
+    public int Id { get; set; }
+    public byte[] Content { get; set; }
+}
+</code></pre>
+<p>为包括 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的类指定页模型属性：</p>
+<pre><code class="lang-csharp">public class BufferedSingleFileUploadDbModel : PageModel
+{
+    ...
+
+    [BindProperty]
+    public BufferedSingleFileUploadDb FileUpload { get; set; }
+
+    ...
+}
+
+public class BufferedSingleFileUploadDb
+{
+    [Required]
+    [Display(Name=&quot;File&quot;)]
+    public IFormFile FormFile { get; set; }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 可以直接用作操作方法参数或绑定模型属性。 前面的示例使用绑定模型属性。</p>
+</div>
+<p><code>FileUpload</code>在 Razor 页面窗体中使用：</p>
+<pre><code class="lang-cshtml">&lt;form enctype=&quot;multipart/form-data&quot; method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label asp-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input asp-for=&quot;FileUpload.FormFile&quot; type=&quot;file&quot;&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;input asp-page-handler=&quot;Upload&quot; class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot;&gt;
+&lt;/form&gt;
+</code></pre>
+<p>将窗体发布到服务器后，将 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 复制到流，并将它作为字节数组保存在数据库中。 在下面的示例中，<code>_dbContext</code> 存储应用的数据库上下文：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync()
+{
+    using (var memoryStream = new MemoryStream())
+    {
+        await FileUpload.FormFile.CopyToAsync(memoryStream);
+
+        // Upload the file if less than 2 MB
+        if (memoryStream.Length &lt; 2097152)
+        {
+            var file = new AppFile()
+            {
+                Content = memoryStream.ToArray()
+            };
+
+            _dbContext.File.Add(file);
+
+            await _dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            ModelState.AddModelError(&quot;File&quot;, &quot;The file is too large.&quot;);
+        }
+    }
+
+    return Page();
+}
+</code></pre>
+<p>上面的示例与示例应用中演示的方案相似：</p>
+<ul>
+<li><em>Pages/BufferedSingleFileUploadDb.cshtml</em></li>
+<li><em>Pages/BufferedSingleFileUploadDb.cshtml.cs</em></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>在关系数据库中存储二进制数据时要格外小心，因为它可能对性能产生不利影响。</p>
+<p>切勿依赖或信任未经验证的 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的 <code>FileName</code> 属性。 只应将 <code>FileName</code> 属性用于显示用途，并且只应在进行 HTML 编码后使用它。</p>
+<p>提供的示例未考虑安全注意事项。 以下各节及<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">示例应用</a>提供了其他信息：</p>
+<ul>
+<li><a href="#security-considerations">安全注意事项</a></li>
+<li><a href="#validation">验证</a></li>
+</ul>
+</div>
+<h3 id="upload-large-files-with-streaming">通过流式传输上传大型文件</h3>
+<p>以下示例演示如何使用 JavaScript 将文件流式传输到控制器操作。 使用自定义筛选器属性生成文件的防伪令牌，并将其传递到客户端 HTTP 头中（而不是在请求正文中传递）。 由于操作方法直接处理上传的数据，所以其他自定义筛选器会禁用窗体模型绑定。 在该操作中，使用 <code>MultipartReader</code> 读取窗体的内容，它会读取每个单独的 <code>MultipartSection</code>，从而根据需要处理文件或存储内容。 读取多部分节后，该操作会执行自己的模型绑定。</p>
+<p>初始页面响应会加载窗体，并 cookie 通过属性) 将防伪标记保存在 (中 <code>GenerateAntiforgeryTokenCookieAttribute</code> 。 属性使用 ASP.NET Core 的内置 <a class="xref" href="../../security/anti-request-forgery.html">防伪支持</a> 来设置 cookie 具有请求令牌的：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 <code>DisableFormValueModelBindingAttribute</code> 禁用模型绑定：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中， <code>GenerateAntiforgeryTokenCookieAttribute</code> 和 <code>DisableFormValueModelBindingAttribute</code> <code>/StreamedSingleFileUploadDb</code> <code>/StreamedSingleFileUploadPhysical</code> <code>Startup.ConfigureServices</code> 使用<a class="xref" href="../../razor-pages/razor-pages-conventions.html"> Razor 页面约定</a>作为筛选器应用于和的页面应用程序模型：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>由于模型绑定不读取窗体，因此不绑定从窗体绑定的参数（查询、路由和标头继续运行）。 操作方法直接使用 <code>Request</code> 属性。 <code>MultipartReader</code> 用于读取每个节。 在 <code>KeyValueAccumulator</code> 中存储键值数据。 读取多部分节后，系统会使用 <code>KeyValueAccumulator</code> 的内容将窗体数据绑定到模型类型。</p>
+<p>使用 EF Core 流式传输到数据库的完整 <code>StreamingController.UploadDatabase</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MultipartRequestHelper</code> (Utilities/MultipartRequestHelper.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>流式传输到物理位置的完整 <code>StreamingController.UploadPhysical</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中，由 <code>FileHelpers.ProcessStreamedFile</code> 处理验证检查。</p>
+<h2 id="validation">验证</h2>
+<p>示例应用的 <code>FileHelpers</code> 类演示对缓冲 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 和流式传输文件上传的多项检查。 有关示例应用如何处理 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 缓冲文件上传的信息，请参阅 Utilities/FileHelpers.cs 文件中的 <code>ProcessFormFile</code> 方法。  有关如何处理流式传输的文件的信息，请参阅同一个文件中的 <code>ProcessStreamedFile</code> 方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>示例应用演示的验证处理方法不扫描上传的文件的内容。 在多数生产方案中，会先将病毒/恶意软件扫描程序 API 用于文件，然后再向用户或其他系统提供文件。</p>
+<p>尽管主题示例提供了验证技巧工作示例，但是如果不满足以下情况，请勿在生产应用中实现 <code>FileHelpers</code> 类：</p>
+<ul>
+<li>完全理解此实现。</li>
+<li>根据应用的环境和规范修改实现。</li>
+</ul>
+<p><strong>切勿未处理这些要求即随意在应用中实现安全代码。</strong></p>
+</div>
+<h3 id="content-validation">内容验证</h3>
+<p><strong>将第三方病毒/恶意软件扫描 API 用于上传的内容</strong> 。</p>
+<p>在大容量方案中，在服务器资源上扫描文件较为困难。 若文件扫描导致请求处理性能降低，请考虑将扫描工作卸载到<a class="xref" href="../../fundamentals/host/hosted-services.html">后台服务</a>，该服务可以是在应用服务器之外的服务器上运行的服务。 通常会将卸载的文件保留在隔离区，直至后台病毒扫描程序检查它们。 文件通过检查时，会将相应的文件移到常规的文件存储位置。 通常在执行这些步骤的同时，会提供指示文件扫描状态的数据库记录。 通过此方法，应用和应用服务器可以持续以响应请求为重点。</p>
+<h3 id="file-extension-validation">文件扩展名验证</h3>
+<p>应在允许的扩展名列表中查找上传的文件的扩展名。 例如： 。</p>
+<pre><code class="lang-csharp">private string[] permittedExtensions = { &quot;.txt&quot;, &quot;.pdf&quot; };
+
+var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
+
+if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+{
+    // The extension is invalid ... discontinue processing the file
+}
+</code></pre>
+<h3 id="file-signature-validation">文件签名验证</h3>
+<p>文件的签名由文件开头部分中的前几个字节确定。 可以使用这些字节指示扩展名是否与文件内容匹配。 示例应用检查一些常见文件类型的文件签名。 在下面的示例中，在文件上检查 JPEG 图像的文件签名：</p>
+<pre><code class="lang-csharp">private static readonly Dictionary&lt;string, List&lt;byte[]&gt;&gt; _fileSignature = 
+    new Dictionary&lt;string, List&lt;byte[]&gt;&gt;
+{
+    { &quot;.jpeg&quot;, new List&lt;byte[]&gt;
+        {
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 },
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE2 },
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE3 },
+        }
+    },
+};
+
+using (var reader = new BinaryReader(uploadedFileData))
+{
+    var signatures = _fileSignature[ext];
+    var headerBytes = reader.ReadBytes(signatures.Max(m =&gt; m.Length));
+
+    return signatures.Any(signature =&gt; 
+        headerBytes.Take(signature.Length).SequenceEqual(signature));
+}
+</code></pre>
+<p>若要获取其他文件签名，请参阅<a href="https://www.filesignatures.net/">文件签名数据库</a>和官方文件规范。</p>
+<h3 id="file-name-security">文件名安全</h3>
+<p>切勿使用客户端提供的文件名来将文件保存到物理存储。 使用 <a href="xref:System.IO.Path.GetRandomFileName*">Path.GetRandomFileName</a> 或 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 为文件创建安全的文件名，以创建完整路径（包括文件名）来执行临时存储。</p>
+<p>Razor 自动对属性值进行 HTML 编码以便显示。 以下代码安全可用：</p>
+<pre><code class="lang-cshtml">@foreach (var file in Model.DatabaseFiles) {
+    &lt;tr&gt;
+        &lt;td&gt;
+            @file.UntrustedName
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}
+</code></pre>
+<p>在之外 Razor ，始终 &lt;xref:System.Net.WebUtility.HtmlEncode*&gt; 根据用户的请求来命名内容。</p>
+<p>许多实现都必须包含关于文件是否存在的检查；否则文件会被使用相同名称的文件覆盖。 提供其他逻辑以符合应用的规范。</p>
+<h3 id="size-validation">大小验证</h3>
+<p>限制上传的文件的大小。</p>
+<p>在示例应用中，文件大小限制为 2 MB（以字节为单位）。 此限制是通过以下文件的 <a class="xref" href="../../fundamentals/configuration/index.html">配置</a> 提供的 <em>appsettings.json</em> ：</p>
+<pre><code class="lang-json">{
+  &quot;FileSizeLimit&quot;: 2097152
+}
+</code></pre>
+<p>将 <code>FileSizeLimit</code> 注入到 <code>PageModel</code> 类：</p>
+<pre><code class="lang-csharp">public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    private readonly long _fileSizeLimit;
+
+    public BufferedSingleFileUploadPhysicalModel(IConfiguration config)
+    {
+        _fileSizeLimit = config.GetValue&lt;long&gt;(&quot;FileSizeLimit&quot;);
+    }
+
+    ...
+}
+</code></pre>
+<p>文件大小超出限制时，将拒绝文件：</p>
+<pre><code class="lang-csharp">if (formFile.Length &gt; _fileSizeLimit)
+{
+    // The file is too large ... discontinue processing the file
+}
+</code></pre>
+<h3 id="match-name-attribute-value-to-parameter-name-of-post-method">使名称属性值与 POST 方法的参数名称匹配</h3>
+<p>在 Razor 发布窗体数据或直接使用 JavaScript 的非窗体中 <code>FormData</code> ，在窗体的元素中指定的名称或 <code>FormData</code> 必须与控制器的操作中参数的名称匹配。</p>
+<p>如下示例中：</p>
+<ul>
+<li><p>使用 <code>&lt;input&gt;</code> 元素时，将 <code>name</code> 属性设置为值 <code>battlePlans</code>：</p>
+<pre><code class="lang-html">&lt;input type=&quot;file&quot; name=&quot;battlePlans&quot; multiple&gt;
+</code></pre>
+</li>
+<li><p>使用 JavaScript <code>FormData</code> 时，将名称设置为值 <code>battlePlans</code>：</p>
+<pre><code class="lang-javascript">var formData = new FormData();
+
+for (var file in files) {
+  formData.append(&quot;battlePlans&quot;, file, file.name);
+}
+</code></pre>
+</li>
+</ul>
+<p>将匹配的名称用于 C# 方法的参数 (<code>battlePlans</code>)：</p>
+<ul>
+<li><p>对于名为的页 Razor 页面处理程序方法 <code>Upload</code> ：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync(List&lt;IFormFile&gt; battlePlans)
+</code></pre>
+</li>
+<li><p>对于 MVC POST 控制器操作方法：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; Post(List&lt;IFormFile&gt; battlePlans)
+</code></pre>
+</li>
+</ul>
+<h2 id="server-and-app-configuration">服务器和应用程序配置</h2>
+<h3 id="multipart-body-length-limit">多部分正文长度限制</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt; 设置每个多部分正文的长度限制。 分析超出此限制的窗体部分时，会引发 &lt;xref:System.IO.InvalidDataException&gt;。 默认值为 134,217,728 (128 MB)。 使用 <code>Startup.ConfigureServices</code> 中的 &lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt; 设置自定义此限制：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.Configure&lt;FormOptions&gt;(options =&gt;
+    {
+        // Set the limit to 256 MB
+        options.MultipartBodyLengthLimit = 268435456;
+    });
+}
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestFormLimitsAttribute&gt; 设置单个页面或操作的 &lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt;。</p>
+<p>在 Razor 页面应用中，将筛选器应用于中的 <a class="xref" href="../../razor-pages/razor-pages-conventions.html">约定</a> <code>Startup.ConfigureServices</code> ：</p>
+<pre><code class="lang-csharp">services.AddRazorPages(options =&gt;
+{
+    options.Conventions
+        .AddPageApplicationModelConvention(&quot;/FileUploadPage&quot;,
+            model.Filters.Add(
+                new RequestFormLimitsAttribute()
+                {
+                    // Set the limit to 256 MB
+                    MultipartBodyLengthLimit = 268435456
+                });
+});
+</code></pre>
+<p>在 Razor 页面应用或 MVC 应用中，将筛选器应用于页面模型或操作方法：</p>
+<pre><code class="lang-csharp">// Set the limit to 256 MB
+[RequestFormLimits(MultipartBodyLengthLimit = 268435456)]
+public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    ...
+}
+</code></pre>
+<h3 id="kestrel-maximum-request-body-size">Kestrel 最大请求正文大小</h3>
+<p>对于 Kestrel 托管的应用，默认的最大请求正文大小为 30,000,000 个字节，约为 28.6 MB。 使用 <a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-request-body-size">MaxRequestBodySize</a> Kestrel 服务器选项自定义限制：</p>
+<pre><code class="lang-csharp">public static IHostBuilder CreateHostBuilder(string[] args) =&gt;
+    Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webBuilder =&gt;
+        {
+            webBuilder.ConfigureKestrel((context, options) =&gt;
+            {
+                // Handle requests up to 50 MB
+                options.Limits.MaxRequestBodySize = 52428800;
+            })
+            .UseStartup&lt;Startup&gt;();
+        });
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 设置单个页面或操作的 <a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-request-body-size">MaxRequestBodySize</a>。</p>
+<p>在 Razor 页面应用中，将筛选器应用于中的 <a class="xref" href="../../razor-pages/razor-pages-conventions.html">约定</a> <code>Startup.ConfigureServices</code> ：</p>
+<pre><code class="lang-csharp">services.AddRazorPages(options =&gt;
+{
+    options.Conventions
+        .AddPageApplicationModelConvention(&quot;/FileUploadPage&quot;,
+            model =&gt;
+            {
+                // Handle requests up to 50 MB
+                model.Filters.Add(
+                    new RequestSizeLimitAttribute(52428800));
+            });
+});
+</code></pre>
+<p>在 Razor 页面应用或 MVC 应用中，将筛选器应用于页面处理程序类或操作方法：</p>
+<pre><code class="lang-csharp">// Handle requests up to 50 MB
+[RequestSizeLimit(52428800)]
+public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    ...
+}
+</code></pre>
+<p><code>RequestSizeLimitAttribute</code>还可以使用 <a class="xref" href="../views/razor.html#attribute"><code>@attribute</code></a> Razor 指令应用：</p>
+<pre><code class="lang-cshtml">@attribute [RequestSizeLimitAttribute(52428800)]
+</code></pre>
+<h3 id="other-kestrel-limits">其他 Kestrel 限制</h3>
+<p>其他 Kestrel 限制可能适用于 Kestrel 托管的应用：</p>
+<ul>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-client-connections">客户端最大连接数</a></li>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#minimum-request-body-data-rate">请求和响应数据速率</a></li>
+</ul>
+<h3 id="iis">IIS</h3>
+<p>默认请求限制 (<code>maxAllowedContentLength</code>) 为30000000字节，即约 28.6 MB。 自定义文件中的限制 <code>web.config</code> 。 在下面的示例中，将限制设置为 50 MB (52428800 字节) ：</p>
+<pre><code class="lang-xml">&lt;system.webServer&gt;
+  &lt;security&gt;
+    &lt;requestFiltering&gt;
+      &lt;requestLimits maxAllowedContentLength=&quot;52428800&quot; /&gt;
+    &lt;/requestFiltering&gt;
+  &lt;/security&gt;
+&lt;/system.webServer&gt;
+</code></pre>
+<p>此 <code>maxAllowedContentLength</code> 设置仅适用于 IIS。 有关详细信息，请参阅<a href="/iis/configuration/system.webServer/security/requestFiltering/requestLimits/">请求 <code>&lt;requestLimits&gt;</code> 限制</a>。</p>
+<p>通过在中设置来增加 HTTP 请求的最大请求正文大小 &lt;xref:Microsoft.AspNetCore.Builder.IISServerOptions.MaxRequestBodySize%2A?displayProperty=nameWithType&gt; <code>Startup.ConfigureServices</code> 。 在下面的示例中，将限制设置为 50 MB (52428800 字节) ：</p>
+<pre><code class="lang-csharp">services.Configure&lt;IISServerOptions&gt;(options =&gt;
+{
+    options.MaxRequestBodySize = 52428800;
+});
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../../host-and-deploy/iis/index.html#iis-options">使用 IIS 在 Windows 上托管 ASP.NET Core</a>。</p>
+<h2 id="troubleshoot">疑难解答</h2>
+<p>以下是上传文件时遇到的一些常见问题及其可能的解决方案。</p>
+<h3 id="not-found-error-when-deployed-to-an-iis-server">部署到 IIS 服务器时出现“找不到”错误</h3>
+<p>以下错误表示上传的文件超过服务器配置的内容长度：</p>
+<pre><code>HTTP 404.13 - Not Found
+The request filtering module is configured to deny a request that exceeds the request content length.
+</code></pre>
+<p>有关详细信息，请参阅 <a href="#iis">IIS</a> 部分。</p>
+<h3 id="connection-failure">连接失败</h3>
+<p>连接错误和重置服务器连接可能表示上传的文件超出 Kestrel 的最大请求正文大小。 有关详细信息，请参阅 <a href="#kestrel-maximum-request-body-size">Kestrel 最大请求正文大小</a>部分。 可能还需要调整 Kestrel 客户端连接限制。</p>
+<h3 id="null-reference-exception-with-iformfile">IFormFile 的空引用异常</h3>
+<p>如果控制器正在接受使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 上传的文件，但该值为 <code>null</code>，请确认 HTML 窗体指定的 <code>multipart/form-data</code> 值是否为 <code>enctype</code>。 如果未在 <code>&lt;form&gt;</code> 元素上设置此属性，则不会发生文件上传，并且任何绑定的 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 参数都为 <code>null</code>。 此外，请确认<a href="#match-name-attribute-value-to-parameter-name-of-post-method">窗体数据中的上传命名是否与应用的命名相匹配</a>。</p>
+<h3 id="stream-was-too-long">数据流太长</h3>
+<p>本主题中的示例依赖于 &lt;xref:System.IO.MemoryStream&gt; 来保存已上传的文件的内容。 <code>MemoryStream</code> 的大小限制为 <code>int.MaxValue</code>。 如果应用的文件上传方案要求保存大于 50 MB 的文件内容，请使用另一种方法，该方法不依赖单个 <code>MemoryStream</code> 来保存已上传文件的内容。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>ASP.NET Core 支持使用缓冲的模型绑定（针对较小文件）和无缓冲的流式传输（针对较大文件）上传一个或多个文件。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="security-considerations">安全注意事项</h2>
+<p>向用户提供向服务器上传文件的功能时，必须格外小心。 攻击者可能会尝试执行以下操作：</p>
+<ul>
+<li>执行<a href="/windows-hardware/drivers/ifs/denial-of-service">拒绝服务</a>攻击。</li>
+<li>上传病毒或恶意软件。</li>
+<li>以其他方式破坏网络和服务器。</li>
+</ul>
+<p>降低成功攻击可能性的安全措施如下：</p>
+<ul>
+<li>将文件上传到专用文件上传区域，最好是非系统驱动器。 使用专用位置便于对上传的文件实施安全限制。 禁用对文件上传位置的执行权限。†</li>
+<li>请勿将上传的文件保存在与应用相同的目录树中  。†</li>
+<li>使用应用确定的安全的文件名。 请勿使用用户提供的文件名或上载文件的不受信任的文件名。 † 显示时，HTML 对不受信任的文件名进行编码。 例如，记录文件名或在 UI 中显示 (Razor 会自动对输出) 进行 HTML 编码。</li>
+<li>仅允许应用设计规范的已批准文件扩展名。† <!-- * Check the file format signature to prevent a user from uploading a masqueraded file.&dagger; For example, don't permit a user to upload an *.exe* file with a *.txt* extension. Add this back when we get instructions how to do this.  --></li>
+<li>验证是否在服务器上执行了客户端检查。 † 客户端检查很容易规避。</li>
+<li>检查已上传文件的大小。 设置大小上限以防止上传大型文件。†</li>
+<li>文件不应该被具有相同名称的上传文件覆盖时，先在数据库或物理存储上检查文件名，然后再上传文件。</li>
+<li><strong>先对上传的内容运行病毒/恶意软件扫描程序，然后再存储文件。</strong></li>
+</ul>
+<p>†示例应用演示了符合条件的方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>将恶意代码上传到系统通常是执行代码的第一步，这些代码可以：</p>
+<ul>
+<li>完全获得对系统的控制权限。</li>
+<li>重载系统，导致系统崩溃。</li>
+<li>泄露用户或系统数据。</li>
+<li>将涂鸦应用于公共 UI。</li>
+</ul>
+<p>有关在接受用户文件时减少攻击外围应用的信息，请参阅以下资源：</p>
+<ul>
+<li><a href="https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload">Unrestricted File Upload</a>（不受限制的文件上传）</li>
+<li><a href="/azure/security/azure-security-threat-modeling-tool-input-validation#controls-users">Azure 安全性：确保在接受用户文件时采取适当的控制措施</a></li>
+</ul>
+</div>
+<p>有关实现安全措施（包括示例应用中的示例）的详细信息，请参阅<a href="#validation">验证</a>部分。</p>
+<h2 id="storage-scenarios">存储方案</h2>
+<p>常见的文件存储选项有：</p>
+<ul>
+<li><p>数据库</p>
+<ul>
+<li>对于小型文件上传，数据库通常快于物理存储（文件系统或网络共享）选项。</li>
+<li>相对于物理存储选项，数据库通常更为便利，因为检索数据库记录来获取用户数据可同时提供文件内容（如头像图像）。</li>
+<li>相对于使用数据存储服务，数据库的成本可能更低。</li>
+</ul>
+</li>
+<li><p>物理存储（文件系统或网络共享）</p>
+<ul>
+<li>对于大型文件上传：
+<ul>
+<li>数据库限制可能会限制上传的大小。</li>
+<li>相对于数据库存储，物理存储通常成本更高。</li>
+</ul>
+</li>
+<li>相对于使用数据存储服务，物理存储的成本可能更低。</li>
+<li>应用的进程必须具有存储位置的读写权限。 切勿授予执行权限。</li>
+</ul>
+</li>
+<li><p>数据存储服务（例如，<a href="https://azure.microsoft.com/services/storage/blobs/">Azure Blob 存储</a>）</p>
+<ul>
+<li>服务通常通过本地解决方案提供提升的可伸缩性和复原能力，而它们往往受单一故障点的影响。</li>
+<li>在大型存储基础结构方案中，服务的成本可能更低。</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="/azure/storage/blobs/storage-quickstart-blobs-dotnet">快速入门：使用 .net 在对象存储中创建 blob</a>。 此主题说明了 &lt;xref:Microsoft.Azure.Storage.File.CloudFile.UploadFromFileAsync*&gt;，但在处理 &lt;xref:System.IO.Stream&gt; 时，可以使用 &lt;xref:Microsoft.Azure.Storage.File.CloudFile.UploadFromStreamAsync*&gt; 将 &lt;xref:System.IO.FileStream&gt; 保存到 blob 存储。</p>
+</li>
+</ul>
+<h2 id="file-upload-scenarios">文件上传方案</h2>
+<p>缓冲和流式传输是上传文件的两种常见方法。</p>
+<p><strong>缓冲</strong></p>
+<p>整个文件读入 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;，它是文件的 C# 表示形式，用于处理或保存文件。</p>
+<p>文件上传所用的资源（磁盘、内存）取决于并发文件上传的数量和大小。 如果应用尝试缓冲过多上传，站点就会在内存或磁盘空间不足时崩溃。 如果文件上传的大小或频率会消耗应用资源，请使用流式传输。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>会将大于 64 KB 的所有单个缓冲文件从内存移到磁盘的临时文件。</p>
+</div>
+<p>本主题的以下部分介绍了如何缓冲小型文件：</p>
+<ul>
+<li><a href="#upload-small-files-with-buffered-model-binding-to-physical-storage">物理存储</a></li>
+<li><a href="#upload-small-files-with-buffered-model-binding-to-a-database">Database</a></li>
+</ul>
+<p><strong>流式处理</strong></p>
+<p>从多部分请求收到文件，然后应用直接处理或保存它。 流式传输无法显著提高性能。 流式传输可降低上传文件时对内存或磁盘空间的需求。</p>
+<p><a href="#upload-large-files-with-streaming">通过流式传输上传大型文件</a>部分介绍了如何流式传输大型文件。</p>
+<h3 id="upload-small-files-with-buffered-model-binding-to-physical-storage">通过缓冲的模型绑定将小型文件上传到物理存储</h3>
+<p>要上传小文件，请使用多部分窗体或使用 JavaScript 构造 POST 请求。</p>
+<p>下面的示例演示 Razor 如何使用页面窗体上传示例应用) 中的单个文件 ( <em>Pages/BufferedSingleFileUploadPhysical</em> ：</p>
+<pre><code class="lang-cshtml">&lt;form enctype=&quot;multipart/form-data&quot; method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label asp-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input asp-for=&quot;FileUpload.FormFile&quot; type=&quot;file&quot;&gt;
+            &lt;span asp-validation-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/span&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;input asp-page-handler=&quot;Upload&quot; class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot; /&gt;
+&lt;/form&gt;
+</code></pre>
+<p>下面的示例与前面的示例类似，不同之处在于：</p>
+<ul>
+<li>使用 JavaScript (<a href="https://developer.mozilla.org/docs/Web/API/Fetch_API">Fetch API</a>) 提交窗体的数据。</li>
+<li>无验证。</li>
+</ul>
+<pre><code class="lang-cshtml">&lt;form action=&quot;BufferedSingleFileUploadPhysical/?handler=Upload&quot; 
+      enctype=&quot;multipart/form-data&quot; onsubmit=&quot;AJAXSubmit(this);return false;&quot; 
+      method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label for=&quot;FileUpload_FormFile&quot;&gt;File&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input id=&quot;FileUpload_FormFile&quot; type=&quot;file&quot; 
+                name=&quot;FileUpload.FormFile&quot; /&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+
+    &lt;input class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot; /&gt;
+
+    &lt;div style=&quot;margin-top:15px&quot;&gt;
+        &lt;output name=&quot;result&quot;&gt;&lt;/output&gt;
+    &lt;/div&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+  async function AJAXSubmit (oFormElement) {
+    var resultElement = oFormElement.elements.namedItem(&quot;result&quot;);
+    const formData = new FormData(oFormElement);
+
+    try {
+    const response = await fetch(oFormElement.action, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      window.location.href = '/';
+    }
+
+    resultElement.value = 'Result: ' + response.status + ' ' + 
+      response.statusText;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+&lt;/script&gt;
+</code></pre>
+<p>若要使用 JavaScript 为<a href="https://caniuse.com/#feat=fetch">不支持 Fetch API</a> 的客户端执行窗体发布，请使用以下方法之一：</p>
+<ul>
+<li><p>使用 Fetch Polyfill（例如，<a href="https://github.com/github/fetch">window.fetch polyfill (github/fetch)</a>）。</p>
+</li>
+<li><p>请使用 <code>XMLHttpRequest</code>。 例如： 。</p>
+<pre><code class="lang-javascript">&lt;script&gt;
+  &quot;use strict&quot;;
+
+  function AJAXSubmit (oFormElement) {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function(e) { 
+    oFormElement.elements.namedItem(&quot;result&quot;).value = 
+      'Result: ' + this.status + ' ' + this.statusText;
+    };
+    oReq.open(&quot;post&quot;, oFormElement.action);
+    oReq.send(new FormData(oFormElement));
+  }
+&lt;/script&gt;
+</code></pre>
+</li>
+</ul>
+<p>为支持文件上传，HTML 窗体必须指定 <code>multipart/form-data</code> 的编码类型 (<code>enctype</code>)。</p>
+<p>要使 <code>files</code> 输入元素支持上传多个文件，请在 <code>&lt;input&gt;</code> 元素上提供 <code>multiple</code> 属性：</p>
+<pre><code class="lang-cshtml">&lt;input asp-for=&quot;FileUpload.FormFiles&quot; type=&quot;file&quot; multiple&gt;
+</code></pre>
+<p>上传到服务器的单个文件可使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 接口通过<a class="xref" href="model-binding.html">模型绑定</a>进行访问。 示例应用演示了数据库和物理存储方案的多个缓冲文件上传。</p>
+<p><a name="filename2"></a></p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>除了显示和日志记录用途外，请勿使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的 <code>FileName</code> 属性  。 显示或日志记录时，HTML 对文件名进行编码。 攻击者可以提供恶意文件名，包括完整路径或相对路径。 应用程序应：</p>
+<ul>
+<li>从用户提供的文件名中删除路径。</li>
+<li>为 UI 或日志记录保存经 HTML 编码、已删除路径的文件名。</li>
+<li>生成新的随机文件名进行存储。</li>
+</ul>
+<p>以下代码可从文件名中删除路径：</p>
+<pre><code class="lang-csharp">string untrustedFileName = Path.GetFileName(pathName);
+</code></pre>
+<p>目前提供的示例未考虑安全注意事项。 以下各节及<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">示例应用</a>提供了其他信息：</p>
+<ul>
+<li><a href="#security-considerations">安全注意事项</a></li>
+<li><a href="#validation">验证</a></li>
+</ul>
+</div>
+<p>使用模型绑定和 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 上传文件时，操作方法可以接受以下内容：</p>
+<ul>
+<li>单个 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;。</li>
+<li>以下任何表示多个文件的集合：
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Http.IFormFileCollection&gt;</li>
+<li>&lt;xref:System.Collections.IEnumerable&gt;&lt;&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;&gt;</li>
+<li><a href="xref:System.Collections.Generic.List%601">成员列表</a>&lt;&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt;&gt;</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>绑定根据名称匹配窗体文件。 例如，<code>&lt;input type=&quot;file&quot; name=&quot;formFile&quot;&gt;</code> 中的 HTML <code>name</code> 值必须与 C# 参数/属性绑定 (<code>FormFile</code>) 匹配。 有关详细信息，请参阅<a href="#match-name-attribute-value-to-parameter-name-of-post-method">使名称属性值与 POST 方法的参数名匹配</a>部分。</p>
+</div>
+<p>如下示例中：</p>
+<ul>
+<li>循环访问一个或多个上传的文件。</li>
+<li>使用 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 返回文件的完整路径，包括文件名称。</li>
+<li>使用应用生成的文件名将文件保存到本地文件系统。</li>
+<li>返回上传的文件的总数量和总大小。</li>
+</ul>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync(List&lt;IFormFile&gt; files)
+{
+    long size = files.Sum(f =&gt; f.Length);
+
+    foreach (var formFile in files)
+    {
+        if (formFile.Length &gt; 0)
+        {
+            var filePath = Path.GetTempFileName();
+
+            using (var stream = System.IO.File.Create(filePath))
+            {
+                await formFile.CopyToAsync(stream);
+            }
+        }
+    }
+
+    // Process uploaded files
+    // Don't rely on or trust the FileName property without validation.
+
+    return Ok(new { count = files.Count, size });
+}
+</code></pre>
+<p>使用 <code>Path.GetRandomFileName</code> 生成文件名（不含路径）。 在下面的示例中，从配置获取路径：</p>
+<pre><code class="lang-csharp">foreach (var formFile in files)
+{
+    if (formFile.Length &gt; 0)
+    {
+        var filePath = Path.Combine(_config[&quot;StoredFilesPath&quot;], 
+            Path.GetRandomFileName());
+
+        using (var stream = System.IO.File.Create(filePath))
+        {
+            await formFile.CopyToAsync(stream);
+        }
+    }
+}
+</code></pre>
+<p>传递到  的路径必须包含文件名&lt;xref:System.IO.FileStream&gt;  。 如果未提供文件名，则会在运行时引发 &lt;xref:System.UnauthorizedAccessException&gt;。</p>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 技术上传的文件在处理之前会缓冲在内存中或服务器的磁盘中。 在操作方法中，&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 内容可作为 &lt;xref:System.IO.Stream&gt; 访问。 除本地文件系统之外，还可以将文件保存到网络共享或文件存储服务，如 <a href="/azure/visual-studio/vs-storage-aspnet5-getting-started-blobs">Azure Blob 存储</a>。</p>
+<p>若要查看循环访问要上传的多个文件并且使用安全文件名的其他示例，请参阅示例应用中的 Pages/BufferedMultipleFileUploadPhysical.cshtml.cs。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果在未删除先前临时文件的情况下创建了 65,535 个以上的文件，则 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 将抛出一个 &lt;xref:System.IO.IOException&gt;。 65,535 个文件限制是每个服务器的限制。 有关 Windows 操作系统上的此限制的详细信息，请参阅以下主题中的说明：</p>
+<ul>
+<li><a href="/windows/desktop/api/fileapi/nf-fileapi-gettempfilenamea#remarks">GetTempFileNameA 函数</a></li>
+<li>&lt;xref:System.IO.Path.GetTempFileName*&gt;</li>
+</ul>
+</div>
+<h3 id="upload-small-files-with-buffered-model-binding-to-a-database">使用缓冲的模型绑定将小型文件上传到数据库</h3>
+<p>要使用<a href="/ef/core/index">实体框架</a>将二进制文件数据存储在数据库中，请在实体上定义 &lt;xref:System.Byte&gt; 数组属性：</p>
+<pre><code class="lang-csharp">public class AppFile
+{
+    public int Id { get; set; }
+    public byte[] Content { get; set; }
+}
+</code></pre>
+<p>为包括 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的类指定页模型属性：</p>
+<pre><code class="lang-csharp">public class BufferedSingleFileUploadDbModel : PageModel
+{
+    ...
+
+    [BindProperty]
+    public BufferedSingleFileUploadDb FileUpload { get; set; }
+
+    ...
+}
+
+public class BufferedSingleFileUploadDb
+{
+    [Required]
+    [Display(Name=&quot;File&quot;)]
+    public IFormFile FormFile { get; set; }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>&lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 可以直接用作操作方法参数或绑定模型属性。 前面的示例使用绑定模型属性。</p>
+</div>
+<p><code>FileUpload</code>在 Razor 页面窗体中使用：</p>
+<pre><code class="lang-cshtml">&lt;form enctype=&quot;multipart/form-data&quot; method=&quot;post&quot;&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;
+            &lt;label asp-for=&quot;FileUpload.FormFile&quot;&gt;&lt;/label&gt;
+        &lt;/dt&gt;
+        &lt;dd&gt;
+            &lt;input asp-for=&quot;FileUpload.FormFile&quot; type=&quot;file&quot;&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;input asp-page-handler=&quot;Upload&quot; class=&quot;btn&quot; type=&quot;submit&quot; value=&quot;Upload&quot;&gt;
+&lt;/form&gt;
+</code></pre>
+<p>将窗体发布到服务器后，将 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 复制到流，并将它作为字节数组保存在数据库中。 在下面的示例中，<code>_dbContext</code> 存储应用的数据库上下文：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync()
+{
+    using (var memoryStream = new MemoryStream())
+    {
+        await FileUpload.FormFile.CopyToAsync(memoryStream);
+
+        // Upload the file if less than 2 MB
+        if (memoryStream.Length &lt; 2097152)
+        {
+            var file = new AppFile()
+            {
+                Content = memoryStream.ToArray()
+            };
+
+            _dbContext.File.Add(file);
+
+            await _dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            ModelState.AddModelError(&quot;File&quot;, &quot;The file is too large.&quot;);
+        }
+    }
+
+    return Page();
+}
+</code></pre>
+<p>上面的示例与示例应用中演示的方案相似：</p>
+<ul>
+<li><em>Pages/BufferedSingleFileUploadDb.cshtml</em></li>
+<li><em>Pages/BufferedSingleFileUploadDb.cshtml.cs</em></li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>在关系数据库中存储二进制数据时要格外小心，因为它可能对性能产生不利影响。</p>
+<p>切勿依赖或信任未经验证的 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 的 <code>FileName</code> 属性。 只应将 <code>FileName</code> 属性用于显示用途，并且只应在进行 HTML 编码后使用它。</p>
+<p>提供的示例未考虑安全注意事项。 以下各节及<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/models/file-uploads/samples/">示例应用</a>提供了其他信息：</p>
+<ul>
+<li><a href="#security-considerations">安全注意事项</a></li>
+<li><a href="#validation">验证</a></li>
+</ul>
+</div>
+<h3 id="upload-large-files-with-streaming">通过流式传输上传大型文件</h3>
+<p>以下示例演示如何使用 JavaScript 将文件流式传输到控制器操作。 使用自定义筛选器属性生成文件的防伪令牌，并将其传递到客户端 HTTP 头中（而不是在请求正文中传递）。 由于操作方法直接处理上传的数据，所以其他自定义筛选器会禁用窗体模型绑定。 在该操作中，使用 <code>MultipartReader</code> 读取窗体的内容，它会读取每个单独的 <code>MultipartSection</code>，从而根据需要处理文件或存储内容。 读取多部分节后，该操作会执行自己的模型绑定。</p>
+<p>初始页面响应会加载窗体，并 cookie 通过属性) 将防伪标记保存在 (中 <code>GenerateAntiforgeryTokenCookieAttribute</code> 。 属性使用 ASP.NET Core 的内置 <a class="xref" href="../../security/anti-request-forgery.html">防伪支持</a> 来设置 cookie 具有请求令牌的：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用 <code>DisableFormValueModelBindingAttribute</code> 禁用模型绑定：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中， <code>GenerateAntiforgeryTokenCookieAttribute</code> 和 <code>DisableFormValueModelBindingAttribute</code> <code>/StreamedSingleFileUploadDb</code> <code>/StreamedSingleFileUploadPhysical</code> <code>Startup.ConfigureServices</code> 使用<a class="xref" href="../../razor-pages/razor-pages-conventions.html"> Razor 页面约定</a>作为筛选器应用于和的页面应用程序模型：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>由于模型绑定不读取窗体，因此不绑定从窗体绑定的参数（查询、路由和标头继续运行）。 操作方法直接使用 <code>Request</code> 属性。 <code>MultipartReader</code> 用于读取每个节。 在 <code>KeyValueAccumulator</code> 中存储键值数据。 读取多部分节后，系统会使用 <code>KeyValueAccumulator</code> 的内容将窗体数据绑定到模型类型。</p>
+<p>使用 EF Core 流式传输到数据库的完整 <code>StreamingController.UploadDatabase</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MultipartRequestHelper</code> (Utilities/MultipartRequestHelper.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>流式传输到物理位置的完整 <code>StreamingController.UploadPhysical</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中，由 <code>FileHelpers.ProcessStreamedFile</code> 处理验证检查。</p>
+<h2 id="validation">验证</h2>
+<p>示例应用的 <code>FileHelpers</code> 类演示对缓冲 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 和流式传输文件上传的多项检查。 有关示例应用如何处理 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 缓冲文件上传的信息，请参阅 Utilities/FileHelpers.cs 文件中的 <code>ProcessFormFile</code> 方法。  有关如何处理流式传输的文件的信息，请参阅同一个文件中的 <code>ProcessStreamedFile</code> 方法。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>示例应用演示的验证处理方法不扫描上传的文件的内容。 在多数生产方案中，会先将病毒/恶意软件扫描程序 API 用于文件，然后再向用户或其他系统提供文件。</p>
+<p>尽管主题示例提供了验证技巧工作示例，但是如果不满足以下情况，请勿在生产应用中实现 <code>FileHelpers</code> 类：</p>
+<ul>
+<li>完全理解此实现。</li>
+<li>根据应用的环境和规范修改实现。</li>
+</ul>
+<p><strong>切勿未处理这些要求即随意在应用中实现安全代码。</strong></p>
+</div>
+<h3 id="content-validation">内容验证</h3>
+<p><strong>将第三方病毒/恶意软件扫描 API 用于上传的内容</strong> 。</p>
+<p>在大容量方案中，在服务器资源上扫描文件较为困难。 若文件扫描导致请求处理性能降低，请考虑将扫描工作卸载到<a class="xref" href="../../fundamentals/host/hosted-services.html">后台服务</a>，该服务可以是在应用服务器之外的服务器上运行的服务。 通常会将卸载的文件保留在隔离区，直至后台病毒扫描程序检查它们。 文件通过检查时，会将相应的文件移到常规的文件存储位置。 通常在执行这些步骤的同时，会提供指示文件扫描状态的数据库记录。 通过此方法，应用和应用服务器可以持续以响应请求为重点。</p>
+<h3 id="file-extension-validation">文件扩展名验证</h3>
+<p>应在允许的扩展名列表中查找上传的文件的扩展名。 例如： 。</p>
+<pre><code class="lang-csharp">private string[] permittedExtensions = { &quot;.txt&quot;, &quot;.pdf&quot; };
+
+var ext = Path.GetExtension(uploadedFileName).ToLowerInvariant();
+
+if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+{
+    // The extension is invalid ... discontinue processing the file
+}
+</code></pre>
+<h3 id="file-signature-validation">文件签名验证</h3>
+<p>文件的签名由文件开头部分中的前几个字节确定。 可以使用这些字节指示扩展名是否与文件内容匹配。 示例应用检查一些常见文件类型的文件签名。 在下面的示例中，在文件上检查 JPEG 图像的文件签名：</p>
+<pre><code class="lang-csharp">private static readonly Dictionary&lt;string, List&lt;byte[]&gt;&gt; _fileSignature = 
+    new Dictionary&lt;string, List&lt;byte[]&gt;&gt;
+{
+    { &quot;.jpeg&quot;, new List&lt;byte[]&gt;
+        {
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 },
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE2 },
+            new byte[] { 0xFF, 0xD8, 0xFF, 0xE3 },
+        }
+    },
+};
+
+using (var reader = new BinaryReader(uploadedFileData))
+{
+    var signatures = _fileSignature[ext];
+    var headerBytes = reader.ReadBytes(signatures.Max(m =&gt; m.Length));
+
+    return signatures.Any(signature =&gt; 
+        headerBytes.Take(signature.Length).SequenceEqual(signature));
+}
+</code></pre>
+<p>若要获取其他文件签名，请参阅<a href="https://www.filesignatures.net/">文件签名数据库</a>和官方文件规范。</p>
+<h3 id="file-name-security">文件名安全</h3>
+<p>切勿使用客户端提供的文件名来将文件保存到物理存储。 使用 <a href="xref:System.IO.Path.GetRandomFileName*">Path.GetRandomFileName</a> 或 <a href="xref:System.IO.Path.GetTempFileName*">Path.GetTempFileName</a> 为文件创建安全的文件名，以创建完整路径（包括文件名）来执行临时存储。</p>
+<p>Razor 自动对属性值进行 HTML 编码以便显示。 以下代码安全可用：</p>
+<pre><code class="lang-cshtml">@foreach (var file in Model.DatabaseFiles) {
+    &lt;tr&gt;
+        &lt;td&gt;
+            @file.UntrustedName
+        &lt;/td&gt;
+    &lt;/tr&gt;
+}
+</code></pre>
+<p>在之外 Razor ，始终 &lt;xref:System.Net.WebUtility.HtmlEncode*&gt; 根据用户的请求来命名内容。</p>
+<p>许多实现都必须包含关于文件是否存在的检查；否则文件会被使用相同名称的文件覆盖。 提供其他逻辑以符合应用的规范。</p>
+<h3 id="size-validation">大小验证</h3>
+<p>限制上传的文件的大小。</p>
+<p>在示例应用中，文件大小限制为 2 MB（以字节为单位）。 此限制是通过以下文件的 <a class="xref" href="../../fundamentals/configuration/index.html">配置</a> 提供的 <em>appsettings.json</em> ：</p>
+<pre><code class="lang-json">{
+  &quot;FileSizeLimit&quot;: 2097152
+}
+</code></pre>
+<p>将 <code>FileSizeLimit</code> 注入到 <code>PageModel</code> 类：</p>
+<pre><code class="lang-csharp">public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    private readonly long _fileSizeLimit;
+
+    public BufferedSingleFileUploadPhysicalModel(IConfiguration config)
+    {
+        _fileSizeLimit = config.GetValue&lt;long&gt;(&quot;FileSizeLimit&quot;);
+    }
+
+    ...
+}
+</code></pre>
+<p>文件大小超出限制时，将拒绝文件：</p>
+<pre><code class="lang-csharp">if (formFile.Length &gt; _fileSizeLimit)
+{
+    // The file is too large ... discontinue processing the file
+}
+</code></pre>
+<h3 id="match-name-attribute-value-to-parameter-name-of-post-method">使名称属性值与 POST 方法的参数名称匹配</h3>
+<p>在 Razor 发布窗体数据或直接使用 JavaScript 的非窗体中 <code>FormData</code> ，在窗体的元素中指定的名称或 <code>FormData</code> 必须与控制器的操作中参数的名称匹配。</p>
+<p>如下示例中：</p>
+<ul>
+<li><p>使用 <code>&lt;input&gt;</code> 元素时，将 <code>name</code> 属性设置为值 <code>battlePlans</code>：</p>
+<pre><code class="lang-html">&lt;input type=&quot;file&quot; name=&quot;battlePlans&quot; multiple&gt;
+</code></pre>
+</li>
+<li><p>使用 JavaScript <code>FormData</code> 时，将名称设置为值 <code>battlePlans</code>：</p>
+<pre><code class="lang-javascript">var formData = new FormData();
+
+for (var file in files) {
+  formData.append(&quot;battlePlans&quot;, file, file.name);
+}
+</code></pre>
+</li>
+</ul>
+<p>将匹配的名称用于 C# 方法的参数 (<code>battlePlans</code>)：</p>
+<ul>
+<li><p>对于名为的页 Razor 页面处理程序方法 <code>Upload</code> ：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; OnPostUploadAsync(List&lt;IFormFile&gt; battlePlans)
+</code></pre>
+</li>
+<li><p>对于 MVC POST 控制器操作方法：</p>
+<pre><code class="lang-csharp">public async Task&lt;IActionResult&gt; Post(List&lt;IFormFile&gt; battlePlans)
+</code></pre>
+</li>
+</ul>
+<h2 id="server-and-app-configuration">服务器和应用程序配置</h2>
+<h3 id="multipart-body-length-limit">多部分正文长度限制</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt; 设置每个多部分正文的长度限制。 分析超出此限制的窗体部分时，会引发 &lt;xref:System.IO.InvalidDataException&gt;。 默认值为 134,217,728 (128 MB)。 使用 <code>Startup.ConfigureServices</code> 中的 &lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt; 设置自定义此限制：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.Configure&lt;FormOptions&gt;(options =&gt;
+    {
+        // Set the limit to 256 MB
+        options.MultipartBodyLengthLimit = 268435456;
+    });
+}
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestFormLimitsAttribute&gt; 设置单个页面或操作的 &lt;xref:Microsoft.AspNetCore.Http.Features.FormOptions.MultipartBodyLengthLimit&gt;。</p>
+<p>在 Razor 页面应用中，将筛选器应用于中的 <a class="xref" href="../../razor-pages/razor-pages-conventions.html">约定</a> <code>Startup.ConfigureServices</code> ：</p>
+<pre><code class="lang-csharp">services.AddMvc()
+    .AddRazorPagesOptions(options =&gt;
+    {
+        options.Conventions
+            .AddPageApplicationModelConvention(&quot;/FileUploadPage&quot;,
+                model.Filters.Add(
+                    new RequestFormLimitsAttribute()
+                    {
+                        // Set the limit to 256 MB
+                        MultipartBodyLengthLimit = 268435456
+                    });
+    })
+    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+</code></pre>
+<p>在 Razor 页面应用或 MVC 应用中，将筛选器应用于页面模型或操作方法：</p>
+<pre><code class="lang-csharp">// Set the limit to 256 MB
+[RequestFormLimits(MultipartBodyLengthLimit = 268435456)]
+public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    ...
+}
+</code></pre>
+<h3 id="kestrel-maximum-request-body-size">Kestrel 最大请求正文大小</h3>
+<p>对于 Kestrel 托管的应用，默认的最大请求正文大小为 30,000,000 个字节，约为 28.6 MB。 使用 <a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-request-body-size">MaxRequestBodySize</a> Kestrel 服务器选项自定义限制：</p>
+<pre><code class="lang-csharp">public static IWebHostBuilder CreateWebHostBuilder(string[] args) =&gt;
+    WebHost.CreateDefaultBuilder(args)
+        .UseStartup&lt;Startup&gt;()
+        .ConfigureKestrel((context, options) =&gt;
+        {
+            // Handle requests up to 50 MB
+            options.Limits.MaxRequestBodySize = 52428800;
+        });
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Mvc.RequestSizeLimitAttribute&gt; 设置单个页面或操作的 <a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-request-body-size">MaxRequestBodySize</a>。</p>
+<p>在 Razor 页面应用中，将筛选器应用于中的 <a class="xref" href="../../razor-pages/razor-pages-conventions.html">约定</a> <code>Startup.ConfigureServices</code> ：</p>
+<pre><code class="lang-csharp">services.AddMvc()
+    .AddRazorPagesOptions(options =&gt;
+    {
+        options.Conventions
+            .AddPageApplicationModelConvention(&quot;/FileUploadPage&quot;,
+                model =&gt;
+                {
+                    // Handle requests up to 50 MB
+                    model.Filters.Add(
+                        new RequestSizeLimitAttribute(52428800));
+                });
+    })
+    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+</code></pre>
+<p>在 Razor 页面应用或 MVC 应用中，将筛选器应用于页面处理程序类或操作方法：</p>
+<pre><code class="lang-csharp">// Handle requests up to 50 MB
+[RequestSizeLimit(52428800)]
+public class BufferedSingleFileUploadPhysicalModel : PageModel
+{
+    ...
+}
+</code></pre>
+<h3 id="other-kestrel-limits">其他 Kestrel 限制</h3>
+<p>其他 Kestrel 限制可能适用于 Kestrel 托管的应用：</p>
+<ul>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#maximum-client-connections">客户端最大连接数</a></li>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#minimum-request-body-data-rate">请求和响应数据速率</a></li>
+</ul>
+<h3 id="iis">IIS</h3>
+<p>默认请求限制 (<code>maxAllowedContentLength</code>) 为30000000字节，即约 28.6 MB。 自定义文件中的限制 <code>web.config</code> 。 在下面的示例中，将限制设置为 50 MB (52428800 字节) ：</p>
+<pre><code class="lang-xml">&lt;system.webServer&gt;
+  &lt;security&gt;
+    &lt;requestFiltering&gt;
+      &lt;requestLimits maxAllowedContentLength=&quot;52428800&quot; /&gt;
+    &lt;/requestFiltering&gt;
+  &lt;/security&gt;
+&lt;/system.webServer&gt;
+</code></pre>
+<p>此 <code>maxAllowedContentLength</code> 设置仅适用于 IIS。 有关详细信息，请参阅<a href="/iis/configuration/system.webServer/security/requestFiltering/requestLimits/">请求 <code>&lt;requestLimits&gt;</code> 限制</a>。</p>
+<p>通过在中设置来增加 HTTP 请求的最大请求正文大小 &lt;xref:Microsoft.AspNetCore.Builder.IISServerOptions.MaxRequestBodySize%2A?displayProperty=nameWithType&gt; <code>Startup.ConfigureServices</code> 。 在下面的示例中，将限制设置为 50 MB (52428800 字节) ：</p>
+<pre><code class="lang-csharp">services.Configure&lt;IISServerOptions&gt;(options =&gt;
+{
+    options.MaxRequestBodySize = 52428800;
+});
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../../host-and-deploy/iis/index.html#iis-options">使用 IIS 在 Windows 上托管 ASP.NET Core</a>。</p>
+<h2 id="troubleshoot">疑难解答</h2>
+<p>以下是上传文件时遇到的一些常见问题及其可能的解决方案。</p>
+<h3 id="not-found-error-when-deployed-to-an-iis-server">部署到 IIS 服务器时出现“找不到”错误</h3>
+<p>以下错误表示上传的文件超过服务器配置的内容长度：</p>
+<pre><code>HTTP 404.13 - Not Found
+The request filtering module is configured to deny a request that exceeds the request content length.
+</code></pre>
+<p>有关详细信息，请参阅 <a href="#iis">IIS</a> 部分。</p>
+<h3 id="connection-failure">连接失败</h3>
+<p>连接错误和重置服务器连接可能表示上传的文件超出 Kestrel 的最大请求正文大小。 有关详细信息，请参阅 <a href="#kestrel-maximum-request-body-size">Kestrel 最大请求正文大小</a>部分。 可能还需要调整 Kestrel 客户端连接限制。</p>
+<h3 id="null-reference-exception-with-iformfile">IFormFile 的空引用异常</h3>
+<p>如果控制器正在接受使用 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 上传的文件，但该值为 <code>null</code>，请确认 HTML 窗体指定的 <code>multipart/form-data</code> 值是否为 <code>enctype</code>。 如果未在 <code>&lt;form&gt;</code> 元素上设置此属性，则不会发生文件上传，并且任何绑定的 &lt;xref:Microsoft.AspNetCore.Http.IFormFile&gt; 参数都为 <code>null</code>。 此外，请确认<a href="#match-name-attribute-value-to-parameter-name-of-post-method">窗体数据中的上传命名是否与应用的命名相匹配</a>。</p>
+<h3 id="stream-was-too-long">数据流太长</h3>
+<p>本主题中的示例依赖于 &lt;xref:System.IO.MemoryStream&gt; 来保存已上传的文件的内容。 <code>MemoryStream</code> 的大小限制为 <code>int.MaxValue</code>。 如果应用的文件上传方案要求保存大于 50 MB 的文件内容，请使用另一种方法，该方法不依赖单个 <code>MemoryStream</code> 来保存已上传文件的内容。</p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../fundamentals/servers/kestrel.html#http11-request-draining">HTTP 连接请求排出</a></li>
+<li><a href="https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload">Unrestricted File Upload</a>（不受限制的文件上传）</li>
+<li><a href="/azure/security/azure-security-threat-modeling-tool-input-validation">Azure 安全：安全框架：输入验证 |措施</a></li>
+<li><a href="/azure/architecture/patterns/valet-key">Azure 云设计模式：附属密钥模式</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

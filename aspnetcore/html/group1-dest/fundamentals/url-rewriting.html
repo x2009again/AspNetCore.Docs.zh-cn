@@ -1,0 +1,888 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; URL &#37325;&#20889;&#20013;&#38388;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; URL &#37325;&#20889;&#20013;&#38388;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/url-rewriting">
+<h1 id="url-rewriting-middleware-in-aspnet-core">ASP.NET Core 中的 URL 重写中间件</h1>
+
+<p>作者：<a href="https://github.com/mikaelm12">Mikael Mengistu</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<p>本文档介绍 URL 重写并说明如何在 ASP.NET Core 应用中使用 URL 重写中间件。</p>
+<p>URL 重写是根据一个或多个预定义规则修改请求 URL 的行为。 URL 重写会在资源位置和地址之间创建一个抽象，使位置和地址不紧密相连。 在以下几种方案中，URL 重写很有价值：</p>
+<ul>
+<li>暂时或永久移动或替换服务器资源，并维护这些资源的稳定定位符。</li>
+<li>拆分在不同应用或同一应用的不同区域中处理的请求。</li>
+<li>删除、添加或重新组织传入请求上的 URL 段。</li>
+<li>优化搜索引擎优化 (SEO) 的公共 URL。</li>
+<li>允许使用友好的公共 URL 来帮助访问者预测请求资源后返回的内容。</li>
+<li>将不安全请求重定向到安全终结点。</li>
+<li>防止热链接，外部站点会通过热链接将其他站点的资产链接到其自己的内容，从而利用托管在其他站点上的静态资产。</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>URL 重写可能会降低应用的性能。 如果可行，应限制规则的数量和复杂度。</p>
+</div>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/url-rewriting/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="url-redirect-and-url-rewrite">URL 重定向和 URL 重写</h2>
+<p>URL 重定向和 URL 重写之间的用词差异很细微，但这对于向客户端提供资源具有重要意义 。 ASP.NET Core 的 URL 重写中间件能够满足两者的需求。</p>
+<p>URL 重定向涉及客户端操作，指示客户端访问与客户端最初请求地址不同的资源。 这需要往返服务器。 客户端对资源发出新请求时，返回客户端的重定向 URL 会出现在浏览器地址栏。</p>
+<p>如果 <code>/resource</code> 被重定向到 <code>/different-resource</code>，则服务器作出响应，指示客户端应在 <code>/different-resource</code> 获取资源，所提供的状态代码指示重定向是临时的还是永久的。</p>
+<p><img src="url-rewriting/_static/url_redirect.png" alt="WebAPI 服务终结点已暂时从服务器上的版本 1 (v1) 更改为版本 2 (v2)。 客户端向版本 1 路径 /v1/api 上的服务发出请求。 服务器发回“302 (已找到)”响应，其中包括版本 2 /v2/api 上服务的新临时路径。 客户端向重定向 URL 上的服务发出第二个请求。 服务器以“200 (正常)”状态代码作出响应。"></p>
+<p>将请求重定向到不同 URL 时，通过使用响应指定状态代码来指示重定向是永久还是临时：</p>
+<ul>
+<li><p>如果资源有一个新的永久性 URL，并且你希望指示客户端所有将来的资源请求都使用新 URL，则使用“301 (永久移动)”状态代码。 收到 301 状态代码时，客户端可能会缓存响应并重用这段代码。</p>
+</li>
+<li><p>“302 (找到)”状态代码用于后列情况：重定向操作是临时的或通常会发生变化。 302 状态代码向客户端指示不存储 URL 并在将来使用。</p>
+</li>
+</ul>
+<p>有关状态代码的详细信息，请参阅 <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">RFC 2616：状态代码定义</a>。</p>
+<p>URL 重写是服务器端操作，它从与客户端请求的资源地址不同的资源地址提供资源。 重写 URL 不需要往返服务器。 重写的 URL 不会返回客户端，也不会出现在浏览器地址栏。</p>
+<p>如果 <code>/resource</code> 重写到 <code>/different-resource</code>，服务器会在内部提取并返回 <code>/different-resource</code> 处的资源 。</p>
+<p>尽管客户端可能能够检索已重写 URL 处的资源，但是，客户端发出请求并收到响应时，并不知道已重写 URL 处存在的资源。</p>
+<p><img src="url-rewriting/_static/url_rewrite.png" alt="WebAPI 服务终结点已从服务器上的版本 1 (v1) 更改为版本 2 (v2)。 客户端向版本 1 路径 /v1/api 上的服务发出请求。 重写请求 URL 以访问版本 2 路径 /v2/api 上的服务。 服务以“200 (正常)”状态代码对客户端作出响应。"></p>
+<h2 id="url-rewriting-sample-app">URL 重写示例应用</h2>
+<p>可使用<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/url-rewriting/samples/">示例应用</a>了解 URL 重写中间件的功能。 该应用程序应用重定向和重写规则，并显示多个方案的重定向或重写的 URL。</p>
+<h2 id="when-to-use-url-rewriting-middleware">何时使用 URL 重写中间件</h2>
+<p>如果无法使用以下方法，请使用 URL 重写中间件：</p>
+<ul>
+<li><a href="https://www.iis.net/downloads/microsoft/url-rewrite">在 Windows Server 上使用带 IIS 的 URL 重写模块</a></li>
+<li><a href="https://httpd.apache.org/docs/2.4/rewrite/">在 Apache 服务器上使用 Apache mod_rewrite 模块</a></li>
+<li><a href="https://www.nginx.com/blog/creating-nginx-rewrite-rules/">Nginx 上的 URL 重写</a></li>
+</ul>
+<p>此外，如果应用程序在 <a class="xref" href="servers/httpsys.html">HTTP.sys 服务器</a>（旧称 WebListener）上托管，请使用中间件。</p>
+<p>使用 IIS、Apache 和 Nginx 中的基于服务器的 URL 重写技术的主要原因：</p>
+<ul>
+<li><p>中间件不支持这些模块的完整功能。</p>
+<p>服务器模块的一些功能不适用于 ASP.NET Core 项目，例如 IIS 重写模块的 <code>IsFile</code> 和 <code>IsDirectory</code> 约束。 在这些情况下，请改为使用中间件。</p>
+</li>
+<li><p>中间件性能与模块性能不匹配。</p>
+<p>基准测试是确定哪种方法会最大程度降低性能或降低的性能是否可忽略不计的唯一方法。</p>
+</li>
+</ul>
+<h2 id="package">Package</h2>
+<p>URL 重写中间件由 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Rewrite">Microsoft.AspNetCore.Rewrite</a> 包提供，该包隐式包含在 ASP.NET Core 应用中。</p>
+<h2 id="extension-and-options">扩展和选项</h2>
+<p>通过使用扩展方法为每条重写规则创建 <a href="xref:Microsoft.AspNetCore.Rewrite.RewriteOptions">RewriteOptions</a> 类的实例，建立 URL 重写和重写定向规则。 按所需的处理顺序链接多个规则。 使用 &lt;xref:Microsoft.AspNetCore.Builder.RewriteBuilderExtensions.UseRewriter*&gt; 将 <code>RewriteOptions</code> 添加到请求管道时，它会被传递到 URL 重写中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="redirect-non-www-to-www">将非 www 重定向到 www</h3>
+<p>三个选项允许应用将非 <code>www</code> 重新定向到 <code>www</code>：</p>
+<ul>
+<li><p>&lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToWwwPermanent*&gt;：如果请求是非 <code>www</code>，则将请求永久重定向到 <code>www</code> 子域。 使用 <a href="xref:Microsoft.AspNetCore.Http.StatusCodes.Status308PermanentRedirect">Status308PermanentRedirect</a> 状态代码进行重定向。</p>
+</li>
+<li><p>&lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToWww*&gt;：如果传入请求是非 <code>www</code>，则将请求重定向到 <code>www</code> 子域。 使用 <a href="xref:Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect">Status307TemporaryRedirect</a> 状态代码进行重定向。 重载允许提供响应状态代码。 使用 &lt;xref:Microsoft.AspNetCore.Http.StatusCodes&gt; 类的字段实现状态代码分配。</p>
+</li>
+</ul>
+<h3 id="url-redirect">URL 重定向</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirect*&gt; 将请求重定向。 第一个参数包含用于匹配传入 URL 路径的正则表达式。 第二个参数是替换字符串。 第三个参数（如有）指定状态代码。 如不指定状态代码，则状态代码默认为“302 (已找到)”，指示资源暂时移动或替换。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在启用了开发人员工具的浏览器中，向路径为 <code>/redirect-rule/1234/5678</code> 的示例应用发出请求。 正则表达式匹配 <code>redirect-rule/(.*)</code> 上的请求路径，且该路径会被 <code>/redirected/1234/5678</code> 替代。 重定向 URL 以“302 (已找到)”状态代码发回客户端。 浏览器会在浏览器地址栏中出现的重定向 URL 上发出新请求。 由于示例应用中的规则都不匹配重定向 URL：</p>
+<ul>
+<li>第二个请求从应用程序收到“200 (正常)”响应。</li>
+<li>响应正文显示了重定向 URL。</li>
+</ul>
+<p>重定向 URL 时，系统将向服务器进行一次往返。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>建立重定向规则时务必小心。 系统会根据应用的每个请求（包括重定向后的请求）对重定向规则进行评估。 很容易便会意外创建无限重定向循环。</p>
+</div>
+<p>原始请求：<code>/redirect-rule/1234/5678</code></p>
+<p><img src="url-rewriting/_static/add_redirect.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>括号内的表达式部分称为“捕获组”。 表达式的点 (<code>.</code>) 表示匹配任何字符。 星号 (<code>*</code>) 表示零次或多次匹配前面的字符。 因此，URL 的最后两个路径段 <code>1234/5678</code> 由捕获组 <code>(.*)</code> 捕获。 在请求 URL 中提供的位于 <code>redirect-rule/</code> 之后的任何值均由此单个捕获组捕获。</p>
+<p>在替换字符串中，将捕获组注入带有美元符号 (<code>$</code>)、后跟捕获序列号的字符串中。 获取的第一个捕获组值为 <code>$1</code>，第二个为 <code>$2</code>，并且正则表达式中的其他捕获组值将依次继续排列。 示例应用的重定向规则正则表达式中只有一个捕获组，因此替换字符串中只有一个注入组，即 <code>$1</code>。 如果应用此规则，URL 将变为 <code>/redirected/1234/5678</code>。</p>
+<h3 id="url-redirect-to-a-secure-endpoint">URL 重定向到安全的终结点</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToHttps*&gt; 将 HTTP 请求重定向到采用 HTTPS 协议的相同主机和路径。 如不提供状态代码，则中间件默认为“302(已找到)”。 如果不提供端口：</p>
+<ul>
+<li>中间件默认为 <code>null</code>。</li>
+<li>方案更改为 <code>https</code>（HTTPS 协议），客户端访问端口 443 上的资源。</li>
+</ul>
+<p>下面的示例演示如何将状态代码设置为“301(永久移动)”并将端口更改为 5001。</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    var options = new RewriteOptions()
+        .AddRedirectToHttps(301, 5001);
+
+    app.UseRewriter(options);
+}
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToHttpsPermanent*&gt; 将不安全的请求重定向到端口 443 上的采用安全 HTTPS 协议的相同主机和路径。 中间件将状态代码设置为“301 (永久移动)”。</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    var options = new RewriteOptions()
+        .AddRedirectToHttpsPermanent();
+
+    app.UseRewriter(options);
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>当重定向到安全的终结点并且不需要其他重定向规则时，建议使用 HTTPS 重定向中间件。 有关详细信息，请参阅<a class="xref" href="../security/enforcing-ssl.html#require-https">强制使用 HTTPS</a>主题。</p>
+</div>
+<p>示例应用能够演示如何使用 <code>AddRedirectToHttps</code> 或 <code>AddRedirectToHttpsPermanent</code>。 将扩展方法添加到 <code>RewriteOptions</code>。 在任何 URL 上向应用发出不安全的请求。 消除自签名证书不受信任的浏览器安全警告，或创建例外以信任证书。</p>
+<p>使用 <code>AddRedirectToHttps(301, 5001)</code> 的原始请求：<code>http://localhost:5000/secure</code></p>
+<p><img src="url-rewriting/_static/add_redirect_to_https.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>使用 <code>AddRedirectToHttpsPermanent</code> 的原始请求：<code>http://localhost:5000/secure</code></p>
+<p><img src="url-rewriting/_static/add_redirect_to_https_permanent.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<h3 id="url-rewrite">URL 重写</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRewrite*&gt; 创建重写 URL 的规则。 第一个参数包含用于匹配传入 URL 路径的正则表达式。 第二个参数是替换字符串。 第三个参数 <code>skipRemainingRules: {true|false}</code> 指示如果当前规则适用，中间件是否要跳过其他重写规则。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/rewrite-rule/1234/5678</code></p>
+<p><img src="url-rewriting/_static/add_rewrite.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>表达式开头的脱字号 (<code>^</code>) 意味着匹配从 URL 路径的开头处开始。</p>
+<p>在前面的重定向规则 <code>redirect-rule/(.*)</code> 的示例中，正则表达式的开头没有脱字号 (<code>^</code>)。 因此，路径中 <code>redirect-rule/</code> 之前的任何字符都可能成功匹配。</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th style="text-align: center;">匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/redirect-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>/my-cool-redirect-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>/anotherredirect-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<p>重写规则 <code>^rewrite-rule/(\d+)/(\d+)</code> 只能与以 <code>rewrite-rule/</code> 开头的路径匹配。 注意下表中的匹配差异。</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th style="text-align: center;">匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/rewrite-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>/my-cool-rewrite-rule/1234/5678</code></td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td><code>/anotherrewrite-rule/1234/5678</code></td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<p>在表达式的 <code>^rewrite-rule/</code> 部分之后，有两个捕获组 <code>(\d+)/(\d+)</code>。 <code>\d</code> 表示与数字匹配。 加号 (<code>+</code>) 表示与前面的一个或多个字符匹配。 因此，URL 必须包含数字加正斜杠加另一个数字的形式。 这些捕获组以 <code>$1</code> 和 <code>$2</code> 的形式注入重写 URL 中。 重写规则替换字符串将捕获组放入查询字符串中。 重写 <code>/rewrite-rule/1234/5678</code> 的请求路径，获取 <code>/rewritten?var1=1234&amp;var2=5678</code> 处的资源。 如果原始请求中存在查询字符串，则重写 URL 时会保留此字符串。</p>
+<p>无需往返服务器来获取资源。 如果资源存在，系统会提取资源并以“200（正常）”状态代码返回给客户端。 因为客户端不会被重定向，所以浏览器地址栏中的 URL 不会发生更改。 客户端无法检测到服务器上发生的 URL 重写操作。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>尽可能使用 <code>skipRemainingRules: true</code>，因为匹配规则在计算上很昂贵并且增加了应用响应时间。 对于最快的应用响应：</p>
+<ul>
+<li>按照从最频繁匹配的规则到最不频繁匹配的规则排列重写规则。</li>
+<li>如果出现匹配项且无需处理任何其他规则，则跳过剩余规则的处理。</li>
+</ul>
+</div>
+<h3 id="apache-mod_rewrite">Apache mod_rewrite</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.ApacheModRewriteOptionsExtensions.AddApacheModRewrite*&gt; 应用 Apache mod_rewrite 规则。 请确保将规则文件与应用一起部署。 有关 mod_rewrite 规则的详细信息和示例，请参阅 <a href="https://httpd.apache.org/docs/2.4/rewrite/">Apache mod_rewrite</a>。</p>
+<p>&lt;xref:System.IO.StreamReader&gt; 用于读取 ApacheModRewrite.txt 规则文件中的规则：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用将请求从 <code>/apache-mod-rules-redirect/(.\*)</code> 重定向到 <code>/redirected?id=$1</code>。 响应状态代码为“302 (已找到)”。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/apache-mod-rules-redirect/1234</code></p>
+<p><img src="url-rewriting/_static/add_apache_mod_redirect.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>中间件支持下列 Apache mod_rewrite 服务器变量：</p>
+<ul>
+<li>CONN_REMOTE_ADDR</li>
+<li>HTTP_ACCEPT</li>
+<li>HTTP_CONNECTION</li>
+<li>HTTP_COOKIE</li>
+<li>HTTP_FORWARDED</li>
+<li>HTTP_HOST</li>
+<li>HTTP_REFERER</li>
+<li>HTTP_USER_AGENT</li>
+<li>HTTPS</li>
+<li>IPV6</li>
+<li>QUERY_STRING</li>
+<li>REMOTE_ADDR</li>
+<li>REMOTE_PORT</li>
+<li>REQUEST_FILENAME</li>
+<li>REQUEST_METHOD</li>
+<li>REQUEST_SCHEME</li>
+<li>REQUEST_URI</li>
+<li>SCRIPT_FILENAME</li>
+<li>SERVER_ADDR</li>
+<li>SERVER_PORT</li>
+<li>SERVER_PROTOCOL</li>
+<li>TIME</li>
+<li>TIME_DAY</li>
+<li>TIME_HOUR</li>
+<li>TIME_MIN</li>
+<li>TIME_MON</li>
+<li>TIME_SEC</li>
+<li>TIME_WDAY</li>
+<li>TIME_YEAR</li>
+</ul>
+<h3 id="iis-url-rewrite-module-rules">IIS URL 重写模块规则</h3>
+<p>若要使用适用于 IIS URL 重写模块的同一规则集，使用 &lt;xref:Microsoft.AspNetCore.Rewrite.IISUrlRewriteOptionsExtensions.AddIISUrlRewrite*&gt;。 请确保将规则文件与应用一起部署。 当在 Windows Server IIS 上运行时，请勿指示中间件使用应用的 web.config 文件。 使用 IIS 时，应将这些规则存储在应用的 web.config 文件之外，以避免与 IIS 重写模块发生冲突。 有关 IIS URL 重写模块规则的详细信息和示例，请参阅 <a href="/iis/extensions/url-rewrite-module/using-url-rewrite-module-20">Using Url Rewrite Module 2.0</a>（使用 URL 重写模块 2.0）和 <a href="/iis/extensions/url-rewrite-module/url-rewrite-module-configuration-reference">URL Rewrite Module Configuration Reference</a>（URL 重写模块配置引用）。</p>
+<p>&lt;xref:System.IO.StreamReader&gt; 用于读取 IISUrlRewrite.xml 规则文件中的规则：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用将请求从 <code>/iis-rules-rewrite/(.*)</code> 重写为 <code>/rewritten?id=$1</code>。 以“200 (正常)”状态代码作为响应发送到客户端。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/iis-rules-rewrite/1234</code></p>
+<p><img src="url-rewriting/_static/add_iis_url_rewrite.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>如果有配置了服务器级别规则（可对应用产生不利影响）的活动 IIS 重写模块，则可禁用应用的 IIS 重写模块。 有关详细信息，请参阅<a class="xref" href="../host-and-deploy/iis/modules.html#disabling-iis-modules">禁用 IIS 模块</a>。</p>
+<h4 id="unsupported-features">不支持的功能</h4>
+<p>与 ASP.NET Core 2.x 一同发布的中间件不支持以下 IIS URL 重写模块功能：</p>
+<ul>
+<li>出站规则</li>
+<li>自定义服务器变量</li>
+<li>通配符</li>
+<li>LogRewrittenUrl</li>
+</ul>
+<h4 id="supported-server-variables">受支持的服务器变量</h4>
+<p>中间件支持下列 IIS URL 重写模块服务器变量：</p>
+<ul>
+<li>CONTENT_LENGTH</li>
+<li>CONTENT_TYPE</li>
+<li>HTTP_ACCEPT</li>
+<li>HTTP_CONNECTION</li>
+<li>HTTP_COOKIE</li>
+<li>HTTP_HOST</li>
+<li>HTTP_REFERER</li>
+<li>HTTP_URL</li>
+<li>HTTP_USER_AGENT</li>
+<li>HTTPS</li>
+<li>LOCAL_ADDR</li>
+<li>QUERY_STRING</li>
+<li>REMOTE_ADDR</li>
+<li>REMOTE_PORT</li>
+<li>REQUEST_FILENAME</li>
+<li>REQUEST_URI</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>也可通过 &lt;xref:Microsoft.Extensions.FileProviders.PhysicalFileProvider&gt; 获取 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt;。 这种方法可为重写规则文件的位置提供更大的灵活性。 请确保将重写规则文件部署到所提供路径的服务器中。</p>
+<pre><code class="lang-csharp">PhysicalFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
+</code></pre>
+</div>
+<h3 id="method-based-rule">基于方法的规则</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.Add*&gt; 在方法中实现自己的规则逻辑。 <code>Add</code> 公开 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteContext&gt;，这使 &lt;xref:Microsoft.AspNetCore.Http.HttpContext&gt; 可用于方法中。 <a href="xref:Microsoft.AspNetCore.Rewrite.RewriteContext.Result*">RewriteContext.Result</a> 决定如何处理其他管道进程。 将值设置为下表中的 &lt;xref:Microsoft.AspNetCore.Rewrite.RuleResult&gt; 字段之一。</p>
+<table>
+<thead>
+<tr>
+<th>重写上下文结果</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RuleResult.ContinueRules</code>（默认值）</td>
+<td>继续应用规则。</td>
+</tr>
+<tr>
+<td><code>RuleResult.EndResponse</code></td>
+<td>停止应用规则并发送响应。</td>
+</tr>
+<tr>
+<td><code>RuleResult.SkipRemainingRules</code></td>
+<td>停止应用规则并将上下文发送给下一个中间件。</td>
+</tr>
+</tbody>
+</table>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用演示了如何对以 .xml 结尾的路径的请求进行重定向。 如果发出针对 <code>/file.xml</code> 的请求，请求将重定向到 <code>/xmlfiles/file.xml</code>。 状态代码设置为“301 (永久移动)”。 当浏览器发出针对 /xmlfiles/file.xml 的新请求后，静态文件中间件会将文件从 wwwroot / xmlfiles 文件夹提供给客户端 。 对于重定向，请显式设置响应的状态代码。 否则，将会返回“200 (正常)”状态代码，且客户端上不会发生重写。</p>
+<p><em>RewriteRules.cs</em>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法还可以重写请求。 示例应用演示了如何重写任何文本文件请求的路径以从 wwwroot 文件夹中提供 file.txt 文本文件 。 静态文件中间件基于更新的请求路径来提供文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><em>RewriteRules.cs</em>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="irule-based-rule">基于 IRule 的规则</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.Add*&gt; 在实现 &lt;xref:Microsoft.AspNetCore.Rewrite.IRule&gt; 接口的类中使用规则逻辑。 与使用基于方法的规则方法相比，<code>IRule</code> 提供了更大的灵活性。 实现类可能包含构造函数，可在其中传入 &lt;xref:Microsoft.AspNetCore.Rewrite.IRule.ApplyRule*&gt; 方法的参数。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>检查示例应用中 <code>extension</code> 和 <code>newPath</code> 的参数值是否符合多个条件。 <code>extension</code> 须包含一个值，并且该值必须是 .png、.jpg 或 .gif  。 如果 <code>newPath</code> 无效，则会引发 &lt;xref:System.ArgumentException&gt;。 如果发出针对 image.png 的请求，请求将重定向到 <code>/png-images/image.png</code>。 如果发出针对 image.png 的请求，请求将重定向到 <code>/jpg-images/image.jpg</code>。 状态代码设置为“301 (永久移动)”，<code>context.Result</code> 设置为停止处理规则并发送响应。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/image.png</code></p>
+<p><img src="url-rewriting/_static/add_redirect_png_requests.png" alt="开发人员工具正跟踪 image.png 的请求和响应的浏览器窗口"></p>
+<p>原始请求：<code>/image.jpg</code></p>
+<p><img src="url-rewriting/_static/add_redirect_jpg_requests.png" alt="开发人员工具正跟踪 image.jpg 的请求和响应的浏览器窗口"></p>
+<h2 id="regex-examples">正则表达式示例</h2>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>正则表达式字符串和<br>匹配示例</th>
+<th>替换字符串和<br>输出示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>将路径重写为查询字符串</td>
+<td><code>^path/(.*)/(.*)</code><br><code>/path/abc/123</code></td>
+<td><code>path?var1=$1&amp;var2=$2</code><br><code>/path?var1=abc&amp;var2=123</code></td>
+</tr>
+<tr>
+<td>去掉尾部反斜杠</td>
+<td><code>(.*)/$</code><br><code>/path/</code></td>
+<td><code>$1</code><br><code>/path</code></td>
+</tr>
+<tr>
+<td>强制添加尾部反斜杠</td>
+<td><code>(.*[^/])$</code><br><code>/path</code></td>
+<td><code>$1/</code><br><code>/path/</code></td>
+</tr>
+<tr>
+<td>避免重写特定请求</td>
+<td><code>^(.*)(?&lt;!\.axd)$</code> 或 <code>^(?!.*\.axd$)(.*)$</code><br>正确：<code>/resource.htm</code><br>错误：<code>/resource.axd</code></td>
+<td><code>rewritten/$1</code><br><code>/rewritten/resource.htm</code><br><code>/resource.axd</code></td>
+</tr>
+<tr>
+<td>重新排列 URL 段</td>
+<td><code>path/(.*)/(.*)/(.*)</code><br><code>path/1/2/3</code></td>
+<td><code>path/$3/$2/$1</code><br><code>path/3/2/1</code></td>
+</tr>
+<tr>
+<td>替换 URL 段</td>
+<td><code>^(.*)/segment2/(.*)</code><br><code>/segment1/segment2/segment3</code></td>
+<td><code>$1/replaced/$2</code><br><code>/segment1/replaced/segment3</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>本文档介绍 URL 重写并说明如何在 ASP.NET Core 应用中使用 URL 重写中间件。</p>
+<p>URL 重写是根据一个或多个预定义规则修改请求 URL 的行为。 URL 重写会在资源位置和地址之间创建一个抽象，使位置和地址不紧密相连。 在以下几种方案中，URL 重写很有价值：</p>
+<ul>
+<li>暂时或永久移动或替换服务器资源，并维护这些资源的稳定定位符。</li>
+<li>拆分在不同应用或同一应用的不同区域中处理的请求。</li>
+<li>删除、添加或重新组织传入请求上的 URL 段。</li>
+<li>优化搜索引擎优化 (SEO) 的公共 URL。</li>
+<li>允许使用友好的公共 URL 来帮助访问者预测请求资源后返回的内容。</li>
+<li>将不安全请求重定向到安全终结点。</li>
+<li>防止热链接，外部站点会通过热链接将其他站点的资产链接到其自己的内容，从而利用托管在其他站点上的静态资产。</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>URL 重写可能会降低应用的性能。 如果可行，应限制规则的数量和复杂度。</p>
+</div>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/url-rewriting/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="url-redirect-and-url-rewrite">URL 重定向和 URL 重写</h2>
+<p>URL 重定向和 URL 重写之间的用词差异很细微，但这对于向客户端提供资源具有重要意义 。 ASP.NET Core 的 URL 重写中间件能够满足两者的需求。</p>
+<p>URL 重定向涉及客户端操作，指示客户端访问与客户端最初请求地址不同的资源。 这需要往返服务器。 客户端对资源发出新请求时，返回客户端的重定向 URL 会出现在浏览器地址栏。</p>
+<p>如果 <code>/resource</code> 被重定向到 <code>/different-resource</code>，则服务器作出响应，指示客户端应在 <code>/different-resource</code> 获取资源，所提供的状态代码指示重定向是临时的还是永久的。</p>
+<p><img src="url-rewriting/_static/url_redirect.png" alt="WebAPI 服务终结点已暂时从服务器上的版本 1 (v1) 更改为版本 2 (v2)。 客户端向版本 1 路径 /v1/api 上的服务发出请求。 服务器发回“302 (已找到)”响应，其中包括版本 2 /v2/api 上服务的新临时路径。 客户端向重定向 URL 上的服务发出第二个请求。 服务器以“200 (正常)”状态代码作出响应。"></p>
+<p>将请求重定向到不同 URL 时，通过使用响应指定状态代码来指示重定向是永久还是临时：</p>
+<ul>
+<li><p>如果资源有一个新的永久性 URL，并且你希望指示客户端所有将来的资源请求都使用新 URL，则使用“301 (永久移动)”状态代码。 收到 301 状态代码时，客户端可能会缓存响应并重用这段代码。</p>
+</li>
+<li><p>“302 (找到)”状态代码用于后列情况：重定向操作是临时的或通常会发生变化。 302 状态代码向客户端指示不存储 URL 并在将来使用。</p>
+</li>
+</ul>
+<p>有关状态代码的详细信息，请参阅 <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">RFC 2616：状态代码定义</a>。</p>
+<p>URL 重写是服务器端操作，它从与客户端请求的资源地址不同的资源地址提供资源。 重写 URL 不需要往返服务器。 重写的 URL 不会返回客户端，也不会出现在浏览器地址栏。</p>
+<p>如果 <code>/resource</code> 重写到 <code>/different-resource</code>，服务器会在内部提取并返回 <code>/different-resource</code> 处的资源 。</p>
+<p>尽管客户端可能能够检索已重写 URL 处的资源，但是，客户端发出请求并收到响应时，并不知道已重写 URL 处存在的资源。</p>
+<p><img src="url-rewriting/_static/url_rewrite.png" alt="WebAPI 服务终结点已从服务器上的版本 1 (v1) 更改为版本 2 (v2)。 客户端向版本 1 路径 /v1/api 上的服务发出请求。 重写请求 URL 以访问版本 2 路径 /v2/api 上的服务。 服务以“200 (正常)”状态代码对客户端作出响应。"></p>
+<h2 id="url-rewriting-sample-app">URL 重写示例应用</h2>
+<p>可使用<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/url-rewriting/samples/">示例应用</a>了解 URL 重写中间件的功能。 该应用程序应用重定向和重写规则，并显示多个方案的重定向或重写的 URL。</p>
+<h2 id="when-to-use-url-rewriting-middleware">何时使用 URL 重写中间件</h2>
+<p>如果无法使用以下方法，请使用 URL 重写中间件：</p>
+<ul>
+<li><a href="https://www.iis.net/downloads/microsoft/url-rewrite">在 Windows Server 上使用带 IIS 的 URL 重写模块</a></li>
+<li><a href="https://httpd.apache.org/docs/2.4/rewrite/">在 Apache 服务器上使用 Apache mod_rewrite 模块</a></li>
+<li><a href="https://www.nginx.com/blog/creating-nginx-rewrite-rules/">Nginx 上的 URL 重写</a></li>
+</ul>
+<p>此外，如果应用程序在 <a class="xref" href="servers/httpsys.html">HTTP.sys 服务器</a>（旧称 WebListener）上托管，请使用中间件。</p>
+<p>使用 IIS、Apache 和 Nginx 中的基于服务器的 URL 重写技术的主要原因：</p>
+<ul>
+<li><p>中间件不支持这些模块的完整功能。</p>
+<p>服务器模块的一些功能不适用于 ASP.NET Core 项目，例如 IIS 重写模块的 <code>IsFile</code> 和 <code>IsDirectory</code> 约束。 在这些情况下，请改为使用中间件。</p>
+</li>
+<li><p>中间件性能与模块性能不匹配。</p>
+<p>基准测试是确定哪种方法会最大程度降低性能或降低的性能是否可忽略不计的唯一方法。</p>
+</li>
+</ul>
+<h2 id="package">Package</h2>
+<p>要在项目中包含中间件，请在项目文件中添加对 <a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App 元数据包</a>的包引用，该文件包含 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Rewrite">Microsoft.AspNetCore.Rewrite</a> 包。</p>
+<p>不使用 <code>Microsoft.AspNetCore.App</code> 元包时，向 <code>Microsoft.AspNetCore.Rewrite</code> 包添加项目引用。</p>
+<h2 id="extension-and-options">扩展和选项</h2>
+<p>通过使用扩展方法为每条重写规则创建 <a href="xref:Microsoft.AspNetCore.Rewrite.RewriteOptions">RewriteOptions</a> 类的实例，建立 URL 重写和重写定向规则。 按所需的处理顺序链接多个规则。 使用 &lt;xref:Microsoft.AspNetCore.Builder.RewriteBuilderExtensions.UseRewriter*&gt; 将 <code>RewriteOptions</code> 添加到请求管道时，它会被传递到 URL 重写中间件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="redirect-non-www-to-www">将非 www 重定向到 www</h3>
+<p>三个选项允许应用将非 <code>www</code> 重新定向到 <code>www</code>：</p>
+<ul>
+<li><p>&lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToWwwPermanent*&gt;：如果请求是非 <code>www</code>，则将请求永久重定向到 <code>www</code> 子域。 使用 <a href="xref:Microsoft.AspNetCore.Http.StatusCodes.Status308PermanentRedirect">Status308PermanentRedirect</a> 状态代码进行重定向。</p>
+</li>
+<li><p>&lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToWww*&gt;：如果传入请求是非 <code>www</code>，则将请求重定向到 <code>www</code> 子域。 使用 <a href="xref:Microsoft.AspNetCore.Http.StatusCodes.Status307TemporaryRedirect">Status307TemporaryRedirect</a> 状态代码进行重定向。 重载允许提供响应状态代码。 使用 &lt;xref:Microsoft.AspNetCore.Http.StatusCodes&gt; 类的字段实现状态代码分配。</p>
+</li>
+</ul>
+<h3 id="url-redirect">URL 重定向</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirect*&gt; 将请求重定向。 第一个参数包含用于匹配传入 URL 路径的正则表达式。 第二个参数是替换字符串。 第三个参数（如有）指定状态代码。 如不指定状态代码，则状态代码默认为“302 (已找到)”，指示资源暂时移动或替换。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在启用了开发人员工具的浏览器中，向路径为 <code>/redirect-rule/1234/5678</code> 的示例应用发出请求。 正则表达式匹配 <code>redirect-rule/(.*)</code> 上的请求路径，且该路径会被 <code>/redirected/1234/5678</code> 替代。 重定向 URL 以“302 (已找到)”状态代码发回客户端。 浏览器会在浏览器地址栏中出现的重定向 URL 上发出新请求。 由于示例应用中的规则都不匹配重定向 URL：</p>
+<ul>
+<li>第二个请求从应用程序收到“200 (正常)”响应。</li>
+<li>响应正文显示了重定向 URL。</li>
+</ul>
+<p>重定向 URL 时，系统将向服务器进行一次往返。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>建立重定向规则时务必小心。 系统会根据应用的每个请求（包括重定向后的请求）对重定向规则进行评估。 很容易便会意外创建无限重定向循环。</p>
+</div>
+<p>原始请求：<code>/redirect-rule/1234/5678</code></p>
+<p><img src="url-rewriting/_static/add_redirect.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>括号内的表达式部分称为“捕获组”。 表达式的点 (<code>.</code>) 表示匹配任何字符。 星号 (<code>*</code>) 表示零次或多次匹配前面的字符。 因此，URL 的最后两个路径段 <code>1234/5678</code> 由捕获组 <code>(.*)</code> 捕获。 在请求 URL 中提供的位于 <code>redirect-rule/</code> 之后的任何值均由此单个捕获组捕获。</p>
+<p>在替换字符串中，将捕获组注入带有美元符号 (<code>$</code>)、后跟捕获序列号的字符串中。 获取的第一个捕获组值为 <code>$1</code>，第二个为 <code>$2</code>，并且正则表达式中的其他捕获组值将依次继续排列。 示例应用的重定向规则正则表达式中只有一个捕获组，因此替换字符串中只有一个注入组，即 <code>$1</code>。 如果应用此规则，URL 将变为 <code>/redirected/1234/5678</code>。</p>
+<h3 id="url-redirect-to-a-secure-endpoint">URL 重定向到安全的终结点</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToHttps*&gt; 将 HTTP 请求重定向到采用 HTTPS 协议的相同主机和路径。 如不提供状态代码，则中间件默认为“302(已找到)”。 如果不提供端口：</p>
+<ul>
+<li>中间件默认为 <code>null</code>。</li>
+<li>方案更改为 <code>https</code>（HTTPS 协议），客户端访问端口 443 上的资源。</li>
+</ul>
+<p>下面的示例演示如何将状态代码设置为“301(永久移动)”并将端口更改为 5001。</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    var options = new RewriteOptions()
+        .AddRedirectToHttps(301, 5001);
+
+    app.UseRewriter(options);
+}
+</code></pre>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRedirectToHttpsPermanent*&gt; 将不安全的请求重定向到端口 443 上的采用安全 HTTPS 协议的相同主机和路径。 中间件将状态代码设置为“301 (永久移动)”。</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    var options = new RewriteOptions()
+        .AddRedirectToHttpsPermanent();
+
+    app.UseRewriter(options);
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>当重定向到安全的终结点并且不需要其他重定向规则时，建议使用 HTTPS 重定向中间件。 有关详细信息，请参阅<a class="xref" href="../security/enforcing-ssl.html#require-https">强制使用 HTTPS</a>主题。</p>
+</div>
+<p>示例应用能够演示如何使用 <code>AddRedirectToHttps</code> 或 <code>AddRedirectToHttpsPermanent</code>。 将扩展方法添加到 <code>RewriteOptions</code>。 在任何 URL 上向应用发出不安全的请求。 消除自签名证书不受信任的浏览器安全警告，或创建例外以信任证书。</p>
+<p>使用 <code>AddRedirectToHttps(301, 5001)</code> 的原始请求：<code>http://localhost:5000/secure</code></p>
+<p><img src="url-rewriting/_static/add_redirect_to_https.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>使用 <code>AddRedirectToHttpsPermanent</code> 的原始请求：<code>http://localhost:5000/secure</code></p>
+<p><img src="url-rewriting/_static/add_redirect_to_https_permanent.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<h3 id="url-rewrite">URL 重写</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.AddRewrite*&gt; 创建重写 URL 的规则。 第一个参数包含用于匹配传入 URL 路径的正则表达式。 第二个参数是替换字符串。 第三个参数 <code>skipRemainingRules: {true|false}</code> 指示如果当前规则适用，中间件是否要跳过其他重写规则。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/rewrite-rule/1234/5678</code></p>
+<p><img src="url-rewriting/_static/add_rewrite.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>表达式开头的脱字号 (<code>^</code>) 意味着匹配从 URL 路径的开头处开始。</p>
+<p>在前面的重定向规则 <code>redirect-rule/(.*)</code> 的示例中，正则表达式的开头没有脱字号 (<code>^</code>)。 因此，路径中 <code>redirect-rule/</code> 之前的任何字符都可能成功匹配。</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th style="text-align: center;">匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/redirect-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>/my-cool-redirect-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>/anotherredirect-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<p>重写规则 <code>^rewrite-rule/(\d+)/(\d+)</code> 只能与以 <code>rewrite-rule/</code> 开头的路径匹配。 注意下表中的匹配差异。</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th style="text-align: center;">匹配</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/rewrite-rule/1234/5678</code></td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>/my-cool-rewrite-rule/1234/5678</code></td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td><code>/anotherrewrite-rule/1234/5678</code></td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<p>在表达式的 <code>^rewrite-rule/</code> 部分之后，有两个捕获组 <code>(\d+)/(\d+)</code>。 <code>\d</code> 表示与数字匹配。 加号 (<code>+</code>) 表示与前面的一个或多个字符匹配。 因此，URL 必须包含数字加正斜杠加另一个数字的形式。 这些捕获组以 <code>$1</code> 和 <code>$2</code> 的形式注入重写 URL 中。 重写规则替换字符串将捕获组放入查询字符串中。 重写 <code>/rewrite-rule/1234/5678</code> 的请求路径，获取 <code>/rewritten?var1=1234&amp;var2=5678</code> 处的资源。 如果原始请求中存在查询字符串，则重写 URL 时会保留此字符串。</p>
+<p>无需往返服务器来获取资源。 如果资源存在，系统会提取资源并以“200（正常）”状态代码返回给客户端。 因为客户端不会被重定向，所以浏览器地址栏中的 URL 不会发生更改。 客户端无法检测到服务器上发生的 URL 重写操作。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>尽可能使用 <code>skipRemainingRules: true</code>，因为匹配规则在计算上很昂贵并且增加了应用响应时间。 对于最快的应用响应：</p>
+<ul>
+<li>按照从最频繁匹配的规则到最不频繁匹配的规则排列重写规则。</li>
+<li>如果出现匹配项且无需处理任何其他规则，则跳过剩余规则的处理。</li>
+</ul>
+</div>
+<h3 id="apache-mod_rewrite">Apache mod_rewrite</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.ApacheModRewriteOptionsExtensions.AddApacheModRewrite*&gt; 应用 Apache mod_rewrite 规则。 请确保将规则文件与应用一起部署。 有关 mod_rewrite 规则的详细信息和示例，请参阅 <a href="https://httpd.apache.org/docs/2.4/rewrite/">Apache mod_rewrite</a>。</p>
+<p>&lt;xref:System.IO.StreamReader&gt; 用于读取 ApacheModRewrite.txt 规则文件中的规则：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用将请求从 <code>/apache-mod-rules-redirect/(.\*)</code> 重定向到 <code>/redirected?id=$1</code>。 响应状态代码为“302 (已找到)”。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/apache-mod-rules-redirect/1234</code></p>
+<p><img src="url-rewriting/_static/add_apache_mod_redirect.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>中间件支持下列 Apache mod_rewrite 服务器变量：</p>
+<ul>
+<li>CONN_REMOTE_ADDR</li>
+<li>HTTP_ACCEPT</li>
+<li>HTTP_CONNECTION</li>
+<li>HTTP_COOKIE</li>
+<li>HTTP_FORWARDED</li>
+<li>HTTP_HOST</li>
+<li>HTTP_REFERER</li>
+<li>HTTP_USER_AGENT</li>
+<li>HTTPS</li>
+<li>IPV6</li>
+<li>QUERY_STRING</li>
+<li>REMOTE_ADDR</li>
+<li>REMOTE_PORT</li>
+<li>REQUEST_FILENAME</li>
+<li>REQUEST_METHOD</li>
+<li>REQUEST_SCHEME</li>
+<li>REQUEST_URI</li>
+<li>SCRIPT_FILENAME</li>
+<li>SERVER_ADDR</li>
+<li>SERVER_PORT</li>
+<li>SERVER_PROTOCOL</li>
+<li>TIME</li>
+<li>TIME_DAY</li>
+<li>TIME_HOUR</li>
+<li>TIME_MIN</li>
+<li>TIME_MON</li>
+<li>TIME_SEC</li>
+<li>TIME_WDAY</li>
+<li>TIME_YEAR</li>
+</ul>
+<h3 id="iis-url-rewrite-module-rules">IIS URL 重写模块规则</h3>
+<p>若要使用适用于 IIS URL 重写模块的同一规则集，使用 &lt;xref:Microsoft.AspNetCore.Rewrite.IISUrlRewriteOptionsExtensions.AddIISUrlRewrite*&gt;。 请确保将规则文件与应用一起部署。 当在 Windows Server IIS 上运行时，请勿指示中间件使用应用的 web.config 文件。 使用 IIS 时，应将这些规则存储在应用的 web.config 文件之外，以避免与 IIS 重写模块发生冲突。 有关 IIS URL 重写模块规则的详细信息和示例，请参阅 <a href="/iis/extensions/url-rewrite-module/using-url-rewrite-module-20">Using Url Rewrite Module 2.0</a>（使用 URL 重写模块 2.0）和 <a href="/iis/extensions/url-rewrite-module/url-rewrite-module-configuration-reference">URL Rewrite Module Configuration Reference</a>（URL 重写模块配置引用）。</p>
+<p>&lt;xref:System.IO.StreamReader&gt; 用于读取 IISUrlRewrite.xml 规则文件中的规则：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用将请求从 <code>/iis-rules-rewrite/(.*)</code> 重写为 <code>/rewritten?id=$1</code>。 以“200 (正常)”状态代码作为响应发送到客户端。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/iis-rules-rewrite/1234</code></p>
+<p><img src="url-rewriting/_static/add_iis_url_rewrite.png" alt="开发人员工具正跟踪请求和响应的浏览器窗口"></p>
+<p>如果有配置了服务器级别规则（可对应用产生不利影响）的活动 IIS 重写模块，则可禁用应用的 IIS 重写模块。 有关详细信息，请参阅<a class="xref" href="../host-and-deploy/iis/modules.html#disabling-iis-modules">禁用 IIS 模块</a>。</p>
+<h4 id="unsupported-features">不支持的功能</h4>
+<p>与 ASP.NET Core 2.x 一同发布的中间件不支持以下 IIS URL 重写模块功能：</p>
+<ul>
+<li>出站规则</li>
+<li>自定义服务器变量</li>
+<li>通配符</li>
+<li>LogRewrittenUrl</li>
+</ul>
+<h4 id="supported-server-variables">受支持的服务器变量</h4>
+<p>中间件支持下列 IIS URL 重写模块服务器变量：</p>
+<ul>
+<li>CONTENT_LENGTH</li>
+<li>CONTENT_TYPE</li>
+<li>HTTP_ACCEPT</li>
+<li>HTTP_CONNECTION</li>
+<li>HTTP_COOKIE</li>
+<li>HTTP_HOST</li>
+<li>HTTP_REFERER</li>
+<li>HTTP_URL</li>
+<li>HTTP_USER_AGENT</li>
+<li>HTTPS</li>
+<li>LOCAL_ADDR</li>
+<li>QUERY_STRING</li>
+<li>REMOTE_ADDR</li>
+<li>REMOTE_PORT</li>
+<li>REQUEST_FILENAME</li>
+<li>REQUEST_URI</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>也可通过 &lt;xref:Microsoft.Extensions.FileProviders.PhysicalFileProvider&gt; 获取 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt;。 这种方法可为重写规则文件的位置提供更大的灵活性。 请确保将重写规则文件部署到所提供路径的服务器中。</p>
+<pre><code class="lang-csharp">PhysicalFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
+</code></pre>
+</div>
+<h3 id="method-based-rule">基于方法的规则</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.Add*&gt; 在方法中实现自己的规则逻辑。 <code>Add</code> 公开 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteContext&gt;，这使 &lt;xref:Microsoft.AspNetCore.Http.HttpContext&gt; 可用于方法中。 <a href="xref:Microsoft.AspNetCore.Rewrite.RewriteContext.Result*">RewriteContext.Result</a> 决定如何处理其他管道进程。 将值设置为下表中的 &lt;xref:Microsoft.AspNetCore.Rewrite.RuleResult&gt; 字段之一。</p>
+<table>
+<thead>
+<tr>
+<th>重写上下文结果</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RuleResult.ContinueRules</code>（默认值）</td>
+<td>继续应用规则。</td>
+</tr>
+<tr>
+<td><code>RuleResult.EndResponse</code></td>
+<td>停止应用规则并发送响应。</td>
+</tr>
+<tr>
+<td><code>RuleResult.SkipRemainingRules</code></td>
+<td>停止应用规则并将上下文发送给下一个中间件。</td>
+</tr>
+</tbody>
+</table>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用演示了如何对以 .xml 结尾的路径的请求进行重定向。 如果发出针对 <code>/file.xml</code> 的请求，请求将重定向到 <code>/xmlfiles/file.xml</code>。 状态代码设置为“301 (永久移动)”。 当浏览器发出针对 /xmlfiles/file.xml 的新请求后，静态文件中间件会将文件从 wwwroot / xmlfiles 文件夹提供给客户端 。 对于重定向，请显式设置响应的状态代码。 否则，将会返回“200 (正常)”状态代码，且客户端上不会发生重写。</p>
+<p><em>RewriteRules.cs</em>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法还可以重写请求。 示例应用演示了如何重写任何文本文件请求的路径以从 wwwroot 文件夹中提供 file.txt 文本文件 。 静态文件中间件基于更新的请求路径来提供文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><em>RewriteRules.cs</em>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="irule-based-rule">基于 IRule 的规则</h3>
+<p>使用 &lt;xref:Microsoft.AspNetCore.Rewrite.RewriteOptionsExtensions.Add*&gt; 在实现 &lt;xref:Microsoft.AspNetCore.Rewrite.IRule&gt; 接口的类中使用规则逻辑。 与使用基于方法的规则方法相比，<code>IRule</code> 提供了更大的灵活性。 实现类可能包含构造函数，可在其中传入 &lt;xref:Microsoft.AspNetCore.Rewrite.IRule.ApplyRule*&gt; 方法的参数。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>检查示例应用中 <code>extension</code> 和 <code>newPath</code> 的参数值是否符合多个条件。 <code>extension</code> 须包含一个值，并且该值必须是 .png、.jpg 或 .gif  。 如果 <code>newPath</code> 无效，则会引发 &lt;xref:System.ArgumentException&gt;。 如果发出针对 image.png 的请求，请求将重定向到 <code>/png-images/image.png</code>。 如果发出针对 image.png 的请求，请求将重定向到 <code>/jpg-images/image.jpg</code>。 状态代码设置为“301 (永久移动)”，<code>context.Result</code> 设置为停止处理规则并发送响应。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>原始请求：<code>/image.png</code></p>
+<p><img src="url-rewriting/_static/add_redirect_png_requests.png" alt="开发人员工具正跟踪 image.png 的请求和响应的浏览器窗口"></p>
+<p>原始请求：<code>/image.jpg</code></p>
+<p><img src="url-rewriting/_static/add_redirect_jpg_requests.png" alt="开发人员工具正跟踪 image.jpg 的请求和响应的浏览器窗口"></p>
+<h2 id="regex-examples">正则表达式示例</h2>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>正则表达式字符串和<br>匹配示例</th>
+<th>替换字符串和<br>输出示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>将路径重写为查询字符串</td>
+<td><code>^path/(.*)/(.*)</code><br><code>/path/abc/123</code></td>
+<td><code>path?var1=$1&amp;var2=$2</code><br><code>/path?var1=abc&amp;var2=123</code></td>
+</tr>
+<tr>
+<td>去掉尾部反斜杠</td>
+<td><code>(.*)/$</code><br><code>/path/</code></td>
+<td><code>$1</code><br><code>/path</code></td>
+</tr>
+<tr>
+<td>强制添加尾部反斜杠</td>
+<td><code>(.*[^/])$</code><br><code>/path</code></td>
+<td><code>$1/</code><br><code>/path/</code></td>
+</tr>
+<tr>
+<td>避免重写特定请求</td>
+<td><code>^(.*)(?&lt;!\.axd)$</code> 或 <code>^(?!.*\.axd$)(.*)$</code><br>正确：<code>/resource.htm</code><br>错误：<code>/resource.axd</code></td>
+<td><code>rewritten/$1</code><br><code>/rewritten/resource.htm</code><br><code>/resource.axd</code></td>
+</tr>
+<tr>
+<td>重新排列 URL 段</td>
+<td><code>path/(.*)/(.*)/(.*)</code><br><code>path/1/2/3</code></td>
+<td><code>path/$3/$2/$1</code><br><code>path/3/2/1</code></td>
+</tr>
+<tr>
+<td>替换 URL 段</td>
+<td><code>^(.*)/segment2/(.*)</code><br><code>/segment1/segment2/segment3</code></td>
+<td><code>$1/replaced/$2</code><br><code>/segment1/replaced/segment3</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a></li>
+<li><a class="xref" href="middleware/index.html">ASP.NET Core 中间件</a></li>
+<li><a href="/dotnet/articles/standard/base-types/regular-expressions">.NET 中的正则表达式</a></li>
+<li><a href="/dotnet/articles/standard/base-types/quick-ref">正则表达式语言 - 快速参考</a></li>
+<li><a href="https://httpd.apache.org/docs/2.4/rewrite/">Apache mod_rewrite</a></li>
+<li><a href="/iis/extensions/url-rewrite-module/using-url-rewrite-module-20">使用 URL 重写模块 2.0（适用于 IIS）</a></li>
+<li><a href="/iis/extensions/url-rewrite-module/url-rewrite-module-configuration-reference">URL Rewrite Module Configuration Reference</a>（URL 重写模块配置引用）</li>
+<li><a href="https://forums.iis.net/1152.aspx">IIS URL 重写模块论坛</a></li>
+<li><a href="https://support.google.com/webmasters/answer/76329?hl=en">Keep a simple URL structure</a>（保持简单的 URL 结构）</li>
+<li><a href="https://ruslany.net/2009/04/10-url-rewriting-tips-and-tricks/">10 URL Rewriting Tips and Tricks</a>（10 个 URL 重写提示和技巧）</li>
+<li><a href="https://webmasters.googleblog.com/2010/04/to-slash-or-not-to-slash.html">To slash or not to slash</a>（用斜杠或不用斜杠）</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

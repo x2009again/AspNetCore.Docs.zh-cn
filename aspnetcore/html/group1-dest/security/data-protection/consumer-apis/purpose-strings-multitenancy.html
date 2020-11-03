@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#29992;&#36884;&#23618;&#27425;&#32467;&#26500;&#21644;&#22810;&#31199;&#25143; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#29992;&#36884;&#23618;&#27425;&#32467;&#26500;&#21644;&#22810;&#31199;&#25143; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/data-protection/consumer-apis/purpose-strings-multitenancy">
+<h1 id="purpose-hierarchy-and-multi-tenancy-in-aspnet-core">ASP.NET Core 中的用途层次结构和多租户</h1>
+
+<p>由于 <code>IDataProtector</code> 也是隐式的 <code>IDataProtectionProvider</code> ，因此，目的可以链接在一起。 在这种意义上， <code>provider.CreateProtector([ &quot;purpose1&quot;, &quot;purpose2&quot; ])</code> 等效于 <code>provider.CreateProtector(&quot;purpose1&quot;).CreateProtector(&quot;purpose2&quot;)</code> 。</p>
+<p>这允许通过数据保护系统实现一些有趣的层次结构关系。 在前面的 <a class="xref" href="purpose-strings.html#data-protection-contoso-purpose">SecureMessage</a>中，SecureMessage 组件可以提前调用， <code>provider.CreateProtector(&quot;Contoso.Messaging.SecureMessage&quot;)</code> 并将结果缓存到私有 <code>_myProvider</code> 字段。 以后可以通过对的调用创建未来的保护 <code>_myProvider.CreateProtector(&quot;User: username&quot;)</code> 程序，这些保护程序将用于保护单个消息。</p>
+<p>这也可以是反向的。 假设有一个逻辑应用程序托管多个租户 (CMS 看似合理) ，每个租户都可以使用其自己的身份验证和状态管理系统进行配置。 该应用程序具有单个主提供程序，它调用 <code>provider.CreateProtector(&quot;Tenant 1&quot;)</code> 并为 <code>provider.CreateProtector(&quot;Tenant 2&quot;)</code> 每个租户提供自己的数据保护系统隔离切片。 然后，租户可以根据自己的需求来派生自己的单独保护程序，但不管它们尝试的情况如何，都不能创建与系统中任何其他租户发生冲突的保护程序。 以图形方式表示，如下所示。</p>
+<p><img src="purpose-strings-multitenancy/_static/purposes-multi-tenancy.png" alt="多租户用途"></p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>这会假定应用程序控制各个租户可用的 Api，并且租户无法在服务器上执行任意代码。 如果租户可以执行任意代码，则他们可能会执行私有反射来打破隔离保证，也可以直接读取主密钥材料，并派生出所需的任何子项。</p>
+</div>
+<p>数据保护系统实际上在其默认的现成配置中使用一种多租户。 默认情况下，主密钥材料存储在工作进程帐户的用户配置文件文件夹 (或注册表中，用于 IIS 应用程序池标识) 。 但实际使用单个帐户运行多个应用程序的情况并不是很常见，因此，所有这些应用程序都将结束共享主密钥材料。 若要解决此情况，数据保护系统会自动插入一个唯一的每个应用程序标识符作为总体用途链中的第一个元素。 这种隐式目的是通过有效地将每个应用程序视为系统内的唯一租户来将 <a class="xref" href="../configuration/overview.html#per-application-isolation">各个应用程序彼此隔离</a> ，并且保护程序创建过程看起来与上图中的相同。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

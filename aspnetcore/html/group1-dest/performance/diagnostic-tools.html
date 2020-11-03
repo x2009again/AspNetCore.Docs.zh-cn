@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#24615;&#33021;&#35786;&#26029;&#24037;&#20855; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#24615;&#33021;&#35786;&#26029;&#24037;&#20855; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="performance/diagnostic-tools">
+<h1 id="performance-diagnostic-tools">性能诊断工具</h1>
+
+<p>作者：<a href="https://github.com/mjrousos">Mike Rousos</a></p>
+<p>本文列出了用于诊断 ASP.NET Core 中性能问题的工具。</p>
+<h2 id="visual-studio-diagnostic-tools">Visual Studio 诊断工具</h2>
+<p>Visual Studio 中内置的 <a href="/visualstudio/profiling">分析和诊断工具</a> 是开始调查性能问题的好地方。 这些工具的功能非常强大，可以方便地从 Visual Studio 开发环境使用。 该工具允许分析 ASP.NET Core 应用中的 CPU 使用率、内存使用率和性能事件。 内置使分析变得非常简单。</p>
+<p>有关详细信息，请 <a href="/visualstudio/profiling/profiling-overview">参阅 Visual Studio 文档</a>。</p>
+<h2 id="application-insights">Application Insights</h2>
+<p><a href="/azure/application-insights/app-insights-overview">Application Insights</a> 提供应用程序的详细性能数据。 Application Insights 会自动收集有关响应速率、失败率、依赖项响应时间等的数据。 Application Insights 支持记录特定于应用的自定义事件和指标。</p>
+<p>Azure 应用程序 Insights 提供多种方法来提供对受监视应用的见解：</p>
+<ul>
+<li><p><a href="/azure/application-insights/app-insights-app-map">应用程序映射</a> -有助于在分布式应用程序的所有组件中发现性能瓶颈或故障热点。</p>
+</li>
+<li><p><a href="/azure/azure-monitor/platform/metrics-getting-started">Azure 指标资源管理器</a> 是 Microsoft Azure 门户的一个组件，它允许绘制图表、直观关联趋势，并调查指标值中的峰值和 dip。</p>
+</li>
+<li><p><a href="/azure/application-insights/app-insights-tutorial-performance">Application Insights 门户中的 &quot;性能&quot; 边栏选项卡</a>：</p>
+<ul>
+<li>显示监视的应用程序中不同操作的性能详细信息。</li>
+<li>允许钻取到单个操作，以检查影响长时间的所有部件/依赖关系。</li>
+<li>可以从源调用探查器，按需收集性能跟踪。</li>
+</ul>
+</li>
+<li><p><a href="/azure/azure-monitor/app/profiler">Azure 应用程序 Insights 探查器</a> 允许 .net 应用的常规和按需分析。  Azure 门户显示通过调用堆栈和热路径捕获的性能跟踪。 还可以使用 PerfView 下载跟踪文件以进行更深入的分析。</p>
+</li>
+</ul>
+<p>Application Insights 可用于各种环境：</p>
+<ul>
+<li>经过优化，可在 Azure 中工作。</li>
+<li>在生产、开发和过渡环境中工作。</li>
+<li>从 <a href="/azure/application-insights/app-insights-visual-studio">Visual Studio</a> 或其他宿主环境中运行。</li>
+</ul>
+<p>有关详细信息，请参阅<a href="/azure/application-insights/app-insights-asp-net-core">适用于 ASP.NET Core 的 Application Insights</a>。</p>
+<h2 id="perfview">PerfView</h2>
+<p><a href="https://github.com/Microsoft/perfview">PerfView</a> 是 .net 团队为诊断 .net 性能问题而创建的一种性能分析工具。 PerfView 允许对 CPU 使用情况、内存和 GC 行为、性能事件和时钟时间进行分析。</p>
+<p>你可以了解有关 PerfView 的详细信息以及如何开始使用 <a href="https://channel9.msdn.com/Series/PerfView-Tutorial">PerfView 视频教程</a> ，或阅读该工具或 <a href="https://github.com/Microsoft/perfview">GitHub 上</a>提供的用户指南。</p>
+<h2 id="windows-performance-toolkit">Windows 性能工具包</h2>
+<p><a href="/windows-hardware/test/wpt/">Windows 性能工具包</a> (WPT) 包含两个组件： Windows 性能记录器 (&quot;) 和 Windows 性能分析器 (WPA) 。 这些工具会生成 Windows 操作系统和应用的深入性能配置文件。 WPT 提供了更丰富的数据可视化方法，但其数据收集功能不如 PerfView。</p>
+<h2 id="perfcollect">PerfCollect</h2>
+<p>尽管 PerfView 是适用于 .NET 方案的有用性能分析工具，但它仅在 Windows 上运行，因此不能使用它从 Linux 环境中运行的 ASP.NET Core 应用程序收集跟踪。</p>
+<p><a href="https://github.com/dotnet/coreclr/blob/master/Documentation/project-docs/linux-performance-tracing.md">PerfCollect</a> 是一种 bash 脚本，它使用本机 Linux 分析工具 (<a href="https://perf.wiki.kernel.org/index.php/Main_Page">Perf</a> 和 <a href="https://lttng.org/">LTTng</a>) 收集 Linux 上可通过 PerfView 分析的跟踪。 当在不能直接使用 PerfView 的 Linux 环境中出现性能问题时，PerfCollect 非常有用。 相反，PerfCollect 可以从 .NET Core 应用收集跟踪，然后使用 PerfView 在 Windows 计算机上进行分析。</p>
+<p><a href="https://github.com/dotnet/coreclr/blob/master/Documentation/project-docs/linux-performance-tracing.md">GitHub 上</a>提供了有关如何安装和开始使用 PerfCollect 的详细信息。</p>
+<h2 id="other-third-party-performance-tools">其他第三方性能工具</h2>
+<p>下面列出了一些可在 .NET Core 应用程序的性能调查中发挥作用的第三方性能工具。</p>
+<ul>
+<li><a href="https://miniprofiler.com/">MiniProfiler</a></li>
+<li><a href="https://www.jetbrains.com/">JetBrains</a>中的<a href="https://www.jetbrains.com/profiler/">dotTrace</a>和<a href="https://www.jetbrains.com/dotmemory/">dotMemory</a></li>
+<li>来自 Intel 的<a href="https://software.intel.com/content/www/us/en/develop/tools/vtune-profiler.html">VTune</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

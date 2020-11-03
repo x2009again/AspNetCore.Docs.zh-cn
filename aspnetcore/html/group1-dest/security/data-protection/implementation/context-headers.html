@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#19978;&#19979;&#25991;&#26631;&#39064; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#19978;&#19979;&#25991;&#26631;&#39064; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/data-protection/implementation/context-headers">
+<h1 id="context-headers-in-aspnet-core">ASP.NET Core 中的上下文标题</h1>
+
+<p><a name="data-protection-implementation-context-headers"></a></p>
+<h2 id="background-and-theory">背景和理论</h2>
+<p>在数据保护系统中，&quot;密钥&quot; 是指可提供经过身份验证的加密服务的对象。 每个密钥都是由 GUID)  (唯一 id 标识的，它附带了它的算法信息和 entropic 材料。 它的目的是，每个密钥都具有唯一的平均信息量，但系统不能强制实施这一点，并且我们还需要考虑到通过修改密钥环中现有密钥的算法信息来手动更改密钥环的开发人员。 为实现安全要求，在这种情况下，数据保护系统具有 <a href="https://www.microsoft.com/research/publication/cryptographic-agility-and-its-relation-to-circular-encryption">加密灵活性</a>，这允许使用跨多个加密算法的单个 entropic 值安全地使用。</p>
+<p>大多数支持加密灵活性的系统通过在有效负载中包含有关算法的一些识别信息来实现此目的。 通常，该算法的 OID 是一个不错的候选项。 但是，我们遇到的一个问题是，有多种方法可以指定相同的算法： &quot;AES&quot; (CNG) ，托管的 Aes、AesManaged、AesCryptoServiceProvider、AesCng 和 RijndaelManaged (给定特定参数的特定参数) 类实际上是相同的，因此，我们需要维护所有这些参数到正确 OID 的映射。 如果开发人员想要提供自定义算法 (甚至 AES！ ) 的其他实现，则他们必须告诉我们其 OID。 此额外注册步骤使系统配置特别令人头痛。</p>
+<p>再回顾一步，我们决定我们从错误的方向接近问题。 OID 告诉您算法是什么，但我们并不真正关心这一点。 如果需要以两个不同的算法安全地使用单个 entropic 值，我们不需要知道算法的实际含义。 我们真正关心的是它们的行为方式。 任何适当的对称块加密算法也是一种功能强大的伪随机排列 (PRP) ：修复输入 (密钥、链接模式、IV、纯文本) 和密码文本输出与任何其他对称块加密算法相比，给定的输入相同。 同样，任何适当的键控哈希函数也是 (PRF) 的强伪随机函数，并且给定固定输入集，其输出将充分与任何其他键控哈希函数不同。</p>
+<p>我们使用强 PRPs 和 PRFs 这一概念来构建上下文标头。 此上下文标头本质上可充当用于任何给定操作的算法的稳定指纹，并提供数据保护系统所需的加密灵活性。 此标头可重复使用，稍后将用作 <a class="xref" href="subkeyderivation.html#data-protection-implementation-subkey-derivation">子项派生过程</a>的一部分。 可以通过两种不同的方式生成上下文标题，具体取决于基础算法的操作模式。</p>
+<h2 id="cbc-mode-encryption--hmac-authentication">CBC 模式加密 + HMAC 身份验证</h2>
+<p><a name="data-protection-implementation-context-headers-cbc-components"></a></p>
+<p>上下文标头包含以下组件：</p>
+<ul>
+<li><p>[16 位]值 00 00，它是一个标记，表示 &quot;CBC 加密 + HMAC 身份验证&quot;。</p>
+</li>
+<li><p>[32 位]对称块加密算法的密钥长度 (以字节为单位，大字节序) 。</p>
+</li>
+<li><p>[32 位]对称块密码算法的块大小 (以字节为单位，大字节序) 。</p>
+</li>
+<li><p>[32 位]HMAC 算法的密钥长度 (以字节为单位，大字节序) 。  (当前密钥大小始终与摘要大小匹配。 )</p>
+</li>
+<li><p>[32 位]HMAC 算法的摘要大小 (（以字节为单位），大字节序) 。</p>
+</li>
+<li><p><code>EncCBC(K_E, IV, &quot;&quot;)</code>，为对称块加密算法的输出，提供空字符串输入，其中 IV 为全零向量。 <code>K_E</code>下面介绍了的构造。</p>
+</li>
+<li><p><code>MAC(K_H, &quot;&quot;)</code>，它是给定空字符串输入的 HMAC 算法的输出。 <code>K_H</code>下面介绍了的构造。</p>
+</li>
+</ul>
+<p>理想情况下，我们可以将所有-zero 向量传递给 <code>K_E</code> 和 <code>K_H</code> 。 但是，我们想要避免在执行任何 (操作之前，基础算法检查是否存在弱密钥，而这种情况会导致 DES 和 3DES) ，而不是使用简单或可重复的模式，例如全零向量。</p>
+<p>相反，我们在计数器模式下使用 NIST SP800-108 KDF (参阅 <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-108.pdf">NIST SP800-108</a>，5.1) ，其中长度为零、标签和上下文，HMACSHA512 作为基础 PRF。 我们派生 <code>| K_E | + | K_H |</code> 输出字节，然后将结果分解为 <code>K_E</code> <code>K_H</code> 自身。 从数学上来说，这种情况如下所示。</p>
+<p><code>( K_E || K_H ) = SP800_108_CTR(prf = HMACSHA512, key = &quot;&quot;, label = &quot;&quot;, context = &quot;&quot;)</code></p>
+<h3 id="example-aes-192-cbc--hmacsha256">示例： AES-192-CBC + HMACSHA256</h3>
+<p>作为示例，请考虑对称块加密算法为 AES-192-CBC 并且验证算法为 HMACSHA256 的情况。 系统将使用以下步骤生成上下文标头。</p>
+<p>首先，让 <code>( K_E || K_H ) = SP800_108_CTR(prf = HMACSHA512, key = &quot;&quot;, label = &quot;&quot;, context = &quot;&quot;)</code> ， <code>| K_E | = 192 bits</code> <code>| K_H | = 256 bits</code> 根据指定的算法和位置。 这会导致 <code>K_E = 5BB6..21DD</code> 和 <code>K_H = A04A..00A9</code> 在以下示例中：</p>
+<pre><code>5B B6 C9 83 13 78 22 1D 8E 10 73 CA CF 65 8E B0
+61 62 42 71 CB 83 21 DD A0 4A 05 00 5B AB C0 A2
+49 6F A5 61 E3 E2 49 87 AA 63 55 CD 74 0A DA C4
+B7 92 3D BF 59 90 00 A9
+</code></pre>
+<p>接下来，计算 <code>Enc_CBC (K_E, IV, &quot;&quot;)</code> 给定 <code>IV = 0*</code> 和更高版本的 AES-192-CBC <code>K_E</code> 。</p>
+<p><code>result := F474B1872B3B53E4721DE19C0841DB6F</code></p>
+<p>接下来，计算 <code>MAC(K_H, &quot;&quot;)</code> HMACSHA256 给定的 <code>K_H</code> 。</p>
+<p><code>result := D4791184B996092EE1202F36E8608FA8FBD98ABDFF5402F264B1D7211536220C</code></p>
+<p>这会生成以下完整的上下文标头：</p>
+<pre><code>00 00 00 00 00 18 00 00 00 10 00 00 00 20 00 00
+00 20 F4 74 B1 87 2B 3B 53 E4 72 1D E1 9C 08 41
+DB 6F D4 79 11 84 B9 96 09 2E E1 20 2F 36 E8 60
+8F A8 FB D9 8A BD FF 54 02 F2 64 B1 D7 21 15 36
+22 0C
+</code></pre>
+<p>此上下文标头是经过身份验证的加密算法对的指纹 (AES-192-CBC encryption + HMACSHA256 验证) 。 如上所述，组件如下所<a class="xref" href="context-headers.html#data-protection-implementation-context-headers-cbc-components">述：</a></p>
+<ul>
+<li><p>标记 <code>(00 00)</code></p>
+</li>
+<li><p>块加密密钥长度 <code>(00 00 00 18)</code></p>
+</li>
+<li><p>块加密块大小 <code>(00 00 00 10)</code></p>
+</li>
+<li><p>HMAC 密钥长度 <code>(00 00 00 20)</code></p>
+</li>
+<li><p>HMAC 摘要大小 <code>(00 00 00 20)</code></p>
+</li>
+<li><p>块密码 PRP 输出 <code>(F4 74 - DB 6F)</code> 和</p>
+</li>
+<li><p>HMAC PRF 输出 <code>(D4 79 - end)</code> 。</p>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>无论算法实现由 Windows CNG 还是由托管的 System.security.cryptography.symmetricalgorithm 和 KeyedHashAlgorithm 类型提供，CBC 模式加密 + HMAC 身份验证上下文标题都采用相同的方式生成。 这使得在不同操作系统上运行的应用程序可以可靠地生成相同的上下文标头，即使这些算法的实现在操作系统之间有所不同。  (实际上，KeyedHashAlgorithm 不必是正确的 HMAC。 它可以是任何密钥哈希算法类型。 )</p>
+</div>
+<h3 id="example-3des-192-cbc--hmacsha1">示例： 3DES-192-CBC + HMACSHA1</h3>
+<p>首先，让 <code>( K_E || K_H ) = SP800_108_CTR(prf = HMACSHA512, key = &quot;&quot;, label = &quot;&quot;, context = &quot;&quot;)</code> ， <code>| K_E | = 192 bits</code> <code>| K_H | = 160 bits</code> 根据指定的算法和位置。 这会导致 <code>K_E = A219..E2BB</code> 和 <code>K_H = DC4A..B464</code> 在以下示例中：</p>
+<pre><code>A2 19 60 2F 83 A9 13 EA B0 61 3A 39 B8 A6 7E 22
+61 D9 F8 6C 10 51 E2 BB DC 4A 00 D7 03 A2 48 3E
+D1 F7 5A 34 EB 28 3E D7 D4 67 B4 64
+</code></pre>
+<p>接下来，计算 <code>Enc_CBC (K_E, IV, &quot;&quot;)</code> 给定 <code>IV = 0*</code> 和更高版本的 3des-192-CBC <code>K_E</code> 。</p>
+<p><code>result := ABB100F81E53E10E</code></p>
+<p>接下来，计算 <code>MAC(K_H, &quot;&quot;)</code> HMACSHA1 给定的 <code>K_H</code> 。</p>
+<p><code>result := 76EB189B35CF03461DDF877CD9F4B1B4D63A7555</code></p>
+<p>这将生成完整的上下文标头，该标头是经过身份验证的加密算法对的指纹 (3DES-192-CBC encryption + HMACSHA1 验证) ，如下所示：</p>
+<pre><code>00 00 00 00 00 18 00 00 00 08 00 00 00 14 00 00
+00 14 AB B1 00 F8 1E 53 E1 0E 76 EB 18 9B 35 CF
+03 46 1D DF 87 7C D9 F4 B1 B4 D6 3A 75 55
+</code></pre>
+<p>组件将按如下方式进行分解：</p>
+<ul>
+<li><p>标记 <code>(00 00)</code></p>
+</li>
+<li><p>块加密密钥长度 <code>(00 00 00 18)</code></p>
+</li>
+<li><p>块加密块大小 <code>(00 00 00 08)</code></p>
+</li>
+<li><p>HMAC 密钥长度 <code>(00 00 00 14)</code></p>
+</li>
+<li><p>HMAC 摘要大小 <code>(00 00 00 14)</code></p>
+</li>
+<li><p>块密码 PRP 输出 <code>(AB B1 - E1 0E)</code> 和</p>
+</li>
+<li><p>HMAC PRF 输出 <code>(76 EB - end)</code> 。</p>
+</li>
+</ul>
+<h2 id="galoiscounter-mode-encryption--authentication">Galois/Counter 模式加密 + 身份验证</h2>
+<p>上下文标头包含以下组件：</p>
+<ul>
+<li><p>[16 位]值 00 01，它是一个标记，表示 &quot;GCM 加密 + 身份验证&quot;。</p>
+</li>
+<li><p>[32 位]对称块加密算法的密钥长度 (以字节为单位，大字节序) 。</p>
+</li>
+<li><p>[32 位]在经过身份验证的加密操作期间) ，nonce 大小 (以字节为单位）。 对于我们的系统 (，这是在 nonce size = 96 位上固定的。 )</p>
+</li>
+<li><p>[32 位]对称块密码算法的块大小 (以字节为单位，大字节序) 。  (GCM，这是在块大小 = 128 位固定的。 )</p>
+</li>
+<li><p>[32 位]身份验证标记大小 () （以字节为单位），由经过身份验证的加密功能生成。 对于我们的系统 (，这是在 tag size = 128 位上固定的。 )</p>
+</li>
+<li><p>[128 位]的标记 <code>Enc_GCM (K_E, nonce, &quot;&quot;)</code> ，它是对称块加密算法的输出，提供的是空字符串输入，其中 nonce 为96位全零向量。</p>
+</li>
+</ul>
+<p><code>K_E</code> 使用与在 CBC 加密 + HMAC 身份验证方案中相同的机制来派生。 不过，由于这里没有任何内容 <code>K_H</code> ，因此我们实质上具有 <code>| K_H | = 0</code> ，算法折叠到下面的窗体中。</p>
+<p><code>K_E = SP800_108_CTR(prf = HMACSHA512, key = &quot;&quot;, label = &quot;&quot;, context = &quot;&quot;)</code></p>
+<h3 id="example-aes-256-gcm">示例： AES-256-GCM</h3>
+<p>首先，让吧 <code>K_E = SP800_108_CTR(prf = HMACSHA512, key = &quot;&quot;, label = &quot;&quot;, context = &quot;&quot;)</code> <code>| K_E | = 256 bits</code> 。</p>
+<p><code>K_E := 22BC6F1B171C08C4AE2F27444AF8FC8B3087A90006CAEA91FDCFB47C1B8733B8</code></p>
+<p>接下来，计算 <code>Enc_GCM (K_E, nonce, &quot;&quot;)</code> 给定 <code>nonce = 096</code> 和更高版本的 256-GCM 的身份验证标记 <code>K_E</code> 。</p>
+<p><code>result := E7DCCE66DF855A323A6BB7BD7A59BE45</code></p>
+<p>这会生成以下完整的上下文标头：</p>
+<pre><code>00 01 00 00 00 20 00 00 00 0C 00 00 00 10 00 00
+00 10 E7 DC CE 66 DF 85 5A 32 3A 6B B7 BD 7A 59
+BE 45
+</code></pre>
+<p>组件将按如下方式进行分解：</p>
+<ul>
+<li><p>标记 <code>(00 01)</code></p>
+</li>
+<li><p>块加密密钥长度 <code>(00 00 00 20)</code></p>
+</li>
+<li><p>nonce 大小 <code>(00 00 00 0C)</code></p>
+</li>
+<li><p>块加密块大小 <code>(00 00 00 10)</code></p>
+</li>
+<li><p>身份验证标记大小 <code>(00 00 00 10)</code> 和</p>
+</li>
+<li><p>运行块密码的身份验证标记 <code>(E7 DC - end)</code> 。</p>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,377 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; cookie ASP.NET Core &#20013;&#30340; SameSite </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; cookie ASP.NET Core &#20013;&#30340; SameSite ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/samesite">
+<h1 id="work-with-samesite-no-loccookies-in-aspnet-core">使用 cookie ASP.NET Core 中的 SameSite</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>SameSite 是一种 <a href="https://ietf.org/about/">IETF</a> 草案标准，旨在针对跨站点请求伪造 (CSRF) 攻击提供一些保护。 最初在 <a href="https://tools.ietf.org/html/draft-west-first-party-cookies-07">2016</a>中起草草案标准版已在 <a href="https://tools.ietf.org/html/draft-west-cookie-incrementalism-00">2019</a>中更新。 更新的标准与以前的标准不是向后兼容，以下是最明显的区别：</p>
+<ul>
+<li>Cookie默认情况下，不使用 SameSite 标头 <code>SameSite=Lax</code> 。</li>
+<li><code>SameSite=None</code> 必须使用以允许跨站点 cookie 使用。</li>
+<li>Cookie断言 <code>SameSite=None</code> 还必须标记为 <code>Secure</code> 。</li>
+<li>使用的应用程序 <a href="https://developer.mozilla.org/docs/Web/HTML/Element/iframe"><code>&lt;iframe&gt;</code></a> 可能会遇到或的问题， <code>sameSite=Lax</code> <code>sameSite=Strict</code> cookie 因为 <code>&lt;iframe&gt;</code> 被视为跨站点方案。</li>
+<li><code>SameSite=None</code> <a href="https://tools.ietf.org/html/draft-west-first-party-cookies-07">2016 标准</a>不允许该值，并导致某些实现将此类视为 cookie <code>SameSite=Strict</code> 。 请参阅本文档中的 <a href="#sob">支持旧版浏览器</a> 。</li>
+</ul>
+<p>此 <code>SameSite=Lax</code> 设置适用于大多数应用程序 cookie 。 某些形式的身份验证，例如 <a href="https://openid.net/connect/">OpenID connect</a> (OIDC) ，并且 <a href="https://auth0.com/docs/protocols/ws-fed">WS 联合</a> 身份验证默认为基于 POST 的重定向。 基于后期的重定向会触发 SameSite 浏览器保护，因此，对这些组件禁用了 SameSite。 由于请求的流动方式不同，大多数 <a href="https://oauth.net/">OAuth</a> 登录名不受影响。</p>
+<p>发出的每个 ASP.NET Core 组件都 cookie 需要确定 SameSite 是否合适。</p>
+<h2 id="samesite-and-no-locidentity">SameSite 和 Identity</h2>
+<p>ASP.NET Core<a class="xref" href="authentication/identity.html">标识</a>在很大程度上不受<a class="xref" href="samesite.html">SameSite cookie</a>的影响，如或集成的高级方案除外 <code>IFrames</code> <code>OpenIdConnect</code> 。</p>
+<p>使用时 <code>Identity</code> ，请<em><strong>不要</strong></em>添加任何 cookie 提供程序或调用，而 <code> services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)</code> 是执行此操作 <code>Identity</code> 。</p>
+<h2 id="samesite-test-sample-code">SameSite 测试示例代码</h2>
+<div range="&gt;= aspnetcore-2.1 &lt; aspnetcore-3.0">
+<p>可下载和测试以下示例：</p>
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>文档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore21MVC">.NET Core MVC</a></td>
+<td><a class="xref" href="samesite/mvc21.html">ASP.NET Core 2.1 MVC SameSite cookie 示例</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore21RazorPages">.NET Core Razor 页</a></td>
+<td><a class="xref" href="samesite/rp21.html">ASP.NET Core 2.1 Razor Pages SameSite cookie 示例</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<p>可下载并测试以下示例：</p>
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>文档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore31RazorPages">.NET Core Razor 页</a></td>
+<td><a class="xref" href="samesite/rp31.html">ASP.NET Core 3.1 Razor Pages SameSite cookie 示例</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div range="&gt;= aspnetcore-2.2">
+<h2 id="net-core-support-for-the-samesite-attribute">.NET Core 对 sameSite 属性的支持</h2>
+<p>.NET Core 2.2 和更高版本支持 SameSite 的2019草稿标准版，因为年12月2019更新版本。 开发人员能够使用属性以编程方式控制 sameSite 属性的值 <code>HttpCookie.SameSite</code> 。 如果将 <code>SameSite</code> 属性设置为 Strict、宽松或 None，则会在网络上用来写入这些值 cookie 。 如果将其设置为 <code>(SameSiteMode)(-1)</code> &quot;等于&quot;，则表示网络中不应包含 sameSite 属性， cookie</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>.NET Core 3.0 和更高版本支持更新后的 SameSite 值，并向枚举添加额外的枚举值 <code>SameSiteMode.Unspecified</code> <code>SameSiteMode</code> 。
+此新值指示不应向发送 sameSite cookie 。</p>
+</div>
+<div range="= aspnetcore-2.1">
+<h2 id="december-patch-behavior-changes">12月修补程序行为更改</h2>
+<p>.NET Framework 和 .NET Core 2.1 的特定行为更改是 <code>SameSite</code> 属性解释值的方式 <code>None</code> 。 在修补程序的值为 <code>None</code> &quot;根本不发出属性&quot; 之前，修补后表示 &quot;发出值为的属性&quot; <code>None</code> 。 修补后，的 <code>SameSite</code> 值将 <code>(SameSiteMode)(-1)</code> 导致不发出属性。</p>
+<p>Forms 身份验证和会话状态的默认 SameSite 值 cookie 从更改 <code>None</code> 为 <code>Lax</code> 。</p>
+</div>
+<h2 id="api-usage-with-samesite">使用 SameSite 的 API 用法</h2>
+<p><a href="xref:Microsoft.AspNetCore.Http.IResponseCookies.Append*">HttpContext 响应。 Cookies。</a> 将默认值追加到 <code>Unspecified</code> ，这意味着，不会将 SameSite 属性添加到中， cookie 并且客户端将使用其默认行为 (对新浏览器的宽松，而不能为旧浏览器) 。 下面的代码演示如何将 cookie SameSite 值更改为 <code>SameSiteMode.Lax</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>发出的所有 ASP.NET Core 组件都 cookie 用适用于方案的设置替代前面的默认值。 先前重写的默认值尚未更改。</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>cookie</th>
+<th>默认</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Http.CookieBuilder&gt;</td>
+<td>&lt;xref:Microsoft.AspNetCore.Http.CookieBuilder.SameSite&gt;</td>
+<td><code>Unspecified</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Http.HttpContext.Session&gt;</td>
+<td><a href="xref:Microsoft.AspNetCore.Builder.SessionOptions.Cookie">SessionOptions.Cookie</a></td>
+<td><code>Lax</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Mvc.ViewFeatures.CookieTempDataProvider&gt;</td>
+<td><a href="xref:Microsoft.AspNetCore.Mvc.CookieTempDataProviderOptions.Cookie">CookieTempDataProviderOptions.Cookie</a></td>
+<td><code>Lax</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Antiforgery.IAntiforgery&gt;</td>
+<td><a href="xref:Microsoft.AspNetCore.Antiforgery.AntiforgeryOptions.Cookie">AntiforgeryOptions.Cookie</a></td>
+<td><code>Strict</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.Extensions.DependencyInjection.CookieExtensions.AddCookie*">Cookie 验证</a></td>
+<td><a href="xref:Microsoft.AspNetCore.Builder.CookieAuthenticationOptions.CookieName">CookieAuthenticationOptions.Cookie</a></td>
+<td><code>Lax</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.DependencyInjection.TwitterExtensions.AddTwitter*&gt;</td>
+<td><a href="xref:Microsoft.AspNetCore.Authentication.Twitter.TwitterOptions.StateCookie">CookieTwitterOptions</a></td>
+<td><code>Lax</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Authentication.RemoteAuthenticationHandler`1&gt;</td>
+<td><a href="xref:Microsoft.AspNetCore.Authentication.RemoteAuthenticationOptions.CorrelationCookie">RemoteAuthenticationOptionsCookie</a></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.DependencyInjection.OpenIdConnectExtensions.AddOpenIdConnect*&gt;</td>
+<td><a href="xref:Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectOptions.NonceCookie">OpenIdConnectOptionsCookie</a></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><a href="xref:Microsoft.AspNetCore.Http.IResponseCookies.Append*">HttpContext 响应。 Cookies. 追加</a></td>
+<td>&lt;xref:Microsoft.AspNetCore.Http.CookieOptions&gt;</td>
+<td><code>Unspecified</code></td>
+</tr>
+</tbody>
+</table>
+<div range="&gt;= aspnetcore-3.1">
+<p>ASP.NET Core 3.1 和更高版本提供了以下 SameSite 支持：</p>
+<ul>
+<li>重新定义要发出的的行为 <code>SameSiteMode.None``SameSite=None</code></li>
+<li>添加新值 <code>SameSiteMode.Unspecified</code> 以省略 SameSite 属性。</li>
+<li>所有 cookie s api 默认为 <code>Unspecified</code> 。 某些使用的组件 cookie 将值设置为对其方案更为具体的值。 有关示例，请参阅上表。</li>
+</ul>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<p>在 ASP.NET Core 3.0 及更高版本中，SameSite 默认值已更改，以避免与客户端默认值不一致发生冲突。 以下 Api 已将默认值从更改为， <code>SameSiteMode.Lax </code> <code>-1</code> 以避免发出以下的 SameSite 属性 cookie ：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Http.CookieOptions&gt; 与 HttpContext 一起使用 <a href="xref:Microsoft.AspNetCore.Http.IResponseCookies.Append*">。 Cookies. 追加</a></li>
+<li>&lt;xref:Microsoft.AspNetCore.Http.CookieBuilder&gt;  用作的工厂 <code>CookieOptions</code></li>
+<li><a href="xref:Microsoft.AspNetCore.Builder.CookiePolicyOptions.MinimumSameSitePolicy">CookiePolicyOptions.MinimumSameSitePolicy</a></li>
+</ul>
+</div>
+<h2 id="history-and-changes">历史记录和更改</h2>
+<p>SameSite 支持在2.0 中第一次 ASP.NET Core 实现，使用 <a href="https://tools.ietf.org/html/draft-west-first-party-cookies-07#section-4.1">2016 草案标准</a>。 2016标准已选择加入。 默认情况下，ASP.NET Core 选择加入 cookie <code>Lax</code> 。 在遇到身份验证的几个 <a href="https://github.com/aspnet/Announcements/issues/318">问题</a> 后，大多数 SameSite 使用已 <a href="https://github.com/aspnet/Announcements/issues/348">禁用</a>。</p>
+<p>2019年11月发布了<a href="https://devblogs.microsoft.com/dotnet/net-core-November-2019/">修补程序</a>，从2016标准版更新为2019标准。 <a href="https://github.com/aspnet/Announcements/issues/390">SameSite 规范的2019草案</a>：</p>
+<ul>
+<li><strong>不</strong> 向后兼容2016草案。 有关详细信息，请参阅本文档中的 <a href="#sob">支持旧版浏览器</a> 。</li>
+<li>指定 cookie <code>SameSite=Lax</code> 按默认值处理。</li>
+<li>指定 cookie 显式断言以便 <code>SameSite=None</code> 启用跨站点传递的是应该标记为的 <code>Secure</code> 。 <code>None</code> 要选择退出的新项。</li>
+<li>为 ASP.NET Core 2.1、2.2 和3.0 颁发的修补程序支持。 ASP.NET Core 3.1 具有附加的 SameSite 支持。</li>
+<li>默认 <a href="https://chromestatus.com/feature/5088147346030592">情况下，计划</a> 在 <a href="https://blog.chromium.org/2019/10/developers-get-ready-for-new.html">2020 年2月</a>启用。 浏览器已开始在2019中移动到此标准。</li>
+</ul>
+<h2 id="apis-impacted-by-the-change-from-the-2016-samesite-draft-standard-to-the-2019-draft-standard">受从 2016 SameSite 草案标准到2019草案标准的更改影响的 Api</h2>
+<ul>
+<li><a href="xref:Microsoft.AspNetCore.Http.SameSiteMode">SameSiteMode</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.CookieOptions.SameSite">Cookie选项。 SameSite</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Http.CookieBuilder.SameSite">CookieSameSite</a></li>
+<li><a href="xref:Microsoft.AspNetCore.Builder.CookiePolicyOptions.MinimumSameSitePolicy">CookiePolicyOptions.MinimumSameSitePolicy</a></li>
+<li>&lt;xref:Microsoft.Net.Http.Headers.SameSiteMode?displayProperty=fullName&gt;</li>
+<li>&lt;xref:Microsoft.Net.Http.Headers.SetCookieHeaderValue.SameSite?displayProperty=fullName&gt;</li>
+</ul>
+<p><a name="sob"></a></p>
+<h2 id="supporting-older-browsers">支持旧版浏览器</h2>
+<p>2016 SameSite 标准规定，未知值必须被视为 <code>SameSite=Strict</code> 值。 从支持 2016 SameSite 标准的旧版浏览器访问的应用在收到值为的 SameSite 属性时可能会中断 <code>None</code> 。 如果 Web 应用要支持较旧的浏览器，则必须实现浏览器检测。 ASP.NET Core 不会实现浏览器检测，因为 User-Agents 值是高度易失性的，经常更改。 中的扩展点 &lt;xref:Microsoft.AspNetCore.CookiePolicy&gt; 允许插入 User-Agent 的特定逻辑。</p>
+<p>在中 <code>Startup.Configure</code> ，添加在调用之前调用的代码 &lt;xref:Microsoft.AspNetCore.Builder.CookiePolicyAppBuilderExtensions.UseCookiePolicy*&gt; &lt;xref:Microsoft.AspNetCore.Builder.AuthAppBuilderExtensions.UseAuthentication*&gt; 或 <em>任何</em> 写入的方法 cookie ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在中 <code>Startup.ConfigureServices</code> ，添加类似于下面的代码：</p>
+<div range="= aspnetcore-3.1">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&lt; aspnetcore-3.1">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<p>在前面的示例中， <code>MyUserAgentDetectionLib.DisallowsSameSiteNone</code> 是一个用户提供的库，用于检测用户代理是否不支持 SameSite <code>None</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>下面的代码演示了一个示例 <code>DisallowsSameSiteNone</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>以下代码仅用于演示：</p>
+<ul>
+<li>不应将其视为已完成。</li>
+<li>它不维护或不受支持。</li>
+</ul>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="test-apps-for-samesite-problems">测试应用的 SameSite 问题</h2>
+<p>与远程站点（如通过第三方登录）交互的应用需要：</p>
+<ul>
+<li>测试多个浏览器上的交互。</li>
+<li>应用本文档所述的<a href="#sob"> Cookie 策略浏览器检测和缓解措施</a>。</li>
+</ul>
+<p>使用可选择新的 SameSite 行为的客户端版本测试 web 应用。 Chrome、Firefox 和 Chromium Edge 都具有可用于测试的新的可选功能标志。 应用应用 SameSite 修补程序后，请对其进行测试，使其与早期版本的客户端版本（尤其是 Safari） 有关详细信息，请参阅本文档中的 <a href="#sob">支持旧版浏览器</a> 。</p>
+<h3 id="test-with-chrome">用 Chrome 测试</h3>
+<p>Chrome 78 + 提供了令人误解的结果，因为它具有临时的缓解措施。 Chrome 78 + 临时缓解允许 cookie 两分钟以内。 已启用适当测试标志的 Chrome 76 或77提供更准确的结果。 若要测试新的 SameSite 行为切换 <code>chrome://flags/#same-site-by-default-cookies</code> 为 <strong>启用状态</strong> 。 旧版本的 Chrome (75 及更) 低版本将报告为失败，并出现新 <code>None</code> 设置。 请参阅本文档中的 <a href="#sob">支持旧版浏览器</a> 。</p>
+<p>Google 不会使旧版 chrome 版本可用。 遵循 <a href="https://www.chromium.org/getting-involved/download-chromium">下载 Chromium</a> 中的说明来测试旧版 Chrome。 不要从通过搜索旧版 chrome 提供的 <strong>链接下载 chrome</strong> 。</p>
+<ul>
+<li><a href="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win_x64/664998/">Chromium 76 Win64</a></li>
+<li><a href="https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win_x64/638880/">Chromium 74 Win64</a></li>
+</ul>
+<p>从 &quot;未完成&quot; 的版本开始 <code>80.0.3975.0</code> ，可以使用新标志来禁用宽松的 + 后续暂时缓解，以 <code>--enable-features=SameSiteDefaultChecksMethodRigorously</code> 允许在删除缓解功能的最终状态下测试站点和服务。 有关详细信息，请参阅 Chromium 项目 <a href="https://www.chromium.org/updates/same-site">SameSite Updates</a></p>
+<h3 id="test-with-safari">用 Safari 测试</h3>
+<p>Safari 12 严格实现了之前的草稿，如果新值在中，则会失败 <code>None</code> cookie 。 <code>None</code> 通过本文档中 <a href="#sob">支持旧版浏览</a> 器的浏览器检测代码，避免了这种情况。 使用 MSAL、ADAL 或所使用的任何库，测试 Safari 12、Safari 13 和基于 WebKit 的 OS 样式登录。 问题取决于基础 OS 版本。 已知 OSX Mojave (10.14) 和 iOS 12 与新的 SameSite 行为存在兼容性问题。 将 OS 升级到 OSX Catalina (10.15) 或 iOS 13 修复了此问题。 Safari 当前没有用于测试新规范行为的选择标记。</p>
+<h3 id="test-with-firefox">用 Firefox 测试</h3>
+<p>可以在版本 68 + 上测试对新标准的 Firefox 支持，方法是在页面上选择 <code>about:config</code> 功能标志 <code>network.cookie.sameSite.laxByDefault</code> 。 以前版本的 Firefox 没有出现兼容性问题的报告。</p>
+<h3 id="test-with-edge-browser">通过 Edge 浏览器进行测试</h3>
+<p>Edge 支持旧的 SameSite 标准。 边缘版本44与新的标准没有任何已知的兼容性问题。</p>
+<h3 id="test-with-edge-chromium"> (Chromium 的边缘测试)</h3>
+<p>页面上设置了 SameSite 标志 <code>edge://flags/#same-site-by-default-cookies</code> 。 未发现边缘 Chromium 的兼容性问题。</p>
+<h3 id="test-with-no-locelectron">测试 Electron</h3>
+<p>版本的 Electron 包含 Chromium 的旧版本。 例如，团队使用的版本 Electron 是 Chromium 66，它展示了较旧的行为。 你必须使用产品的版本来执行你自己的兼容性测试 Electron 。 请参阅下一节中的 <a href="#sob">支持旧版浏览器</a> 。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://blog.chromium.org/2019/10/developers-get-ready-for-new.html">Chromium 博客：开发人员：准备好新 SameSite = 无;安全 Cookie 设置</a></li>
+<li><a href="https://web.dev/samesite-cookies-explained/">cookie说明 SameSite</a></li>
+<li><a href="https://devblogs.microsoft.com/dotnet/net-core-November-2019/">2019年11月修补程序</a></li>
+</ul>
+<div range="&gt;= aspnetcore-2.1 &lt; aspnetcore-3.0">
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>文档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore21MVC">.NET Core MVC</a></td>
+<td><a class="xref" href="samesite/mvc21.html">ASP.NET Core 2.1 MVC SameSite cookie 示例</a></td>
+</tr>
+<tr>
+<td><a href="https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore21RazorPages">.NET Core Razor 页</a></td>
+<td><a class="xref" href="samesite/rp21.html">ASP.NET Core 2.1 Razor Pages SameSite cookie 示例</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>文档</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/blowdart/AspNetSameSiteSamples/tree/master/AspNetCore31RazorPages">.NET Core Razor 页</a></td>
+<td><a class="xref" href="samesite/rp31.html">ASP.NET Core 3.1 Razor Pages SameSite cookie 示例</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

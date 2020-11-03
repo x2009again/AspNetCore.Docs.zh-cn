@@ -1,0 +1,421 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#37197;&#32622; ASP.NET Core &#25968;&#25454;&#20445;&#25252; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#37197;&#32622; ASP.NET Core &#25968;&#25454;&#20445;&#25252; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/data-protection/configuration/overview">
+<h1 id="configure-aspnet-core-data-protection">配置 ASP.NET Core 数据保护</h1>
+
+<p>当数据保护系统已初始化时，它将基于操作环境应用 <a class="xref" href="default-settings.html">默认设置</a> 。 这些设置通常适用于在一台计算机上运行的应用程序。 在某些情况下，开发人员可能想要更改默认设置：</p>
+<ul>
+<li>应用程序分布在多台计算机上。</li>
+<li>出于合规性原因。</li>
+</ul>
+<p>在这些情况下，数据保护系统提供了丰富的配置 API。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>与配置文件类似，应使用适当的权限保护数据保护密钥环。 你可以选择对静态密钥加密，但这不会阻止攻击者创建新密钥。 因此，应用的安全将受到影响。 使用数据保护配置的存储位置应该将其访问权限限制为应用本身，这与保护配置文件的方式类似。 例如，如果选择将密钥环存储在磁盘上，请使用文件系统权限。 确保你的 web 应用在其下运行的标识具有对该目录的读取、写入和创建访问权限。 如果使用 Azure Blob 存储，则只有 web 应用应能够在 Blob 存储中读取、写入或创建新条目等。</p>
+<p>扩展方法 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.dataprotectionservicecollectionextensions.adddataprotection">AddDataProtection</a> 返回 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.idataprotectionbuilder">IDataProtectionBuilder</a>。 <code>IDataProtectionBuilder</code> 公开扩展方法，你可以将这些方法链接在一起来配置数据保护选项。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<p>本文中使用的数据保护扩展插件需要以下 NuGet 包：</p>
+<ul>
+<li><a href="https://www.nuget.org/packages/Azure.Extensions.AspNetCore.DataProtection.Blobs">Azure.Extensions.AspNetCore.DataProtection.Blobs</a></li>
+<li><a href="https://www.nuget.org/packages/Azure.Extensions.AspNetCore.DataProtection.Keys">Azure.Extensions.AspNetCore.DataProtection.Keys</a></li>
+</ul>
+</div>
+<div range="&gt;= aspnetcore-2.1">
+<h2 id="protectkeyswithazurekeyvault">ProtectKeysWithAzureKeyVault</h2>
+<p>若要在 <a href="https://azure.microsoft.com/services/key-vault/">Azure Key Vault</a>中存储密钥，请在类中配置 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.azuredataprotectionbuilderextensions.protectkeyswithazurekeyvault">ProtectKeysWithAzureKeyVault</a> 系统 <code>Startup</code> 。 <code>blobUriWithSasToken</code> 应存储密钥文件的完整 URI。 此 URI 必须包含 SAS 令牌作为查询字符串参数：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .PersistKeysToAzureBlobStorage(new Uri(&quot;&lt;blobUriWithSasToken&gt;&quot;))
+        .ProtectKeysWithAzureKeyVault(&quot;&lt;keyIdentifier&gt;&quot;, &quot;&lt;clientId&gt;&quot;, &quot;&lt;clientSecret&gt;&quot;);
+}
+</code></pre>
+<p>将密钥环存储位置设置 (例如 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.azuredataprotectionbuilderextensions.persistkeystoazureblobstorage">PersistKeysToAzureBlobStorage</a>) 。 必须设置位置，因为调用 <code>ProtectKeysWithAzureKeyVault</code> 实现了禁用自动数据保护设置的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.xmlencryption.ixmlencryptor">IXmlEncryptor</a> ，包括密钥环存储位置。 前面的示例使用 Azure Blob 存储来持久保存密钥环。 有关详细信息，请参阅 <a class="xref" href="../implementation/key-storage-providers.html#azure-storage">密钥存储提供程序： Azure 存储</a>。 还可以通过 <a class="xref" href="../implementation/key-storage-providers.html#file-system">PersistKeysToFileSystem</a>将密钥环保存到本地。</p>
+<p><code>keyIdentifier</code>是用于密钥加密的密钥保管库密钥标识符。 例如，在中名为的密钥保管库中创建的密钥 <code>dataprotection</code> <code>contosokeyvault</code> 具有密钥标识符 <code>https://contosokeyvault.vault.azure.net/keys/dataprotection/</code> 。 向应用提供对密钥保管库的 <strong>解包密钥</strong> 和 <strong>包装密钥</strong> 权限。</p>
+<p><code>ProtectKeysWithAzureKeyVault</code> 重载</p>
+<ul>
+<li><a href="/dotnet/api/microsoft.aspnetcore.dataprotection.azuredataprotectionbuilderextensions.protectkeyswithazurekeyvault#Microsoft_AspNetCore_DataProtection_AzureDataProtectionBuilderExtensions_ProtectKeysWithAzureKeyVault_Microsoft_AspNetCore_DataProtection_IDataProtectionBuilder_Microsoft_Azure_KeyVault_KeyVaultClient_System_String_">ProtectKeysWithAzureKeyVault (IDataProtectionBuilder，KeyVaultClient，String) </a> 允许使用 <a href="/dotnet/api/microsoft.azure.keyvault.keyvaultclient">KeyVaultClient</a> 使数据保护系统能够使用密钥保管库。</li>
+<li><a href="/dotnet/api/microsoft.aspnetcore.dataprotection.azuredataprotectionbuilderextensions.protectkeyswithazurekeyvault#Microsoft_AspNetCore_DataProtection_AzureDataProtectionBuilderExtensions_ProtectKeysWithAzureKeyVault_Microsoft_AspNetCore_DataProtection_IDataProtectionBuilder_System_String_System_String_System_Security_Cryptography_X509Certificates_X509Certificate2_">ProtectKeysWithAzureKeyVault (IDataProtectionBuilder，string，string，X509Certificate2) </a> 允许使用 <code>ClientId</code> 和 <a href="/dotnet/api/system.security.cryptography.x509certificates.x509certificate2">X509Certificate</a> 使数据保护系统能够使用密钥保管库。</li>
+<li><a href="/dotnet/api/microsoft.aspnetcore.dataprotection.azuredataprotectionbuilderextensions.protectkeyswithazurekeyvault#Microsoft_AspNetCore_DataProtection_AzureDataProtectionBuilderExtensions_ProtectKeysWithAzureKeyVault_Microsoft_AspNetCore_DataProtection_IDataProtectionBuilder_System_String_System_String_System_String_">ProtectKeysWithAzureKeyVault (IDataProtectionBuilder、string、string、string) </a> 允许使用 <code>ClientId</code> 和， <code>ClientSecret</code> 使数据保护系统能够使用密钥保管库。</li>
+</ul>
+<p>如果应用使用以前的 Azure 包 (<a href="https://www.nuget.org/packages/Microsoft.AspNetCore.DataProtection.AzureStorage"><code>Microsoft.AspNetCore.DataProtection.AzureStorage</code></a> 和 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.DataProtection.AzureKeyVault"><code>Microsoft.AspNetCore.DataProtection.AzureKeyVault</code></a>) 并结合了 Azure Key Vault 和 Azure 存储来存储和保护密钥，则 &lt;xref:System.UriFormatException?displayProperty=nameWithType&gt; 会在密钥存储的 blob 不存在时引发。 可以在 Azure 门户中运行应用之前手动创建 blob，也可以使用以下过程：</p>
+<ol>
+<li>删除对的调用，以便 <code>ProtectKeysWithAzureKeyVault</code> 在首次运行时创建 blob。</li>
+<li>将对的调用添加到 <code>ProtectKeysWithAzureKeyVault</code> 后面的运行。</li>
+</ol>
+<p><code>ProtectKeysWithAzureKeyVault</code>建议删除首次运行，因为它可确保创建的文件具有正确的架构和值。</p>
+<p>建议升级到 <a href="https://www.nuget.org/packages/Azure.Extensions.AspNetCore.DataProtection.Blobs">AspNetCore DataProtection</a> 和 <a href="https://www.nuget.org/packages/Azure.Extensions.AspNetCore.DataProtection.Keys">AspNetCore</a> 包，因为如果 blob 不存在，则该 API 会自动创建该 blob 的包。</p>
+<pre><code class="lang-csharp">var storageAccount = CloudStorageAccount.Parse(&quot;&lt;storage account connection string&quot;&gt;);
+var client = storageAccount.CreateCloudBlobClient();
+var container = client.GetContainerReference(&quot;&lt;key store container name&gt;&quot;);
+
+var azureServiceTokenProvider = new AzureServiceTokenProvider();
+var keyVaultClient = new KeyVaultClient(new KeyVaultClient.AuthenticationCallback(
+        azureServiceTokenProvider.KeyVaultTokenCallback));
+
+services.AddDataProtection()
+    //This blob must already exist before the application is run
+    .PersistKeysToAzureBlobStorage(container, &quot;&lt;key store blob name&gt;&quot;)
+    //Removing this line below for an initial run will ensure the file is created correctly
+    .ProtectKeysWithAzureKeyVault(keyVaultClient, &quot;&lt;keyIdentifier&gt;&quot;);
+</code></pre>
+</div>
+<h2 id="persistkeystofilesystem">PersistKeysToFileSystem</h2>
+<p>若要将密钥存储在 UNC 共享上，而不是存储在 <em>% LOCALAPPDATA%</em> 默认位置，请使用 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions.persistkeystofilesystem">PersistKeysToFileSystem</a>配置系统：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@&quot;\\server\share\directory\&quot;));
+}
+</code></pre>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果更改密钥持久性位置，系统将不再自动加密静态密钥，因为它不知道 DPAPI 是否为适当的加密机制。</p>
+</div>
+<h2 id="protectkeyswith">ProtectKeysWith*</h2>
+<p>可以通过调用任何<a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions">ProtectKeysWith * </a>配置 api 将系统配置为保护静态密钥。 请考虑以下示例，该示例将密钥存储在 UNC 共享上，并使用特定的 x.509 证书对静态密钥进行加密：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@&quot;\\server\share\directory\&quot;))
+        .ProtectKeysWithCertificate(&quot;thumbprint&quot;);
+}
+</code></pre>
+<div range="&gt;= aspnetcore-2.1">
+<p>在 ASP.NET Core 2.1 或更高版本中，你可以提供<a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions.protectkeyswithcertificate">ProtectKeysWithCertificate</a>的<a href="/dotnet/api/system.security.cryptography.x509certificates.x509certificate2">X509Certificate2</a> ，例如从文件中加载的证书：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@&quot;\\server\share\directory\&quot;))
+        .ProtectKeysWithCertificate(
+            new X509Certificate2(&quot;certificate.pfx&quot;, &quot;password&quot;));
+}
+</code></pre>
+</div>
+<p>有关内置密钥加密机制的更多示例和讨论，请参阅 <a class="xref" href="../implementation/key-encryption-at-rest.html">静态密钥加密</a> 。</p>
+<div range="&gt;= aspnetcore-2.1">
+<h2 id="unprotectkeyswithanycertificate">UnprotectKeysWithAnyCertificate</h2>
+<p>在 ASP.NET Core 2.1 或更高版本中，你可以使用<a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions.unprotectkeyswithanycertificate">UnprotectKeysWithAnyCertificate</a>的<a href="/dotnet/api/system.security.cryptography.x509certificates.x509certificate2">X509Certificate2</a></p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(@&quot;\\server\share\directory\&quot;))
+        .ProtectKeysWithCertificate(
+            new X509Certificate2(&quot;certificate.pfx&quot;, &quot;password&quot;));
+        .UnprotectKeysWithAnyCertificate(
+            new X509Certificate2(&quot;certificate_old_1.pfx&quot;, &quot;password_1&quot;),
+            new X509Certificate2(&quot;certificate_old_2.pfx&quot;, &quot;password_2&quot;));
+}
+</code></pre>
+</div>
+<h2 id="setdefaultkeylifetime">SetDefaultKeyLifetime</h2>
+<p>若要将系统配置为使用14天的密钥生存期而不是默认的90天，请使用 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions.setdefaultkeylifetime">SetDefaultKeyLifetime</a>：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .SetDefaultKeyLifetime(TimeSpan.FromDays(14));
+}
+</code></pre>
+<h2 id="setapplicationname">SetApplicationName</h2>
+<p>默认情况下，数据保护系统基于其 <a class="xref" href="../../../fundamentals/index.html#content-root">内容根</a> 路径将应用彼此隔离，即使它们共享相同的物理密钥存储库。 这可防止应用了解彼此的受保护负载。</p>
+<p>在应用之间共享受保护的负载：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.DataProtection.DataProtectionBuilderExtensions.SetApplicationName*&gt;在每个应用中配置相同的值。</li>
+<li>在应用程序中使用相同版本的数据保护 API 堆栈。 在应用的项目文件中执行以下 <strong>任一</strong> 操作：
+<ul>
+<li>通过 <a class="xref" href="../../../fundamentals/metapackage-app.html">AspNetCore 元包</a>引用相同的共享框架版本。</li>
+<li>引用相同的 <a class="xref" href="../introduction.html#package-layout">数据保护包</a> 版本。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .SetApplicationName(&quot;shared app name&quot;);
+}
+</code></pre>
+<h2 id="disableautomatickeygeneration">DisableAutomaticKeyGeneration</h2>
+<p>你可能会遇到这样的情况：你不希望应用程序自动滚动更新密钥 (创建新密钥) ，因为它们接近过期。 这种情况的一个示例可能是在主/辅助关系中设置的应用，其中只有主应用负责密钥管理问题，辅助应用只是具有密钥环的只读视图。 可以将辅助应用配置为使用以下配置系统将密钥环视为只读 &lt;xref:Microsoft.AspNetCore.DataProtection.DataProtectionBuilderExtensions.DisableAutomaticKeyGeneration*&gt; ：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDataProtection()
+        .DisableAutomaticKeyGeneration();
+}
+</code></pre>
+<h2 id="per-application-isolation">每应用程序隔离</h2>
+<p>当数据保护系统由 ASP.NET Core 主机提供时，它会自动将应用彼此隔离，即使这些应用在相同的工作进程帐户下运行并且使用相同的主密钥材料也是如此。 这有点类似于 System.web 元素中的 IsolateApps 修饰符 <code>&lt;machineKey&gt;</code> 。</p>
+<p>隔离机制的工作原理是将本地计算机上的每个应用视为唯一的租户，因此， &lt;xref:Microsoft.AspNetCore.DataProtection.IDataProtector&gt; 任何给定应用的根都将自动包括应用 ID 作为鉴别器。 应用的唯一 ID 是应用的物理路径：</p>
+<ul>
+<li>对于在 IIS 中托管的应用，唯一 ID 是应用的 IIS 物理路径。 如果在 web 场环境中部署了应用，则此值是稳定的，假定在 web 场中的所有计算机上配置了类似的 IIS 环境。</li>
+<li>对于在 <a class="xref" href="../../../fundamentals/servers/index.html#kestrel">Kestrel 服务器</a>上运行的自承载应用程序，唯一 ID 是指向磁盘上的应用程序的物理路径。</li>
+</ul>
+<p>唯一标识符旨在重置 — 单独的应用程序和计算机本身。</p>
+<p>此隔离机制假定应用不是恶意的。 恶意应用始终会影响在同一工作进程帐户下运行的任何其他应用。 在应用不受信任的共享主机环境中，托管提供商应采取措施来确保应用之间的操作系统级隔离，包括分离应用程序的底层密钥存储库。</p>
+<p>如果 ASP.NET Core 主机未提供数据保护系统 (例如，如果通过具体类型对其进行实例化 <code>DataProtectionProvider</code>) 则默认情况下禁用应用程序隔离。 禁用应用隔离后，只要提供相应的 <a class="xref" href="../consumer-apis/purpose-strings.html">用途</a>，同一密钥材料支持的所有应用就可以共享有效负载。 若要在此环境中提供应用隔离，请对配置对象调用 <a href="#setapplicationname">SetApplicationName</a> 方法，并为每个应用提供唯一的名称。</p>
+<h2 id="changing-algorithms-with-usecryptographicalgorithms">用 UseCryptographicAlgorithms 更改算法</h2>
+<p>数据保护堆栈允许您更改新生成的密钥使用的默认算法。 执行此操作的最简单方法是从配置回调调用 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions.usecryptographicalgorithms">UseCryptographicAlgorithms</a> ：</p>
+<div range="&gt;= aspnetcore-2.0">
+<pre><code class="lang-csharp">services.AddDataProtection()
+    .UseCryptographicAlgorithms(
+        new AuthenticatedEncryptorConfiguration()
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-2.0">
+<pre><code class="lang-csharp">services.AddDataProtection()
+    .UseCryptographicAlgorithms(
+        new AuthenticatedEncryptionSettings()
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
+</code></pre>
+</div>
+<p>默认 EncryptionAlgorithm 为 AES-256-CBC，默认 ValidationAlgorithm 为 HMACSHA256。 系统管理员可以通过 <a class="xref" href="machine-wide-policy.html">计算机范围内的策略</a>来设置默认策略，但会对 <code>UseCryptographicAlgorithms</code> 替代默认策略进行显式调用。</p>
+<p>通过调用， <code>UseCryptographicAlgorithms</code> 可以从预定义的内置列表中指定所需的算法。 您无需担心算法的实现。 在上述方案中，如果在 Windows 上运行，数据保护系统将尝试使用 AES 的 CNG 实现。 否则，它会回退到托管的<a href="/dotnet/api/system.security.cryptography.aes">系统。</a></p>
+<p>可以通过调用 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.dataprotectionbuilderextensions.usecustomcryptographicalgorithms">UseCustomCryptographicAlgorithms</a>手动指定实现。</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>更改算法不会影响密钥环中的现有密钥。 它仅影响新生成的键。</p>
+</div>
+<h3 id="specifying-custom-managed-algorithms">指定自定义托管算法</h3>
+<div range="&gt;= aspnetcore-2.0">
+<p>若要指定自定义托管算法，请创建一个指向实现类型的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.configurationmodel.managedauthenticatedencryptorconfiguration">ManagedAuthenticatedEncryptorConfiguration</a> 实例：</p>
+<pre><code class="lang-csharp">serviceCollection.AddDataProtection()
+    .UseCustomCryptographicAlgorithms(
+        new ManagedAuthenticatedEncryptorConfiguration()
+    {
+        // A type that subclasses SymmetricAlgorithm
+        EncryptionAlgorithmType = typeof(Aes),
+
+        // Specified in bits
+        EncryptionAlgorithmKeySize = 256,
+
+        // A type that subclasses KeyedHashAlgorithm
+        ValidationAlgorithmType = typeof(HMACSHA256)
+    });
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-2.0">
+<p>若要指定自定义托管算法，请创建一个指向实现类型的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.managedauthenticatedencryptionsettings">ManagedAuthenticatedEncryptionSettings</a> 实例：</p>
+<pre><code class="lang-csharp">serviceCollection.AddDataProtection()
+    .UseCustomCryptographicAlgorithms(
+        new ManagedAuthenticatedEncryptionSettings()
+    {
+        // A type that subclasses SymmetricAlgorithm
+        EncryptionAlgorithmType = typeof(Aes),
+
+        // Specified in bits
+        EncryptionAlgorithmKeySize = 256,
+
+        // A type that subclasses KeyedHashAlgorithm
+        ValidationAlgorithmType = typeof(HMACSHA256)
+    });
+</code></pre>
+</div>
+<p>通常， * 类型属性必须指向具体的可实例化 (通过 <a href="/dotnet/api/system.security.cryptography.symmetricalgorithm">System.security.cryptography.symmetricalgorithm</a> 和 <a href="/dotnet/api/system.security.cryptography.keyedhashalgorithm">KeyedHashAlgorithm</a>的公共无参数的) ctor 实现，尽管系统特别适用于一些值， <code>typeof(Aes)</code> 以便于方便。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>System.security.cryptography.symmetricalgorithm 必须具有≥128位的密钥长度和≥64位的块大小，并且必须支持 PKCS #7 填充的 CBC 模式加密。 KeyedHashAlgorithm 的摘要大小必须为 &gt;= 128 位，并且它必须支持长度等于哈希算法摘要长度的键。 KeyedHashAlgorithm 不一定是 HMAC。</p>
+</div>
+<h3 id="specifying-custom-windows-cng-algorithms">指定自定义 Windows CNG 算法</h3>
+<div range="&gt;= aspnetcore-2.0">
+<p>若要通过 HMAC 验证使用 CBC 模式加密指定自定义 Windows CNG 算法，请创建包含算法信息的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.configurationmodel.cngcbcauthenticatedencryptorconfiguration">CngCbcAuthenticatedEncryptorConfiguration</a> 实例：</p>
+<pre><code class="lang-csharp">services.AddDataProtection()
+    .UseCustomCryptographicAlgorithms(
+        new CngCbcAuthenticatedEncryptorConfiguration()
+    {
+        // Passed to BCryptOpenAlgorithmProvider
+        EncryptionAlgorithm = &quot;AES&quot;,
+        EncryptionAlgorithmProvider = null,
+
+        // Specified in bits
+        EncryptionAlgorithmKeySize = 256,
+
+        // Passed to BCryptOpenAlgorithmProvider
+        HashAlgorithm = &quot;SHA256&quot;,
+        HashAlgorithmProvider = null
+    });
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-2.0">
+<p>若要通过 HMAC 验证使用 CBC 模式加密指定自定义 Windows CNG 算法，请创建包含算法信息的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.cngcbcauthenticatedencryptionsettings">CngCbcAuthenticatedEncryptionSettings</a> 实例：</p>
+<pre><code class="lang-csharp">services.AddDataProtection()
+    .UseCustomCryptographicAlgorithms(
+        new CngCbcAuthenticatedEncryptionSettings()
+    {
+        // Passed to BCryptOpenAlgorithmProvider
+        EncryptionAlgorithm = &quot;AES&quot;,
+        EncryptionAlgorithmProvider = null,
+
+        // Specified in bits
+        EncryptionAlgorithmKeySize = 256,
+
+        // Passed to BCryptOpenAlgorithmProvider
+        HashAlgorithm = &quot;SHA256&quot;,
+        HashAlgorithmProvider = null
+    });
+</code></pre>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>对称块加密算法的密钥长度必须为 &gt;= 128 位，块大小为 &gt;= 64 位，并且它必须支持 PKCS #7 填充的 CBC 模式加密。 哈希算法的摘要大小必须为 &gt;= 128 位，并且必须支持使用 BCRYPT _ ALG _ 句柄 _ HMAC _ 标志标志打开。 *提供程序属性可以设置为 null，以将默认提供程序用于指定的算法。 有关详细信息，请参阅 <a href="/windows/win32/api/bcrypt/nf-bcrypt-bcryptopenalgorithmprovider">BCryptOpenAlgorithmProvider</a> 文档。</p>
+</div>
+<div range="&gt;= aspnetcore-2.0">
+<p>若要使用 Galois/Counter 模式加密和验证来指定自定义 Windows CNG 算法，请创建包含算法信息的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.configurationmodel.cnggcmauthenticatedencryptorconfiguration">CngGcmAuthenticatedEncryptorConfiguration</a> 实例：</p>
+<pre><code class="lang-csharp">services.AddDataProtection()
+    .UseCustomCryptographicAlgorithms(
+        new CngGcmAuthenticatedEncryptorConfiguration()
+    {
+        // Passed to BCryptOpenAlgorithmProvider
+        EncryptionAlgorithm = &quot;AES&quot;,
+        EncryptionAlgorithmProvider = null,
+
+        // Specified in bits
+        EncryptionAlgorithmKeySize = 256
+    });
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-2.0">
+<p>若要使用 Galois/Counter 模式加密和验证来指定自定义 Windows CNG 算法，请创建包含算法信息的 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.cnggcmauthenticatedencryptionsettings">CngGcmAuthenticatedEncryptionSettings</a> 实例：</p>
+<pre><code class="lang-csharp">services.AddDataProtection()
+    .UseCustomCryptographicAlgorithms(
+        new CngGcmAuthenticatedEncryptionSettings()
+    {
+        // Passed to BCryptOpenAlgorithmProvider
+        EncryptionAlgorithm = &quot;AES&quot;,
+        EncryptionAlgorithmProvider = null,
+
+        // Specified in bits
+        EncryptionAlgorithmKeySize = 256
+    });
+</code></pre>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>对称块密码算法的密钥长度必须为 &gt;= 128 位，块大小正好为128位，并且必须支持 GCM 加密。 可以将 <a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.configurationmodel.cngcbcauthenticatedencryptorconfiguration.encryptionalgorithmprovider">EncryptionAlgorithmProvider</a> 属性设置为 null，以将默认提供程序用于指定的算法。 有关详细信息，请参阅 <a href="/windows/win32/api/bcrypt/nf-bcrypt-bcryptopenalgorithmprovider">BCryptOpenAlgorithmProvider</a> 文档。</p>
+</div>
+<h3 id="specifying-other-custom-algorithms">指定其他自定义算法</h3>
+<p>尽管不是作为第一类 API 公开的，但数据保护系统的扩展能力足以允许指定几乎任何类型的算法。 例如，可以将硬件安全模块中包含的所有密钥保留 (HSM) ，并提供核心加密和解密例程的自定义实现。 有关详细信息，请参阅<a class="xref" href="../extensibility/core-crypto.html">核心加密扩展性</a>中的<a href="/dotnet/api/microsoft.aspnetcore.dataprotection.authenticatedencryption.iauthenticatedencryptor">IAuthenticatedEncryptor</a> 。</p>
+<h2 id="persisting-keys-when-hosting-in-a-docker-container">在 Docker 容器中托管时保持密钥</h2>
+<p>在 <a href="/dotnet/standard/microservices-architecture/container-docker-introduction/">Docker</a> 容器中托管时，应在以下任一项中维护密钥：</p>
+<ul>
+<li>一个文件夹，它是在容器的生存期之外保留的 Docker 卷，如共享卷或主机装入的卷。</li>
+<li>外部提供程序，如 <a href="https://azure.microsoft.com/services/key-vault/">Azure Key Vault</a> 或 <a href="https://redis.io/">Redis</a>。</li>
+</ul>
+<h2 id="persisting-keys-with-redis">通过 Redis 保持密钥</h2>
+<p>只应使用支持 <a href="/azure/azure-cache-for-redis/cache-how-to-premium-persistence">Redis 数据暂留</a> 的 Redis 版本来存储密钥。 <a href="/azure/storage/blobs/storage-blobs-introduction">Azure Blob 存储</a> 是持久性的，可用于存储密钥。 有关详细信息，请参阅<a href="https://github.com/dotnet/AspNetCore/issues/13476">此 GitHub 问题</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="non-di-scenarios.html">ASP.NET Core 中数据保护的非 DI 感知情境</a></li>
+<li><a class="xref" href="machine-wide-policy.html">ASP.NET Core 中的数据保护计算机范围内的策略支持</a></li>
+<li><a class="xref" href="../../../host-and-deploy/web-farm.html">在 Web 场中托管 ASP.NET Core</a></li>
+<li><a class="xref" href="../implementation/key-storage-providers.html">ASP.NET Core 中的密钥存储提供程序</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20855;&#26377; ASP.NET Core &#30340; Twitter &#22806;&#37096;&#30331;&#24405;&#35774;&#32622; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20855;&#26377; ASP.NET Core &#30340; Twitter &#22806;&#37096;&#30331;&#24405;&#35774;&#32622; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../index.html">
+                <img id="logo" class="svg" src="../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/twitter-logins">
+<h1 id="twitter-external-sign-in-setup-with-aspnet-core">具有 ASP.NET Core 的 Twitter 外部登录设置</h1>
+
+<p>作者：<a href="https://github.com/01binary">Valeriy Novytskyy</a> 和 <a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>此示例演示如何使用户能够使用在<a class="xref" href="index.html">前一页</a>上创建的示例 ASP.NET Core 3.0 项目<a href="https://dev.twitter.com/web/sign-in/desktop-browser">登录其 Twitter 帐户</a>。</p>
+<h2 id="create-the-app-in-twitter">在 Twitter 中创建应用</h2>
+<ul>
+<li><p>将 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.Twitter/3.0.0">AspNetCore</a> NuGet 包添加到项目。</p>
+</li>
+<li><p>导航到 <a href="https://apps.twitter.com/">https://apps.twitter.com/</a> 并登录。 如果还没有 Twitter 帐户，请使用 &quot; <strong><a href="https://twitter.com/signup">立即注册</a></strong> &quot; 链接创建一个。</p>
+</li>
+<li><p>选择 &quot; <strong>创建应用</strong> &quot;。 填写 &quot;应用 <strong>名称</strong> &quot;、&quot; <strong>应用程序说明</strong> &quot; 和 &quot;公共 <strong>网站</strong> URI&quot; (这在您注册域名) 之前是暂时的：</p>
+</li>
+<li><p>选中 &quot; <strong>启用使用 Twitter 登录</strong> &quot; 旁边的框</p>
+</li>
+<li><p>AspNetCore。Identity 要求用户在默认情况下具有电子邮件地址。 中转到 &quot; <strong>权限</strong> &quot; 选项卡，单击 &quot; <strong>编辑</strong> &quot; 按钮，然后选中 &quot; <strong>请求用户的电子邮件地址</strong> &quot; 旁边的框。</p>
+</li>
+<li><p>输入 <code>/signin-twitter</code> 附加到 &quot; <strong>回调 url</strong> &quot; 字段中的开发 URI (例如： <code>https://webapp128.azurewebsites.net/signin-twitter</code>) 。 稍后在本示例中配置的 Twitter 身份验证方案将自动处理路由中的请求 <code>/signin-twitter</code> 以实现 OAuth 流。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>URI 段 <code>/signin-twitter</code> 设置为 Twitter 身份验证提供程序的默认回调。 通过<a href="/dotnet/api/microsoft.aspnetcore.authentication.twitter.twitteroptions">TwitterOptions</a>类的继承的<a href="/dotnet/api/microsoft.aspnetcore.authentication.remoteauthenticationoptions.callbackpath">RemoteAuthenticationOptions. CallbackPath</a>属性配置 Twitter 身份验证中间件时，可以更改默认的回叫 URI。</p>
+</div>
+</li>
+<li><p>填写表单的其余部分，然后选择 &quot; <strong>创建</strong> &quot;。 显示新应用程序详细信息：</p>
+</li>
+</ul>
+<h2 id="store-the-twitter-consumer-api-key-and-secret">存储 Twitter 使用者 API 密钥和机密</h2>
+<p>使用 <a class="xref" href="../../app-secrets.html">机密管理器</a>存储敏感设置，如 Twitter 使用者 API 密钥和机密。 对于本示例，请使用以下步骤：</p>
+<ol>
+<li><p>按照 <a class="xref" href="../../app-secrets.html#enable-secret-storage">启用密钥存储</a>中的说明初始化密钥存储的项目。</p>
+</li>
+<li><p>将敏感设置存储在本地密钥存储中，并提供机密密钥 <code>Authentication:Twitter:ConsumerKey</code> 和 <code>Authentication:Twitter:ConsumerSecret</code> ：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;Authentication:Twitter:ConsumerAPIKey&quot; &quot;&lt;consumer-api-key&gt;&quot;
+dotnet user-secrets set &quot;Authentication:Twitter:ConsumerSecret&quot; &quot;&lt;consumer-secret&gt;&quot;
+</code></pre>
+</li>
+</ol>
+<p>所有平台上的环境变量分层键都不支持 <code>:</code> 分隔符。 <code>__</code>（双下划线）：</p>
+<ul>
+<li>受所有平台支持。 例如，<a href="https://linuxhint.com/bash-environment-variables/">Bash</a> 不支持 <code>:</code> 分隔符，但支持 <code>__</code>。</li>
+<li>自动替换为 <code>:</code></li>
+</ul>
+
+<p>创建新的 Twitter 应用程序后，可以在 &quot; <strong>密钥和访问令牌</strong> &quot; 选项卡上找到这些令牌：</p>
+<h2 id="configure-twitter-authentication">配置 Twitter 身份验证</h2>
+<p>将 Twitter 服务添加到 <code>ConfigureServices</code> <em>Startup.cs</em> 文件的方法中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><!--Don't update this for 2.2, use the 2.2 version -->
+<p><a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication#Microsoft_Extensions_DependencyInjection_AuthenticationServiceCollectionExtensions_AddAuthentication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_">AddAuthentication （字符串）</a>重载设置<a href="/dotnet/api/microsoft.aspnetcore.authentication.authenticationoptions.defaultscheme">DefaultScheme</a>属性。 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication#Microsoft_Extensions_DependencyInjection_AuthenticationServiceCollectionExtensions_AddAuthentication_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_Microsoft_AspNetCore_Authentication_AuthenticationOptions__">AddAuthentication （Action&lt;AuthenticationOptions&gt;）</a>重载允许配置身份验证选项，这些选项可用于为不同目的设置默认的身份验证方案。 对的后续调用 <code>AddAuthentication</code> 重写以前配置的<a href="/dotnet/api/microsoft.aspnetcore.builder.authenticationoptions">AuthenticationOptions</a>属性。</p>
+<p>对于注册身份验证处理程序的<a href="/dotnet/api/microsoft.aspnetcore.authentication.authenticationbuilder">AuthenticationBuilder</a>扩展方法，每个身份验证方案只能调用一次。 存在允许配置方案属性、方案名称和显示名称的重载。</p>
+<h2 id="multiple-authentication-providers">多个身份验证提供程序</h2>
+<p>如果应用需要多个提供程序，请在 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.authenticationservicecollectionextensions.addauthentication">AddAuthentication</a> 后面链接提供程序扩展方法：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddMicrosoftAccount(microsoftOptions =&gt; { ... })
+    .AddGoogle(googleOptions =&gt; { ... })
+    .AddTwitter(twitterOptions =&gt; { ... })
+    .AddFacebook(facebookOptions =&gt; { ... });
+</code></pre>
+
+<p>有关 Twitter 身份验证支持的配置选项的详细信息，请参阅 <a href="/dotnet/api/microsoft.aspnetcore.builder.twitteroptions">TwitterOptions</a> API 参考。 这可用于请求有关用户的其他信息。</p>
+<h2 id="sign-in-with-twitter">通过 Twitter 登录</h2>
+<p>运行应用并选择 <strong>&quot;登录&quot;</strong> 。 将显示使用 Twitter 登录的选项：</p>
+<p>单击 <strong>twitter</strong> 重定向到 twitter 进行身份验证：</p>
+<p>输入 Twitter 凭据后，会重定向回到网站，你可以在其中设置电子邮件。</p>
+<p>你现在已使用 Twitter 凭据登录：</p>
+<h2 id="forward-request-information-with-a-proxy-or-load-balancer">使用代理或负载均衡器转发请求信息</h2>
+<p>如果应用部署在代理服务器或负载均衡器后面，则可能会将某些原始请求信息转发到请求标头中的应用。 此信息通常包括安全请求方案 (<code>https</code>)、主机和客户端 IP 地址。 应用不会自动读取这些请求标头以发现和使用原始请求信息。</p>
+<p>方案用于通过外部提供程序影响身份验证流的链接生成。 丢失安全方案 (<code>https</code>) 会导致应用生成不正确且不安全的重定向 URL。</p>
+<p>使用转发标头中间件以使应用可以使用原始请求信息来进行请求处理。</p>
+<p>有关更多信息，请参见 <a class="xref" href="../../../host-and-deploy/proxy-load-balancer.html">配置 ASP.NET Core 以使用代理服务器和负载均衡器</a>。</p>
+<!-- 
+### React to cancel Authorize External sign-in
+Twitter doesn't support AccessDeniedPath
+Rather in the twitter setup, you can provide an External sign-in homepage. The external sign-in homepage doesn't support localhost. Tested with https://cors3.azurewebsites.net/ and that works.
+-->
+<h2 id="troubleshooting">疑难解答</h2>
+<ul>
+<li><strong>仅 ASP.NET Core 2.x：</strong> 如果 Identity 未通过调用进行 <code>services.AddIdentity</code> 配置 <code>ConfigureServices</code> ，尝试进行身份验证会导致 <em>ArgumentException：必须提供 &quot;SignInScheme&quot; 选项</em> 。 本示例中使用的项目模板可确保完成此操作。</li>
+<li>如果尚未通过应用初始迁移来创建站点数据库，则在处理请求错误时将会获得 <em>数据库操作失败</em> 。 点击 &quot; <strong>应用迁移</strong> &quot; 以创建数据库，然后单击 &quot;刷新&quot; 以继续出现错误。</li>
+</ul>
+<h2 id="next-steps">后续步骤</h2>
+<ul>
+<li><p>本文介绍了如何通过 Twitter 进行身份验证。 您可以遵循类似的方法向 <a class="xref" href="index.html">前一页</a>上列出的其他提供程序进行身份验证。</p>
+</li>
+<li><p>将网站发布到 Azure web 应用后，应 <code>ConsumerSecret</code> 在 Twitter 开发人员门户中重置。</p>
+</li>
+<li><p><code>Authentication:Twitter:ConsumerKey</code> <code>Authentication:Twitter:ConsumerSecret</code> 在 Azure 门户中将和设置为应用程序设置。 配置系统设置为从环境变量读取密钥。</p>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../styles/main.js"></script>
+  </body>
+</html>

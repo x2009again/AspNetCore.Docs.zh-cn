@@ -1,0 +1,289 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#29992;&#20110; ASP.NET Core &#27178;&#21521;&#25193;&#23637;&#30340; Redis &#24213;&#26495; SignalR </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#29992;&#20110; ASP.NET Core &#27178;&#21521;&#25193;&#23637;&#30340; Redis &#24213;&#26495; SignalR ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/redis-backplane">
+<h1 id="set-up-a-redis-backplane-for-aspnet-core-no-locsignalr-scale-out">设置用于 ASP.NET Core 横向扩展的 Redis 底板 SignalR</h1>
+
+<p>作者： <a href="https://twitter.com/anurse">Andrew Stanton</a>、 <a href="https://twitter.com/bradygaster">Brady Gaster</a>和<a href="https://github.com/tdykstra">Tom Dykstra</a></p>
+<p>本文介绍了 SignalR 设置 <a href="https://redis.io/">Redis</a> 服务器以用于横向扩展 ASP.NET Core 应用程序的特定方面 SignalR 。</p>
+<h2 id="set-up-a-redis-backplane">设置 Redis 底板</h2>
+<ul>
+<li><p>部署 Redis 服务器。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>对于生产用途，建议仅当 Redis 底板与应用在同一数据中心内运行时才使用它 SignalR 。 否则，网络延迟会降低性能。 如果你 SignalR 的应用在 azure 云中运行，我们建议使用 azure SignalR 服务，而不是 Redis 底板。 可以使用 Azure Redis 缓存服务进行开发和测试环境。</p>
+</div>
+<p>有关详细信息，请参阅以下资源：</p>
+<ul>
+<li><a class="xref" href="scale.html">ASP.NET Core SignalR 生产承载和扩展</a></li>
+<li><a href="https://redis.io/">Redis 文档</a></li>
+<li><a href="/azure/redis-cache/">Azure Redis 缓存文档</a></li>
+</ul>
+</li>
+</ul>
+<div range="= aspnetcore-2.1">
+<ul>
+<li><p>在 SignalR 应用中，安装 <code>Microsoft.AspNetCore.SignalR.Redis</code> NuGet 包。</p>
+</li>
+<li><p>在 <code>Startup.ConfigureServices</code> 方法中，调用 <code>AddRedis</code> after <code>AddSignalR</code> ：</p>
+<pre><code class="lang-csharp">services.AddSignalR().AddRedis(&quot;&lt;your_Redis_connection_string&gt;&quot;);
+</code></pre>
+</li>
+<li><p>根据需要配置选项：</p>
+<p>可以在连接字符串中或在 <a href="https://stackexchange.github.io/StackExchange.Redis/Configuration#configuration-options">ConfigurationOptions</a> 对象中设置大多数选项。 中指定的选项 <code>ConfigurationOptions</code> 替代在连接字符串中设置的选项。</p>
+<p>下面的示例演示如何在对象中设置选项 <code>ConfigurationOptions</code> 。 此示例将添加一个通道前缀，以便多个应用可以共享同一 Redis 实例，如以下步骤中所述。</p>
+<pre><code class="lang-csharp">services.AddSignalR()
+  .AddRedis(connectionString, options =&gt; {
+      options.Configuration.ChannelPrefix = &quot;MyApp&quot;;
+  });
+</code></pre>
+<p>在前面的代码中， <code>options.Configuration</code> 用连接字符串中指定的内容进行初始化。</p>
+</li>
+</ul>
+</div>
+<div range="= aspnetcore-2.2">
+<ul>
+<li><p>在 SignalR 应用中，安装以下 NuGet 包之一：</p>
+<ul>
+<li><code>Microsoft.AspNetCore.SignalR.StackExchangeRedis</code> -依赖于 Stackexchange.redis. Redis 2. 采用2.X.X。 建议将此包用于 ASP.NET Core 2.2 及更高版本。</li>
+<li><code>Microsoft.AspNetCore.SignalR.Redis</code> -依赖于 Stackexchange.redis. Redis 采用2.X.X。 此包不包含在 ASP.NET Core 3.0 及更高版本中。</li>
+</ul>
+</li>
+<li><p>在 <code>Startup.ConfigureServices</code> 方法中，调用 &lt;xref:Microsoft.Extensions.DependencyInjection.StackExchangeRedisDependencyInjectionExtensions.AddStackExchangeRedis*&gt; ：</p>
+<pre><code class="lang-csharp">services.AddSignalR().AddStackExchangeRedis(&quot;&lt;your_Redis_connection_string&gt;&quot;);
+</code></pre>
+</li>
+</ul>
+<p>使用时 <code>Microsoft.AspNetCore.SignalR.Redis</code> ，请调用 &lt;xref:Microsoft.Extensions.DependencyInjection.RedisDependencyInjectionExtensions.AddRedis*&gt; 。</p>
+<ul>
+<li><p>根据需要配置选项：</p>
+<p>可以在连接字符串中或在 <a href="https://stackexchange.github.io/StackExchange.Redis/Configuration#configuration-options">ConfigurationOptions</a> 对象中设置大多数选项。 中指定的选项 <code>ConfigurationOptions</code> 替代在连接字符串中设置的选项。</p>
+<p>下面的示例演示如何在对象中设置选项 <code>ConfigurationOptions</code> 。 此示例将添加一个通道前缀，以便多个应用可以共享同一 Redis 实例，如以下步骤中所述。</p>
+<pre><code class="lang-csharp">services.AddSignalR()
+  .AddStackExchangeRedis(connectionString, options =&gt; {
+      options.Configuration.ChannelPrefix = &quot;MyApp&quot;;
+  });
+</code></pre>
+</li>
+</ul>
+<p>使用时 <code>Microsoft.AspNetCore.SignalR.Redis</code> ，请调用 &lt;xref:Microsoft.Extensions.DependencyInjection.RedisDependencyInjectionExtensions.AddRedis*&gt; 。</p>
+<p>在前面的代码中， <code>options.Configuration</code> 用连接字符串中指定的内容进行初始化。</p>
+<p>有关 Redis 选项的信息，请参阅 <a href="https://stackexchange.github.io/StackExchange.Redis/Configuration.html">Stackexchange.redis Redis 文档</a>。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<ul>
+<li><p>在 SignalR 应用中，安装以下 NuGet 包：</p>
+<ul>
+<li><code>Microsoft.AspNetCore.SignalR.StackExchangeRedis</code></li>
+</ul>
+</li>
+<li><p>在 <code>Startup.ConfigureServices</code> 方法中，调用 &lt;xref:Microsoft.Extensions.DependencyInjection.StackExchangeRedisDependencyInjectionExtensions.AddStackExchangeRedis*&gt; ：</p>
+<pre><code class="lang-csharp">services.AddSignalR().AddStackExchangeRedis(&quot;&lt;your_Redis_connection_string&gt;&quot;);
+</code></pre>
+</li>
+<li><p>根据需要配置选项：</p>
+<p>可以在连接字符串中或在 <a href="https://stackexchange.github.io/StackExchange.Redis/Configuration#configuration-options">ConfigurationOptions</a> 对象中设置大多数选项。 中指定的选项 <code>ConfigurationOptions</code> 替代在连接字符串中设置的选项。</p>
+<p>下面的示例演示如何在对象中设置选项 <code>ConfigurationOptions</code> 。 此示例将添加一个通道前缀，以便多个应用可以共享同一 Redis 实例，如以下步骤中所述。</p>
+<pre><code class="lang-csharp">services.AddSignalR()
+  .AddStackExchangeRedis(connectionString, options =&gt; {
+      options.Configuration.ChannelPrefix = &quot;MyApp&quot;;
+  });
+</code></pre>
+<p>在前面的代码中， <code>options.Configuration</code> 用连接字符串中指定的内容进行初始化。</p>
+<p>有关 Redis 选项的信息，请参阅 <a href="https://stackexchange.github.io/StackExchange.Redis/Configuration.html">Stackexchange.redis Redis 文档</a>。</p>
+</li>
+</ul>
+</div>
+<ul>
+<li><p>如果将一个 Redis 服务器用于多个 SignalR 应用程序，请为每个应用程序使用不同的通道前缀 SignalR 。</p>
+<p>设置通道前缀会将一个 SignalR 应用与其他使用不同通道前缀的应用隔离开来。 如果未分配不同的前缀，则从一个应用发送到其所有客户端的消息将发送到使用 Redis 服务器作为底板的所有应用的所有客户端。</p>
+</li>
+<li><p>为粘滞会话配置服务器场负载平衡软件。 下面是有关如何执行此操作的一些文档示例：</p>
+<ul>
+<li><a href="/iis/extensions/configuring-application-request-routing-arr/http-load-balancing-using-application-request-routing">IIS</a></li>
+<li><a href="https://www.haproxy.com/blog/load-balancing-affinity-persistence-sticky-sessions-what-you-need-to-know/">HAProxy</a></li>
+<li><a href="https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/#sticky">Nginx</a></li>
+<li><a href="https://www.netgate.com/docs/pfsense/loadbalancing/inbound-load-balancing.html#sticky-connections">pfSense</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="redis-server-errors">Redis 服务器错误</h2>
+<p>当 Redis 服务器发生故障时，将 SignalR 引发指示消息无法传递的异常。 一些典型的异常消息：</p>
+<ul>
+<li><em>写入消息失败</em></li>
+<li><em>未能调用中心方法 &quot;方法名称&quot;</em></li>
+<li><em>未能连接到 Redis</em></li>
+</ul>
+<p>SignalR 不会在服务器重新启动时缓冲消息以发送这些消息。 Redis 服务器关闭时发送的任何消息都将丢失。</p>
+<p>SignalR 当 Redis 服务器再次可用时，自动重新连接。</p>
+<h3 id="custom-behavior-for-connection-failures">连接失败的自定义行为</h3>
+<p>下面是演示如何处理 Redis 连接失败事件的示例。</p>
+<div range="= aspnetcore-2.1">
+<pre><code class="lang-csharp">services.AddSignalR()
+        .AddRedis(o =&gt;
+        {
+            o.ConnectionFactory = async writer =&gt;
+            {
+                var config = new ConfigurationOptions
+                {
+                    AbortOnConnectFail = false
+                };
+                config.EndPoints.Add(IPAddress.Loopback, 0);
+                config.SetDefaultPorts();
+                var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                connection.ConnectionFailed += (_, e) =&gt;
+                {
+                    Console.WriteLine(&quot;Connection to Redis failed.&quot;);
+                };
+
+                if (!connection.IsConnected)
+                {
+                    Console.WriteLine(&quot;Did not connect to Redis.&quot;);
+                }
+
+                return connection;
+            };
+        });
+</code></pre>
+</div>
+<div range="&gt; aspnetcore-2.1">
+<pre><code class="lang-csharp">services.AddSignalR()
+        .AddMessagePackProtocol()
+        .AddStackExchangeRedis(o =&gt;
+        {
+            o.ConnectionFactory = async writer =&gt;
+            {
+                var config = new ConfigurationOptions
+                {
+                    AbortOnConnectFail = false
+                };
+                config.EndPoints.Add(IPAddress.Loopback, 0);
+                config.SetDefaultPorts();
+                var connection = await ConnectionMultiplexer.ConnectAsync(config, writer);
+                connection.ConnectionFailed += (_, e) =&gt;
+                {
+                    Console.WriteLine(&quot;Connection to Redis failed.&quot;);
+                };
+
+                if (!connection.IsConnected)
+                {
+                    Console.WriteLine(&quot;Did not connect to Redis.&quot;);
+                }
+
+                return connection;
+            };
+        });
+</code></pre>
+</div>
+<h2 id="redis-clustering">Redis 群集</h2>
+<p><a href="https://redis.io/topics/cluster-spec">Redis 聚类分析</a> 是一种通过使用多个 Redis 服务器实现高可用性的方法。 群集不是正式支持的，但它可能会起作用。</p>
+<h2 id="next-steps">后续步骤</h2>
+<p>有关详细信息，请参阅以下资源：</p>
+<ul>
+<li><a class="xref" href="scale.html">ASP.NET Core SignalR 生产承载和扩展</a></li>
+<li><a href="https://redis.io/documentation">Redis 文档</a></li>
+<li><a href="https://stackexchange.github.io/StackExchange.Redis/">Stackexchange.redis Redis 文档</a></li>
+<li><a href="/azure/redis-cache/">Azure Redis 缓存文档</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

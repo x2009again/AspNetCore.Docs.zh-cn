@@ -1,0 +1,378 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#23450;&#20301;&#28857;&#26631;&#35760;&#24110;&#21161;&#31243;&#24207; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#23450;&#20301;&#28857;&#26631;&#35760;&#24110;&#21161;&#31243;&#24207; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../../../favicon.ico">
+    <link rel="stylesheet" href="../../../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../../../index.html">
+                <img id="logo" class="svg" src="../../../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="mvc/views/tag-helpers/builtin-th/anchor-tag-helper">
+<h1 id="anchor-tag-helper-in-aspnet-core">ASP.NET Core 中的定位点标记帮助程序</h1>
+
+<p>作者：<a href="https://peterkellner.net">Peter Kellner</a> 和 <a href="https://github.com/scottaddie">Scott Addie</a></p>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper">定位点标记帮助程序</a>可通过添加新属性来增强标准的 HTML 定位点 (<code>&lt;a ... &gt;&lt;/a&gt;</code>) 标记。 按照约定，属性名称将使用前缀 <code>asp-</code>。 <code>asp-</code> 属性的值决定呈现的定位点元素的 <code>href</code> 属性值。</p>
+<p>有关标记帮助程序的概述，请参阅 <a class="xref" href="../intro.html">ASP.NET Core 中的标记帮助程序</a>。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/views/tag-helpers/built-in/samples">查看或下载示例代码</a>（<a class="xref" href="../../../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<p>本文档中的示例均使用 SpeakerController  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="anchor-tag-helper-attributes">定位点标记帮助程序属性</h2>
+<h3 id="asp-controller">asp-controller</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Controller*">asp-controller</a> 属性可分配用于生成 URL 的控制器。 下面的标记列出了所有发言人：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker&quot;&gt;All Speakers&lt;/a&gt;
+</code></pre>
+<p>如果指定了 <code>asp-controller</code> 属性，而未指定 <code>asp-action</code> 属性，则默认的 <code>asp-action</code> 值为与当前正在执行的视图关联的控制器操作。 如果前面的标记中省略了 <code>asp-action</code>，并在 HomeController 的索引视图 (/Home) 中使用了定位点标记帮助程序，则生成的 HTML 为  ：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Home&quot;&gt;All Speakers&lt;/a&gt;
+</code></pre>
+<h3 id="asp-action">asp-action</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Action*">asp-action</a> 属性值表示生成的 <code>href</code> 属性中包含的控制器操作名称。 下面的标记可将生成的 <code>href</code> 属性值设置为发言人评估页：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker/Evaluations&quot;&gt;Speaker Evaluations&lt;/a&gt;
+</code></pre>
+<p>如果未指定 <code>asp-controller</code> 属性，则使用默认控制器，该控制器调用执行当前视图的视图。</p>
+<p>如果 <code>asp-action</code> 属性值为 <code>Index</code>，则不向 URL 追加任何操作，从而导致调用默认的 <code>Index</code> 操作。 <code>asp-controller</code> 引用的控制器中必须存在指定的（或默认的）操作。</p>
+<h3 id="asp-route-value">asp-route-{value}</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.RouteValues*">asp-route-{value}</a> 属性可实现通配符路由前缀。 占用 <code>{value}</code> 占位符的所有值都解释为潜在的路由参数。 如果找不到默认路由，则将此路由前缀作为请求参数和值追加到生成的 <code>href</code> 属性。 否则，将在路由模板中替换它。</p>
+<p>考虑以下控制器操作：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 Startup.Configure 中定义默认路由模板  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>MVC 视图使用操作提供的模型，如下所示：</p>
+<pre><code class="lang-cshtml">@model Speaker
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;a asp-controller=&quot;Speaker&quot;
+       asp-action=&quot;Detail&quot; 
+       asp-route-id=&quot;@Model.SpeakerId&quot;&gt;SpeakerId: @Model.SpeakerId&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>默认路由的 <code>{id?}</code> 占位符得以匹配。 生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker/Detail/12&quot;&gt;SpeakerId: 12&lt;/a&gt;
+</code></pre>
+<p>假设路由前缀不属于匹配路由模板的一部分，如下面的 MVC 视图所示：</p>
+<pre><code class="lang-cshtml">@model Speaker
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;a asp-controller=&quot;Speaker&quot;
+       asp-action=&quot;Detail&quot;
+       asp-route-speakerid=&quot;@Model.SpeakerId&quot;&gt;SpeakerId: @Model.SpeakerId&lt;/a&gt;
+&lt;body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>生成以下 HTML，因为匹配的路由中未找到 <code>speakerid</code>：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker/Detail?speakerid=12&quot;&gt;SpeakerId: 12&lt;/a&gt;
+</code></pre>
+<p>如果 <code>asp-controller</code> 或 <code>asp-action</code> 均未指定，则会执行与 <code>asp-route</code> 属性中相同的默认处理。</p>
+<h3 id="asp-route">asp-route</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Route*">asp-route</a> 属性用于创建直接链接到命名路由的 URL。 使用<a class="xref" href="../../../controllers/routing.html#attribute-routing">路由属性</a>，路由可以按 <code>SpeakerController</code> 中所示进行命名并用于其 <code>Evaluations</code> 操作：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在下列标记中，<code>asp-route</code> 属性引用命名路由：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>定位点标记帮助程序使用 URL /Speaker/Evaluations 生成直接指向该控制器操作的路由  。 生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker/Evaluations&quot;&gt;Speaker Evaluations&lt;/a&gt;
+</code></pre>
+<p>如果除了 <code>asp-route</code>，还指定了 <code>asp-controller</code> 或 <code>asp-action</code>，则可能不会生成预期的路由。 为了避免发生路由冲突，不应将 <code>asp-route</code> 与 <code>asp-controller</code> 和 <code>asp-action</code> 属性结合使用。</p>
+<h3 id="asp-all-route-data">asp-all-route-data</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.RouteValues*">asp-all-route-data</a> 属性支持创建键值对字典。 键是参数名称，值是参数值。</p>
+<p>在下面的示例中，将对字典进行初始化并将其传递给 Razor 视图。 或者，也可以使用模型传入数据。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码生成以下 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker/EvaluationsCurrent?speakerId=11&amp;currentYear=true&quot;&gt;Speaker Evaluations&lt;/a&gt;
+</code></pre>
+<p>平展 <code>asp-all-route-data</code> 字典，以生成满足重载 <code>Evaluations</code> 操作要求的查询字符串：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果字典中的任何键匹配路由参数，则将根据需要在路由中替换这些值。 其他不匹配的值作为请求参数生成。</p>
+<h3 id="asp-fragment">asp-fragment</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Fragment*">asp-fragment</a> 属性可定义要追加到 URL 的 URL 片段。 定位点标记帮助程序添加哈希字符 (#)。 请考虑以下标记：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Speaker/Evaluations#SpeakerEvaluations&quot;&gt;Speaker Evaluations&lt;/a&gt;
+</code></pre>
+<p>生成客户端应用时，哈希标记很有用。 它们可用于在 JavaScript 中轻松地执行标记和搜索等操作。</p>
+<h3 id="asp-area">asp-area</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Area*">asp-area</a> 属性可设置用来设置相应路由的区域名称。 以下示例展示了 <code>asp-area</code> 属性如何导致重新映射路由。</p>
+<h4 id="usage-in-no-locrazor-pages">页面使用量 Razor</h4>
+<p>Razor ASP.NET Core 2.1 或更高版本中支持页区域。</p>
+<p>考虑以下目录层次结构：</p>
+<ul>
+<li><strong>{项目名称}</strong>
+<ul>
+<li><strong>wwwroot</strong></li>
+<li><strong>Areas</strong>
+<ul>
+<li><strong>会话</strong>
+<ul>
+<li><strong>页</strong>
+<ul>
+<li><em>_Viewstart.cshtml</em></li>
+<li><em>Index.cshtml</em></li>
+<li><em>Index.cshtml.cs</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>页</strong></li>
+</ul>
+</li>
+</ul>
+<p>用于引用 <em>会话</em> 区域 <em>索引</em> Razor 页的标记为：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Sessions&quot;&gt;View Sessions&lt;/a&gt;
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>若要在页面应用中支持区域 Razor ，请在中执行以下 <code>Startup.ConfigureServices</code> 操作之一：</p>
+<ul>
+<li><p>将<a class="xref" href="../../../compatibility-version.html">兼容性版本</a>设置为 2.1 或更高版本。</p>
+</li>
+<li><p>将 AllowAreas 属性设置为<a href="xref:Microsoft.AspNetCore.Mvc.RazorPages.RazorPagesOptions.AllowAreas*"> Razor PagesOptions</a> <code>true</code> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+</ul>
+</div>
+<h4 id="usage-in-mvc">MVC 中的使用情况</h4>
+<p>考虑以下目录层次结构：</p>
+<ul>
+<li><strong>{项目名称}</strong>
+<ul>
+<li><strong>wwwroot</strong></li>
+<li><strong>Areas</strong>
+<ul>
+<li><strong>博客</strong>
+<ul>
+<li><strong>Controllers</strong>
+<ul>
+<li>HomeController.cs</li>
+</ul>
+</li>
+<li><strong>Views</strong>
+<ul>
+<li><strong>主页</strong>
+<ul>
+<li><em>AboutBlog.cshtml</em></li>
+<li><em>Index.cshtml</em></li>
+</ul>
+</li>
+<li><em>_Viewstart.cshtml</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Controllers</strong></li>
+</ul>
+</li>
+</ul>
+<p>如果将 <code>asp-area</code> 设置为 “Blogs”，则会为此定位点标记的关联控制器和视图的路由添加目录 Areas/Blogs 作为前缀  。 用于引用 AboutBlog 视图的标记是  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Blogs/Home/AboutBlog&quot;&gt;About Blog&lt;/a&gt;
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p>若要在 MVC 应用中支持区域，路由模板必须包含对该区域（如果存在）的引用。 该模板由 <code>routes.MapRoute</code> <em>Startup.Configu)</em> 中的方法调用的第二个参数表示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<h3 id="asp-protocol">asp-protocol</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Protocol*">asp-protocol</a> 属性用于在 URL 中指定协议（比如 <code>https</code>）。 例如： 。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;https://localhost/Home/About&quot;&gt;About&lt;/a&gt;
+</code></pre>
+<p>示例中的主机名为 localhost。 生成 URL 时，定位点标记帮助程序会使用网站的公共域。</p>
+<h3 id="asp-host">asp-host</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Host*">asp-host</a> 属性用于在 URL 中指定主机名。 例如： 。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;https://microsoft.com/Home/About&quot;&gt;About&lt;/a&gt;
+</code></pre>
+<h3 id="asp-page">asp-page</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.Page*">Asp 页</a>属性用于 Razor 页面。 使用它向特定页设置定位点标记的 <code>href</code> 属性值。 通过在页面名称前面使用正斜杠 (“/”) 作为前缀，可创建 URL。</p>
+<p>以下示例指向 &quot;与会者&quot; Razor 页：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Attendee&quot;&gt;All Attendees&lt;/a&gt;
+</code></pre>
+<p><code>asp-page</code> 属性与 <code>asp-route</code>、<code>asp-controller</code> 和 <code>asp-action</code> 属性互斥。 但是，<code>asp-page</code> 可与 <code>asp-route-{value}</code> 结合使用以控制路由，如以下标记所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Attendee?attendeeid=10&quot;&gt;View Attendee&lt;/a&gt;
+</code></pre>
+<h3 id="asp-page-handler">asp-page-handler</h3>
+<p><a href="xref:Microsoft.AspNetCore.Mvc.TagHelpers.AnchorTagHelper.PageHandler*">Asp 页处理程序</a>属性与页一起使用 Razor 。 它用于链接到特定的页处理程序。</p>
+<p>请考虑以下页处理程序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>页模型的关联标记链接到 <code>OnGetProfile</code> 页处理程序。 注意，<code>asp-page-handler</code> 属性值中省略了页处理程序方法名称的 <code>On&lt;Verb&gt;</code> 前缀。 如果方法是异步的，也省略 <code>Async</code> 后缀。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>生成的 HTML：</p>
+<pre><code class="lang-html">&lt;a href=&quot;/Attendee?attendeeid=12&amp;handler=Profile&quot;&gt;Attendee Profile&lt;/a&gt;
+</code></pre>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../../controllers/areas.html">ASP.NET Core 中的区域</a></li>
+<li><a class="xref" href="../../../../razor-pages/index.html">ASP.NET Core 中的 Razor Pages 介绍</a></li>
+<li><a class="xref" href="../../../compatibility-version.html">ASP.NET Core MVC 的兼容性版本</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../../../styles/main.js"></script>
+  </body>
+</html>

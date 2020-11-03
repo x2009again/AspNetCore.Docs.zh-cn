@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>.NET Core &#20013;&#30340; gRPC &#23458;&#25143;&#31471;&#24037;&#21378;&#38598;&#25104; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content=".NET Core &#20013;&#30340; gRPC &#23458;&#25143;&#31471;&#24037;&#21378;&#38598;&#25104; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/clientfactory">
+<h1 id="grpc-client-factory-integration-in-net-core">.NET Core 中的 gRPC 客户端工厂集成</h1>
+
+<p>gRPC 与 <code>HttpClientFactory</code> 的集成提供了一种创建 gRPC 客户端的集中方式。 它可用作<a class="xref" href="client.html">配置独立 gRPC 客户端实例</a>的替代方法。 <a href="https://www.nuget.org/packages/Grpc.Net.ClientFactory">Grpc.Net.ClientFactory</a> NuGet 包中提供了工厂集成。</p>
+<p>工厂具有以下优势：</p>
+<ul>
+<li>提供了用于配置逻辑 gRPC 客户端实例的中心位置</li>
+<li>可管理基础 <code>HttpClientMessageHandler</code> 的生存期</li>
+<li>在 ASP.NET Core gRPC 服务中自动传播截止时间和取消</li>
+</ul>
+<h2 id="register-grpc-clients">注册 gRPC 客户端</h2>
+<p>若要注册 gRPC 客户端，可在 <code>Startup.ConfigureServices</code> 中使用通用的 <code>AddGrpcClient</code> 扩展方法，并指定 gRPC 类型化客户端类和服务地址：</p>
+<pre><code class="lang-csharp">services.AddGrpcClient&lt;Greeter.GreeterClient&gt;(o =&gt;
+{
+    o.Address = new Uri(&quot;https://localhost:5001&quot;);
+});
+</code></pre>
+<p>gRPC 客户端类型通过依赖项注入 (DI) 注册为暂时性。 现在可以在由 DI 创建的类型中直接注入和使用客户端。 ASP.NET Core MVC 控制器、SignalR 中心和 gRPC 服务是可以自动注入 gRPC 客户端的位置：</p>
+<pre><code class="lang-csharp">public class AggregatorService : Aggregator.AggregatorBase
+{
+    private readonly Greeter.GreeterClient _client;
+
+    public AggregatorService(Greeter.GreeterClient client)
+    {
+        _client = client;
+    }
+
+    public override async Task SayHellos(HelloRequest request,
+        IServerStreamWriter&lt;HelloReply&gt; responseStream, ServerCallContext context)
+    {
+        // Forward the call on to the greeter service
+        using (var call = _client.SayHellos(request))
+        {
+            await foreach (var response in call.ResponseStream.ReadAllAsync())
+            {
+                await responseStream.WriteAsync(response);
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="configure-httpclient">配置 HttpClient</h2>
+<p><code>HttpClientFactory</code> 创建 gRPC 客户端使用的 <code>HttpClient</code>。 标准 <code>HttpClientFactory</code> 方法可用于添加传出请求中间件或配置 <code>HttpClient</code> 的基础 <code>HttpClientHandler</code>：</p>
+<pre><code class="lang-csharp">services
+    .AddGrpcClient&lt;Greeter.GreeterClient&gt;(o =&gt;
+    {
+        o.Address = new Uri(&quot;https://localhost:5001&quot;);
+    })
+    .ConfigurePrimaryHttpMessageHandler(() =&gt;
+    {
+        var handler = new HttpClientHandler();
+        handler.ClientCertificates.Add(LoadCertificate());
+        return handler;
+    });
+</code></pre>
+<p>有关详细信息，请参阅<a class="xref" href="../fundamentals/http-requests.html">使用 IHttpClientFactory 发出 HTTP 请求</a>。</p>
+<h2 id="configure-channel-and-interceptors">配置通道和侦听器</h2>
+<p>特定于 gRPC 的方法可用于：</p>
+<ul>
+<li>配置 gRPC 客户端的基础通道。</li>
+<li>添加客户端在进行 gRPC 调用时将使用的 <code>Interceptor</code> 实例。</li>
+</ul>
+<pre><code class="lang-csharp">services
+    .AddGrpcClient&lt;Greeter.GreeterClient&gt;(o =&gt;
+    {
+        o.Address = new Uri(&quot;https://localhost:5001&quot;);
+    })
+    .AddInterceptor(() =&gt; new LoggingInterceptor())
+    .ConfigureChannel(o =&gt;
+    {
+        o.Credentials = new CustomCredentials();
+    });
+</code></pre>
+<h2 id="deadline-and-cancellation-propagation">截止时间和取消传播</h2>
+<p>可以使用 <code>EnableCallContextPropagation()</code> 对 gRPC 服务中工厂所创建的 gRPC 客户端进行配置，以自动将截止时间和取消令牌传播到子调用。 <a href="https://www.nuget.org/packages/Grpc.AspNetCore.Server.ClientFactory">Grpc.AspNetCore.Server.ClientFactory</a> NuGet 包中提供了 <code>EnableCallContextPropagation()</code> 扩展方法。</p>
+<p>调用上下文传播的工作方式是：从当前 gRPC 请求上下文中读取截止时间和取消令牌，并自动将其传播到 gRPC 客户端所发出的传出调用。 调用上下文传播是确保复杂的嵌套 gRPC 场景始终传播截止时间和取消的一种极佳方式。</p>
+<pre><code class="lang-csharp">services
+    .AddGrpcClient&lt;Greeter.GreeterClient&gt;(o =&gt;
+    {
+        o.Address = new Uri(&quot;https://localhost:5001&quot;);
+    })
+    .EnableCallContextPropagation();
+</code></pre>
+<p>默认情况下，如果客户端在 gRPC 调用的上下文之外使用，<code>EnableCallContextPropagation</code> 将引发错误。 此错误旨在提醒你没有要传播的调用上下文。 如果要在调用上下文之外使用客户端，请使用 <code>SuppressContextNotFoundErrors</code> 在配置客户端时禁止显示该错误：</p>
+<pre><code class="lang-csharp">services
+    .AddGrpcClient&lt;Greeter.GreeterClient&gt;(o =&gt;
+    {
+        o.Address = new Uri(&quot;https://localhost:5001&quot;);
+    })
+    .EnableCallContextPropagation(o =&gt; o.SuppressContextNotFoundErrors = true);
+</code></pre>
+<p>有关截止时间和 RPC 取消的详细信息，请参阅 <a href="https://www.grpc.io/docs/guides/concepts/#rpc-life-cycle">RPC 生命周期</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="client.html">使用 .NET 客户端调用 gRPC 服务</a></li>
+<li><a class="xref" href="../fundamentals/http-requests.html">在 ASP.NET Core 中使用 IHttpClientFactory 发出 HTTP 请求</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

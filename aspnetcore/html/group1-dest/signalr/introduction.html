@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core SignalR &#31616;&#20171; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core SignalR &#31616;&#20171; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/introduction">
+<h1 id="introduction-to-aspnet-core-no-locsignalr">ASP.NET Core SignalR 简介</h1>
+
+<h2 id="what-is-no-locsignalr">什么是 SignalR？</h2>
+<p>ASP.NET Core SignalR 是一种开放源代码库，可简化将实时 web 功能添加到应用程序的功能。 实时 web 功能使服务器端代码可以立即将内容推送到客户端。</p>
+<p>适用于 SignalR ：</p>
+<ul>
+<li>需要从服务器进行高频率更新的应用。 示例包括游戏、社交网络、投票、拍卖、地图和 GPS 应用。</li>
+<li>仪表板和监视应用。 示例包括公司仪表板、即时销售更新或旅行警报。</li>
+<li>协作应用。 协作应用的示例包括白板应用和团队会议软件。</li>
+<li>需要通知的应用。 社交网络、电子邮件、聊天、游戏、旅行警报和很多其他应用都需使用通知。</li>
+</ul>
+<p>SignalR 提供一个 API，用于创建 (RPC) 的服务器到客户端 <a href="https://wikipedia.org/wiki/Remote_procedure_call">远程过程调用 </a>。 Rpc 通过服务器端 .NET Core 代码从客户端调用 JavaScript 函数。</p>
+<p>下面是的某些功能 SignalR ASP.NET Core：</p>
+<ul>
+<li>自动处理连接管理。</li>
+<li>将消息同时发送到所有连接的客户端。 例如，聊天室。</li>
+<li>向特定客户端或客户端组发送消息。</li>
+<li>可缩放以处理不断增加的流量。</li>
+</ul>
+<p>源托管在<a href="https://github.com/dotnet/AspNetCore/tree/master/src/SignalR"> SignalR GitHub 上的存储库</a>中。</p>
+<h2 id="transports">传输</h2>
+<p>SignalR 支持以下用于按正常回退)  (处理实时通信的技术：</p>
+<ul>
+<li><a href="https://tools.ietf.org/html/rfc7118">WebSockets</a></li>
+<li>Server-Sent 事件</li>
+<li>长轮询</li>
+</ul>
+<p>SignalR 自动选择服务器和客户端功能内的最佳传输方法。</p>
+<h2 id="hubs">中心</h2>
+<p>SignalR 使用 <em>集线器</em> 在客户端和服务器之间进行通信。</p>
+<p>中心是一种高级管道，它允许客户端和服务器分别调用方法。 SignalR 自动处理跨计算机边界的调度，使客户端能够在服务器上调用方法，反之亦然。 可以将强类型参数传递给方法，从而启用模型绑定。 SignalR 提供了两个内置的集线器协议：基于 JSON 的文本协议和基于 <a href="https://msgpack.org/">MessagePack</a>的二进制协议。  与 JSON 相比，MessagePack 通常会创建较小的消息。 较早的浏览器必须支持 <a href="https://caniuse.com/#feat=xhr2">XHR 级别 2</a> ，才能提供 MessagePack 协议支持。</p>
+<p>中心通过发送包含客户端方法的名称和参数的消息来调用客户端代码。 作为方法参数发送的对象将使用配置的协议进行反序列化。 客户端尝试将名称与客户端代码中的方法匹配。 当客户端找到匹配项时，它将调用方法并向其传递反序列化的参数数据。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../tutorials/signalr.html">SignalRASP.NET Core 入门</a></li>
+<li><a class="xref" href="supported-platforms.html">支持的平台</a></li>
+<li><a class="xref" href="hubs.html">中心</a></li>
+<li><a class="xref" href="javascript-client.html">JavaScript 客户端</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

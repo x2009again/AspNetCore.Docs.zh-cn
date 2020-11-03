@@ -1,0 +1,585 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; Razor Pages &#21333;&#20803;&#27979;&#35797; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; Razor Pages &#21333;&#20803;&#27979;&#35797; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="test/razor-pages-tests">
+<h1 id="no-locrazor-pages-unit-tests-in-aspnet-core">ASP.NET Core 中的 Razor Pages 单元测试</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>ASP.NET Core 支持 Razor Pages 应用的单元测试。 数据访问层 (DAL) 和页面模型测试有助于确保：</p>
+<ul>
+<li>Razor Pages 应用的各个部分在应用构造过程中既可以独立运行，也可以作为一个整体运行。</li>
+<li>类和方法具有有限责任范围。</li>
+<li>存在有关应用应如何运行的其他文档。</li>
+<li>回归指代码更新引起的错误，可在自动生成和部署过程中出现。</li>
+</ul>
+<p>本主题假定你对 Razor Pages 应用和单元测试有基本的了解。 如果你不熟悉 Razor Pages 应用或测试概念，请参阅以下主题：</p>
+<ul>
+<li><a class="xref" href="../razor-pages/index.html">ASP.NET Core 中的 Razor Pages 介绍</a></li>
+<li><a class="xref" href="../tutorials/razor-pages/razor-pages-start.html">教程：在 ASP.NET Core 中开始使用 Razor Pages</a></li>
+<li><a href="/dotnet/articles/core/testing/unit-testing-with-dotnet-test">使用 dotnet test 和 xUnit 在 .NET Core 中进行 C# 单元测试</a></li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/test/razor-pages-tests/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<p>示例项目包含两个应用：</p>
+<table>
+<thead>
+<tr>
+<th>应用</th>
+<th>项目文件夹</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>消息应用</td>
+<td>src/RazorPagesTestSample</td>
+<td>允许用户添加消息、删除一条消息、删除所有消息以及分析消息（查找每条消息的平均字词数）。</td>
+</tr>
+<tr>
+<td>测试应用</td>
+<td>tests/RazorPagesTestSample.Tests</td>
+<td>用于对消息应用的 DAL 和索引页面模型进行单元测试。</td>
+</tr>
+</tbody>
+</table>
+<p>可使用 IDE 的内置测试功能（例如 <a href="/visualstudio/test/unit-test-your-code">Visual Studio</a> 或 <a href="/dotnet/core/tutorials/using-on-mac-vs-full-solution">Visual Studio for Mac</a>）运行测试。 如果使用 <a href="https://code.visualstudio.com/">Visual Studio Code</a> 或命令行，请在 tests/RazorPagesTestSample.Tests 文件夹中的命令提示符处执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet test
+</code></pre>
+<h2 id="message-app-organization">消息应用组织</h2>
+<p>消息应用是具有以下特征的 Razor Pages 消息系统：</p>
+<ul>
+<li>应用的索引页面（<em>Pages/Index.cshtml</em> 和 <em>Pages/Index.cshtml.cs</em>）提供 UI 和页面模型方法，用于控制添加、删除和分析消息（查找每条消息的平均字词数）。</li>
+<li>消息由 <code>Message</code> 类 (<em>Data/Message.cs</em>) 描述，并具有两个属性：<code>Id</code>（键）和 <code>Text</code>（消息）。 <code>Text</code> 属性是必需的，并限制为 200 个字符。</li>
+<li>消息使用<a href="/ef/core/providers/in-memory/">实体框架的内存中数据库</a>†存储。</li>
+<li>应用在其数据库上下文类 <code>AppDbContext</code> (<em>Data/AppDbContext.cs</em>) 中包含 DAL。 DAL 方法标记为 <code>virtual</code>，这允许模拟在测试中使用的方法。</li>
+<li>如果应用启动时数据库为空，则消息存储初始化为三条消息。 这些<em>种子消息</em>也用于测试。</li>
+</ul>
+<p>†EF 主题<a href="/ef/core/miscellaneous/testing/in-memory">使用 InMemory 进行测试</a>说明如何将内存中数据库用于 MSTest 测试。 本主题使用 <a href="https://xunit.github.io/">xUnit</a> 测试框架。 不同测试框架中的测试概念和测试实现相似，但不完全相同。</p>
+<p>尽管示例应用未使用存储库模式且不是<a href="https://martinfowler.com/eaaCatalog/unitOfWork.html">工作单元 (UoW) 模式</a>的有效示例，但 Razor Pages 支持这些开发模式。 有关详细信息，请参阅<a href="/dotnet/standard/microservices-architecture/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design">设计基础设施持久性层</a>和 <a class="xref" href="../mvc/controllers/testing.html">ASP.NET Core 中的测试控制器逻辑</a>（该示例实现存储库模式）。</p>
+<h2 id="test-app-organization">测试应用组织</h2>
+<p>测试应用是 tests/RazorPagesTestSample.Tests 文件夹中的控制台应用。</p>
+<table>
+<thead>
+<tr>
+<th>测试应用文件夹</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>UnitTests</em></td>
+<td><ul><li><em>DataAccessLayerTest.cs</em> 包含 DAL 的单元测试。</li><li><em>IndexPageTests.cs</em> 包含索引页面模型的单元测试。</li></ul></td>
+</tr>
+<tr>
+<td><em>实用工具</em></td>
+<td>包含 <code>TestDbContextOptions</code> 方法，该方法用于为每个 DAL 单元测试创建新的数据库上下文选项，以便为每个测试将数据库重置为其基线条件。</td>
+</tr>
+</tbody>
+</table>
+<p>测试框架为 <a href="https://xunit.github.io/">xUnit</a>。 对象模拟框架为 <a href="https://github.com/moq/moq4">Moq</a>。</p>
+<h2 id="unit-tests-of-the-data-access-layer-dal">数据访问层 (DAL) 的单元测试</h2>
+<p>消息应用具有 DAL，其中 <code>AppDbContext</code> 类 (src/RazorPagesTestSample/Data/AppDbContext.cs) 中包含 4 个方法。 每个方法在测试应用中都有一到两个单元测试。</p>
+<table>
+<thead>
+<tr>
+<th>DAL 方法</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GetMessagesAsync</code></td>
+<td>从按 <code>Text</code> 属性排序的数据库获取 <code>List&lt;Message&gt;</code>。</td>
+</tr>
+<tr>
+<td><code>AddMessageAsync</code></td>
+<td>向数据库添加 <code>Message</code>。</td>
+</tr>
+<tr>
+<td><code>DeleteAllMessagesAsync</code></td>
+<td>从数据库中删除所有 <code>Message</code> 条目。</td>
+</tr>
+<tr>
+<td><code>DeleteMessageAsync</code></td>
+<td>按 <code>Id</code> 从数据库中删除单个 <code>Message</code>。</td>
+</tr>
+</tbody>
+</table>
+<p>为每个测试创建新的 <code>AppDbContext</code> 时，DAL 的单元测试需要 &lt;xref:Microsoft.EntityFrameworkCore.DbContextOptions&gt;。 为每个测试创建 <code>DbContextOptions</code> 的一个方法是使用 &lt;xref:Microsoft.EntityFrameworkCore.DbContextOptionsBuilder&gt;：</p>
+<pre><code class="lang-csharp">var optionsBuilder = new DbContextOptionsBuilder&lt;AppDbContext&gt;()
+    .UseInMemoryDatabase(&quot;InMemoryDb&quot;);
+
+using (var db = new AppDbContext(optionsBuilder.Options))
+{
+    // Use the db here in the unit test.
+}
+</code></pre>
+<p>此方法的问题在于，每个测试收到的数据库都处于之前测试中的状态。 尝试编写不会相互干扰的原子单元测试时，这可能会导致问题。 若要强制 <code>AppDbContext</code> 为每个测试使用新的数据库上下文，请提供基于新服务提供程序的 <code>DbContextOptions</code> 实例。 测试应用演示如何使用其 <code>Utilities</code> 类方法 <code>TestDbContextOptions</code> (tests/RazorPagesTestSample.Tests/Utilities/Utilities.cs) 执行此操作：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 DAL 单元测试中使用 <code>DbContextOptions</code> 可使每个测试使用新的数据库实例自动运行：</p>
+<pre><code class="lang-csharp">using (var db = new AppDbContext(Utilities.TestDbContextOptions()))
+{
+    // Use the db here in the unit test.
+}
+</code></pre>
+<p><code>DataAccessLayerTest</code> 类 (<em>UnitTests/DataAccessLayerTest.cs</em>) 中的每个测试方法都遵循类似的安排-执行-断言模式：</p>
+<ol>
+<li>安排：为测试配置数据库和/或定义预期结果。</li>
+<li>执行：执行测试。</li>
+<li>断言：进行断言以确定测试结果是否成功。</li>
+</ol>
+<p>例如，<code>DeleteMessageAsync</code> 方法负责删除由其 <code>Id</code> (src/RazorPagesTestSample/Data/AppDbContext.cs) 标识的单个消息：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法有两个测试。 一个测试检查当数据库中存在消息时该方法是否删除消息。 另一个方法测试在要删除的消息 <code>Id</code> 不存在的情况下，数据库是否保持不变。 <code>DeleteMessageAsync_MessageIsDeleted_WhenMessageIsFound</code> 方法如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>首先，方法执行“安排”步骤，并在该步骤中为“执行”步骤做好准备。 获取种子消息并将其保存在 <code>seedMessages</code> 中。 种子消息会保存到数据库中。 <code>Id</code> 为 <code>1</code> 的消息设置为删除。 执行 <code>DeleteMessageAsync</code> 方法时，预期的消息应是除 <code>Id</code> 为 <code>1</code> 的消息以外的所有消息。 <code>expectedMessages</code> 变量表示此预期结果。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该方法执行：执行 <code>DeleteMessageAsync</code> 方法并传入值为 <code>1</code> 的 <code>recId</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>最后，该方法从上下文中获取 <code>Messages</code> 并将其与断言两者相等的 <code>expectedMessages</code> 进行比较：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要比较两个 <code>List&lt;Message&gt;</code> 是否相同，请执行以下操作：</p>
+<ul>
+<li>按 <code>Id</code> 排序消息。</li>
+<li>在 <code>Text</code> 属性上比较消息对。</li>
+</ul>
+<p>类似的测试方法 <code>DeleteMessageAsync_NoMessageIsDeleted_WhenMessageIsNotFound</code> 检查尝试删除不存在的消息的结果。 在这种情况下，执行 <code>DeleteMessageAsync</code> 方法后，数据库中的预期消息数应等于实际消息数。 数据库的内容不应有任何变化：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="unit-tests-of-the-page-model-methods">页面模型方法的单元测试</h2>
+<p>另一组单元测试负责测试页面模型方法。 在消息应用中，可在 src/RazorPagesTestSample/Pages/Index.cshtml.cs 的 <code>IndexModel</code> 类中找到索引页面模型。</p>
+<table>
+<thead>
+<tr>
+<th>页面模型方法</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OnGetAsync</code></td>
+<td>使用 <code>GetMessagesAsync</code> 方法从 DAL 获取 UI 的消息。</td>
+</tr>
+<tr>
+<td><code>OnPostAddMessageAsync</code></td>
+<td>如果 <a href="xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary">ModelState</a> 有效，则调用 <code>AddMessageAsync</code> 将消息添加到数据库。</td>
+</tr>
+<tr>
+<td><code>OnPostDeleteAllMessagesAsync</code></td>
+<td>调用 <code>DeleteAllMessagesAsync</code> 以删除数据库中的所有消息。</td>
+</tr>
+<tr>
+<td><code>OnPostDeleteMessageAsync</code></td>
+<td>执行 <code>DeleteMessageAsync</code> 以删除指定了 <code>Id</code> 的消息。</td>
+</tr>
+<tr>
+<td><code>OnPostAnalyzeMessagesAsync</code></td>
+<td>如果数据库中有一条或多条消息，请计算每条消息的平均字词数。</td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>IndexPageTests</code> 类 (tests/RazorPagesTestSample.Tests/UnitTests/IndexPageTests.cs) 中的 7 个测试来测试页面模型方法。 测试使用熟悉的安排-断言-执行模式。 这些测试的重点在于：</p>
+<ul>
+<li>确定 <a href="xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary">ModelState</a> 无效时方法是否遵循正确的行为模式。</li>
+<li>确认方法是否会生成正确的 &lt;xref:Microsoft.AspNetCore.Mvc.IActionResult&gt;。</li>
+<li>检查属性值分配是否正确进行。</li>
+</ul>
+<p>这一组测试经常模拟 DAL 的方法，以生成执行页面模型方法的“执行”步骤的预期数据。 例如，模拟 <code>AppDbContext</code> 的 <code>GetMessagesAsync</code> 方法以生成输出。 当页面模型方法执行此方法时，模拟返回结果。 数据不来自数据库。 这会创建可预测的可靠测试条件，以便在页面模型测试中使用 DAL。</p>
+<p><code>OnGetAsync_PopulatesThePageModel_WithAListOfMessages</code> 测试演示如何为页面模型模拟 <code>GetMessagesAsync</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在“执行”步骤中执行 <code>OnGetAsync</code> 方法时，它会调用页面模型的 <code>GetMessagesAsync</code> 方法。</p>
+<p>单元测试“执行”步骤 (tests/RazorPagesTestSample.Tests/UnitTests/IndexPageTests.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>IndexPage</code> 页面模型的 <code>OnGetAsync</code> 方法 (src/RazorPagesTestSample/Pages/Index.cshtml.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>DAL 中的 <code>GetMessagesAsync</code> 方法不会返回此方法调用的结果。 方法的模拟版本返回结果。</p>
+<p>在 <code>Assert</code> 步骤中，从页面模型的 <code>Messages</code> 属性分配实际消息 (<code>actualMessages</code>)。 分配消息后，还会执行类型检查。 预期消息和实际消息通过其 <code>Text</code> 属性进行比较。 该测试断言两个 <code>List&lt;Message&gt;</code> 实例包含相同的消息。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此组的其他测试创建页面模型对象，这些对象包括 &lt;xref:Microsoft.AspNetCore.Http.DefaultHttpContext&gt;、&lt;xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary&gt;、用于建立 <code>PageContext</code> 的 &lt;xref:Microsoft.AspNetCore.Mvc.ActionContext&gt;、<code>ViewDataDictionary</code> 和 <code>PageContext</code>。 这些对象对于执行测试很有用。 例如，消息应用与 &lt;xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary.AddModelError*&gt; 建立 <code>ModelState</code> 错误，以检查执行 <code>OnPostAddMessageAsync</code> 时是否返回有效的 &lt;xref:Microsoft.AspNetCore.Mvc.RazorPages.PageResult&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/articles/core/testing/unit-testing-with-dotnet-test">使用 dotnet test 和 xUnit 在 .NET Core 中进行 C# 单元测试</a></li>
+<li><a class="xref" href="../mvc/controllers/testing.html">ASP.NET Core 中的测试控制器逻辑</a></li>
+<li><a href="/visualstudio/test/unit-test-your-code">对代码进行单元测试</a> (Visual Studio)</li>
+<li><a class="xref" href="integration-tests.html">ASP.NET Core 中的集成测试</a></li>
+<li><a href="https://xunit.github.io/">xUnit.net</a></li>
+<li><a href="/dotnet/core/tutorials/using-on-mac-vs-full-solution">使用 Visual Studio for Mac 在 macOS 上构建完整的 .NET Core 解决方案</a></li>
+<li><a href="https://xunit.github.io/docs/getting-started-dotnet-core">Getting started with xUnit.net:Using .NET Core with the .NET SDK command line</a>（xUnit.net 入门：将 .NET Core 与 .NET SDK 命令行配合使用）</li>
+<li><a href="https://github.com/moq/moq4">Moq</a></li>
+<li><a href="https://github.com/Moq/moq4/wiki/Quickstart">Moq Quickstart</a>（Moq 快速入门）</li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>ASP.NET Core 支持 Razor Pages 应用的单元测试。 数据访问层 (DAL) 和页面模型测试有助于确保：</p>
+<ul>
+<li>Razor Pages 应用的各个部分在应用构造过程中既可以独立运行，也可以作为一个整体运行。</li>
+<li>类和方法具有有限责任范围。</li>
+<li>存在有关应用应如何运行的其他文档。</li>
+<li>回归指代码更新引起的错误，可在自动生成和部署过程中出现。</li>
+</ul>
+<p>本主题假定你对 Razor Pages 应用和单元测试有基本的了解。 如果你不熟悉 Razor Pages 应用或测试概念，请参阅以下主题：</p>
+<ul>
+<li><a class="xref" href="../razor-pages/index.html">ASP.NET Core 中的 Razor Pages 介绍</a></li>
+<li><a class="xref" href="../tutorials/razor-pages/razor-pages-start.html">教程：在 ASP.NET Core 中开始使用 Razor Pages</a></li>
+<li><a href="/dotnet/articles/core/testing/unit-testing-with-dotnet-test">使用 dotnet test 和 xUnit 在 .NET Core 中进行 C# 单元测试</a></li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/test/razor-pages-tests/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<p>示例项目包含两个应用：</p>
+<table>
+<thead>
+<tr>
+<th>应用</th>
+<th>项目文件夹</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>消息应用</td>
+<td>src/RazorPagesTestSample</td>
+<td>允许用户添加消息、删除一条消息、删除所有消息以及分析消息（查找每条消息的平均字词数）。</td>
+</tr>
+<tr>
+<td>测试应用</td>
+<td>tests/RazorPagesTestSample.Tests</td>
+<td>用于对消息应用的 DAL 和索引页面模型进行单元测试。</td>
+</tr>
+</tbody>
+</table>
+<p>可使用 IDE 的内置测试功能（例如 <a href="/visualstudio/test/unit-test-your-code">Visual Studio</a> 或 <a href="/dotnet/core/tutorials/using-on-mac-vs-full-solution">Visual Studio for Mac</a>）运行测试。 如果使用 <a href="https://code.visualstudio.com/">Visual Studio Code</a> 或命令行，请在 tests/RazorPagesTestSample.Tests 文件夹中的命令提示符处执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet test
+</code></pre>
+<h2 id="message-app-organization">消息应用组织</h2>
+<p>消息应用是具有以下特征的 Razor Pages 消息系统：</p>
+<ul>
+<li>应用的索引页面（<em>Pages/Index.cshtml</em> 和 <em>Pages/Index.cshtml.cs</em>）提供 UI 和页面模型方法，用于控制添加、删除和分析消息（查找每条消息的平均字词数）。</li>
+<li>消息由 <code>Message</code> 类 (<em>Data/Message.cs</em>) 描述，并具有两个属性：<code>Id</code>（键）和 <code>Text</code>（消息）。 <code>Text</code> 属性是必需的，并限制为 200 个字符。</li>
+<li>消息使用<a href="/ef/core/providers/in-memory/">实体框架的内存中数据库</a>†存储。</li>
+<li>应用在其数据库上下文类 <code>AppDbContext</code> (<em>Data/AppDbContext.cs</em>) 中包含 DAL。 DAL 方法标记为 <code>virtual</code>，这允许模拟在测试中使用的方法。</li>
+<li>如果应用启动时数据库为空，则消息存储初始化为三条消息。 这些<em>种子消息</em>也用于测试。</li>
+</ul>
+<p>†EF 主题<a href="/ef/core/miscellaneous/testing/in-memory">使用 InMemory 进行测试</a>说明如何将内存中数据库用于 MSTest 测试。 本主题使用 <a href="https://xunit.github.io/">xUnit</a> 测试框架。 不同测试框架中的测试概念和测试实现相似，但不完全相同。</p>
+<p>尽管示例应用未使用存储库模式且不是<a href="https://martinfowler.com/eaaCatalog/unitOfWork.html">工作单元 (UoW) 模式</a>的有效示例，但 Razor Pages 支持这些开发模式。 有关详细信息，请参阅<a href="/dotnet/standard/microservices-architecture/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design">设计基础设施持久性层</a>和 <a class="xref" href="../mvc/controllers/testing.html">ASP.NET Core 中的测试控制器逻辑</a>（该示例实现存储库模式）。</p>
+<h2 id="test-app-organization">测试应用组织</h2>
+<p>测试应用是 tests/RazorPagesTestSample.Tests 文件夹中的控制台应用。</p>
+<table>
+<thead>
+<tr>
+<th>测试应用文件夹</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>UnitTests</em></td>
+<td><ul><li><em>DataAccessLayerTest.cs</em> 包含 DAL 的单元测试。</li><li><em>IndexPageTests.cs</em> 包含索引页面模型的单元测试。</li></ul></td>
+</tr>
+<tr>
+<td><em>实用工具</em></td>
+<td>包含 <code>TestDbContextOptions</code> 方法，该方法用于为每个 DAL 单元测试创建新的数据库上下文选项，以便为每个测试将数据库重置为其基线条件。</td>
+</tr>
+</tbody>
+</table>
+<p>测试框架为 <a href="https://xunit.github.io/">xUnit</a>。 对象模拟框架为 <a href="https://github.com/moq/moq4">Moq</a>。</p>
+<h2 id="unit-tests-of-the-data-access-layer-dal">数据访问层 (DAL) 的单元测试</h2>
+<p>消息应用具有 DAL，其中 <code>AppDbContext</code> 类 (src/RazorPagesTestSample/Data/AppDbContext.cs) 中包含 4 个方法。 每个方法在测试应用中都有一到两个单元测试。</p>
+<table>
+<thead>
+<tr>
+<th>DAL 方法</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GetMessagesAsync</code></td>
+<td>从按 <code>Text</code> 属性排序的数据库获取 <code>List&lt;Message&gt;</code>。</td>
+</tr>
+<tr>
+<td><code>AddMessageAsync</code></td>
+<td>向数据库添加 <code>Message</code>。</td>
+</tr>
+<tr>
+<td><code>DeleteAllMessagesAsync</code></td>
+<td>从数据库中删除所有 <code>Message</code> 条目。</td>
+</tr>
+<tr>
+<td><code>DeleteMessageAsync</code></td>
+<td>按 <code>Id</code> 从数据库中删除单个 <code>Message</code>。</td>
+</tr>
+</tbody>
+</table>
+<p>为每个测试创建新的 <code>AppDbContext</code> 时，DAL 的单元测试需要 &lt;xref:Microsoft.EntityFrameworkCore.DbContextOptions&gt;。 为每个测试创建 <code>DbContextOptions</code> 的一个方法是使用 &lt;xref:Microsoft.EntityFrameworkCore.DbContextOptionsBuilder&gt;：</p>
+<pre><code class="lang-csharp">var optionsBuilder = new DbContextOptionsBuilder&lt;AppDbContext&gt;()
+    .UseInMemoryDatabase(&quot;InMemoryDb&quot;);
+
+using (var db = new AppDbContext(optionsBuilder.Options))
+{
+    // Use the db here in the unit test.
+}
+</code></pre>
+<p>此方法的问题在于，每个测试收到的数据库都处于之前测试中的状态。 尝试编写不会相互干扰的原子单元测试时，这可能会导致问题。 若要强制 <code>AppDbContext</code> 为每个测试使用新的数据库上下文，请提供基于新服务提供程序的 <code>DbContextOptions</code> 实例。 测试应用演示如何使用其 <code>Utilities</code> 类方法 <code>TestDbContextOptions</code> (tests/RazorPagesTestSample.Tests/Utilities/Utilities.cs) 执行此操作：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 DAL 单元测试中使用 <code>DbContextOptions</code> 可使每个测试使用新的数据库实例自动运行：</p>
+<pre><code class="lang-csharp">using (var db = new AppDbContext(Utilities.TestDbContextOptions()))
+{
+    // Use the db here in the unit test.
+}
+</code></pre>
+<p><code>DataAccessLayerTest</code> 类 (<em>UnitTests/DataAccessLayerTest.cs</em>) 中的每个测试方法都遵循类似的安排-执行-断言模式：</p>
+<ol>
+<li>安排：为测试配置数据库和/或定义预期结果。</li>
+<li>执行：执行测试。</li>
+<li>断言：进行断言以确定测试结果是否成功。</li>
+</ol>
+<p>例如，<code>DeleteMessageAsync</code> 方法负责删除由其 <code>Id</code> (src/RazorPagesTestSample/Data/AppDbContext.cs) 标识的单个消息：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此方法有两个测试。 一个测试检查当数据库中存在消息时该方法是否删除消息。 另一个方法测试在要删除的消息 <code>Id</code> 不存在的情况下，数据库是否保持不变。 <code>DeleteMessageAsync_MessageIsDeleted_WhenMessageIsFound</code> 方法如下所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>首先，方法执行“安排”步骤，并在该步骤中为“执行”步骤做好准备。 获取种子消息并将其保存在 <code>seedMessages</code> 中。 种子消息会保存到数据库中。 <code>Id</code> 为 <code>1</code> 的消息设置为删除。 执行 <code>DeleteMessageAsync</code> 方法时，预期的消息应是除 <code>Id</code> 为 <code>1</code> 的消息以外的所有消息。 <code>expectedMessages</code> 变量表示此预期结果。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该方法执行：执行 <code>DeleteMessageAsync</code> 方法并传入值为 <code>1</code> 的 <code>recId</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>最后，该方法从上下文中获取 <code>Messages</code> 并将其与断言两者相等的 <code>expectedMessages</code> 进行比较：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要比较两个 <code>List&lt;Message&gt;</code> 是否相同，请执行以下操作：</p>
+<ul>
+<li>按 <code>Id</code> 排序消息。</li>
+<li>在 <code>Text</code> 属性上比较消息对。</li>
+</ul>
+<p>类似的测试方法 <code>DeleteMessageAsync_NoMessageIsDeleted_WhenMessageIsNotFound</code> 检查尝试删除不存在的消息的结果。 在这种情况下，执行 <code>DeleteMessageAsync</code> 方法后，数据库中的预期消息数应等于实际消息数。 数据库的内容不应有任何变化：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="unit-tests-of-the-page-model-methods">页面模型方法的单元测试</h2>
+<p>另一组单元测试负责测试页面模型方法。 在消息应用中，可在 src/RazorPagesTestSample/Pages/Index.cshtml.cs 的 <code>IndexModel</code> 类中找到索引页面模型。</p>
+<table>
+<thead>
+<tr>
+<th>页面模型方法</th>
+<th>函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OnGetAsync</code></td>
+<td>使用 <code>GetMessagesAsync</code> 方法从 DAL 获取 UI 的消息。</td>
+</tr>
+<tr>
+<td><code>OnPostAddMessageAsync</code></td>
+<td>如果 <a href="xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary">ModelState</a> 有效，则调用 <code>AddMessageAsync</code> 将消息添加到数据库。</td>
+</tr>
+<tr>
+<td><code>OnPostDeleteAllMessagesAsync</code></td>
+<td>调用 <code>DeleteAllMessagesAsync</code> 以删除数据库中的所有消息。</td>
+</tr>
+<tr>
+<td><code>OnPostDeleteMessageAsync</code></td>
+<td>执行 <code>DeleteMessageAsync</code> 以删除指定了 <code>Id</code> 的消息。</td>
+</tr>
+<tr>
+<td><code>OnPostAnalyzeMessagesAsync</code></td>
+<td>如果数据库中有一条或多条消息，请计算每条消息的平均字词数。</td>
+</tr>
+</tbody>
+</table>
+<p>使用 <code>IndexPageTests</code> 类 (tests/RazorPagesTestSample.Tests/UnitTests/IndexPageTests.cs) 中的 7 个测试来测试页面模型方法。 测试使用熟悉的安排-断言-执行模式。 这些测试的重点在于：</p>
+<ul>
+<li>确定 <a href="xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary">ModelState</a> 无效时方法是否遵循正确的行为模式。</li>
+<li>确认方法是否会生成正确的 &lt;xref:Microsoft.AspNetCore.Mvc.IActionResult&gt;。</li>
+<li>检查属性值分配是否正确进行。</li>
+</ul>
+<p>这一组测试经常模拟 DAL 的方法，以生成执行页面模型方法的“执行”步骤的预期数据。 例如，模拟 <code>AppDbContext</code> 的 <code>GetMessagesAsync</code> 方法以生成输出。 当页面模型方法执行此方法时，模拟返回结果。 数据不来自数据库。 这会创建可预测的可靠测试条件，以便在页面模型测试中使用 DAL。</p>
+<p><code>OnGetAsync_PopulatesThePageModel_WithAListOfMessages</code> 测试演示如何为页面模型模拟 <code>GetMessagesAsync</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在“执行”步骤中执行 <code>OnGetAsync</code> 方法时，它会调用页面模型的 <code>GetMessagesAsync</code> 方法。</p>
+<p>单元测试“执行”步骤 (tests/RazorPagesTestSample.Tests/UnitTests/IndexPageTests.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>IndexPage</code> 页面模型的 <code>OnGetAsync</code> 方法 (src/RazorPagesTestSample/Pages/Index.cshtml.cs)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>DAL 中的 <code>GetMessagesAsync</code> 方法不会返回此方法调用的结果。 方法的模拟版本返回结果。</p>
+<p>在 <code>Assert</code> 步骤中，从页面模型的 <code>Messages</code> 属性分配实际消息 (<code>actualMessages</code>)。 分配消息后，还会执行类型检查。 预期消息和实际消息通过其 <code>Text</code> 属性进行比较。 该测试断言两个 <code>List&lt;Message&gt;</code> 实例包含相同的消息。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此组的其他测试创建页面模型对象，这些对象包括 &lt;xref:Microsoft.AspNetCore.Http.DefaultHttpContext&gt;、&lt;xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary&gt;、用于建立 <code>PageContext</code> 的 &lt;xref:Microsoft.AspNetCore.Mvc.ActionContext&gt;、<code>ViewDataDictionary</code> 和 <code>PageContext</code>。 这些对象对于执行测试很有用。 例如，消息应用与 &lt;xref:Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary.AddModelError*&gt; 建立 <code>ModelState</code> 错误，以检查执行 <code>OnPostAddMessageAsync</code> 时是否返回有效的 &lt;xref:Microsoft.AspNetCore.Mvc.RazorPages.PageResult&gt;：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/articles/core/testing/unit-testing-with-dotnet-test">使用 dotnet test 和 xUnit 在 .NET Core 中进行 C# 单元测试</a></li>
+<li><a class="xref" href="../mvc/controllers/testing.html">ASP.NET Core 中的测试控制器逻辑</a></li>
+<li><a href="/visualstudio/test/unit-test-your-code">对代码进行单元测试</a> (Visual Studio)</li>
+<li><a class="xref" href="integration-tests.html">ASP.NET Core 中的集成测试</a></li>
+<li><a href="https://xunit.github.io/">xUnit.net</a></li>
+<li><a href="/dotnet/core/tutorials/using-on-mac-vs-full-solution">使用 Visual Studio for Mac 在 macOS 上构建完整的 .NET Core 解决方案</a></li>
+<li><a href="https://xunit.github.io/docs/getting-started-dotnet-core">Getting started with xUnit.net:Using .NET Core with the .NET SDK command line</a>（xUnit.net 入门：将 .NET Core 与 .NET SDK 命令行配合使用）</li>
+<li><a href="https://github.com/moq/moq4">Moq</a></li>
+<li><a href="https://github.com/Moq/moq4/wiki/Quickstart">Moq Quickstart</a>（Moq 快速入门）</li>
+<li><a href="https://github.com/telerik/JustMockLite">JustMockLite</a>：面向 .NET 开发人员的模拟框架。 （<em>不由 Microsoft 进行支持或维护</em>。）</li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>.NET Core &#19978;&#30340; gRPC &#30340;&#31616;&#20171; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content=".NET Core &#19978;&#30340; gRPC &#30340;&#31616;&#20171; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="grpc/index">
+<h1 id="introduction-to-grpc-on-net-core">.NET Core 上的 gRPC 的简介</h1>
+
+<p>作者：<a href="https://github.com/juntaoluo">John Luo</a> 和 <a href="https://twitter.com/jamesnk">James Newton-King</a></p>
+<p><a href="https://grpc.io/docs/guides/">gRPC</a> 是一种与语言无关的高性能远程过程调用 (RPC) 框架。</p>
+<p>gRPC 的主要优点是：</p>
+<ul>
+<li>现代高性能轻量级 RPC 框架。</li>
+<li>协定优先 API 开发，默认使用协议缓冲区，允许与语言无关的实现。</li>
+<li>可用于多种语言的工具，以生成强类型服务器和客户端。</li>
+<li>支持客户端、服务器和双向流式处理调用。</li>
+<li>使用 Protobuf 二进制序列化减少对网络的使用。</li>
+</ul>
+<p>这些优点使 gRPC 适用于：</p>
+<ul>
+<li>效率至关重要的轻量级微服务。</li>
+<li>需要多种语言用于开发的 Polyglot 系统。</li>
+<li>需要处理流式处理请求或响应的点对点实时服务。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Azure 应用服务或 IIS 当前不支持 <a class="xref" href="index.html">ASP.NET Core gRPC</a>。 Http.Sys 的 HTTP/2 实现不支持 gRPC 依赖的 HTTP 响应尾随标头。 有关详细信息，请参阅<a href="https://github.com/dotnet/AspNetCore/issues/9020">此 GitHub 问题</a>。</p>
+</div>
+<h2 id="c-tooling-support-for-proto-files">.proto 文件的 C# 工具支持</h2>
+<p>gRPC 使用协定优先方法进行 API 开发。 在 *.proto  文件中定义服务和消息：</p>
+<pre><code class="lang-protobuf">syntax = &quot;proto3&quot;;
+
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply);
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
+</code></pre>
+<p>通过在项目中包含 *.proto  文件，可以自动生成用于服务、客户端和消息的 .NET 类型：</p>
+<ul>
+<li>将包引用添加到 <a href="https://www.nuget.org/packages/Grpc.Tools/">Grpc.Tools</a> 包。</li>
+<li>将 *.proto 文件添加到 <code>&lt;Protobuf&gt;</code> 项目组。</li>
+</ul>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;Protobuf Include=&quot;Protos\greet.proto&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>有关 gRPC 工具支持的详细信息，请参阅 <a class="xref" href="basics.html">使用 C# 的 gRPC 服务</a>。</p>
+<h2 id="grpc-services-on-aspnet-core">ASP.NET Core 上的 gRPC 服务</h2>
+<p>gRPC 服务可以托管在 ASP.NET Core 上。 这些服务与常用的 ASP.NET Core 功能（例如日志记录、依赖关系注入(DI)、身份验证和授权）完全集成。</p>
+<p>gRPC 服务项目模板提供了一个入门版服务：</p>
+<pre><code class="lang-csharp">public class GreeterService : Greeter.GreeterBase
+{
+    private readonly ILogger&lt;GreeterService&gt; _logger;
+
+    public GreeterService(ILogger&lt;GreeterService&gt; logger)
+    {
+        _logger = logger;
+    }
+
+    public override Task&lt;HelloReply&gt; SayHello(HelloRequest request,
+        ServerCallContext context)
+    {
+        _logger.LogInformation(&quot;Saying hello to {Name}&quot;, request.Name);
+        return Task.FromResult(new HelloReply 
+        {
+            Message = &quot;Hello &quot; + request.Name
+        });
+    }
+}
+</code></pre>
+<p><code>GreeterService</code> 继承自 <code>GreeterBase</code> 类型，后者是从 *.proto  文件的 <code>Greeter</code> 服务生成的。 Startup.cs  中的客户端可以访问该服务：</p>
+<pre><code class="lang-csharp">app.UseEndpoints(endpoints =&gt;
+{
+    endpoints.MapGrpcService&lt;GreeterService&gt;();
+});
+</code></pre>
+<p>若要了解有关 ASP.NET Core 上的 gRPC 服务的详细信息，请参阅 <a class="xref" href="aspnetcore.html">使用 ASP.NET Core 的 gRPC 服务</a>。</p>
+<h2 id="call-grpc-services-with-a-net-client">使用 .NET 客户端调用 gRPC 服务</h2>
+<p>gRPC 客户端是从 <a class="xref" href="basics.html#generated-c-assets">*.proto  文件生成的</a>具体客户端类型。 具体 gRPC 客户端具有转换为 *.proto  文件中 gRPC 服务的方法。</p>
+<pre><code class="lang-csharp">var channel = GrpcChannel.ForAddress(&quot;https://localhost:5001&quot;);
+var client = new Greeter.GreeterClient(channel);
+
+var response = await client.SayHelloAsync(
+    new HelloRequest { Name = &quot;World&quot; });
+
+Console.WriteLine(response.Message);
+</code></pre>
+<p>gRPC 客户端是使用通道创建的，该通道表示与 gRPC 服务的长期连接。 可以使用 <code>GrpcChannel.ForAddress</code> 创建通道。</p>
+<p>有关创建客户端、调用不同服务方法的详细信息，请参阅 <a class="xref" href="client.html">使用 .NET 客户端调用 gRPC 服务</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="basics.html">使用 C# 的 gRPC 服务</a></li>
+<li><a class="xref" href="aspnetcore.html">使用 ASP.NET Core 的 gRPC 服务</a></li>
+<li><a class="xref" href="client.html">使用 .NET 客户端调用 gRPC 服务</a></li>
+<li><a class="xref" href="clientfactory.html">.NET Core 中的 gRPC 客户端工厂集成</a></li>
+<li><a class="xref" href="../tutorials/grpc/grpc-start.html">在 ASP.NET Core 中创建 .NET Core gRPC 客户端和服务器</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

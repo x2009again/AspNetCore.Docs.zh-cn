@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#33258;&#23450;&#20041;&#25480;&#26435;&#31574;&#30053;&#25552;&#20379;&#31243;&#24207; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#33258;&#23450;&#20041;&#25480;&#26435;&#31574;&#30053;&#25552;&#20379;&#31243;&#24207; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authorization/iauthorizationpolicyprovider">
+<h1 id="custom-authorization-policy-providers-using-iauthorizationpolicyprovider-in-aspnet-core">在 ASP.NET Core 中使用 IAuthorizationPolicyProvider 的自定义授权策略提供程序</h1>
+
+<p>作者：<a href="https://github.com/mjrousos">Mike Rousos</a></p>
+<p>通常，在使用 <a class="xref" href="policies.html">基于策略的授权</a>时，通过调用 <code>AuthorizationOptions.AddPolicy</code> 作为授权服务配置的一部分来注册策略。 在某些情况下，可能无法 (或理想的) 以这种方式注册所有的授权策略。 在这些情况下，可以<a href="#ci">使用自定义 <code>IAuthorizationPolicyProvider</code> </a>来控制如何提供授权策略。</p>
+<p>自定义 <a href="/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationpolicyprovider">IAuthorizationPolicyProvider</a> 可能有用的方案示例包括：</p>
+<ul>
+<li>使用外部服务提供策略评估。</li>
+<li>使用大范围的策略 (不同的房间号或年龄段，如) ，因此，使用调用来添加每个授权策略并无意义 <code>AuthorizationOptions.AddPolicy</code> 。</li>
+<li>基于外部数据源中的信息在运行时创建策略 (例如数据库) 或通过其他机制动态确定授权要求。</li>
+</ul>
+<p>从<a href="https://github.com/dotnet/AspNetCore">AspNetCore GitHub 存储库</a><a href="https://github.com/dotnet/aspnetcore/tree/v3.1.3/src/Security/samples/CustomPolicyProvider">查看或下载示例代码</a>。 下载 dotnet/AspNetCore 存储库 ZIP 文件。 解压缩文件。 导航到 <em>src/Security/samples/CustomPolicyProvider</em> 项目文件夹。</p>
+<h2 id="customize-policy-retrieval">自定义策略检索</h2>
+<p>ASP.NET Core 应用使用接口的实现 <code>IAuthorizationPolicyProvider</code> 来检索授权策略。 默认情况下， <a href="/dotnet/api/microsoft.aspnetcore.authorization.defaultauthorizationpolicyprovider">DefaultAuthorizationPolicyProvider</a> 已注册并使用。 <code>DefaultAuthorizationPolicyProvider</code> 返回 <code>AuthorizationOptions</code> 调用中提供的策略 <code>IServiceCollection.AddAuthorization</code> 。</p>
+<p>通过 <code>IAuthorizationPolicyProvider</code> 在应用程序的 <a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a> 容器中注册不同的实现来自定义此行为。</p>
+<p>此 <code>IAuthorizationPolicyProvider</code> 接口包含三个 api：</p>
+<ul>
+<li><a href="/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationpolicyprovider.getpolicyasync#Microsoft_AspNetCore_Authorization_IAuthorizationPolicyProvider_GetPolicyAsync_System_String_">GetPolicyAsync</a> 返回给定名称的授权策略。</li>
+<li><a href="/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationpolicyprovider.getdefaultpolicyasync">GetDefaultPolicyAsync</a> 返回默认授权策略 (<code>[Authorize]</code> 未指定) 策略的属性所使用的策略。</li>
+<li>当未指定策略时， <a href="/dotnet/api/microsoft.aspnetcore.authorization.iauthorizationpolicyprovider.getfallbackpolicyasync">GetFallbackPolicyAsync</a>将返回授权中间件所使用的策略 (后备授权策略) 。</li>
+</ul>
+<p>通过实现这些 Api，你可以自定义如何提供授权策略。</p>
+<h2 id="parameterized-authorize-attribute-example">参数化授权特性示例</h2>
+<p>其中一种情况非常 <code>IAuthorizationPolicyProvider</code> 有用，即启用要求依赖于参数的自定义 <code>[Authorize]</code> 属性。 例如，在 <a class="xref" href="policies.html">基于策略的授权</a> 文档中，基于年龄 ( &quot;AtLeast21&quot; ) 策略用作示例。 如果应用中的不同控制器操作应该在 <em>不同</em> 年龄段的用户中可用，则使用许多不同的基于时期的策略可能会很有用。 <code>AuthorizationOptions</code>你可以使用自定义动态生成策略，而不是注册应用程序将在中使用的所有基于时期的其他策略 <code>IAuthorizationPolicyProvider</code> 。 为了更轻松地使用这些策略，你可以使用自定义授权属性（例如）对操作进行批注 <code>[MinimumAgeAuthorize(20)]</code> 。</p>
+<h2 id="custom-authorization-attributes">自定义授权属性</h2>
+<p>授权策略由其名称标识。 <code>MinimumAgeAuthorizeAttribute</code>前面所述的自定义需要将参数映射到一个字符串，该字符串可用于检索相应的授权策略。 可以通过从派生 <code>AuthorizeAttribute</code> ，并使 <code>Age</code> 属性换行属性来实现此目的 <code>AuthorizeAttribute.Policy</code> 。</p>
+<pre><code class="lang-csharp">internal class MinimumAgeAuthorizeAttribute : AuthorizeAttribute
+{
+    const string POLICY_PREFIX = &quot;MinimumAge&quot;;
+
+    public MinimumAgeAuthorizeAttribute(int age) =&gt; Age = age;
+
+    // Get or set the Age property by manipulating the underlying Policy property
+    public int Age
+    {
+        get
+        {
+            if (int.TryParse(Policy.Substring(POLICY_PREFIX.Length), out var age))
+            {
+                return age;
+            }
+            return default(int);
+        }
+        set
+        {
+            Policy = $&quot;{POLICY_PREFIX}{value.ToString()}&quot;;
+        }
+    }
+}
+</code></pre>
+<p>此特性类型具有一个 <code>Policy</code> 基于硬编码前缀 (<code>&quot;MinimumAge&quot;</code>) 和通过构造函数传入的整数的字符串。</p>
+<p>可以采用与其他属性相同的方式将其应用于操作， <code>Authorize</code> 只不过它采用整数作为参数。</p>
+<pre><code class="lang-csharp">[MinimumAgeAuthorize(10)]
+public IActionResult RequiresMinimumAge10()
+</code></pre>
+<h2 id="custom-iauthorizationpolicyprovider">自定义 IAuthorizationPolicyProvider</h2>
+<p>自定义 <code>MinimumAgeAuthorizeAttribute</code> 可让你轻松地针对所需的最少年龄请求授权策略。 要解决的下一个问题是确保授权策略可用于所有这些不同年龄段。 这就是 <code>IAuthorizationPolicyProvider</code> 有用的。</p>
+<p>使用时 <code>MinimumAgeAuthorizationAttribute</code> ，授权策略名称将遵循模式 <code>&quot;MinimumAge&quot; + Age</code> ，因此自定义 <code>IAuthorizationPolicyProvider</code> 应通过以下方式生成授权策略：</p>
+<ul>
+<li>正在分析策略名称的期限。</li>
+<li>使用 <code>AuthorizationPolicyBuilder</code> 创建新的 <code>AuthorizationPolicy</code></li>
+<li>在此示例和以下示例中，假定用户通过进行身份验证 cookie 。 <code>AuthorizationPolicyBuilder</code>应至少用一个授权方案名称构造，或始终会成功。 否则，没有关于如何向用户提供质询的信息，将引发异常。</li>
+<li>根据 age 将要求添加到策略 <code>AuthorizationPolicyBuilder.AddRequirements</code> 。 在其他情况下，您可以使用 <code>RequireClaim</code> 、 <code>RequireRole</code> 或 <code>RequireUserName</code> 。</li>
+</ul>
+<pre><code class="lang-csharp">internal class MinimumAgePolicyProvider : IAuthorizationPolicyProvider
+{
+    const string POLICY_PREFIX = &quot;MinimumAge&quot;;
+
+    // Policies are looked up by string name, so expect 'parameters' (like age)
+    // to be embedded in the policy names. This is abstracted away from developers
+    // by the more strongly-typed attributes derived from AuthorizeAttribute
+    // (like [MinimumAgeAuthorize()] in this sample)
+    public Task&lt;AuthorizationPolicy&gt; GetPolicyAsync(string policyName)
+    {
+        if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase) &amp;&amp;
+            int.TryParse(policyName.Substring(POLICY_PREFIX.Length), out var age))
+        {
+            var policy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme);
+            policy.AddRequirements(new MinimumAgeRequirement(age));
+            return Task.FromResult(policy.Build());
+        }
+
+        return Task.FromResult&lt;AuthorizationPolicy&gt;(null);
+    }
+}
+</code></pre>
+<h2 id="multiple-authorization-policy-providers">多个授权策略提供程序</h2>
+<p>使用自定义 <code>IAuthorizationPolicyProvider</code> 实现时，请记住 ASP.NET Core 仅使用一个实例 <code>IAuthorizationPolicyProvider</code> 。 如果自定义提供程序无法为将使用的所有策略名称提供授权策略，则该提供程序应遵从备份提供程序。</p>
+<p>例如，假设某个应用程序需要自定义年龄策略和更传统的基于角色的策略检索。 此类应用程序可使用自定义授权策略提供程序，该提供程序：</p>
+<ul>
+<li>尝试分析策略名称。</li>
+<li>如果策略名称不包含 age，则调用到不同的策略提供程序 (如 <code>DefaultAuthorizationPolicyProvider</code>) 。</li>
+</ul>
+<p><code>IAuthorizationPolicyProvider</code>上面所示的示例实现可以 <code>DefaultAuthorizationPolicyProvider</code> 通过在其构造函数中创建备份策略提供程序来进行更新， (如果策略名称与其预期模式 &quot;MinimumAge&quot; + age) 不匹配，则可以使用该实现。</p>
+<pre><code class="lang-csharp">private DefaultAuthorizationPolicyProvider BackupPolicyProvider { get; }
+
+public MinimumAgePolicyProvider(IOptions&lt;AuthorizationOptions&gt; options)
+{
+    // ASP.NET Core only uses one authorization policy provider, so if the custom implementation
+    // doesn't handle all policies it should fall back to an alternate provider.
+    BackupPolicyProvider = new DefaultAuthorizationPolicyProvider(options);
+}
+</code></pre>
+<p>然后， <code>GetPolicyAsync</code> 可以将方法更新为使用 <code>BackupPolicyProvider</code> 而不是返回 null：</p>
+<pre><code class="lang-csharp">...
+return BackupPolicyProvider.GetPolicyAsync(policyName);
+</code></pre>
+<h2 id="default-policy">默认策略</h2>
+<p>除了提供命名的授权策略外，还需要实现自定义， <code>IAuthorizationPolicyProvider</code> <code>GetDefaultPolicyAsync</code> 以提供 <code>[Authorize]</code> 未指定策略名称的属性的授权策略。</p>
+<p>在许多情况下，此授权特性只需要经过身份验证的用户，因此你可以通过调用来进行所需的策略 <code>RequireAuthenticatedUser</code> ：</p>
+<pre><code class="lang-csharp">public Task&lt;AuthorizationPolicy&gt; GetDefaultPolicyAsync() =&gt; 
+    Task.FromResult(new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build());
+</code></pre>
+<p>与自定义的所有方面一样 <code>IAuthorizationPolicyProvider</code> ，你可以根据需要对其进行自定义。 在某些情况下，可能需要检索回退的默认策略 <code>IAuthorizationPolicyProvider</code> 。</p>
+<h2 id="fallback-policy">回退策略</h2>
+<p>自定义 <code>IAuthorizationPolicyProvider</code> 可以选择实现 <code>GetFallbackPolicyAsync</code> 来提供在 <a href="/dotnet/api/microsoft.aspnetcore.authorization.authorizationpolicy.combine">结合策略</a> 时使用的策略，以及未指定策略时使用的策略。 如果 <code>GetFallbackPolicyAsync</code> 返回非 null 策略，则在未为请求指定策略时，授权中间件会使用返回的策略。</p>
+<p>如果不需要回退策略，则提供程序可以返回 <code>null</code> 或延迟到回退提供程序：</p>
+<pre><code class="lang-csharp">public Task&lt;AuthorizationPolicy&gt; GetFallbackPolicyAsync() =&gt; 
+    Task.FromResult&lt;AuthorizationPolicy&gt;(null);
+</code></pre>
+<p><a name="ci"></a></p>
+<h2 id="use-a-custom-iauthorizationpolicyprovider">使用自定义 IAuthorizationPolicyProvider</h2>
+<p>若要使用中的自定义策略 <code>IAuthorizationPolicyProvider</code> ，你 <strong>必须</strong> ：</p>
+<p>_ <code>AuthorizationHandler</code> 用 <a class="xref" href="policies.html#authorization-handlers">基于策略的授权</a>) 中描述的依赖项注入注册适当的类型 (，与所有基于策略的授权方案相同。</p>
+<ul>
+<li><p>在 <code>IAuthorizationPolicyProvider</code> 应用程序的依赖项注入服务集合中注册自定义类型 <code>Startup.ConfigureServices</code> ，以替换默认策略提供程序。</p>
+<pre><code class="lang-csharp">services.AddSingleton&lt;IAuthorizationPolicyProvider, MinimumAgePolicyProvider&gt;();
+</code></pre>
+</li>
+</ul>
+<p><code>IAuthorizationPolicyProvider</code> <a href="https://github.com/dotnet/aspnetcore/tree/v3.1.3/src/Security/samples/CustomPolicyProvider">Dotnet/aspnetcore GitHub 存储库</a>中提供了完整的自定义示例。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

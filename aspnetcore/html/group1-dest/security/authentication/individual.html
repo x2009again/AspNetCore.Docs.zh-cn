@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22522;&#20110;&#36890;&#36807;&#21333;&#29420;&#29992;&#25143;&#24080;&#25143;&#21019;&#24314;&#30340; ASP.NET Core &#39033;&#30446;&#30340;&#39033;&#30446; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22522;&#20110;&#36890;&#36807;&#21333;&#29420;&#29992;&#25143;&#24080;&#25143;&#21019;&#24314;&#30340; ASP.NET Core &#39033;&#30446;&#30340;&#39033;&#30446; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/individual">
+<h1 id="articles-based-on-aspnet-core-projects-created-with-individual-user-accounts">基于通过单独用户帐户创建的 ASP.NET Core 项目的项目</h1>
+
+<p>ASP.NET Core Identity 包含在 Visual Studio 中具有 &quot;单独用户帐户&quot; 选项的项目模板中。</p>
+<p>.NET Core CLI 中提供了身份验证模板 <code>-au Individual</code> ：</p>
+<div range="&gt;= aspnetcore-2.1">
+<pre><code class="lang-dotnetcli">dotnet new mvc -au Individual
+dotnet new webapp -au Individual
+</code></pre>
+</div>
+<div range="= aspnetcore-2.0">
+<pre><code class="lang-dotnetcli">dotnet new mvc -au Individual
+dotnet new razor -au Individual
+</code></pre>
+</div>
+<p>对于 web API 身份验证，请参阅 <a href="https://github.com/dotnet/AspNetCore/issues/5833">此 GitHub 问题</a> 。</p>
+<p><a name="no"></a></p>
+<h2 id="no-authentication">无身份验证</h2>
+<p>在 .NET Core CLI 中通过选项指定了身份验证 <code>-au</code> 。 在 Visual Studio 中，&quot; <strong>更改身份验证</strong> &quot; 对话框可用于新的 web 应用程序。 Visual Studio 中新 web 应用的默认值为 &quot; <strong>无身份验证</strong> &quot;。</p>
+<p>用无身份验证创建的项目：</p>
+<ul>
+<li>不要包含用于登录和注销的网页和 UI。</li>
+<li>不包含身份验证代码。</li>
+</ul>
+<p><a name="win"></a></p>
+<h2 id="windows-authentication">Windows 身份验证</h2>
+<p>Windows 身份验证是通过选项在 .NET Core CLI 中为新 web 应用指定的 <code>-au Windows</code> 。 在 Visual Studio 中，&quot; <strong>更改身份验证</strong> &quot; 对话框提供 <strong>Windows 身份验证</strong> 选项。</p>
+<p>如果选择了 &quot;Windows 身份验证&quot;，则会将应用程序配置为使用 <a class="xref" href="../../host-and-deploy/iis/modules.html">Windows 身份验证 IIS 模块</a>。 Windows 身份验证适用于 Intranet 网站。</p>
+<h2 id="dotnet-new-webapp-authentication-options">dotnet new webapp authentication 选项</h2>
+<p>下表显示了可用于新 web 应用的身份验证选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>身份验证类型</th>
+<th>有关详细信息的链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>无身份验证</td>
+<td></td>
+</tr>
+<tr>
+<td>个人</td>
+<td>单个身份验证</td>
+<td><a class="xref" href="identity.html">ASP.NET Core 简介 Identity</a></td>
+</tr>
+<tr>
+<td>IndividualB2C</td>
+<td>Azure AD B2C 的云托管的单个身份验证</td>
+<td><a href="/azure/active-directory-b2c/">Azure AD B2C</a></td>
+</tr>
+<tr>
+<td>SingleOrg</td>
+<td>对一个租户进行组织身份验证</td>
+<td><a href="/azure/active-directory/develop/quickstart-v2-aspnet-core-webapp">Azure AD</a></td>
+</tr>
+<tr>
+<td>MultiOrg</td>
+<td>对多个租户进行组织身份验证</td>
+<td><a href="/azure/active-directory/develop/quickstart-v2-aspnet-core-webapp">Azure AD</a></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>Windows 身份验证</td>
+<td><a class="xref" href="windowsauth.html">Windows 身份验证</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="visual-studio-new-webapp-authentication-options">Visual Studio new webapp authentication 选项</h2>
+<p>下表显示了使用 Visual Studio 创建新的 web 应用时可用的身份验证选项：</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>身份验证类型</th>
+<th>有关详细信息的链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>无身份验证</td>
+<td></td>
+</tr>
+<tr>
+<td>应用中的单个用户帐户/存储用户帐户</td>
+<td>单个身份验证</td>
+<td><a class="xref" href="identity.html">ASP.NET Core 简介 Identity</a></td>
+</tr>
+<tr>
+<td>单个用户帐户/连接到云中的现有用户存储</td>
+<td>Azure AD B2C 的云托管的单个身份验证</td>
+<td><a href="/azure/active-directory-b2c/">Azure AD B2C</a></td>
+</tr>
+<tr>
+<td>工作或学校云/单个组织</td>
+<td>对一个租户进行组织身份验证</td>
+<td><a href="/azure/active-directory/develop/quickstart-v2-aspnet-core-webapp">Azure AD</a></td>
+</tr>
+<tr>
+<td>工作或学校云/多个组织</td>
+<td>对多个租户进行组织身份验证</td>
+<td><a href="/azure/active-directory/develop/quickstart-v2-aspnet-core-webapp">Azure AD</a></td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>Windows 身份验证</td>
+<td><a class="xref" href="windowsauth.html">Windows 身份验证</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-resources">其他资源</h2>
+<p>以下文章演示了如何使用 ASP.NET Core 使用单个用户帐户的模板中生成的代码：</p>
+<ul>
+<li><a class="xref" href="accconfirm.html">ASP.NET Core 中的帐户确认和密码恢复</a></li>
+<li><a class="xref" href="../authorization/secure-data.html">使用授权保护的用户数据创建 ASP.NET Core 应用</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

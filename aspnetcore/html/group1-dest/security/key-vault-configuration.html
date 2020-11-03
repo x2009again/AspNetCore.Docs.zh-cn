@@ -1,0 +1,735 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340; Azure Key Vault &#37197;&#32622;&#25552;&#20379;&#31243;&#24207; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340; Azure Key Vault &#37197;&#32622;&#25552;&#20379;&#31243;&#24207; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/key-vault-configuration">
+<h1 id="azure-key-vault-configuration-provider-in-aspnet-core">ASP.NET Core 中的 Azure Key Vault 配置提供程序</h1>
+
+<p>作者： <a href="https://github.com/anurse">Andrew Stanton</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<p>本文档说明如何使用 <a href="https://azure.microsoft.com/services/key-vault/">Microsoft Azure Key Vault</a> 配置提供程序从 Azure Key Vault 机密加载应用配置值。 Azure Key Vault 是一项基于云的服务，可帮助保护应用程序和服务使用的加密密钥和机密。 将 Azure Key Vault 用于 ASP.NET Core 应用的常见方案包括：</p>
+<ul>
+<li>控制对敏感配置数据的访问。</li>
+<li>满足 FIPS 140-2 第2级验证的硬件安全模块在存储配置数据时 (HSM) 的要求。</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/key-vault-configuration/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="packages">包</h2>
+<p>向Microsoft.Extensions.Configu 添加包引用 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Configuration.AzureKeyVault/"> 。AzureKeyVault</a> 包。</p>
+<h2 id="sample-app">示例应用</h2>
+<p>该示例应用在由 <code>#define</code> <em>Program.cs</em> 文件顶部的语句确定的两种模式中运行：</p>
+<ul>
+<li><code>Certificate</code>：演示如何使用 Azure Key Vault 的客户端 ID 和 x.509 证书来访问存储在 Azure Key Vault 中的机密。 可以从部署到 Azure App Service 的任何位置运行此版本的示例，也可以从部署到 ASP.NET Core 应用程序的任何主机上运行。</li>
+<li><code>Managed</code>：演示如何使用 <a href="/azure/active-directory/managed-identities-azure-resources/overview">Azure 资源的托管标识</a> 对应用进行身份验证，以通过 Azure AD 身份验证 Azure Key Vault，而不会在应用的代码或配置中存储凭据。 使用托管标识进行身份验证时，不需要 Azure AD 的应用程序 ID 和密码 (客户端密钥) 。 <code>Managed</code>必须将示例的版本部署到 Azure。 按照 <a href="#use-managed-identities-for-azure-resources">使用 Azure 资源的托管标识</a> 部分中的指导进行操作。</li>
+</ul>
+<p>有关如何使用预处理器指令 () 配置示例应用的详细信息 <code>#define</code> ，请参阅 <a class="xref" href="../introduction-to-aspnet-core.html#preprocessor-directives-in-sample-code">ASP.NET Core 简介</a> 。</p>
+<h2 id="secret-storage-in-the-development-environment">开发环境中的机密存储</h2>
+<p>使用 <a class="xref" href="app-secrets.html">机密管理器工具</a>在本地设置机密。 当在开发环境中的本地计算机上运行示例应用时，会从本地密钥管理器存储中加载密码。</p>
+<p>机密管理器工具需要 <code>&lt;UserSecretsId&gt;</code> 应用的项目文件中的属性。 将属性值 (<code>{GUID}</code>) 设置为任何唯一 GUID：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;UserSecretsId&gt;{GUID}&lt;/UserSecretsId&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<p>机密以名称-值对的形式创建。 配置节 (层次结构值) <code>:</code> 在 <a class="xref" href="../fundamentals/configuration/index.html">ASP.NET Core 配置</a> 项名称中将 (冒号) 作为分隔符。</p>
+<p>机密管理器用于从打开的命令 shell 到项目的 <a class="xref" href="../fundamentals/index.html#content-root">内容根目录</a>，其中 <code>{SECRET NAME}</code> 是名称， <code>{SECRET VALUE}</code> 是值：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;{SECRET NAME}&quot; &quot;{SECRET VALUE}&quot;
+</code></pre>
+<p>从项目的 <a class="xref" href="../fundamentals/index.html#content-root">内容根</a> 在命令外壳中执行以下命令，为示例应用设置机密：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;SecretName&quot; &quot;secret_value_1_dev&quot;
+dotnet user-secrets set &quot;Section:SecretName&quot; &quot;secret_value_2_dev&quot;
+</code></pre>
+<p>如果这些机密存储在 <a href="#secret-storage-in-the-production-environment-with-azure-key-vault">生产环境中的机密存储</a> Azure Key Vault 中，并 Azure Key Vault 部分，则 <code>_dev</code> 后缀将更改为 <code>_prod</code> 。 后缀在应用的输出中提供视觉提示，指示配置值的源。</p>
+<h2 id="secret-storage-in-the-production-environment-with-azure-key-vault">Azure Key Vault 中的生产环境中的机密存储</h2>
+<p>本 <a href="/azure/key-vault/quick-create-cli">快速入门：使用 Azure CLI 主题的 Azure Key Vault 设置和检索机密</a> 的说明，请参阅此处，以创建 Azure Key Vault 和存储示例应用使用的机密。 有关更多详细信息，请参阅主题。</p>
+<ol>
+<li><p>使用 <a href="https://portal.azure.com/">Azure 门户</a>中的以下方法之一打开 Azure Cloud shell：</p>
+<ul>
+<li>选择代码块右上角的“试用”。 在文本框中使用搜索字符串 &quot;Azure CLI&quot;。</li>
+<li>在浏览器中打开 Cloud Shell，并提供 &quot; <strong>启动 Cloud Shell</strong> &quot; 按钮。</li>
+<li>选择 Azure 门户右上角菜单中的 &quot; <strong>Cloud Shell</strong> &quot; 按钮。</li>
+</ul>
+<p>有关详细信息，请参阅 Azure Cloud Shell <a href="/cli/azure/">Azure CLI</a> 和 <a href="/azure/cloud-shell/overview">概述</a>。</p>
+</li>
+<li><p>如果尚未通过身份验证，请在命令中登录 <code>az login</code> 。</p>
+</li>
+<li><p>使用以下命令创建资源组，其中 <code>{RESOURCE GROUP NAME}</code> 是新资源组的资源组名称， <code>{LOCATION}</code> 是 Azure 区域 (datacenter) ：</p>
+<pre><code class="lang-azurecli">az group create --name &quot;{RESOURCE GROUP NAME}&quot; --location {LOCATION}
+</code></pre>
+</li>
+<li><p>使用以下命令在资源组中创建密钥保管库，其中 <code>{KEY VAULT NAME}</code> 是新密钥保管库的名称， <code>{LOCATION}</code> 是 Azure 区域 (datacenter) ：</p>
+<pre><code class="lang-azurecli">az keyvault create --name {KEY VAULT NAME} --resource-group &quot;{RESOURCE GROUP NAME}&quot; --location {LOCATION}
+</code></pre>
+</li>
+<li><p>在密钥保管库中，以名称-值对的形式创建机密。</p>
+<p>Azure Key Vault 机密名称仅限字母数字字符和短划线。 配置节 (层次结构值) 使用 <code>--</code> (两个短划线) 作为分隔符。 冒号（通常用于在 <a class="xref" href="../fundamentals/configuration/index.html">ASP.NET Core 配置</a>中的子项中分隔部分）在 key vault 机密名称中不允许使用。 因此，当机密加载到应用的配置中时，将使用两个短划线并为冒号交换。</p>
+<p>以下机密用于示例应用。 这些值包含 <code>_prod</code> 后缀，以将其与 <code>_dev</code> 从用户机密的开发环境中加载的后缀值区分开来。 将替换 <code>{KEY VAULT NAME}</code> 为在上一步中创建的密钥保管库的名称：</p>
+<pre><code class="lang-azurecli">az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;SecretName&quot; --value &quot;secret_value_1_prod&quot;
+az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;Section--SecretName&quot; --value &quot;secret_value_2_prod&quot;
+</code></pre>
+</li>
+</ol>
+<h2 id="use-application-id-and-x509-certificate-for-non-azure-hosted-apps">为非 Azure 托管的应用使用应用程序 ID 和 x.509 证书</h2>
+<p>配置 Azure AD、Azure Key Vault 和应用，以便在 <strong>Azure 外托管应用时</strong> 使用 Azure Active Directory 应用程序 ID 和 x.509 证书对密钥保管库进行身份验证。 有关详细信息，请参阅<a href="/azure/key-vault/about-keys-secrets-and-certificates">关于密钥、机密和证书</a>。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>尽管在 Azure 中托管的应用程序支持使用应用程序 ID 和 x.509 证书，但在 Azure 中托管应用程序时，我们建议使用 <a href="#use-managed-identities-for-azure-resources">Azure 资源的托管标识</a> 。 托管标识不需要在应用或开发环境中存储证书。</p>
+</div>
+<p>当 <code>#define</code> <em>Program.cs</em> 文件顶部的语句设置为时，示例应用使用应用程序 ID 和 x.509 证书 <code>Certificate</code> 。</p>
+<ol>
+<li>创建 PKCS # 12 存档 ( <em>.pfx</em> ) 证书。 用于创建证书的选项包括 Windows 和<a href="https://www.openssl.org/">OpenSSL</a><a href="/windows/desktop/seccrypto/makecert">上的 MakeCert</a> 。</li>
+<li>将证书安装到当前用户的个人证书存储中。 将密钥标记为可导出是可选的。 记下证书的指纹，此过程将在此过程中使用。</li>
+<li>将 PKCS # 12 存档 ( <em>.pfx</em> ) 证书导 () <em>.cer</em> 编码的证书。</li>
+<li>将应用注册 Azure AD ( <strong>应用注册</strong> ) 。</li>
+<li>将 DER 编码的证书 ( <em>.cer</em> ) 上传到 Azure AD：
+<ol>
+<li>在 Azure AD 中选择应用。</li>
+<li>导航到 &quot; <strong>证书&quot; &amp; &quot;机密</strong> &quot;。</li>
+<li>选择 &quot; <strong>上传证书</strong> &quot;，上传包含公钥的证书。 <em>.Cer</em> 、 <em>pem</em> 或 <em>.crt</em> 证书是可接受的。</li>
+</ol>
+</li>
+<li>在应用的文件中存储密钥保管库名称、应用程序 ID 和证书指纹 <em>appsettings.json</em> 。</li>
+<li>导航到 Azure 门户中的 <strong>密钥保管库</strong> 。</li>
+<li>选择在 <a href="#secret-storage-in-the-production-environment-with-azure-key-vault">生产环境中的机密存储中</a> 创建的密钥保管库，其中 Azure Key Vault &quot;部分。</li>
+<li>选择“访问策略”。</li>
+<li>选择“添加访问策略”。</li>
+<li>打开 <strong>机密权限</strong> ，并为应用提供 <strong>Get</strong> 和 <strong>List</strong> 权限。</li>
+<li>选择 &quot; <strong>选择主体</strong> &quot;，并按名称选择注册的应用。 选择“选择”按钮  。</li>
+<li>选择“确定”  。</li>
+<li>选择“保存”  。</li>
+<li>部署应用。</li>
+</ol>
+<p><code>Certificate</code>示例应用从中获取其配置值，其 <code>IConfigurationRoot</code> 名称与机密名称相同：</p>
+<ul>
+<li>非分层值：通过获取的值 <code>SecretName</code> <code>config[&quot;SecretName&quot;]</code> 。</li>
+<li>) 部分 (层次结构值：使用 <code>:</code> (冒号) 表示法或 <code>GetSection</code> 扩展方法。 使用以下任一方法来获取配置值：
+<ul>
+<li><code>config[&quot;Section:SecretName&quot;]</code></li>
+<li><code>config.GetSection(&quot;Section&quot;)[&quot;SecretName&quot;]</code></li>
+</ul>
+</li>
+</ul>
+<p>X.509 证书由操作系统管理。 应用 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 使用文件提供的值调用 <em>appsettings.json</em> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例值：</p>
+<ul>
+<li>密钥保管库名称： <code>contosovault</code></li>
+<li>应用程序 ID： <code>627e911e-43cc-61d4-992e-12db9c81b413</code></li>
+<li>证书指纹： <code>fe14593dd66b2406c5269d742d04b6e1ab03adb1</code></li>
+</ul>
+<p><em>appsettings.json</em> :</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>运行应用时，网页将显示加载的机密值。 在开发环境中，机密值用后缀进行加载 <code>_dev</code> 。 在生产环境中，值以后缀进行加载 <code>_prod</code> 。</p>
+<h2 id="use-managed-identities-for-azure-resources">使用 Azure 资源的托管标识</h2>
+<p><strong>部署到 azure 的应用</strong> 可以利用 <a href="/azure/active-directory/managed-identities-azure-resources/overview">Azure 资源的托管标识</a>，这允许应用使用 Azure AD 身份验证（不含凭据 (应用程序 ID 和密码/客户端密钥) 存储在应用中）对 Azure Key Vault 进行身份验证。</p>
+<p>当 <code>#define</code> <em>Program.cs</em> 文件顶部的语句设置为时，示例应用使用 Azure 资源的托管标识 <code>Managed</code> 。</p>
+<p>在应用的文件中输入保管库名称 <em>appsettings.json</em> 。 当设置为版本时，示例应用不需要应用程序 ID 和密码 (的客户端机密) <code>Managed</code> ，因此你可以忽略这些配置条目。 应用将部署到 Azure，Azure 将对应用进行身份验证，以便仅使用存储在文件中的保管库名称访问 Azure Key Vault <em>appsettings.json</em> 。</p>
+<p>将示例应用部署到 Azure App Service。</p>
+<p>在创建服务时，会自动向 Azure AD 注册部署到 Azure App Service 的应用。 从部署中获取对象 ID 以在下面的命令中使用。 对象 ID 显示在应用服务面板上的 &quot;Azure 门户中 <strong>Identity</strong> 。</p>
+<p>使用 Azure CLI 和应用程序的对象 ID，为应用程序提供 <code>list</code> <code>get</code> 访问密钥保管库的和权限：</p>
+<pre><code class="lang-azurecli">az keyvault set-policy --name {KEY VAULT NAME} --object-id {OBJECT ID} --secret-permissions get list
+</code></pre>
+<p>使用 Azure CLI、PowerShell 或 Azure 门户 <strong>重启应用</strong> 。</p>
+<p>示例应用：</p>
+<ul>
+<li>创建 <code>AzureServiceTokenProvider</code> 不带连接字符串的类的实例。 如果未提供连接字符串，提供程序将尝试从 Azure 资源的托管标识获取访问令牌。</li>
+<li>&lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt;使用 <code>AzureServiceTokenProvider</code> 实例标记回调创建新的。</li>
+<li>&lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt;实例与加载所有机密值的的默认实现一起使用， &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; 并将 <code>--</code> 冒号 () 替换为 <code>:</code> 键名称中 () 。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>Key vault 名称示例值： <code>contosovault</code></p>
+<p><em>appsettings.json</em> :</p>
+<pre><code class="lang-json">{
+  &quot;KeyVaultName&quot;: &quot;Key Vault Name&quot;
+}
+</code></pre>
+<p>运行应用时，网页将显示加载的机密值。 在开发环境中，机密值具有 <code>_dev</code> 后缀，因为它们是由用户机密提供的。 在生产环境中，值加载时使用 <code>_prod</code> 后缀，因为它们由 Azure Key Vault 提供。</p>
+<p>如果收到 <code>Access denied</code> 错误，请确认该应用已注册到 Azure AD，并提供对密钥保管库的访问权限。 确认已在 Azure 中重新启动该服务。</p>
+<p>有关将提供程序与托管标识和 Azure DevOps 管道一起使用的信息，请参阅使用 <a href="/azure/devops/pipelines/library/connect-to-azure#create-an-azure-resource-manager-service-connection-to-a-vm-with-a-managed-service-identity">托管服务标识创建与 VM 的 Azure 资源管理器服务连接</a>。</p>
+<h2 id="configuration-options">配置选项</h2>
+<p>&lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 可以接受 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.AzureKeyVaultConfigurationOptions&gt; ：</p>
+<pre><code class="lang-csharp">config.AddAzureKeyVault(
+    new AzureKeyVaultConfigurationOptions()
+    {
+        ...
+    });
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Client</code></td>
+<td>&lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt; 用于检索值。</td>
+</tr>
+<tr>
+<td><code>Manager</code></td>
+<td>&lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; 用于控制机密加载的实例。</td>
+</tr>
+<tr>
+<td><code>ReloadInterval</code></td>
+<td><code>Timespan</code> 如果为，则在轮询密钥保管库以进行更改之间等待。 默认值为 <code>null</code> (不) 重新加载配置。</td>
+</tr>
+<tr>
+<td><code>Vault</code></td>
+<td>密钥保管库 URI。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="use-a-key-name-prefix">使用密钥名称前缀</h2>
+<p>&lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 提供一个重载，该重载接受的实现 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; ，该实现允许您控制密钥保管库机密如何转换为配置密钥。 例如，你可以实现接口，以便基于在应用启动时提供的前缀值加载机密值。 例如，你可以根据应用程序的版本加载机密。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不要对 key vault 机密使用前缀，将多个应用的机密放入同一密钥保管库，或放置环境机密 (例如， <em>开发</em> 与 <em>生产</em> 机密) 到同一保管库中。 建议不同的应用和开发/生产环境使用不同的密钥保管库，以便隔离应用环境以获得最高级别的安全性。</p>
+</div>
+<p>在下面的示例中，密钥保管库中建立了机密 (和使用开发环境的机密管理器工具) 对于 <code>5000-AppSecret</code> 密钥保管库机密名称) 中不允许使用 (期间。 此机密代表应用程序版本5.0.0.0 的应用程序机密。 对于其他版本的应用，5.1.0.0 会将机密添加到密钥保管库 (并使用机密管理器工具) <code>5100-AppSecret</code> 。 每个应用版本会将其版本控制的机密值加载到其配置中，并在 <code>AppSecret</code> 加载机密时去除版本。</p>
+<p>&lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 使用自定义调用 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; 实现将对机密的版本前缀做出反应，以将适当的机密加载到配置中：</p>
+<ul>
+<li><code>Load</code> 当机密名称以前缀开头时，加载密码。 未加载其他机密。</li>
+<li><code>GetKey</code>:
+<ul>
+<li>从机密名称中删除前缀。</li>
+<li>将任何名称中的两个短划线替换为 <code>KeyDelimiter</code> ，它是在配置 (中使用的分隔符，通常为冒号) 。 Azure Key Vault 不允许在机密名称中使用冒号。</li>
+</ul>
+</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Load</code>方法由提供程序算法调用，该算法循环访问保管库机密以查找具有版本前缀的文件。 如果找到了版本前缀 <code>Load</code> ，则该算法将使用 <code>GetKey</code> 方法来返回密钥名称的配置名称。 它从机密名称中去除版本前缀，并返回密钥名称的其余部分，以便加载到应用的配置名称-值对中。</p>
+<p>实现此方法时：</p>
+<ol>
+<li><p>应用的项目文件中指定的应用版本。 在以下示例中，应用的版本设置为 <code>5.0.0.0</code> ：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;Version&gt;5.0.0.0&lt;/Version&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</li>
+<li><p>确认 <code>&lt;UserSecretsId&gt;</code> 应用的项目文件中存在属性，其中 <code>{GUID}</code> 是用户提供的 GUID：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;UserSecretsId&gt;{GUID}&lt;/UserSecretsId&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<p>用 <a class="xref" href="app-secrets.html">机密管理器工具</a>本地保存以下机密：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;5000-AppSecret&quot; &quot;5.0.0.0_secret_value_dev&quot;
+dotnet user-secrets set &quot;5100-AppSecret&quot; &quot;5.1.0.0_secret_value_dev&quot;
+</code></pre>
+</li>
+<li><p>使用以下 Azure CLI 命令在 Azure Key Vault 中保存机密：</p>
+<pre><code class="lang-azurecli">az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;5000-AppSecret&quot; --value &quot;5.0.0.0_secret_value_prod&quot;
+az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;5100-AppSecret&quot; --value &quot;5.1.0.0_secret_value_prod&quot;
+</code></pre>
+</li>
+<li><p>当应用运行时，将加载密钥保管库机密。 的字符串机密与 <code>5000-AppSecret</code> 应用程序的项目文件中指定的应用版本匹配 (<code>5.0.0.0</code>) 。</p>
+</li>
+<li><p><code>5000</code>用破折号)  (的版本将从键名称中去除。 在整个应用程序中，通过密钥读取配置会 <code>AppSecret</code> 加载机密值。</p>
+</li>
+<li><p>如果在项目文件中将应用程序的版本更改为 <code>5.1.0.0</code> ，并再次运行应用程序，则返回的机密值位于 <code>5.1.0.0_secret_value_dev</code> 开发环境和生产环境中 <code>5.1.0.0_secret_value_prod</code> 。</p>
+</li>
+</ol>
+<div class="NOTE">
+<h5>Note</h5>
+<p>你还可以向提供自己的 &lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt; 实现 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 。 自定义客户端允许跨应用共享客户端的单个实例。</p>
+</div>
+<h2 id="bind-an-array-to-a-class">将数组绑定至类</h2>
+<p>提供程序能够将配置值读入数组，以便绑定到 POCO 数组。</p>
+<p>当从允许键包含冒号 () 分隔符的配置源中进行读取时 <code>:</code> ，将使用数字键段来区分组成数组 (<code>:0:</code> 、) 的键 <code>:1:</code> … <code>:{n}:</code> 。 有关详细信息，请参阅 <a class="xref" href="../fundamentals/configuration/index.html#bind-an-array-to-a-class">配置：将数组绑定到类</a>。</p>
+<p>Azure Key Vault 密钥不能使用冒号作为分隔符。 本主题中所述的方法使用双短划线 (<code>--</code>) 作为层次结构值 (节) 的分隔符。 数组键存储在 Azure Key Vault 中 <code>--0--</code> ， (，，) 为双短划线和数值段 <code>--1--</code> … <code>--{n}--</code> 。</p>
+<p>检查 JSON 文件提供的以下 <a href="https://serilog.net/">Serilog</a> 日志记录提供程序配置。 在数组中定义了两个对象文本 <code>WriteTo</code> ，它们反映了两个 Serilog <em>接收器</em> ，它们描述了日志记录输出的目标：</p>
+<pre><code class="lang-json">&quot;Serilog&quot;: {
+  &quot;WriteTo&quot;: [
+    {
+      &quot;Name&quot;: &quot;AzureTableStorage&quot;,
+      &quot;Args&quot;: {
+        &quot;storageTableName&quot;: &quot;logs&quot;,
+        &quot;connectionString&quot;: &quot;DefaultEnd...ountKey=Eby8...GMGw==&quot;
+      }
+    },
+    {
+      &quot;Name&quot;: &quot;AzureDocumentDB&quot;,
+      &quot;Args&quot;: {
+        &quot;endpointUrl&quot;: &quot;https://contoso.documents.azure.com:443&quot;,
+        &quot;authorizationKey&quot;: &quot;Eby8...GMGw==&quot;
+      }
+    }
+  ]
+}
+</code></pre>
+<p>前面的 JSON 文件中所示的配置将存储在 Azure Key Vault 中，使用双划线 (<code>--</code>) 表示法和数值段：</p>
+<table>
+<thead>
+<tr>
+<th>密钥</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Serilog--WriteTo--0--Name</code></td>
+<td><code>AzureTableStorage</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--0--Args--storageTableName</code></td>
+<td><code>logs</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--0--Args--connectionString</code></td>
+<td><code>DefaultEnd...ountKey=Eby8...GMGw==</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--1--Name</code></td>
+<td><code>AzureDocumentDB</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--1--Args--endpointUrl</code></td>
+<td><code>https://contoso.documents.azure.com:443</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--1--Args--authorizationKey</code></td>
+<td><code>Eby8...GMGw==</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="reload-secrets">重载机密</h2>
+<p>在调用之前会缓存机密 <code>IConfigurationRoot.Reload()</code> 。 在执行之前，应用程序不会考虑到密钥保管库中已过期、已禁用和更新的机密 <code>Reload</code> 。</p>
+<pre><code class="lang-csharp">Configuration.Reload();
+</code></pre>
+<h2 id="disabled-and-expired-secrets">禁用和过期的机密</h2>
+<p>禁用和过期的机密会引发 &lt;xref:Microsoft.Azure.KeyVault.Models.KeyVaultErrorException&gt; 。 若要防止应用程序引发，请使用不同的配置提供程序提供配置，或更新禁用或过期的机密。</p>
+<h2 id="troubleshoot">疑难解答</h2>
+<p>当应用无法使用访问接口加载配置时，会将错误消息写入 <a class="xref" href="../fundamentals/logging/index.html">ASP.NET Core 日志记录基础结构</a>。 以下条件将阻止加载配置：</p>
+<ul>
+<li>Azure Active Directory 中未正确配置应用或证书。</li>
+<li>Azure Key Vault 中不存在密钥保管库。</li>
+<li>应用无权访问密钥保管库。</li>
+<li>访问策略不包括 <code>Get</code> 和 <code>List</code> 权限。</li>
+<li>在密钥保管库中，配置数据 (名称-值对) 错误地命名、缺失、禁用或过期。</li>
+<li>应用具有错误的密钥保管库名称 (<code>KeyVaultName</code>) 、Azure AD 应用程序 Id (<code>AzureADApplicationId</code>) 或 Azure AD 证书指纹 (<code>AzureADCertThumbprint</code>) 。</li>
+<li>要尝试加载的值在应用中 (名称) 的配置密钥不正确。</li>
+<li>向密钥保管库添加应用的访问策略时，策略已创建，但未在 <strong>访问策略</strong> UI 中选择 &quot; <strong>保存</strong> &quot; 按钮。</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../fundamentals/configuration/index.html">ASP.NET Core 中的配置</a></li>
+<li><a href="https://azure.microsoft.com/services/key-vault/">Microsoft Azure： Key Vault</a></li>
+<li><a href="/azure/key-vault/">Microsoft Azure： Key Vault 文档</a></li>
+<li><a href="/azure/key-vault/key-vault-hsm-protected-keys">如何为 Azure Key Vault 生成和传输受 HSM 保护的密钥</a></li>
+<li><a href="/dotnet/api/microsoft.azure.keyvault.keyvaultclient">KeyVaultClient 类</a></li>
+<li><a href="/azure/key-vault/quick-create-net">快速入门：使用 .NET Web 应用在 Azure Key Vault 中设置和检索机密</a></li>
+<li><a href="/azure/key-vault/tutorial-net-windows-virtual-machine">教程：如何将 Azure Key Vault 与通过 .NET 编写的 Azure Windows 虚拟机配合使用</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>本文档说明如何使用 <a href="https://azure.microsoft.com/services/key-vault/">Microsoft Azure Key Vault</a> 配置提供程序从 Azure Key Vault 机密加载应用配置值。 Azure Key Vault 是一项基于云的服务，可帮助保护应用程序和服务使用的加密密钥和机密。 将 Azure Key Vault 用于 ASP.NET Core 应用的常见方案包括：</p>
+<ul>
+<li>控制对敏感配置数据的访问。</li>
+<li>满足 FIPS 140-2 第2级验证的硬件安全模块在存储配置数据时 (HSM) 的要求。</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/security/key-vault-configuration/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="packages">包</h2>
+<p>向Microsoft.Extensions.Configu 添加包引用 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Configuration.AzureKeyVault/"> 。AzureKeyVault</a> 包。</p>
+<h2 id="sample-app">示例应用</h2>
+<p>该示例应用在由 <code>#define</code> <em>Program.cs</em> 文件顶部的语句确定的两种模式中运行：</p>
+<ul>
+<li><code>Certificate</code>：演示如何使用 Azure Key Vault 的客户端 ID 和 x.509 证书来访问存储在 Azure Key Vault 中的机密。 可以从部署到 Azure App Service 的任何位置运行此版本的示例，也可以从部署到 ASP.NET Core 应用程序的任何主机上运行。</li>
+<li><code>Managed</code>：演示如何使用 <a href="/azure/active-directory/managed-identities-azure-resources/overview">Azure 资源的托管标识</a> 对应用进行身份验证，以通过 Azure AD 身份验证 Azure Key Vault，而不会在应用的代码或配置中存储凭据。 使用托管标识进行身份验证时，不需要 Azure AD 的应用程序 ID 和密码 (客户端密钥) 。 <code>Managed</code>必须将示例的版本部署到 Azure。 按照 <a href="#use-managed-identities-for-azure-resources">使用 Azure 资源的托管标识</a> 部分中的指导进行操作。</li>
+</ul>
+<p>有关如何使用预处理器指令 () 配置示例应用的详细信息 <code>#define</code> ，请参阅 <a class="xref" href="../introduction-to-aspnet-core.html#preprocessor-directives-in-sample-code">ASP.NET Core 简介</a> 。</p>
+<h2 id="secret-storage-in-the-development-environment">开发环境中的机密存储</h2>
+<p>使用 <a class="xref" href="app-secrets.html">机密管理器工具</a>在本地设置机密。 当在开发环境中的本地计算机上运行示例应用时，会从本地密钥管理器存储中加载密码。</p>
+<p>机密管理器工具需要 <code>&lt;UserSecretsId&gt;</code> 应用的项目文件中的属性。 将属性值 (<code>{GUID}</code>) 设置为任何唯一 GUID：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;UserSecretsId&gt;{GUID}&lt;/UserSecretsId&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<p>机密以名称-值对的形式创建。 配置节 (层次结构值) <code>:</code> 在 <a class="xref" href="../fundamentals/configuration/index.html">ASP.NET Core 配置</a> 项名称中将 (冒号) 作为分隔符。</p>
+<p>机密管理器用于从打开的命令 shell 到项目的 <a class="xref" href="../fundamentals/index.html#content-root">内容根目录</a>，其中 <code>{SECRET NAME}</code> 是名称， <code>{SECRET VALUE}</code> 是值：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;{SECRET NAME}&quot; &quot;{SECRET VALUE}&quot;
+</code></pre>
+<p>从项目的 <a class="xref" href="../fundamentals/index.html#content-root">内容根</a> 在命令外壳中执行以下命令，为示例应用设置机密：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;SecretName&quot; &quot;secret_value_1_dev&quot;
+dotnet user-secrets set &quot;Section:SecretName&quot; &quot;secret_value_2_dev&quot;
+</code></pre>
+<p>如果这些机密存储在 <a href="#secret-storage-in-the-production-environment-with-azure-key-vault">生产环境中的机密存储</a> Azure Key Vault 中，并 Azure Key Vault 部分，则 <code>_dev</code> 后缀将更改为 <code>_prod</code> 。 后缀在应用的输出中提供视觉提示，指示配置值的源。</p>
+<h2 id="secret-storage-in-the-production-environment-with-azure-key-vault">Azure Key Vault 中的生产环境中的机密存储</h2>
+<p>本 <a href="/azure/key-vault/quick-create-cli">快速入门：使用 Azure CLI 主题的 Azure Key Vault 设置和检索机密</a> 的说明，请参阅此处，以创建 Azure Key Vault 和存储示例应用使用的机密。 有关更多详细信息，请参阅主题。</p>
+<ol>
+<li><p>使用 <a href="https://portal.azure.com/">Azure 门户</a>中的以下方法之一打开 Azure Cloud shell：</p>
+<ul>
+<li>选择代码块右上角的“试用”。 在文本框中使用搜索字符串 &quot;Azure CLI&quot;。</li>
+<li>在浏览器中打开 Cloud Shell，并提供 &quot; <strong>启动 Cloud Shell</strong> &quot; 按钮。</li>
+<li>选择 Azure 门户右上角菜单中的 &quot; <strong>Cloud Shell</strong> &quot; 按钮。</li>
+</ul>
+<p>有关详细信息，请参阅 Azure Cloud Shell <a href="/cli/azure/">Azure CLI</a> 和 <a href="/azure/cloud-shell/overview">概述</a>。</p>
+</li>
+<li><p>如果尚未通过身份验证，请在命令中登录 <code>az login</code> 。</p>
+</li>
+<li><p>使用以下命令创建资源组，其中 <code>{RESOURCE GROUP NAME}</code> 是新资源组的资源组名称， <code>{LOCATION}</code> 是 Azure 区域 (datacenter) ：</p>
+<pre><code class="lang-azurecli">az group create --name &quot;{RESOURCE GROUP NAME}&quot; --location {LOCATION}
+</code></pre>
+</li>
+<li><p>使用以下命令在资源组中创建密钥保管库，其中 <code>{KEY VAULT NAME}</code> 是新密钥保管库的名称， <code>{LOCATION}</code> 是 Azure 区域 (datacenter) ：</p>
+<pre><code class="lang-azurecli">az keyvault create --name {KEY VAULT NAME} --resource-group &quot;{RESOURCE GROUP NAME}&quot; --location {LOCATION}
+</code></pre>
+</li>
+<li><p>在密钥保管库中，以名称-值对的形式创建机密。</p>
+<p>Azure Key Vault 机密名称仅限字母数字字符和短划线。 配置节 (层次结构值) 使用 <code>--</code> (两个短划线) 作为分隔符。 冒号（通常用于在 <a class="xref" href="../fundamentals/configuration/index.html">ASP.NET Core 配置</a>中的子项中分隔部分）在 key vault 机密名称中不允许使用。 因此，当机密加载到应用的配置中时，将使用两个短划线并为冒号交换。</p>
+<p>以下机密用于示例应用。 这些值包含 <code>_prod</code> 后缀，以将其与 <code>_dev</code> 从用户机密的开发环境中加载的后缀值区分开来。 将替换 <code>{KEY VAULT NAME}</code> 为在上一步中创建的密钥保管库的名称：</p>
+<pre><code class="lang-azurecli">az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;SecretName&quot; --value &quot;secret_value_1_prod&quot;
+az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;Section--SecretName&quot; --value &quot;secret_value_2_prod&quot;
+</code></pre>
+</li>
+</ol>
+<h2 id="use-application-id-and-x509-certificate-for-non-azure-hosted-apps">为非 Azure 托管的应用使用应用程序 ID 和 x.509 证书</h2>
+<p>配置 Azure AD、Azure Key Vault 和应用，以便在 <strong>Azure 外托管应用时</strong> 使用 Azure Active Directory 应用程序 ID 和 x.509 证书对密钥保管库进行身份验证。 有关详细信息，请参阅<a href="/azure/key-vault/about-keys-secrets-and-certificates">关于密钥、机密和证书</a>。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>尽管在 Azure 中托管的应用程序支持使用应用程序 ID 和 x.509 证书，但在 Azure 中托管应用程序时，我们建议使用 <a href="#use-managed-identities-for-azure-resources">Azure 资源的托管标识</a> 。 托管标识不需要在应用或开发环境中存储证书。</p>
+</div>
+<p>当 <code>#define</code> <em>Program.cs</em> 文件顶部的语句设置为时，示例应用使用应用程序 ID 和 x.509 证书 <code>Certificate</code> 。</p>
+<ol>
+<li>创建 PKCS # 12 存档 ( <em>.pfx</em> ) 证书。 用于创建证书的选项包括 Windows 和<a href="https://www.openssl.org/">OpenSSL</a><a href="/windows/desktop/seccrypto/makecert">上的 MakeCert</a> 。</li>
+<li>将证书安装到当前用户的个人证书存储中。 将密钥标记为可导出是可选的。 记下证书的指纹，此过程将在此过程中使用。</li>
+<li>将 PKCS # 12 存档 ( <em>.pfx</em> ) 证书导 () <em>.cer</em> 编码的证书。</li>
+<li>将应用注册 Azure AD ( <strong>应用注册</strong> ) 。</li>
+<li>将 DER 编码的证书 ( <em>.cer</em> ) 上传到 Azure AD：
+<ol>
+<li>在 Azure AD 中选择应用。</li>
+<li>导航到 &quot; <strong>证书&quot; &amp; &quot;机密</strong> &quot;。</li>
+<li>选择 &quot; <strong>上传证书</strong> &quot;，上传包含公钥的证书。 <em>.Cer</em> 、 <em>pem</em> 或 <em>.crt</em> 证书是可接受的。</li>
+</ol>
+</li>
+<li>在应用的文件中存储密钥保管库名称、应用程序 ID 和证书指纹 <em>appsettings.json</em> 。</li>
+<li>导航到 Azure 门户中的 <strong>密钥保管库</strong> 。</li>
+<li>选择在 <a href="#secret-storage-in-the-production-environment-with-azure-key-vault">生产环境中的机密存储中</a> 创建的密钥保管库，其中 Azure Key Vault &quot;部分。</li>
+<li>选择“访问策略”。</li>
+<li>选择“添加访问策略”。</li>
+<li>打开 <strong>机密权限</strong> ，并为应用提供 <strong>Get</strong> 和 <strong>List</strong> 权限。</li>
+<li>选择 &quot; <strong>选择主体</strong> &quot;，并按名称选择注册的应用。 选择“选择”按钮  。</li>
+<li>选择“确定”  。</li>
+<li>选择“保存”  。</li>
+<li>部署应用。</li>
+</ol>
+<p><code>Certificate</code>示例应用从中获取其配置值，其 <code>IConfigurationRoot</code> 名称与机密名称相同：</p>
+<ul>
+<li>非分层值：通过获取的值 <code>SecretName</code> <code>config[&quot;SecretName&quot;]</code> 。</li>
+<li>) 部分 (层次结构值：使用 <code>:</code> (冒号) 表示法或 <code>GetSection</code> 扩展方法。 使用以下任一方法来获取配置值：
+<ul>
+<li><code>config[&quot;Section:SecretName&quot;]</code></li>
+<li><code>config.GetSection(&quot;Section&quot;)[&quot;SecretName&quot;]</code></li>
+</ul>
+</li>
+</ul>
+<p>X.509 证书由操作系统管理。 应用 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 使用文件提供的值调用 <em>appsettings.json</em> ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例值：</p>
+<ul>
+<li>密钥保管库名称： <code>contosovault</code></li>
+<li>应用程序 ID： <code>627e911e-43cc-61d4-992e-12db9c81b413</code></li>
+<li>证书指纹： <code>fe14593dd66b2406c5269d742d04b6e1ab03adb1</code></li>
+</ul>
+<p><em>appsettings.json</em> :</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>运行应用时，网页将显示加载的机密值。 在开发环境中，机密值用后缀进行加载 <code>_dev</code> 。 在生产环境中，值以后缀进行加载 <code>_prod</code> 。</p>
+<h2 id="use-managed-identities-for-azure-resources">使用 Azure 资源的托管标识</h2>
+<p><strong>部署到 azure 的应用</strong> 可以利用 <a href="/azure/active-directory/managed-identities-azure-resources/overview">Azure 资源的托管标识</a>，这允许应用使用 Azure AD 身份验证（不含凭据 (应用程序 ID 和密码/客户端密钥) 存储在应用中）对 Azure Key Vault 进行身份验证。</p>
+<p>当 <code>#define</code> <em>Program.cs</em> 文件顶部的语句设置为时，示例应用使用 Azure 资源的托管标识 <code>Managed</code> 。</p>
+<p>在应用的文件中输入保管库名称 <em>appsettings.json</em> 。 当设置为版本时，示例应用不需要应用程序 ID 和密码 (的客户端机密) <code>Managed</code> ，因此你可以忽略这些配置条目。 应用将部署到 Azure，Azure 将对应用进行身份验证，以便仅使用存储在文件中的保管库名称访问 Azure Key Vault <em>appsettings.json</em> 。</p>
+<p>将示例应用部署到 Azure App Service。</p>
+<p>在创建服务时，会自动向 Azure AD 注册部署到 Azure App Service 的应用。 从部署中获取对象 ID 以在下面的命令中使用。 对象 ID 显示在应用服务面板上的 &quot;Azure 门户中 <strong>Identity</strong> 。</p>
+<p>使用 Azure CLI 和应用程序的对象 ID，为应用程序提供 <code>list</code> <code>get</code> 访问密钥保管库的和权限：</p>
+<pre><code class="lang-azurecli">az keyvault set-policy --name {KEY VAULT NAME} --object-id {OBJECT ID} --secret-permissions get list
+</code></pre>
+<p>使用 Azure CLI、PowerShell 或 Azure 门户 <strong>重启应用</strong> 。</p>
+<p>示例应用：</p>
+<ul>
+<li>创建 <code>AzureServiceTokenProvider</code> 不带连接字符串的类的实例。 如果未提供连接字符串，提供程序将尝试从 Azure 资源的托管标识获取访问令牌。</li>
+<li>&lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt;使用 <code>AzureServiceTokenProvider</code> 实例标记回调创建新的。</li>
+<li>&lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt;实例与加载所有机密值的的默认实现一起使用， &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; 并将 <code>--</code> 冒号 () 替换为 <code>:</code> 键名称中 () 。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>Key vault 名称示例值： <code>contosovault</code></p>
+<p><em>appsettings.json</em> :</p>
+<pre><code class="lang-json">{
+  &quot;KeyVaultName&quot;: &quot;Key Vault Name&quot;
+}
+</code></pre>
+<p>运行应用时，网页将显示加载的机密值。 在开发环境中，机密值具有 <code>_dev</code> 后缀，因为它们是由用户机密提供的。 在生产环境中，值加载时使用 <code>_prod</code> 后缀，因为它们由 Azure Key Vault 提供。</p>
+<p>如果收到 <code>Access denied</code> 错误，请确认该应用已注册到 Azure AD，并提供对密钥保管库的访问权限。 确认已在 Azure 中重新启动该服务。</p>
+<p>有关将提供程序与托管标识和 Azure DevOps 管道一起使用的信息，请参阅使用 <a href="/azure/devops/pipelines/library/connect-to-azure#create-an-azure-resource-manager-service-connection-to-a-vm-with-a-managed-service-identity">托管服务标识创建与 VM 的 Azure 资源管理器服务连接</a>。</p>
+<h2 id="use-a-key-name-prefix">使用密钥名称前缀</h2>
+<p>&lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 提供一个重载，该重载接受的实现 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; ，该实现允许您控制密钥保管库机密如何转换为配置密钥。 例如，你可以实现接口，以便基于在应用启动时提供的前缀值加载机密值。 例如，你可以根据应用程序的版本加载机密。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不要对 key vault 机密使用前缀，将多个应用的机密放入同一密钥保管库，或放置环境机密 (例如， <em>开发</em> 与 <em>生产</em> 机密) 到同一保管库中。 建议不同的应用和开发/生产环境使用不同的密钥保管库，以便隔离应用环境以获得最高级别的安全性。</p>
+</div>
+<p>在下面的示例中，密钥保管库中建立了机密 (和使用开发环境的机密管理器工具) 对于 <code>5000-AppSecret</code> 密钥保管库机密名称) 中不允许使用 (期间。 此机密代表应用程序版本5.0.0.0 的应用程序机密。 对于其他版本的应用，5.1.0.0 会将机密添加到密钥保管库 (并使用机密管理器工具) <code>5100-AppSecret</code> 。 每个应用版本会将其版本控制的机密值加载到其配置中，并在 <code>AppSecret</code> 加载机密时去除版本。</p>
+<p>&lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 使用自定义调用 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVault.IKeyVaultSecretManager&gt; 实现将对机密的版本前缀做出反应，以将适当的机密加载到配置中：</p>
+<ul>
+<li><code>Load</code> 当机密名称以前缀开头时，加载密码。 未加载其他机密。</li>
+<li><code>GetKey</code>:
+<ul>
+<li>从机密名称中删除前缀。</li>
+<li>将任何名称中的两个短划线替换为 <code>KeyDelimiter</code> ，它是在配置 (中使用的分隔符，通常为冒号) 。 Azure Key Vault 不允许在机密名称中使用冒号。</li>
+</ul>
+</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>Load</code>方法由提供程序算法调用，该算法循环访问保管库机密以查找具有版本前缀的文件。 如果找到了版本前缀 <code>Load</code> ，则该算法将使用 <code>GetKey</code> 方法来返回密钥名称的配置名称。 它从机密名称中去除版本前缀，并返回密钥名称的其余部分，以便加载到应用的配置名称-值对中。</p>
+<p>实现此方法时：</p>
+<ol>
+<li><p>应用的项目文件中指定的应用版本。 在以下示例中，应用的版本设置为 <code>5.0.0.0</code> ：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;Version&gt;5.0.0.0&lt;/Version&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+</li>
+<li><p>确认 <code>&lt;UserSecretsId&gt;</code> 应用的项目文件中存在属性，其中 <code>{GUID}</code> 是用户提供的 GUID：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;UserSecretsId&gt;{GUID}&lt;/UserSecretsId&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<p>用 <a class="xref" href="app-secrets.html">机密管理器工具</a>本地保存以下机密：</p>
+<pre><code class="lang-dotnetcli">dotnet user-secrets set &quot;5000-AppSecret&quot; &quot;5.0.0.0_secret_value_dev&quot;
+dotnet user-secrets set &quot;5100-AppSecret&quot; &quot;5.1.0.0_secret_value_dev&quot;
+</code></pre>
+</li>
+<li><p>使用以下 Azure CLI 命令在 Azure Key Vault 中保存机密：</p>
+<pre><code class="lang-azurecli">az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;5000-AppSecret&quot; --value &quot;5.0.0.0_secret_value_prod&quot;
+az keyvault secret set --vault-name {KEY VAULT NAME} --name &quot;5100-AppSecret&quot; --value &quot;5.1.0.0_secret_value_prod&quot;
+</code></pre>
+</li>
+<li><p>当应用运行时，将加载密钥保管库机密。 的字符串机密与 <code>5000-AppSecret</code> 应用程序的项目文件中指定的应用版本匹配 (<code>5.0.0.0</code>) 。</p>
+</li>
+<li><p><code>5000</code>用破折号)  (的版本将从键名称中去除。 在整个应用程序中，通过密钥读取配置会 <code>AppSecret</code> 加载机密值。</p>
+</li>
+<li><p>如果在项目文件中将应用程序的版本更改为 <code>5.1.0.0</code> ，并再次运行应用程序，则返回的机密值位于 <code>5.1.0.0_secret_value_dev</code> 开发环境和生产环境中 <code>5.1.0.0_secret_value_prod</code> 。</p>
+</li>
+</ol>
+<div class="NOTE">
+<h5>Note</h5>
+<p>你还可以向提供自己的 &lt;xref:Microsoft.Azure.KeyVault.KeyVaultClient&gt; 实现 &lt;xref:Microsoft.Extensions.Configuration.AzureKeyVaultConfigurationExtensions.AddAzureKeyVault*&gt; 。 自定义客户端允许跨应用共享客户端的单个实例。</p>
+</div>
+<h2 id="bind-an-array-to-a-class">将数组绑定至类</h2>
+<p>提供程序能够将配置值读入数组，以便绑定到 POCO 数组。</p>
+<p>当从允许键包含冒号 () 分隔符的配置源中进行读取时 <code>:</code> ，将使用数字键段来区分组成数组 (<code>:0:</code> 、) 的键 <code>:1:</code> … <code>:{n}:</code> 。 有关详细信息，请参阅 <a class="xref" href="../fundamentals/configuration/index.html#bind-an-array-to-a-class">配置：将数组绑定到类</a>。</p>
+<p>Azure Key Vault 密钥不能使用冒号作为分隔符。 本主题中所述的方法使用双短划线 (<code>--</code>) 作为层次结构值 (节) 的分隔符。 数组键存储在 Azure Key Vault 中 <code>--0--</code> ， (，，) 为双短划线和数值段 <code>--1--</code> … <code>--{n}--</code> 。</p>
+<p>检查 JSON 文件提供的以下 <a href="https://serilog.net/">Serilog</a> 日志记录提供程序配置。 在数组中定义了两个对象文本 <code>WriteTo</code> ，它们反映了两个 Serilog <em>接收器</em> ，它们描述了日志记录输出的目标：</p>
+<pre><code class="lang-json">&quot;Serilog&quot;: {
+  &quot;WriteTo&quot;: [
+    {
+      &quot;Name&quot;: &quot;AzureTableStorage&quot;,
+      &quot;Args&quot;: {
+        &quot;storageTableName&quot;: &quot;logs&quot;,
+        &quot;connectionString&quot;: &quot;DefaultEnd...ountKey=Eby8...GMGw==&quot;
+      }
+    },
+    {
+      &quot;Name&quot;: &quot;AzureDocumentDB&quot;,
+      &quot;Args&quot;: {
+        &quot;endpointUrl&quot;: &quot;https://contoso.documents.azure.com:443&quot;,
+        &quot;authorizationKey&quot;: &quot;Eby8...GMGw==&quot;
+      }
+    }
+  ]
+}
+</code></pre>
+<p>前面的 JSON 文件中所示的配置将存储在 Azure Key Vault 中，使用双划线 (<code>--</code>) 表示法和数值段：</p>
+<table>
+<thead>
+<tr>
+<th>密钥</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Serilog--WriteTo--0--Name</code></td>
+<td><code>AzureTableStorage</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--0--Args--storageTableName</code></td>
+<td><code>logs</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--0--Args--connectionString</code></td>
+<td><code>DefaultEnd...ountKey=Eby8...GMGw==</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--1--Name</code></td>
+<td><code>AzureDocumentDB</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--1--Args--endpointUrl</code></td>
+<td><code>https://contoso.documents.azure.com:443</code></td>
+</tr>
+<tr>
+<td><code>Serilog--WriteTo--1--Args--authorizationKey</code></td>
+<td><code>Eby8...GMGw==</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="reload-secrets">重载机密</h2>
+<p>在调用之前会缓存机密 <code>IConfigurationRoot.Reload()</code> 。 在执行之前，应用程序不会考虑到密钥保管库中已过期、已禁用和更新的机密 <code>Reload</code> 。</p>
+<pre><code class="lang-csharp">Configuration.Reload();
+</code></pre>
+<h2 id="disabled-and-expired-secrets">禁用和过期的机密</h2>
+<p>禁用和过期的机密会引发 &lt;xref:Microsoft.Azure.KeyVault.Models.KeyVaultErrorException&gt; 。 若要防止应用程序引发，请使用不同的配置提供程序提供配置，或更新禁用或过期的机密。</p>
+<h2 id="troubleshoot">疑难解答</h2>
+<p>当应用无法使用访问接口加载配置时，会将错误消息写入 <a class="xref" href="../fundamentals/logging/index.html">ASP.NET Core 日志记录基础结构</a>。 以下条件将阻止加载配置：</p>
+<ul>
+<li>Azure Active Directory 中未正确配置应用或证书。</li>
+<li>Azure Key Vault 中不存在密钥保管库。</li>
+<li>应用无权访问密钥保管库。</li>
+<li>访问策略不包括 <code>Get</code> 和 <code>List</code> 权限。</li>
+<li>在密钥保管库中，配置数据 (名称-值对) 错误地命名、缺失、禁用或过期。</li>
+<li>应用具有错误的密钥保管库名称 (<code>KeyVaultName</code>) 、Azure AD 应用程序 Id (<code>AzureADApplicationId</code>) 或 Azure AD 证书指纹 (<code>AzureADCertThumbprint</code>) 。</li>
+<li>要尝试加载的值在应用中 (名称) 的配置密钥不正确。</li>
+<li>向密钥保管库添加应用的访问策略时，策略已创建，但未在 <strong>访问策略</strong> UI 中选择 &quot; <strong>保存</strong> &quot; 按钮。</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../fundamentals/configuration/index.html">ASP.NET Core 中的配置</a></li>
+<li><a href="https://azure.microsoft.com/services/key-vault/">Microsoft Azure： Key Vault</a></li>
+<li><a href="/azure/key-vault/">Microsoft Azure： Key Vault 文档</a></li>
+<li><a href="/azure/key-vault/key-vault-hsm-protected-keys">如何为 Azure Key Vault 生成和传输受 HSM 保护的密钥</a></li>
+<li><a href="/dotnet/api/microsoft.azure.keyvault.keyvaultclient">KeyVaultClient 类</a></li>
+<li><a href="/azure/key-vault/quick-create-net">快速入门：使用 .NET Web 应用在 Azure Key Vault 中设置和检索机密</a></li>
+<li><a href="/azure/key-vault/tutorial-net-windows-virtual-machine">教程：如何将 Azure Key Vault 与通过 .NET 编写的 Azure Windows 虚拟机配合使用</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

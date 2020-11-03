@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#23558;&#20381;&#36182;&#39033;&#27880;&#20837;&#21040;&#35270;&#22270; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#23558;&#20381;&#36182;&#39033;&#27880;&#20837;&#21040;&#35270;&#22270; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="mvc/views/dependency-injection">
+<h1 id="dependency-injection-into-views-in-aspnet-core">在 ASP.NET Core 中将依赖项注入到视图</h1>
+
+<p>作者：<a href="https://ardalis.com/">Steve Smith</a></p>
+<p>ASP.NET Core 支持将<a class="xref" href="../../fundamentals/dependency-injection.html">依赖关系注入</a>到视图。 这对于视图特定服务很有用，例如仅为填充视图元素所需的本地化或数据。 应尽量在控制器和视图之间保持<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#separation-of-concerns">问题分离</a>。 视图显示的大部分数据应该从控制器传入。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/mvc/views/dependency-injection/sample">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="configuration-injection">配置注入</h2>
+<p><em>appsettings.json</em> 可以直接将值注入到视图中。</p>
+<p><em>appsettings.json</em> 文件示例：</p>
+<pre><code class="lang-json">{
+   &quot;root&quot;: {
+      &quot;parent&quot;: {
+         &quot;child&quot;: &quot;myvalue&quot;
+      }
+   }
+}
+</code></pre>
+<p><code>@inject</code> 的语法：<code>@inject &lt;type&gt; &lt;name&gt;</code></p>
+<p>使用 <code>@inject</code> 的示例：</p>
+<pre><code class="lang-csharp">@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+   string myValue = Configuration[&quot;root:parent:child&quot;];
+   ...
+}
+</code></pre>
+<h2 id="service-injection">服务注入</h2>
+<p>可以使用 <code>@inject</code> 指令将服务注入到视图。 可以将 <code>@inject</code> 视为向视图添加属性，然后使用 DI 填充属性。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此视图显示 <code>ToDoItem</code> 实例的列表，以及显示总体统计信息的摘要。 摘要从已注入的 <code>StatisticsService</code> 中填充。 在 Startup.cs 的 <code>ConfigureServices</code> 中为依赖关系注入注册此服务  ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>StatisticsService</code> 通过存储库访问 <code>ToDoItem</code> 实例集并执行某些计算：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例存储库使用内存中集合。 建议不将上示实现（对内存中的所有数据进行操作）用于远程访问的大型数据集。</p>
+<p>该示例显示绑定到视图的模型数据以及注入到视图中的服务：</p>
+<p><img src="dependency-injection/_static/screenshot.png" alt="列出项总数、已完成项、平均优先级以及任务列表（具有其优先级别和表示完成的布尔值）的“To Do”视图。"></p>
+<h2 id="populating-lookup-data">填充查找数据</h2>
+<p>视图注入可用于填充 UI 元素（如下拉列表）中的选项。 请考虑这样的用户个人资料窗体，其中包含用于指定性别、状态和其他首选项的选项。 使用标准 MVC 方法呈现这样的窗体，需让控制器为每组选项请求数据访问服务，然后用要绑定的每组选项填充模型或 <code>ViewBag</code>。</p>
+<p>另一种方法是将服务直接注入视图以获取选项。 这最大限度地减少了控制器所需的代码量，将此视图元素构造逻辑移入视图本身。 显示个人资料编辑窗体的控制器操作只需要传递个人资料实例的窗体：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>用于更新这些首选项的 HTML 窗体包括三个属性的下拉列表：</p>
+<p><img src="dependency-injection/_static/updateprofile.png" alt="用窗体更新个人资料视图，可输入姓名、性别、状态和喜爱的颜色。"></p>
+<p>这些列表由已注入视图的服务填充：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>ProfileOptionsService</code> 是 UI 级别的服务，旨在准确提供此窗体所需的数据：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>请记得在 <code>Startup.ConfigureServices</code> 中注册通过依赖项注入请求的类型。 注销的类型将在运行时引发异常，因为服务提供程序通过 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.serviceproviderserviceextensions.getrequiredservice">GetRequiredService</a> 接受内部查询。</p>
+</div>
+<h2 id="overriding-services">替代服务</h2>
+<p>除了注入新的服务之外，此方法也可用于替代以前在页面上注入的服务。 下图显示了第一个示例中使用的页面上的所有可用字段：</p>
+<p><img src="dependency-injection/_static/razor-fields.png" alt="类型化 @ symbol 列表 Html 上的 IntelliSense 上下文菜单, 组件, StatsService, 以及 Url 字段"></p>
+<p>如你所见，包括默认字段 <code>Html</code>、<code>Component</code> 和 <code>Url</code>（以及我们注入的 <code>StatsService</code>）。 如果想用自己的 HTML 帮助程序替换默认的 HTML 帮助程序，可使用 <code>@inject</code> 轻松完成：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果想扩展现有的服务，用自己的方法继承或包装现有的实现时，只需使用此方法。</p>
+<h2 id="see-also">另请参阅</h2>
+<ul>
+<li>Simon Timms 的博客：<a href="https://blog.simontimms.com/2015/06/09/getting-lookup-data-into-you-view/">在视图中查找数据</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

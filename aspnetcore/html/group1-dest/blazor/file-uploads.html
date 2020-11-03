@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#25991;&#20214;&#19978;&#20256; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#25991;&#20214;&#19978;&#20256; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/file-uploads">
+<h1 id="aspnet-core-no-locblazor-file-uploads">ASP.NET Core Blazor 文件上传</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://github.com/pranavkm">Pranav Krishnamoorthy</a></p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/file-uploads/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<p>使用 <code>InputFile</code> 组件将浏览器文件数据（包括文件上传）读入 .NET 代码。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>请始终遵循文件上传安全最佳做法。 有关详细信息，请参阅 <a class="xref" href="../mvc/models/file-uploads.html#security-considerations">在 ASP.NET Core 中上传文件</a>。</p>
+</div>
+<h2 id="inputfile-component"><code>InputFile</code> 组件</h2>
+<p><code>InputFile</code> 组件呈现为 <code>file</code> 类型的 HTML 输入。</p>
+<p>默认情况下，用户选择单个文件。 可添加 <code>multiple</code> 属性以允许用户一次上传多个文件。 当用户选择了一个或多个文件时，<code>InputFile</code> 组件将触发 <code>OnChange</code> 事件并传入 <code>InputFileChangeEventArgs</code>，以允许访问所选文件列表和各文件的详细信息。</p>
+<p>从用户选择的文件中读取数据：</p>
+<ul>
+<li>对文件调用 <code>OpenReadStream</code>，并从返回的流中进行读取。 有关详细信息，请参阅<a href="#file-streams">文件流</a>部分。</li>
+<li>请使用 <code>ReadAsync</code>。 默认情况下，<code>ReadAsync</code> 只允许读取 524,288 KB (512 KB) 以下的文件。 此限制旨在防止开发人员意外地将大型文件读入到内存中。 如果必须支持较大的文件，则为所需的最大文件大小指定合理的近似值。 避免将传入的文件流直接读入到内存中。 例如，不要将文件字节复制到 &lt;xref:System.IO.MemoryStream&gt;，也不要以字节数组的形式进行读取。 这些方法可能会导致性能和安全问题，尤其是在 Blazor Server 中。 请考虑将文件字节复制到外部存储（如 blob 或磁盘上的文件）。</li>
+</ul>
+<p>接收图像文件的组件可以对文件调用 <code>RequestImageFileAsync</code> 便利方法，在图像流式传入应用之前，在浏览器的 JavaScript 运行时内调整图像数据的大小。</p>
+<p>以下示例演示在组件中上传多个图像文件。 通过 <code>InputFileChangeEventArgs.GetMultipleFiles</code>，可以读取多个文件。 请指定希望读取的最大文件数，以防止恶意用户上传的文件数超过应用的预期值。 如果文件上传不支持多个文件，则可以通过 <code>InputFileChangeEventArgs.File</code> 读取第一个文件，并且只能读取此文件。</p>
+<pre><code class="lang-razor">&lt;h3&gt;Upload PNG images&lt;/h3&gt;
+
+&lt;p&gt;
+    &lt;InputFile OnChange=&quot;@OnInputFileChange&quot; multiple /&gt;
+&lt;/p&gt;
+
+@if (imageDataUrls.Count &gt; 0)
+{
+    &lt;h4&gt;Images&lt;/h4&gt;
+
+    &lt;div class=&quot;card&quot; style=&quot;width:30rem;&quot;&gt;
+        &lt;div class=&quot;card-body&quot;&gt;
+            @foreach (var imageDataUrl in imageDataUrls)
+            {
+                &lt;img class=&quot;rounded m-1&quot; src=&quot;@imageDataUrl&quot; /&gt;
+            }
+        &lt;/div&gt;
+    &lt;/div&gt;
+}
+
+@code {
+    IList&lt;string&gt; imageDataUrls = new List&lt;string&gt;();
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var maxAllowedFiles = 3;
+        var format = &quot;image/png&quot;;
+
+        foreach (var imageFile in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            var resizedImageFile = await imageFile.RequestImageFileAsync(format, 
+                100, 100);
+            var buffer = new byte[resizedImageFile.Size];
+            await resizedImageFile.OpenReadStream().ReadAsync(buffer);
+            var imageDataUrl = 
+                $&quot;data:{format};base64,{Convert.ToBase64String(buffer)}&quot;;
+            imageDataUrls.Add(imageDataUrl);
+        }
+    }
+}
+</code></pre>
+<p><code>IBrowserFile</code> 会以属性形式返回<a href="https://developer.mozilla.org/docs/Web/API/File#Instance_properties">浏览器公开的元数据</a>。 此元数据可用于进行初步验证。 有关示例，请参阅 <a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/file-uploads/samples/"><code>FileUpload.razor</code> 和 <code>FilePreview.razor</code> 示例组件</a>。</p>
+<h2 id="file-streams">文件流</h2>
+<p>在 Blazor WebAssembly 应用中，数据直接流式传入浏览器中的 .NET 代码。</p>
+<p>在 Blazor Server 应用中，从流中读取文件时，文件数据通过 SignalR 连接流式传入服务器上的 .NET 代码。 通过 <a href="https://github.com/dotnet/aspnetcore/blob/master/src/Components/Web/src/Forms/InputFile/RemoteBrowserFileStreamOptions.cs"><code>Forms.RemoteBrowserFileStreamOptions</code></a>，可以配置 Blazor Server 的文件上传特性。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../mvc/models/file-uploads.html#security-considerations">在 ASP.NET Core 中上传文件</a></li>
+<li><a class="xref" href="forms-validation.html">ASP.NET Core Blazor 窗体和验证</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

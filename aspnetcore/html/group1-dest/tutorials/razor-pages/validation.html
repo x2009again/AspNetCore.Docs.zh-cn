@@ -1,0 +1,297 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#31532; 8 &#37096;&#20998;&#65292;&#23558;&#39564;&#35777;&#28155;&#21152;&#21040; ASP.NET Core Razor &#39029;&#38754; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#31532; 8 &#37096;&#20998;&#65292;&#23558;&#39564;&#35777;&#28155;&#21152;&#21040; ASP.NET Core Razor &#39029;&#38754; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="tutorials/razor-pages/validation">
+<h1 id="part-8-add-validation-to-an-aspnet-core-no-locrazor-page">第 8 部分，将验证添加到 ASP.NET Core Razor 页面</h1>
+
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>本部分中向 <code>Movie</code> 模型添加了验证逻辑。 每当用户创建或编辑电影时，都会强制执行验证规则。</p>
+<h2 id="validation">验证</h2>
+<p>软件开发的一个关键原则被称为 <a href="https://wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a>（即“不要自我重复”）  。 Razor 页面鼓励进行仅指定一次功能的开发，且功能在整个应用中反映。 DRY 可以帮助：</p>
+<ul>
+<li>减少应用中的代码量。</li>
+<li>使代码更加不易出错，且更易于测试和维护。</li>
+</ul>
+<p>Razor 页面和实体框架提供的验证支持是 DRY 原则的极佳示例。 验证规则在模型类中的某处以声明方式指定，且在应用的所有位置强制执行。</p>
+<h2 id="add-validation-rules-to-the-movie-model">将验证规则添加到电影模型</h2>
+<p>DataAnnotations 命名空间提供一组内置验证特性，可通过声明方式应用于类或属性。 DataAnnotations 还包含 <code>DataType</code> 等格式特性，有助于格式设置但不提供任何验证。</p>
+<p>更新 <code>Movie</code> 类以使用内置的 <code>Required</code>、<code>StringLength</code>、<code>RegularExpression</code> 和 <code>Range</code> 验证特性。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>验证特性指定要对应用这些特性的模型属性强制执行的行为：</p>
+<ul>
+<li><p><code>Required</code> 和 <code>MinimumLength</code> 特性表示属性必须有值；但用户可输入空格来满足此验证。</p>
+</li>
+<li><p><code>RegularExpression</code> 特性用于限制可输入的字符。 在上述代码中，即“Genre”（分类）：</p>
+<ul>
+<li>只能使用字母。</li>
+<li>第一个字母必须为大写。 不允许使用空格、数字和特殊字符。</li>
+</ul>
+</li>
+<li><p><code>RegularExpression</code>“Rating”（分级）：</p>
+<ul>
+<li>要求第一个字符为大写字母。</li>
+<li>允许在后续空格中使用特殊字符和数字。 “PG-13”对“分级”有效，但对于“分类”无效。</li>
+</ul>
+</li>
+<li><p><code>Range</code> 特性将值限制在指定范围内。</p>
+</li>
+<li><p><code>StringLength</code> 特性使你能够设置字符串属性的最大长度，以及可选的最小长度。</p>
+</li>
+<li><p>从本质上来说，需要值类型（如 <code>decimal</code>、<code>int</code>、<code>float</code>、<code>DateTime</code>），但不需要 <code>[Required]</code> 特性。</p>
+</li>
+</ul>
+<p>让 ASP.NET Core 强制自动执行验证规则有助于提升你的应用的可靠性。 同时它能确保你无法忘记验证某些内容，并防止你无意中将错误数据导入数据库。</p>
+<h3 id="validation-error-ui-in-no-locrazor-pages">Razor 页面中的验证错误 UI</h3>
+<p>运行应用并导航到“页面/电影”。</p>
+<p>选择“新建”链接。 使用无效值填写表单。 当 jQuery 客户端验证检测到错误时，会显示一条错误消息。</p>
+<p><img src="validation/_static/val.png" alt="带有多个 jQuery 客户端验证错误的电影视图表单"></p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>可能无法在小数字段中输入十进制逗号。 若要使 <a href="https://jqueryvalidation.org/">jQuery 验证</a>支持使用逗号（“,”）表示小数点的的非英语区域设置，以及支持非美国英语日期格式，必须执行使应用全球化的步骤。 有关添加十进制逗号的说明，<a href="https://github.com/dotnet/AspNetCore.Docs/issues/4076#issuecomment-326590420">请参阅 GitHub 问题 4076</a>。</p>
+</div>
+
+<p>请注意表单如何自动呈现每个包含无效值的字段中的验证错误消息。 客户端（使用 JavaScript 和 jQuery）和服务器端（若用户禁用 JavaScript）都必定会遇到这些错误。</p>
+<p>一项重要优势是，无需在“创建”或“编辑”页面中更改代码。 在模型应用 DataAnnotations 后，即已启用验证 UI。 本教程中创建的 Razor 页面自动选取了验证规则（使用 <code>Movie</code> 模型类的属性上的验证特性）。 使用“编辑”页面测试验证后，即已应用相同验证。</p>
+<p>存在客户端验证错误时，不会将表单数据发布到服务器。 请通过以下一种或多种方法验证是否未发布表单数据：</p>
+<ul>
+<li>在 <code>OnPostAsync</code> 方法中放置一个断点。 提交表单（选择“创建”或“保存”） 。 从未命中断点。</li>
+<li>使用 <a href="https://www.telerik.com/fiddler">Fiddler 工具</a>。</li>
+<li>使用浏览器开发人员工具监视网络流量。</li>
+</ul>
+<h3 id="server-side-validation">服务器端验证</h3>
+<p>在浏览器中禁用 JavaScript 后，提交出错表单将发布到服务器。</p>
+<p>（可选）测试服务器端验证：</p>
+<ul>
+<li><p>在浏览器中禁用 JavaScript。 可以使用浏览器的开发人员工具禁用 JavaScript。 如果无法在浏览器中禁用 JavaScript，请尝试其他浏览器。</p>
+</li>
+<li><p>在“创建”或“编辑”页面的 <code>OnPostAsync</code> 方法中设置断点。</p>
+</li>
+<li><p>提交包含无效数据的表单。</p>
+</li>
+<li><p>验证模型状态是否无效：</p>
+<pre><code class="lang-csharp">if (!ModelState.IsValid)
+{
+    return Page();
+}
+</code></pre>
+</li>
+</ul>
+<p>或者可以<a class="xref" href="../../mvc/models/validation.html#disable-client-side-validation">禁用服务器上的客户端验证</a>。</p>
+<p>以下代码显示了之前在本教程中设定其基架的“Create.cshtml”的一部分。 它用于在“创建”和“编辑”页面中显示初始表单并在发生错误后重新显示表单。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><a class="xref" href="../../mvc/views/working-with-forms.html">输入标记帮助程序</a>使用 <a href="/aspnet/mvc/overview/older-versions/mvc-music-store/mvc-music-store-part-6">DataAnnotations</a> 特性并在客户端生成 jQuery 验证所需的 HTML 特性。 <a class="xref" href="../../mvc/views/working-with-forms.html#the-validation-tag-helpers">验证标记帮助程序</a>用于显示验证错误。 有关详细信息，请参阅<a class="xref" href="../../mvc/models/validation.html">验证</a>。</p>
+<p>“创建”和“编辑”页面中没有验证规则。 仅可在 <code>Movie</code> 类中指定验证规则和错误字符串。 这些验证规则将自动应用于编辑 <code>Movie</code> 模型的 Razor 页面。</p>
+<p>需要更改验证逻辑时，也只能在该模型中更改。 将始终在整个应用程序中应用验证（在一处定义验证逻辑）。 单处验证有助于保持代码干净，且更易于维护和更新。</p>
+<h2 id="using-datatype-attributes">使用 DataType 特性</h2>
+<p>检查 <code>Movie</code> 类。 除了一组内置的验证特性，<code>System.ComponentModel.DataAnnotations</code> 命名空间还提供格式特性。 <code>DataType</code> 特性应用于 <code>ReleaseDate</code> 和 <code>Price</code> 属性。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>DataType</code> 特性仅提供相关提示来帮助视图引擎设置数据格式（并提供特性，例如向 URL 提供 <code>&lt;a&gt;</code> 和向电子邮件提供 <code>&lt;a href=&quot;mailto:EmailAddress.com&quot;&gt;</code>）。 使用 <code>RegularExpression</code> 特性验证数据的格式。 <code>DataType</code> 属性用于指定比数据库内部类型更具体的数据类型。 <code>DataType</code> 特性不是验证特性。 示例应用程序中仅显示日期，不显示时间。</p>
+<p><code>DataType</code> 枚举提供了多种数据类型，例如日期、时间、电话号码、货币、电子邮件地址等。 应用程序还可通过 <code>DataType</code> 特性自动提供类型特定的功能。 例如，可为 <code>DataType.EmailAddress</code> 创建 <code>mailto:</code> 链接。 可在支持 HTML5 的浏览器中为 <code>DataType.Date</code> 提供日期选择器。 <code>DataType</code> 特性发出 HTML 5 <code>data-</code>（读作 data dash）特性供 HTML 5 浏览器使用。 <code>DataType</code> 特性不提供任何验证。</p>
+<p><code>DataType.Date</code> 不指定显示日期的格式。 默认情况下，数据字段根据基于服务器的 <code>CultureInfo</code> 的默认格式进行显示。</p>
+<p>要使 Entity Framework Core 能将 <code>Price</code> 正确地映射到数据库中的货币，则必须使用 <code>[Column(TypeName = &quot;decimal(18, 2)&quot;)]</code> 数据注释。 有关详细信息，请参阅<a href="/ef/core/modeling/relational/data-types">数据类型</a>。</p>
+<p><code>DisplayFormat</code> 特性用于显式指定日期格式：</p>
+<pre><code class="lang-csharp">[DisplayFormat(DataFormatString = &quot;{0:yyyy-MM-dd}&quot;, ApplyFormatInEditMode = true)]
+public DateTime ReleaseDate { get; set; }
+</code></pre>
+<p><code>ApplyFormatInEditMode</code> 设置用于指定在显示值进行编辑时需应用格式。 可能不希望某些字段具有此行为。 例如，在货币值中，可能不希望编辑 UI 中存在货币符号。</p>
+<p>可单独使用 <code>DisplayFormat</code> 特性，但通常建议使用 <code>DataType</code> 特性。 <code>DataType</code> 特性传达数据的语义而不是传达如何在屏幕上呈现数据，并提供 DisplayFormat 不具备的以下优势：</p>
+<ul>
+<li>浏览器可启用 HTML5 功能（例如显示日历控件、区域设置适用的货币符号、电子邮件链接等）</li>
+<li>默认情况下，浏览器将根据区域设置采用正确的格式呈现数据。</li>
+<li>借助 <code>DataType</code> 特性，ASP.NET Core 框架可选择适当的字段模板来呈现数据。 单独使用时，<code>DisplayFormat</code> 特性将使用字符串模板。</li>
+</ul>
+<p><strong>注意</strong>：jQuery 验证不适用于 <code>Range</code> 特性和 <code>DateTime</code>。 例如，以下代码将始终显示客户端验证错误，即便日期在指定的范围内：</p>
+<pre><code class="lang-csharp">[Range(typeof(DateTime), &quot;1/1/1966&quot;, &quot;1/1/2020&quot;)]
+</code></pre>
+<p>通常，在模型中编译固定日期是不恰当的，因此不推荐使用 <code>Range</code> 特性和 <code>DateTime</code>。</p>
+<p>以下代码显示组合在一行上的特性：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><a class="xref" href="../../data/ef-rp/intro.html">Razor 页面和 EF Core 入门</a>显示了 Razor 页面的高级 EF Core 操作。</p>
+<h3 id="apply-migrations">应用迁移</h3>
+<p>应用于类的 DataAnnotations 会更改架构。 例如，应用于 <code>Title</code> 字段的 DataAnnotations 会：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<ul>
+<li>将字符数限制为 60。</li>
+<li>不允许使用 <code>null</code> 值。</li>
+</ul>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" data-tab="visual-studio-code+visual-studio-mac" tabindex="-1">Visual Studio Code / Visual Studio for Mac</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<p><code>Movie</code> 表当前具有以下架构：</p>
+<pre><code class="lang-sql">CREATE TABLE [dbo].[Movie] (
+    [ID]          INT             IDENTITY (1, 1) NOT NULL,
+    [Title]       NVARCHAR (MAX)  NULL,
+    [ReleaseDate] DATETIME2 (7)   NOT NULL,
+    [Genre]       NVARCHAR (MAX)  NULL,
+    [Price]       DECIMAL (18, 2) NOT NULL,
+    [Rating]      NVARCHAR (MAX)  NULL,
+    CONSTRAINT [PK_Movie] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+</code></pre>
+<p>前面的架构更改不会导致 EF 引发异常。 不过，请创建迁移，使架构与模型保持一致。</p>
+<p>从“工具”菜单中，选择“NuGet 包管理器”&gt;“包管理器控制台”。
+在 PMC 中，输入以下命令：</p>
+<pre><code class="lang-powershell">Add-Migration New_DataAnnotations
+Update-Database
+</code></pre>
+<p><code>Update-Database</code> 运行 <code>New_DataAnnotations</code> 类的 <code>Up</code> 方法。 检查 <code>Up</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>更新的 <code>Movie</code> 表具有以下架构：</p>
+<pre><code class="lang-sql">CREATE TABLE [dbo].[Movie] (
+    [ID]          INT             IDENTITY (1, 1) NOT NULL,
+    [Title]       NVARCHAR (60)   NOT NULL,
+    [ReleaseDate] DATETIME2 (7)   NOT NULL,
+    [Genre]       NVARCHAR (30)   NOT NULL,
+    [Price]       DECIMAL (18, 2) NOT NULL,
+    [Rating]      NVARCHAR (5)    NOT NULL,
+    CONSTRAINT [PK_Movie] PRIMARY KEY CLUSTERED ([ID] ASC)
+);
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q_visual-studio-code+visual-studio-mac" role="tabpanel" data-tab="visual-studio-code+visual-studio-mac" aria-hidden="true" hidden="hidden">
+
+<p>SQLite 不需要迁移。</p>
+</section>
+</div>
+<h3 id="publish-to-azure">发布到 Azure</h3>
+<p>若要了解如何部署到 Azure，请参阅<a href="/azure/app-service/app-service-web-tutorial-dotnetcore-sqldb">教程：使用 SQL 数据库在 Azure 中生成 ASP.NET Core 应用</a>。</p>
+<p>感谢读完这篇 Razor Pages 简介。 <a class="xref" href="../../data/ef-rp/intro.html">Razor Pages 和 EF Core 入门</a>是本教程的优选后续教程。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../mvc/views/working-with-forms.html">ASP.NET Core 表单中的标记帮助程序</a></li>
+<li><a class="xref" href="../../fundamentals/localization.html">ASP.NET Core 全球化和本地化</a></li>
+<li><a class="xref" href="../../mvc/views/tag-helpers/intro.html">ASP.NET Core 中的标记帮助程序</a></li>
+<li><a class="xref" href="../../mvc/views/tag-helpers/authoring.html">在 ASP.NET Core 中创作标记帮助程序</a></li>
+<li><a href="https://youtu.be/b63m66eu7us">本教程的 YouTube 版本</a></li>
+</ul>
+<div class="step-by-step">
+<p><a class="xref" href="new-field.html">上一篇：添加新字段</a></p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,359 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#25345;&#32493;&#38598;&#25104;&#21644;&#25345;&#32493;&#37096;&#32626; - &#36890;&#36807; ASP.NET Core &#21644; Azure &#23454;&#29616; DevOps </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#25345;&#32493;&#38598;&#25104;&#21644;&#25345;&#32493;&#37096;&#32626; - &#36890;&#36807; ASP.NET Core &#21644; Azure &#23454;&#29616; DevOps ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="azure/devops/cicd">
+<h1 id="continuous-integration-and-deployment">持续集成和持续部署</h1>
+
+<p>在上一章中，你为简单源读取器应用创建了一个本地 Git 存储库。 在本章中，你将把代码发布到 GitHub 存储库，并使用 Azure Pipelines 构建 Azure DevOps Services 管道。 管道支持应用的持续生成和持续部署。 对 GitHub 存储库的任何提交都会触发对 Azure Web 应用过渡槽的生成和部署。</p>
+<p>在本节中，你将完成以下任务：</p>
+<ul>
+<li>将应用的代码发布到 GitHub</li>
+<li>断开本地 Git 部署连接</li>
+<li>创建一个 Azure DevOps 组织</li>
+<li>在 Azure DevOps Services 中创建团队项目</li>
+<li>创建生成定义</li>
+<li>创建发布管道</li>
+<li>提交对 GitHub 所做的更改并将其自动部署到 Azure</li>
+<li>检查 Azure Pipelines 管道</li>
+</ul>
+<h2 id="publish-the-apps-code-to-github">将应用的代码发布到 GitHub</h2>
+<ol>
+<li><p>打开浏览器窗口并导航到 <code>https://github.com</code>。</p>
+</li>
+<li><p>单击标头中的 + 下拉列表，然后选择“新建存储库” ：</p>
+<p><img src="media/cicd/github-new-repo.png" alt="GitHub“新建存储库”选项"></p>
+</li>
+<li><p>在“所有者”下拉列表中选择你的帐户，然后在“存储库名称”文本框中输入“简单源读取器” 。</p>
+</li>
+<li><p>单击“创建存储库”按钮。</p>
+</li>
+<li><p>打开本地计算机的命令行界面。 导航到存储简单源读取器 Git 存储库的目录。</p>
+</li>
+<li><p>将现有的源远程库重命名为“上游” 。 请执行以下命令：</p>
+<pre><code class="lang-console">git remote rename origin upstream
+</code></pre>
+</li>
+<li><p>添加指向一个 GitHub 上存储库的副本的新源远程库。 请执行以下命令：</p>
+<pre><code class="lang-console">git remote add origin https://github.com/&lt;GitHub_username&gt;/simple-feed-reader/
+</code></pre>
+</li>
+<li><p>将本地 Git 存储库发布到新创建的 GitHub 存储库。 请执行以下命令：</p>
+<pre><code class="lang-console">git push -u origin master
+</code></pre>
+</li>
+<li><p>打开浏览器窗口并导航到 <code>https://github.com/&lt;GitHub_username&gt;/simple-feed-reader/</code>。 验证你的代码是否显示在 GitHub 存储库中。</p>
+</li>
+</ol>
+<h2 id="disconnect-local-git-deployment">断开本地 Git 部署连接</h2>
+<p>通过以下步骤删除本地 Git 部署。 Azure Pipelines（一种 Azure DevOps 服务）既替代又增强了该功能。</p>
+<ol>
+<li><p>打开 <a href="https://portal.azure.com/">Azure 门户</a>，导航到暂存 (mywebapp&lt;unique_number&gt;/staging) Web 应用。 通过在门户的搜索框中输入“暂存”，可以快速找到该 Web 应用：</p>
+<p><img src="media/cicd/portal-search-box.png" alt="暂存 Web 应用搜索术语"></p>
+</li>
+<li><p>单击“部署中心”。 此时将显示一个新面板。 单击“断开连接”以删除上一章中添加的本地 Git 源代码管理配置。 单击“是”按钮，确认删除操作。</p>
+</li>
+<li><p>导航到“mywebapp&lt;unique_number&gt;”应用服务。 在此提醒，可使用门户的搜索框快速找到该应用服务。</p>
+</li>
+<li><p>单击“部署中心”。 此时将显示一个新面板。 单击“断开连接”以删除上一章中添加的本地 Git 源代码管理配置。 单击“是”按钮，确认删除操作。</p>
+</li>
+</ol>
+<h2 id="create-an-azure-devops-organization">创建一个 Azure DevOps 组织</h2>
+<ol>
+<li><p>打开浏览器，并导航到 <a href="https://go.microsoft.com/fwlink/?LinkId=307137">Azure DevOps 组织创建页</a>。</p>
+</li>
+<li><p>在“选取一个便于记忆的名称”文本框中键入一个唯一名称，形成用于访问 Azure DevOps 组织的 URL。</p>
+</li>
+<li><p>选择“Git”单选按钮，因为代码托管在 GitHub 存储库中。</p>
+</li>
+<li><p>单击“继续”按钮。 片刻后，一个帐户以及一个名为 MyFirstProject 的团队项目随之创建。</p>
+<p><img src="media/cicd/vsts-account-creation.png" alt="Azure DevOps 组织创建页"></p>
+</li>
+<li><p>打开确认电子邮件，该邮件指示 Azure DevOps 组织和项目已准备就绪，可供使用。 单击“启动项目”按钮：</p>
+<p><img src="media/cicd/vsts-start-project.png" alt="“启动项目”按钮"></p>
+</li>
+<li><p>浏览器将打开 &lt;account_name&gt;.visualstudio.com。 单击“MyFirstProject”链接，开始配置项目的 DevOps 管道。</p>
+</li>
+</ol>
+<h2 id="configure-the-azure-pipelines-pipeline">配置 Azure Pipelines 管道</h2>
+<p>需要完成三个不同的步骤。 完成以下三节中的步骤将生成一个可操作的 DevOps 管道。</p>
+<h3 id="grant-azure-devops-access-to-the-github-repository">授予 Azure DevOps 对 GitHub 存储库的访问权限</h3>
+<ol>
+<li><p>展开“或从外部存储库生成代码”可折叠项。 单击“设置生成”按钮：</p>
+<p><img src="media/cicd/vsts-setup-build.png" alt="“设置生成”按钮"></p>
+</li>
+<li><p>从“选择源”部分中选择“GitHub”选项 ：</p>
+<p><img src="media/cicd/vsts-select-source.png" alt="选择源 - GitHub"></p>
+</li>
+<li><p>Azure DevOps 需要经过授权才可访问 GitHub 存储库。 在“连接名称”文本框中输入“&lt;GitHub_username&gt; GitHub 连接”。 例如：</p>
+<p><img src="media/cicd/vsts-repo-authz.png" alt="GitHub 连接名称"></p>
+</li>
+<li><p>如果对 GitHub 帐户启用了双因素身份验证，则需要个人访问令牌。 在这种情况下，单击“使用 GitHub 个人访问令牌授权”链接。 有关帮助，请参阅<a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">官方 GitHub 个人访问令牌创建说明</a>。 只需要存储库范围内的权限。 否则，单击“使用 OAuth 授权”按钮。</p>
+</li>
+<li><p>出现提示时，请登录到你的 GitHub 帐户。 然后，选择“授权”，授予对 Azure DevOps 组织的访问权限。 如果成功，新的服务终结点随之创建。</p>
+</li>
+<li><p>单击“存储库”按钮旁边的省略号按钮。 从列表中选择“&lt;GitHub_username&gt;/simple-feed-reader”存储库。 单击“选择”按钮。</p>
+</li>
+<li><p>从“用于手动生成和计划生成的默认分支”下拉列表中选择主分支。 单击“继续”按钮。 此时将显示模板选择页。</p>
+</li>
+</ol>
+<h3 id="create-the-build-definition">创建生成定义</h3>
+<ol>
+<li><p>在模板选择页的“搜索”框中输入 ASP.NET Core：</p>
+<p><img src="media/cicd/vsts-template-selection.png" alt="模板页上的 ASP.NET Core 搜索"></p>
+</li>
+<li><p>模板搜索结果随即显示。 将鼠标悬停在“ASP.NET Core”模板上，然后单击“应用”按钮 。</p>
+</li>
+<li><p>生成定义的“任务”选项卡随即出现。 单击“触发器”  选项卡。</p>
+</li>
+<li><p>单击“启用持续集成”框。 在“分支筛选器”部分下，确认“类型”下拉列表设置为“包括” 。 将“分支规范”下拉列表设置为“主”。</p>
+<p><img src="media/cicd/vsts-enable-ci.png" alt="启用持续集成设置"></p>
+<p>这些设置会在将任何更改推送到 GitHub 存储库的主分支时触发生成。 持续集成在<a href="#commit-changes-to-github-and-automatically-deploy-to-azure">提交对 GitHub 的更改并自动部署到 Azure</a> 一节中进行测试。</p>
+</li>
+<li><p>单击“保存并排队”按钮，然后选择“保存”选项 ：</p>
+<p><img src="media/cicd/vsts-save-build.png" alt="“保存”按钮"></p>
+</li>
+<li><p>以下模式对话框随即显示：</p>
+<p><img src="media/cicd/vsts-save-modal.png" alt="保存生成定义 - 模式对话框"></p>
+<p>使用 \ 的默认文件夹，然后单击“保存”按钮。</p>
+</li>
+</ol>
+<h3 id="create-the-release-pipeline">创建发布管道</h3>
+<ol>
+<li><p>单击团队项目的“发布”选项卡。 单击“新建管道”按钮。</p>
+<p><img src="media/cicd/vsts-new-release-definition.png" alt="“发布”选项卡 -“新建”定义按钮"></p>
+<p>此时将显示模板选择窗格。</p>
+</li>
+<li><p>在模板选择页的搜索框中输入应用服务：</p>
+<p><img src="media/cicd/vsts-release-template-search.png" alt="发布管道模板搜索框"></p>
+</li>
+<li><p>模板搜索结果随即显示。 将鼠标悬停在“Azure 应用服务的槽部署”模板上，然后单击“应用”按钮 。 发布管道的“管道”选项卡出现。</p>
+<p><img src="media/cicd/vsts-release-definition-pipeline.png" alt="发布管道的“管道”选项卡"></p>
+</li>
+<li><p>单击“项目”框中的“添加”按钮 。 此时将显示“添加项目”面板：</p>
+<p><img src="media/cicd/vsts-release-add-artifact.png" alt="发布管道 - 添加项目面板"></p>
+</li>
+<li><p>从“源类型”部分选择“生成”磁贴 。 此类型允许将发布管道链接到生成定义。</p>
+</li>
+<li><p>从“项目”下拉列表中选择“MyFirstProject”。</p>
+</li>
+<li><p>从“源(生成定义)”下拉列表中选择生成定义名称“MyFirstProject-ASP.NET Core-CI”。</p>
+</li>
+<li><p>从“默认版本”下拉列表中选择“最新”。 此选项生成由最新运行的生成定义生成的项目。</p>
+</li>
+<li><p>使用“Drop”替换“源别名”文本框中的文本。</p>
+</li>
+<li><p>单击“添加”按钮。 “项目”部分将更新以显示更改。</p>
+</li>
+<li><p>单击闪电图标以启用持续部署：</p>
+<p><img src="media/cicd/vsts-artifacts-lightning-bolt.png" alt="发布管道的“项目”- 闪电符号图标"></p>
+<p>启用此选项后，每次有新生成可用时都会进行部署。</p>
+</li>
+<li><p>右侧随即出现“持续部署触发器”面板。 单击“切换”按钮以启用该功能。 无需启用“拉取请求触发器”。</p>
+</li>
+<li><p>单击“生成分支筛选器”部分中的“添加”下拉列表 。 选择“生成定义的默认分支”选项。 此筛选器使得发布仅针对来自 GitHub 存储库的主分支的生成而触发。</p>
+</li>
+<li><p>单击“保存”按钮。 在生成的“保存”模式对话框中，单击“确定”按钮 。</p>
+</li>
+<li><p>单击“环境 1”框。 右侧随即出现“环境”面板。 将“环境名称”文本框中的“环境 1”文本更改为“生产” 。</p>
+<p><img src="media/cicd/vsts-environment-name-textbox.png" alt="发布管道 -“环境名称”文本框"></p>
+</li>
+<li><p>单击“生产”框中的“1 个阶段、2 个任务”链接 ：</p>
+<p><img src="media/cicd/vsts-production-link.png" alt="发布管道 - 生产环境链接图像 (.png)"></p>
+<p>此时将显示环境的“任务”选项卡。</p>
+</li>
+<li><p>单击“将 Azure 应用服务部署到槽”任务。 其设置显示在右侧的面板中。</p>
+</li>
+<li><p>从“Azure 订阅”下拉列表中选择与应用服务关联的 Azure 订阅。 选择后，单击“授权”按钮。</p>
+</li>
+<li><p>从“应用类型”下拉菜单中选择“Web 应用”。</p>
+</li>
+<li><p>从“应用服务名称”下拉列表中选择“mywebapp/&lt;unique_number/&gt;”。</p>
+</li>
+<li><p>从“资源组”下拉列表中选择“AzureTutorial”。</p>
+</li>
+<li><p>从“槽”下拉列表中选择“暂存”。</p>
+</li>
+<li><p>单击“保存”按钮。</p>
+</li>
+<li><p>将鼠标悬停在默认的发布管道名称上。 单击铅笔图标进行编辑。 使用“MyFirstProject-ASP.NET Core-CD”作为名称。</p>
+<p><img src="media/cicd/vsts-release-definition-name.png" alt="发布管道名称"></p>
+</li>
+<li><p>单击“保存”按钮。</p>
+</li>
+</ol>
+<h2 id="commit-changes-to-github-and-automatically-deploy-to-azure">提交对 GitHub 所做的更改并将其自动部署到 Azure</h2>
+<ol>
+<li><p>在 Visual Studio 中打开“SimpleFeedReader.sln”。</p>
+</li>
+<li><p>在解决方案资源管理器中，打开 Pages\Index.cshtml。 将 <code>&lt;h2&gt;Simple Feed Reader - V3&lt;/h2&gt;</code> 更改为 <code>&lt;h2&gt;Simple Feed Reader - V4&lt;/h2&gt;</code>。</p>
+</li>
+<li><p>按 Ctrl+Shift+B 生成应用  。</p>
+</li>
+<li><p>将该文件提交到 GitHub 存储库。 使用 Visual Studio“团队资源管理器”选项卡中的“更改”页，或者使用本地计算机的命令行界面执行以下操作：</p>
+<pre><code class="lang-console">git commit -a -m &quot;upgraded to V4&quot;
+</code></pre>
+</li>
+<li><p>将主分支中的更改推送到 GitHub 存储库的源远程库 ：</p>
+<pre><code class="lang-console">git push origin master
+</code></pre>
+<p>提交出现在 GitHub 存储库的主分支中：</p>
+<p><img src="media/cicd/github-commit.png" alt="主分支中的 GitHub 提交"></p>
+<p>生成被触发，因为在生成定义的“触发器”选项卡中启用了持续集成：</p>
+<p><img src="media/cicd/enable-ci.png" alt="启用持续集成"></p>
+</li>
+<li><p>导航到 Azure DevOps Services 中“Azure Pipelines” &gt; “生成”页面的“已排队”选项卡  。 队列生成显示触发生成的分支和提交：</p>
+<p><img src="media/cicd/build-queued.png" alt="已排队的生成"></p>
+</li>
+<li><p>生成成功后便会部署到 Azure。 在浏览器中导航到应用。 请注意，“V4”文本显示在标题中：</p>
+<p><img src="media/cicd/updated-app-v4.png" alt="已更新应用"></p>
+</li>
+</ol>
+<h2 id="examine-the-azure-pipelines-pipeline">检查 Azure Pipelines 管道</h2>
+<h3 id="build-definition">生成定义</h3>
+<p>已创建名为“MyFirstProject-ASP.NET Core-CI”的生成定义。 完成后，该生成会产生一个包含要发布的资产的 .zip文件。 发布管道将这些资产部署到 Azure。</p>
+<p>生成定义的“任务”选项卡列出了所使用的各个步骤。 有五个生成任务。</p>
+<p><img src="media/cicd/build-definition-tasks.png" alt="生成定义任务"></p>
+<ol>
+<li><p>还原 — 执行 <code>dotnet restore</code> 命令，还原应用的 NuGet 包。 使用的默认包源为 nuget.org。</p>
+</li>
+<li><p>生成 — 执行 <code>dotnet build --configuration release</code> 命令，编译应用的代码。 此 <code>--configuration</code> 选项用于生成代码的优化版本，该版本适合部署到生产环境。 例如，如果需要调试配置，请修改生成定义的“变量”选项卡上的“BuildConfiguration”变量。</p>
+</li>
+<li><p>测试 — 执行 <code>dotnet test --configuration release --logger trx --results-directory &lt;local_path_on_build_agent&gt;</code> 命令，运行应用的单元测试。 单元测试在与 <code>**/*Tests/*.csproj</code> glob 模式匹配的任何 C# 项目中执行。 测试结果保存在位于 <code>--results-directory</code> 选项指定的位置的 .trx 文件中。 如果任何测试失败，则生成将失败且不会部署。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>若要验证单元测试是否运作正常，请修改 SimpleFeedReader.Tests\Services\NewsServiceTests.cs，有意地中断其中一个测试。 例如，在 <code>Returns_News_Stories_Given_Valid_Uri</code> 方法中，将 <code>Assert.True(result.Count &gt; 0);</code> 更改为 <code>Assert.False(result.Count &gt; 0);</code>。 提交更改并将其推送到 GitHub。 生成已触发并失败。 生成管道状态更改为“失败”。 还原更改、提交并再次推送。 生成成功。</p>
+</div>
+</li>
+<li><p>发布— 执行 <code>dotnet publish --configuration release --output &lt;local_path_on_build_agent&gt;</code> 命令，生成包含要部署的项目的 .zip 文件。 <code>--output</code> 选项指定 .zip 文件的发布位置。 通过传递名为 <code>$(build.artifactstagingdirectory)</code> 的<a href="/azure/devops/pipelines/build/variables">预定义变量</a>来指定该位置。 该变量扩展到生成代理上的本地路径，如“c:\agent_work\1\a”。</p>
+</li>
+<li><p>发布项目 — 发布由“发布”任务生成的 .zip 文件 。 任务接受 .zip 文件位置作为参数，这是预定义的变量 <code>$(build.artifactstagingdirectory)</code>。 .zip 文件作为名为“drop”的文件夹发布 。</p>
+</li>
+</ol>
+<p>单击生成定义的“摘要”链接，查看具有以下定义的生成的历史记录：</p>
+<p><img src="media/cicd/build-definition-summary.png" alt="显示生成定义历史记录的屏幕截图"></p>
+<p>在生成的页面上，单击与唯一生成号对应的链接：</p>
+<p><img src="media/cicd/build-definition-completed.png" alt="显示生成定义摘要页的屏幕截图"></p>
+<p>随即显示此特定生成的摘要。 单击“项目”选项卡，便可注意到该生成产生的“drop”文件夹已列出：</p>
+<p><img src="media/cicd/build-definition-artifacts.png" alt="显示生成定义项目 - drop 文件夹的屏幕截图"></p>
+<p>使用“下载”和“浏览”链接检查已发布的项目 。</p>
+<h3 id="release-pipeline">发布管道</h3>
+<p>已创建名为“MyFirstProject-ASP.NET Core-CD”的发布管道：</p>
+<p><img src="media/cicd/release-definition-overview.png" alt="显示发布管道概述的屏幕截图"></p>
+<p>发布管道的两个主要组件是“项目”和“环境” 。 单击“项目”部分中的框将显示以下面板：</p>
+<p><img src="media/cicd/release-definition-artifacts.png" alt="显示发布管道项目的屏幕截图"></p>
+<p>“源(生成定义)”值表示此发布管道链接到的生成定义。 成功运行生成定义所生成的 .zip 文件将提供给“生产”环境以部署到 Azure 。 单击“生产”环境框中的“1 个阶段、2 个任务”链接，查看发布管道任务 ：</p>
+<p><img src="media/cicd/release-definition-tasks.png" alt="显示发布管道任务的屏幕截图"></p>
+<p>发布管道包含两个任务：“将 Azure 应用服务部署到槽”和“管理 Azure 应用服务 - 槽交换” 。 单击第一个任务将显示以下任务配置：</p>
+<p><img src="media/cicd/release-definition-task1.png" alt="显示发布管道部署任务的屏幕截图"></p>
+<p>Azure 订阅、服务类型、Web 应用名称、资源组和部署槽位在部署任务中定义。 “包或文件夹”文本框保存要提取并部署到 mywebapp&lt;unique_number&gt; Web 应用“暂存”槽的 .zip 文件路径。</p>
+<p>单击槽交换任务将显示以下任务配置：</p>
+<p><img src="media/cicd/release-definition-task2.png" alt="显示发布管道槽交换任务的屏幕截图"></p>
+<p>订阅、资源组、服务类型、Web 应用名称和部署槽位的详细信息已提供。 “与生成交换”复选框已选中。 因此，部署到“暂存”槽的位将交换到生产环境中。</p>
+<h2 id="additional-reading">其他阅读材料</h2>
+<ul>
+<li><a href="/azure/devops/pipelines/get-started-yaml">使用 Azure Pipelines 创建你的第一个管道</a></li>
+<li><a href="/azure/devops/pipelines/languages/dotnet-core">生成和 .NET Core 项目</a></li>
+<li><a href="/azure/devops/pipelines/targets/webapp">使用 Azure Pipelines 部署 Web 应用</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,194 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#32452;&#20214;&#34394;&#25311;&#21270; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#32452;&#20214;&#34394;&#25311;&#21270; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/components/virtualization">
+<h1 id="aspnet-core-no-locblazor-component-virtualization">ASP.NET Core Blazor 组件虚拟化</h1>
+
+<p>作者：<a href="https://github.com/danroth27">Daniel Roth</a></p>
+<p>使用 Blazor 框架的内置虚拟化支持提高组件呈现的感知性能。 虚拟化是一种技术，用于将 UI 呈现限制为仅当前可见的部分。 例如，当应用必须呈现项的长列表，并且在任何给定的时间只需要一小部分项可见时，虚拟化很有帮助。 Blazor 提供 <code>Virtualize</code> 组件，可用于向应用的组件添加虚拟化。</p>
+<p>如果不使用虚拟化，典型列表可能会使用 C# <a href="/dotnet/csharp/language-reference/keywords/foreach-in"><code>foreach</code></a> 循环来呈现列表中的每一项：</p>
+<pre><code class="lang-razor">@foreach (var employee in employees)
+{
+    &lt;p&gt;
+        @employee.FirstName @employee.LastName has the 
+        job title of @employee.JobTitle.
+    &lt;/p&gt;
+}
+</code></pre>
+<p>如果列表包含数千项，则呈现该列表可能会花费较长时间。 用户可能会遇到明显的 UI 延迟。</p>
+<p>与其一次性呈现列表中的所有项，不如将 <a href="/dotnet/csharp/language-reference/keywords/foreach-in"><code>foreach</code></a> 循环替换为 <code>Virtualize</code> 组件，并使用 <code>Items</code> 指定固定的项源。 这样，将仅呈现当前可见的项：</p>
+<pre><code class="lang-razor">&lt;Virtualize Context=&quot;employee&quot; Items=&quot;@employees&quot;&gt;
+    &lt;p&gt;
+        @employee.FirstName @employee.LastName has the 
+        job title of @employee.JobTitle.
+    &lt;/p&gt;
+&lt;/Virtualize&gt;
+</code></pre>
+<p>如果未使用 <code>Context</code> 指定组件的上下文，请在项目内容模板中使用 <code>context</code> 值 (<code>@context.{PROPERTY}</code>)：</p>
+<pre><code class="lang-razor">&lt;Virtualize Items=&quot;@employees&quot;&gt;
+    &lt;p&gt;
+        @context.FirstName @context.LastName has the 
+        job title of @context.JobTitle.
+    &lt;/p&gt;
+&lt;/Virtualize&gt;
+</code></pre>
+<p><code>Virtualize</code> 组件根据容器的高度和呈现的项的大小来计算要呈现的项数。</p>
+<p><code>Virtualize</code> 组件的项内容可以包括：</p>
+<ul>
+<li>纯 HTML 和 Razor 代码，如前面的示例所示。</li>
+<li>一个或多个 Razor 组件。</li>
+<li>HTML/Razor 和 Razor 组件的组合。</li>
+</ul>
+<h2 id="item-provider-delegate">项提供程序委托</h2>
+<p>如果不想将所有项加载到内存中，可向组件的 <code>ItemsProvider</code> 参数指定项提供程序委托方法，以按需异步检索请求的项：</p>
+<pre><code class="lang-razor">&lt;Virtualize Context=&quot;employee&quot; ItemsProvider=&quot;@LoadEmployees&quot;&gt;
+    &lt;p&gt;
+        @employee.FirstName @employee.LastName has the 
+        job title of @employee.JobTitle.
+    &lt;/p&gt;
+&lt;/Virtualize&gt;
+</code></pre>
+<p>项提供程序接收 <code>ItemsProviderRequest</code>，它指定从特定起始索引开始的请求项数。 然后，项提供程序在数据库或其他服务中检索请求的项，并以 <code>ItemsProviderResult&lt;TItem&gt;</code> 形式将这些项与项总数一起返回。 项提供程序可以选择按每个请求检索项，也可以将项缓存以便后续使用。 请勿尝试使用项提供程序来为同一个 <code>Virtualize</code> 组件分配 <code>Items</code> 的集合。</p>
+<p>以下示例从 <code>EmployeeService</code> 加载员工：</p>
+<pre><code class="lang-csharp">private async ValueTask&lt;ItemsProviderResult&lt;Employee&gt;&gt; LoadEmployees(
+    ItemsProviderRequest request)
+{
+    var numEmployees = Math.Min(request.Count, totalEmployees - request.StartIndex);
+    var employees = await EmployeesService.GetEmployeesAsync(request.StartIndex, 
+        numEmployees, request.CancellationToken);
+
+    return new ItemsProviderResult&lt;Employee&gt;(employees, totalEmployees);
+}
+</code></pre>
+<h2 id="placeholder">占位符</h2>
+<p>由于从远程数据源请求项可能需要一些时间，你可以选择呈现占位符 (<code>&lt;Placeholder&gt;...&lt;/Placeholder&gt;</code>)，直到项数据可用：</p>
+<pre><code class="lang-razor">&lt;Virtualize Context=&quot;employee&quot; ItemsProvider=&quot;@LoadEmployees&quot;&gt;
+    &lt;ItemContent&gt;
+        &lt;p&gt;
+            @employee.FirstName @employee.LastName has the 
+            job title of @employee.JobTitle.
+        &lt;/p&gt;
+    &lt;/ItemContent&gt;
+    &lt;Placeholder&gt;
+        &lt;p&gt;
+            Loading&amp;hellip;
+        &lt;/p&gt;
+    &lt;/Placeholder&gt;
+&lt;/Virtualize&gt;
+</code></pre>
+<h2 id="item-size">项大小</h2>
+<p>你可以使用 <code>ItemSize</code> 设置每个项的像素大小（默认值：50px）：</p>
+<pre><code class="lang-razor">&lt;Virtualize Context=&quot;employee&quot; Items=&quot;@employees&quot; ItemSize=&quot;25&quot;&gt;
+    ...
+&lt;/Virtualize&gt;
+</code></pre>
+<h2 id="overscan-count">溢出扫描计数</h2>
+<p><code>OverscanCount</code> 确定在可见区域之前和之后呈现的额外项数。 此设置有助于降低滚动期间的呈现频率。 但是，值越大，页面中呈现的元素越多（默认值：3）：</p>
+<pre><code class="lang-razor">&lt;Virtualize Context=&quot;employee&quot; Items=&quot;@employees&quot; OverscanCount=&quot;4&quot;&gt;
+    ...
+&lt;/Virtualize&gt;
+</code></pre>
+<h2 id="state-changes">状态更改</h2>
+<p>当对 <code>Virtualize</code> 组件呈现的项进行更改时，将调用 &lt;xref:Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged%2A&gt; 以强制重新计算和重新呈现组件。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,485 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#29992;&#20110; ASP.NET Core &#24212;&#29992;&#37096;&#32626;&#30340; Visual Studio &#21457;&#24067;&#37197;&#32622;&#25991;&#20214; (.pubxml) </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#29992;&#20110; ASP.NET Core &#24212;&#29992;&#37096;&#32626;&#30340; Visual Studio &#21457;&#24067;&#37197;&#32622;&#25991;&#20214; (.pubxml) ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="host-and-deploy/visual-studio-publish-profiles">
+<h1 id="visual-studio-publish-profiles-pubxml-for-aspnet-core-app-deployment">用于 ASP.NET Core 应用部署的 Visual Studio 发布配置文件 (.pubxml)</h1>
+
+<p>作者：<a href="https://github.com/sayedihashimi">Sayed Ibrahim Hashimi</a> 和 <a href="https://twitter.com/RickAndMSFT">Rick Anderson</a></p>
+<p>本文档重点介绍了如何通过 Visual Studio 2019 或更高版本创建和使用发布配置文件。 通过 Visual Studio 创建的发布配置文件可用于 MSBuild 和 Visual Studio。 要查看说明了解如何发布到 Azure，请参阅 <a class="xref" href="../tutorials/publish-to-azure-webapp-using-vs.html">使用 Visual Studio 将 ASP.NET Core 应用发布到 Azure</a>。</p>
+<p><code>dotnet new mvc</code> 命令生成包含以下根级别 <a href="/visualstudio/msbuild/project-element-msbuild">&lt;Project&gt; 元素</a>的项目文件：</p>
+<pre><code class="lang-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk.Web&quot;&gt;
+    &lt;!-- omitted for brevity --&gt;
+&lt;/Project&gt;
+</code></pre>
+<p>前导 <code>&lt;Project&gt;</code> 元素的 <code>Sdk</code> 属性分别从 $(MSBuildSDKsPath)\Microsoft.NET.Sdk.Web\Sdk\Sdk.props 和 $(MSBuildSDKsPath)\Microsoft.NET.Sdk.Web\Sdk\Sdk.targets 导入 MSBuild <a href="/visualstudio/msbuild/msbuild-properties">属性</a>和<a href="/visualstudio/msbuild/msbuild-targets">目标</a>。 <code>$(MSBuildSDKsPath)</code>（装有 Visual Studio 2019 Enterprise）的默认位置是 %programfiles(x86)%\Microsoft Visual Studio\2019\Enterprise\MSBuild\Sdks 文件夹。</p>
+<p><code>Microsoft.NET.Sdk.Web</code> (<a class="xref" href="../razor-pages/web-sdk.html">Web SDK</a>) 依赖其他 SDK，包括 <code>Microsoft.NET.Sdk</code> (<a href="/dotnet/core/project-sdk/msbuild-props">.NET Core SDK</a>) 和 <code>Microsoft.NET.Sdk.Razor</code> (<a class="xref" href="../razor-pages/sdk.html">Razor Razor SDK</a>)。 将导入与每个从属 SDK 关联的 MSBuild 属性和目标。 发布目标将根据使用的发布方法，导入相应的目标集。</p>
+<p>MSBuild 或 Visual Studio 加载项目时，执行下列高级别操作：</p>
+<ul>
+<li>生成项目</li>
+<li>计算要发布的文件</li>
+<li>将文件发布到目标</li>
+</ul>
+<h2 id="compute-project-items">计算项目项</h2>
+<p>加载项目时，将计算 <a href="/visualstudio/msbuild/common-msbuild-project-items">MSBuild 项目项</a>（文件）。 项类型确定如何处理该文件。 默认情况下，.cs 文件包含在 <code>Compile</code> 项列表内。 会对 <code>Compile</code> 项列表中的文件进行编译。</p>
+<p>除了生成输出，<code>Content</code> 项列表还包含已发布的文件。 默认情况下，匹配模式 <code>wwwroot\**</code>、<code>**\*.config</code> 和 <code>**\*.json</code> 的文件包含在 <code>Content</code> 项列表内。 例如，<code>wwwroot\**</code><a href="https://gruntjs.com/configuring-tasks#globbing-patterns">glob 模式</a>与 wwwroot 文件夹及其子文件夹中的所有文件相匹配。</p>
+<div range="&gt;= aspnetcore-3.0">
+<p><a class="xref" href="../razor-pages/web-sdk.html">Web SDK</a> 导入 <a class="xref" href="../razor-pages/sdk.html">Razor SDK</a>。 因此，匹配模式 <code>**\*.cshtml</code> 和 <code>**\*.razor</code> 的文件也同时包含在 <code>Content</code> 项列表内。</p>
+</div>
+<div range="&gt;= aspnetcore-2.1 &lt;= aspnetcore-2.2">
+<p><a class="xref" href="../razor-pages/web-sdk.html">Web SDK</a> 导入 <a class="xref" href="../razor-pages/sdk.html">Razor SDK</a>。 因此，匹配 <code>**\*.cshtml</code> 模式的文件也同时包含在 <code>Content</code> 项列表内。</p>
+</div>
+<p>若要将文件显式添加到发布列表，请直接在 .csproj 文件中添加文件，如<a href="#include-files">包含文件</a>一节中所示。</p>
+<p>在 Visual Studio 中选择“发布”按钮时或从命令行发布时：</p>
+<ul>
+<li>计算属性/项目（需要生成的文件）。</li>
+<li><strong>仅限 Visual Studio</strong>：NuGet 包已还原。 （用户需要在 CLI 上执行显式还原。）</li>
+<li>生成项目。</li>
+<li>计算发布项（需要发布的文件）。</li>
+<li>文件已发布（计算的文件将被复制到发布目标）。</li>
+</ul>
+<p>当 ASP.NET Core 项目在项目文件中引用 <code>Microsoft.NET.Sdk.Web</code> 时，会将 app_offline.htm 文件放在 Web 应用目录的根目录下。 该文件存在时，ASP.NET Core 模块会在部署过程中正常关闭该应用并提供 app_offline.htm 文件。 有关详细信息，请参阅 <a class="xref" href="aspnet-core-module.html#app_offlinehtm">ASP.NET Core 模块配置参考</a>。</p>
+<h2 id="basic-command-line-publishing">基本命令行发布</h2>
+<p>命令行发布适用于所有支持 .NET Core 的平台，而且不需要 Visual Studio。 在下面的示例中，从项目目录（其中包含 .csproj文件）运行 .NET Core CLI 的 <a href="/dotnet/core/tools/dotnet-publish">dotnet publish</a> 命令。 如果当前工作目录中没有项目文件夹，则在项目文件路径中显式传递。 例如：</p>
+<pre><code class="lang-dotnetcli">dotnet publish C:\Webs\Web1
+</code></pre>
+<p>运行以下命令以创建并发布 Web 应用：</p>
+<pre><code class="lang-dotnetcli">dotnet new mvc
+dotnet publish
+</code></pre>
+<p><code>dotnet publish</code> 会生成以下输出的变体：</p>
+<pre><code class="lang-console">C:\Webs\Web1&gt;dotnet publish
+Microsoft (R) Build Engine version {VERSION} for .NET Core
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Restore completed in 36.81 ms for C:\Webs\Web1\Web1.csproj.
+  Web1 -&gt; C:\Webs\Web1\bin\Debug\{TARGET FRAMEWORK MONIKER}\Web1.dll
+  Web1 -&gt; C:\Webs\Web1\bin\Debug\{TARGET FRAMEWORK MONIKER}\Web1.Views.dll
+  Web1 -&gt; C:\Webs\Web1\bin\Debug\{TARGET FRAMEWORK MONIKER}\publish\
+</code></pre>
+<p>默认发布文件夹格式为 bin\Debug\{TARGET FRAMEWORK MONIKER}\publish\。 例如 bin\Debug\netcoreapp2.2\publish\。</p>
+<p>以下命令指定 <code>Release</code> 生成和发布目录：</p>
+<pre><code class="lang-dotnetcli">dotnet publish -c Release -o C:\MyWebs\test
+</code></pre>
+<p><code>dotnet publish</code> 命令调用 MSBuild，后者会调用 <code>Publish</code> 目标。 任何传递给 <code>dotnet publish</code> 的参数都将传递给 MSBuild。 <code>-c</code> 和 <code>-o</code> 参数分别映射到 MSBuild 的 <code>Configuration</code> 和 <code>OutputPath</code> 属性。</p>
+<p>可以使用以下任一格式来传递 MSBuild 属性：</p>
+<ul>
+<li><code>-p:&lt;NAME&gt;=&lt;VALUE&gt;</code></li>
+<li><code>/p:&lt;NAME&gt;=&lt;VALUE&gt;</code></li>
+</ul>
+<p>例如，以下命令将 <code>Release</code> 版本发布到网络共享。 网络共享通过正斜杠指定 (//r8/) 并适用于所有支持 .NET Core 的平台。</p>
+<pre><code class="lang-dotnetcli">dotnet publish -c Release /p:PublishDir=//r8/release/AdminWeb
+</code></pre>
+<p>确认用于部署的发布应用未在运行。 如果应用正在运行，publish 文件夹中的文件会被锁定。 部署不会发生，因为无法复制锁定的文件。</p>
+<h2 id="publish-profiles">发布配置文件</h2>
+<p>本部分使用 Visual Studio 2019 或更高版本来创建发布配置文件。 创建配置文件后，可以从 Visual Studio 或命令行进行发布。 发布配置文件可以简化发布过程，并且可以存在任意数量的配置文件。</p>
+<p>通过选择以下路径之一在 Visual Studio 中创建发布配置文件：</p>
+<ul>
+<li>在“解决方案资源管理器”中，右键单击该项目并选择“发布”。</li>
+<li>可以从“生成”菜单中选择“发布 {项目名称}” 。</li>
+</ul>
+<p>随即显示应用程序容量页的“发布”选项卡。 如果项目缺少发布配置文件，将显示“选择发布目标”页面。 系统会要求选择下述发布目标之一：</p>
+<ul>
+<li>Azure 应用服务</li>
+<li>Linux 上的 Azure 应用服务</li>
+<li>Azure 虚拟机</li>
+<li>文件夹</li>
+<li>IIS、FTP、Web 部署（面向任何 Web 服务器）</li>
+<li>导入配置文件</li>
+</ul>
+<p>要确定最适合的发布目标，请参阅<a href="/visualstudio/ide/not-in-toc/web-publish-options">哪些发布选项适合我</a>。</p>
+<p>当选择“文件夹”发布目标时，指定一个文件夹路径来存储发布的资产。 默认文件夹路径为 bin\{PROJECT CONFIGURATION}\{TARGET FRAMEWORK MONIKER}\publish\。 例如 bin\Release\netcoreapp2.2\publish\。 选择“创建配置文件”按钮完成操作。</p>
+<p>创建发布配置文件后，“发布”选项卡的内容将更改。 新创建的配置文件显示在下拉列表中。 在下拉列表中，选择“创建新配置文件”，再新建一个配置文件。</p>
+<p>Visual Studio 的生成工具会生成一个 Properties/PublishProfiles/{PROFILE NAME}.pubxml MSBuild 文件，它描述了发布配置文件。 .pubxml 文件：</p>
+<ul>
+<li>包含发布配置设置并由发布过程使用。</li>
+<li>可更改它来自定义生成和发布过程。</li>
+</ul>
+<p>发布到 Azure 目标时，.pubxml 文件包含 Azure 订阅标识符。 不建议使用该目标类型将此文件添加到源代码管理。 发布到非 Azure 目标时，签入 .pubxml 文件是安全的。</p>
+<p>敏感信息（如发布密码）在每个用户/机器级别均进行加密。 它存储在 Properties/PublishProfiles/{PROFILE NAME}.pubxml.user 文件中。 由于此文件可以存储敏感信息，因此不应将其签入源代码管理。</p>
+<p>要简要了解如何发布 ASP.NET Core Web 应用，请参阅 <a class="xref" href="index.html">托管和部署 ASP.NET Core</a>。 发布 ASP.NET Core Web 应用所需的 MSBuild 任务和目标在 <a href="https://github.com/dotnet/websdk">dotnet/websdk repository</a> 中是开放源代码的。</p>
+<p>以下命令可使用文件夹、MSDeploy 和 <a href="https://github.com/projectkudu/kudu/wiki">Kudu</a> 发布配置文件。 MSDeploy 缺少跨平台支持，因此仅支持在 Windows 上使用以下 MSDeploy 选项。</p>
+<p>文件夹（跨平台工作）：</p>
+<pre><code class="lang-dotnetcli">dotnet publish WebApplication.csproj /p:PublishProfile=&lt;FolderProfileName&gt;
+</code></pre>
+<pre><code class="lang-dotnetcli">dotnet build WebApplication.csproj /p:DeployOnBuild=true /p:PublishProfile=&lt;FolderProfileName&gt;
+</code></pre>
+<p>MSDeploy：</p>
+<pre><code class="lang-dotnetcli">dotnet publish WebApplication.csproj /p:PublishProfile=&lt;MsDeployProfileName&gt; /p:Password=&lt;DeploymentPassword&gt;
+</code></pre>
+<pre><code class="lang-dotnetcli">dotnet build WebApplication.csproj /p:DeployOnBuild=true /p:PublishProfile=&lt;MsDeployProfileName&gt; /p:Password=&lt;DeploymentPassword&gt;
+</code></pre>
+<p>MSDeploy 包：</p>
+<pre><code class="lang-dotnetcli">dotnet publish WebApplication.csproj /p:PublishProfile=&lt;MsDeployPackageProfileName&gt;
+</code></pre>
+<pre><code class="lang-dotnetcli">dotnet build WebApplication.csproj /p:DeployOnBuild=true /p:PublishProfile=&lt;MsDeployPackageProfileName&gt;
+</code></pre>
+<p>在上面的示例中：</p>
+<ul>
+<li><code>dotnet publish</code> 和 <code>dotnet build</code> 支持 Kudu API 从任何平台发布到 Azure。 Visual Studio 发布支持 Kudu API，但 WebSDK 支持其跨平台发布到 Azure。</li>
+<li>不要将 <code>DeployOnBuild</code> 传递到 <code>dotnet publish</code> 命令。</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="https://github.com/dotnet/websdk#microsoftnetsdkpublish">Microsoft.NET.Sdk.Publish</a>。</p>
+<p>向项目的 Properties/PublishProfiles 文件夹添加包含以下内容的发布配置文件：</p>
+<pre><code class="lang-xml">&lt;Project&gt;
+  &lt;PropertyGroup&gt;
+    &lt;PublishProtocol&gt;Kudu&lt;/PublishProtocol&gt;
+    &lt;PublishSiteName&gt;nodewebapp&lt;/PublishSiteName&gt;
+    &lt;UserName&gt;username&lt;/UserName&gt;
+    &lt;Password&gt;password&lt;/Password&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;
+</code></pre>
+<h2 id="folder-publish-example">文件夹发布示例</h2>
+<p>当使用名为 FolderProfile 的配置文件发布时，请使用以下命令之一：</p>
+<pre><code class="lang-dotnetcli">dotnet publish /p:Configuration=Release /p:PublishProfile=FolderProfile`
+</code></pre>
+<pre><code class="lang-dotnetcli">dotnet build /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+</code></pre>
+<pre><code class="lang-bash">msbuild /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+</code></pre>
+<p>.NET Core CLI 的 <a href="/dotnet/core/tools/dotnet-build">dotnet build</a> 命令会调用 <code>msbuild</code> 来运行生成和发布过程。 在文件夹配置文件中传递时，<code>dotnet build</code> 和 <code>msbuild</code> 命令作用相同。 在 Windows 上直接调用 <code>msbuild</code> 时，将使用 MSBuild 的 .NET Framework 版本。 在非文件夹配置文件上调用 <code>dotnet build</code>：</p>
+<ul>
+<li>调用 <code>msbuild</code>后者使用 MSDeploy。</li>
+<li>结果失败（即使在 Windows 上运行时）。 要使用非文件夹配置文件发布，请直接调用 <code>msbuild</code>。</li>
+</ul>
+<p>以下文件夹发布配置文件通过 Visual Studio 创建，并被发布到网络共享：</p>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;!--
+This file is used by the publish/package process of your Web project.
+You can customize the behavior of this process by editing this 
+MSBuild file.
+--&gt;
+&lt;Project ToolsVersion=&quot;4.0&quot; xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+  &lt;PropertyGroup&gt;
+    &lt;WebPublishMethod&gt;FileSystem&lt;/WebPublishMethod&gt;
+    &lt;PublishProvider&gt;FileSystem&lt;/PublishProvider&gt;
+    &lt;LastUsedBuildConfiguration&gt;Release&lt;/LastUsedBuildConfiguration&gt;
+    &lt;LastUsedPlatform&gt;Any CPU&lt;/LastUsedPlatform&gt;
+    &lt;SiteUrlToLaunchAfterPublish /&gt;
+    &lt;LaunchSiteAfterPublish&gt;True&lt;/LaunchSiteAfterPublish&gt;
+    &lt;ExcludeApp_Data&gt;False&lt;/ExcludeApp_Data&gt;
+    &lt;PublishFramework&gt;netcoreapp1.1&lt;/PublishFramework&gt;
+    &lt;ProjectGuid&gt;c30c453c-312e-40c4-aec9-394a145dee0b&lt;/ProjectGuid&gt;
+    &lt;publishUrl&gt;\\r8\Release\AdminWeb&lt;/publishUrl&gt;
+    &lt;DeleteExistingFiles&gt;False&lt;/DeleteExistingFiles&gt;
+  &lt;/PropertyGroup&gt;
+&lt;/Project&gt;
+</code></pre>
+<p>在上面的示例中：</p>
+<ul>
+<li><p><code>&lt;ExcludeApp_Data&gt;</code> 属性仅为满足 XML 架构要求。 <code>&lt;ExcludeApp_Data&gt;</code> 属性不影响发布过程，即使项目根中存在 App_Data 文件夹也是如此。 App_Data 文件夹不会像在 ASP.NET 4.x 项目中那样得到特殊对待。</p>
+</li>
+<li><p><code>&lt;LastUsedBuildConfiguration&gt;</code> 属性设置为 <code>Release</code>。 从 Visual Studio 发布时，启动发布过程后将使用该值设置 <code>&lt;LastUsedBuildConfiguration&gt;</code> 的值。 <code>&lt;LastUsedBuildConfiguration&gt;</code> 比较特殊，不得在导入的 MSBuild 文件中覆盖它。 但是，可通过下述方法之一在命令行中覆盖此属性。</p>
+<ul>
+<li><p>使用 .NET Core CLI：</p>
+<pre><code class="lang-dotnetcli">dotnet publish /p:Configuration=Release /p:PublishProfile=FolderProfile
+</code></pre>
+<pre><code class="lang-dotnetcli">dotnet build -c Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+</code></pre>
+</li>
+<li><p>使用 MSBuild：</p>
+<pre><code class="lang-bash">msbuild /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+</code></pre>
+</li>
+</ul>
+<p>有关详细信息，请参阅 <a href="http://sedodream.com/2012/10/27/MSBuildHowToSetTheConfigurationProperty.aspx">MSBuild：如何设置配置属性</a>。</p>
+</li>
+</ul>
+<h2 id="publish-to-an-msdeploy-endpoint-from-the-command-line">从命令行发布到 MSDeploy 终结点</h2>
+<p>下面的示例使用由 Visual Studio 创建的 ASP.NET Core Web 应用，名为 AzureWebApp。 通过 Visual Studio 添加 Azure 应用发布配置文件。 有关如何创建配置文件的详细信息，请参阅<a href="#publish-profiles">发布配置文件</a>部分。</p>
+<p>若要使用发布配置文件部署应用，请在 Visual Studio 开发人员命令提示中执行 <code>msbuild</code> 命令。 Windows 任务栏上的“开始”菜单的“Visual Studio”文件夹中提供命令提示符。 为了便于访问，可将命令提示符添加到 Visual Studio 中的“工具”菜单中。 有关详细信息，请参阅 <a href="/dotnet/framework/tools/developer-command-prompt-for-vs#run-the-command-prompt-from-inside-visual-studio">Visual Studio 开发人员命令提示符</a>。</p>
+<p>MSBuild 使用以下命令语法：</p>
+<pre><code class="lang-bash">msbuild {PATH} 
+    /p:DeployOnBuild=true 
+    /p:PublishProfile={PROFILE} 
+    /p:Username={USERNAME} 
+    /p:Password={PASSWORD}
+</code></pre>
+<ul>
+<li><code>{PATH}</code>：应用的项目文件的路径。</li>
+<li><code>{PROFILE}</code>：发布配置文件的名称。</li>
+<li><code>{USERNAME}</code>：MSDeploy 用户名。 可以在发布配置文件中找到 <code>{USERNAME}</code>。</li>
+<li><code>{PASSWORD}</code>：MSDeploy 密码。 从 {PROFILE}.PublishSettings 文件中获取 <code>{PASSWORD}</code>。 可以从以下位置下载 .PublishSettings 文件：
+<ul>
+<li>解决方案资源管理器：选择“视图” &gt; “Cloud Explorer” 。 连接你的 Azure 订阅。 打开“应用服务”。 右键单击应用。 选择“下载发布配置文件”。</li>
+<li>Azure 门户：选择 Web 应用“概述”面板上的“获取发布配置文件” 。</li>
+</ul>
+</li>
+</ul>
+<p>下面的示例使用名为“AzureWebApp - Web 部署”的发布配置文件：</p>
+<pre><code class="lang-bash">msbuild &quot;AzureWebApp.csproj&quot; 
+    /p:DeployOnBuild=true 
+    /p:PublishProfile=&quot;AzureWebApp - Web Deploy&quot; 
+    /p:Username=&quot;$AzureWebApp&quot; 
+    /p:Password=&quot;..........&quot;
+</code></pre>
+<p>发布配置文件还可通过 Windows 命令行界面与 .NET Core CLI 的 <a href="/dotnet/core/tools/dotnet-msbuild">dotnet msbuild</a> 一起使用：</p>
+<pre><code class="lang-dotnetcli">dotnet msbuild &quot;AzureWebApp.csproj&quot;
+    /p:DeployOnBuild=true 
+    /p:PublishProfile=&quot;AzureWebApp - Web Deploy&quot; 
+    /p:Username=&quot;$AzureWebApp&quot; 
+    /p:Password=&quot;..........&quot;
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><code>dotnet msbuild</code> 命令是一个跨平台命令，可在 macOS 和 Linux 上编译 ASP.NET Core 应用。 但是，macOS 和 Linux 上的 MSBuild 不能将应用部署到 Azure 或其他 MSDeploy 终结点。</p>
+</div>
+<h2 id="set-the-environment">设置环境</h2>
+<p>将 <code>&lt;EnvironmentName&gt;</code> 属性包含在发布配置文件（.pubxml）或项目文件中，以设置应用的<a class="xref" href="../fundamentals/environments.html">环境</a>：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;EnvironmentName&gt;Development&lt;/EnvironmentName&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<p>如果需要 web.config 转换（例如，基于配置、配置文件或环境设置环境变量），请参阅 <a class="xref" href="iis/transform-webconfig.html">转换 web.config</a>。</p>
+<h2 id="exclude-files">排除文件</h2>
+<p>在发布 ASP.NET Core Web 应用时，包括以下资产：</p>
+<ul>
+<li>生成工件</li>
+<li>与以下 glob 模式匹配的文件夹和文件：
+<ul>
+<li><code>**\*.config</code>（例如，web.config）</li>
+<li><code>**\*.json</code>（例如，appsettings.json）</li>
+<li><code>wwwroot\**</code></li>
+</ul>
+</li>
+</ul>
+<p>MSBuild 支持 <a href="https://gruntjs.com/configuring-tasks#globbing-patterns">glob 模式</a>。 例如，以下 <code>&lt;Content&gt;</code> 元素禁止在 wwwroot\content 文件夹及其子文件夹中复制文本 (.txt) 文件：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;Content Update=&quot;wwwroot/content/**/*.txt&quot; CopyToPublishDirectory=&quot;Never&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>可以将上面的标记添加到发布配置文件或 .csproj 文件。 添加到 .csproj 文件时，会将该规则添加到项目中的所有发布配置文件中。</p>
+<p>以下 <code>&lt;MsDeploySkipRules&gt;</code> 元素排除 wwwroot\content 文件夹中的所有文件：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;MsDeploySkipRules Include=&quot;CustomSkipFolder&quot;&gt;
+    &lt;ObjectName&gt;dirPath&lt;/ObjectName&gt;
+    &lt;AbsolutePath&gt;wwwroot\\content&lt;/AbsolutePath&gt;
+  &lt;/MsDeploySkipRules&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p><code>&lt;MsDeploySkipRules&gt;</code> 不会从部署站点删除跳过目标。 从部署站点中删除 <code>&lt;Content&gt;</code> 目标文件和文件夹。 例如，假设部署的 Web 应用具有以下文件：</p>
+<ul>
+<li><em>Views/Home/About1.cshtml</em></li>
+<li><em>Views/Home/About2.cshtml</em></li>
+<li><em>Views/Home/About3.cshtml</em></li>
+</ul>
+<p>如果添加了以下 <code>&lt;MsDeploySkipRules&gt;</code> 元素，则不会在部署站点上删除这些文件。</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;MsDeploySkipRules Include=&quot;CustomSkipFile&quot;&gt;
+    &lt;ObjectName&gt;filePath&lt;/ObjectName&gt;
+    &lt;AbsolutePath&gt;Views\\Home\\About1.cshtml&lt;/AbsolutePath&gt;
+  &lt;/MsDeploySkipRules&gt;
+
+  &lt;MsDeploySkipRules Include=&quot;CustomSkipFile&quot;&gt;
+    &lt;ObjectName&gt;filePath&lt;/ObjectName&gt;
+    &lt;AbsolutePath&gt;Views\\Home\\About2.cshtml&lt;/AbsolutePath&gt;
+  &lt;/MsDeploySkipRules&gt;
+
+  &lt;MsDeploySkipRules Include=&quot;CustomSkipFile&quot;&gt;
+    &lt;ObjectName&gt;filePath&lt;/ObjectName&gt;
+    &lt;AbsolutePath&gt;Views\\Home\\About3.cshtml&lt;/AbsolutePath&gt;
+  &lt;/MsDeploySkipRules&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>之前的 <code>&lt;MsDeploySkipRules&gt;</code> 元素阻止部署跳过的文件。 一旦部署这些文件就不会删除它们。</p>
+<p>以下 <code>&lt;Content&gt;</code> 元素将在部署站点中删除目标文件：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;Content Update=&quot;Views/Home/About?.cshtml&quot; CopyToPublishDirectory=&quot;Never&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>如果将命令行部署和前面的 <code>&lt;Content&gt;</code> 元素一起使用，则将生成以下输出的变体：</p>
+<pre><code class="lang-console">MSDeployPublish:
+  Starting Web deployment task from source: manifest(C:\Webs\Web1\obj\Release\{TARGET FRAMEWORK MONIKER}\PubTmp\Web1.SourceManifest.
+  xml) to Destination: auto().
+  Deleting file (Web11112\Views\Home\About1.cshtml).
+  Deleting file (Web11112\Views\Home\About2.cshtml).
+  Deleting file (Web11112\Views\Home\About3.cshtml).
+  Updating file (Web11112\web.config).
+  Updating file (Web11112\Web1.deps.json).
+  Updating file (Web11112\Web1.dll).
+  Updating file (Web11112\Web1.pdb).
+  Updating file (Web11112\Web1.runtimeconfig.json).
+  Successfully executed Web deployment task.
+  Publish Succeeded.
+Done Building Project &quot;C:\Webs\Web1\Web1.csproj&quot; (default targets).
+</code></pre>
+<h2 id="include-files">包含文件</h2>
+<p>下列各部分简要介绍了发布时用于包含文件的不同方法。 <a href="#general-file-inclusion">常规文件包含</a>部分使用了 <code>DotNetPublishFiles</code> 项，后者由 <a class="xref" href="../razor-pages/web-sdk.html">Web SDK</a> 中的发布目标文件提供。 <a href="#selective-file-inclusion">选择性文件包含</a>部分使用了 <code>ResolvedFileToPublish</code> 项，它由 <a href="/dotnet/core/project-sdk/msbuild-props">.NET Core SDK</a> 中的发布目标文件提供。 Web SDK 依赖于 .NET Core SDK，因此上述任一项都可在 ASP.NET Core 项目中使用。</p>
+<h3 id="general-file-inclusion">常规文件包含</h3>
+<p>下例中的 <code>&lt;ItemGroup&gt;</code> 元素展示了将位于项目目录之外的文件夹复制到已发布的站点的文件夹中。 添加到下述标记的 <code>&lt;ItemGroup&gt;</code> 的所有文件都将默认包含在内。</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;_CustomFiles Include=&quot;$(MSBuildProjectDirectory)/../images/**/*&quot; /&gt;
+  &lt;DotNetPublishFiles Include=&quot;@(_CustomFiles)&quot;&gt;
+    &lt;DestinationRelativePath&gt;wwwroot/images/%(RecursiveDir)%(Filename)%(Extension)&lt;/DestinationRelativePath&gt;
+  &lt;/DotNetPublishFiles&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>前面的标记：</p>
+<ul>
+<li>可以将标记添加到 .csproj 文件或发布配置文件。 如果将其添加到 .csproj 文件，它会包含在项目的每个发布配置文件中。</li>
+<li>声明一个 <code>_CustomFiles</code> 项来存储与 <code>Include</code> 属性的 glob 模式匹配的文件。 模式中引用的“图像”文件夹未在项目目录中。 名为 <code>$(MSBuildProjectDirectory)</code> 的<a href="/visualstudio/msbuild/msbuild-reserved-and-well-known-properties">保留属性</a>会解析为项目文件的绝对路径。</li>
+<li>向 <code>DotNetPublishFiles</code> 项提供一个文件列表。 默认情况下，该项的 <code>&lt;DestinationRelativePath&gt;</code> 元素为空。 默认值在标记中重写，且使用 <code>%(RecursiveDir)</code> 等<a href="/visualstudio/msbuild/msbuild-well-known-item-metadata">常见的项元数据</a>。 内部文本表示已发布的站点的 wwwroot/images 文件夹。</li>
+</ul>
+<h3 id="selective-file-inclusion">选择性文件包含</h3>
+<p>下例中突出显示的标记展示了：</p>
+<ul>
+<li>将项目之外的文件复制到已发布的站点的 wwwroot 文件夹。 保留文件名 ReadMe2.md。</li>
+<li>排除 wwwroot\Content 文件夹。</li>
+<li>排除 Views\Home\About2.cshtml。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前述示例使用 <code>ResolvedFileToPublish</code> 项，其默认行为是始终将 <code>Include</code> 中提供的文件复制到已发布的站点中。 通过 <code>Never</code> 或 <code>PreserveNewest</code> 的内部文本包含 <code>&lt;CopyToPublishDirectory&gt;</code>覆盖默认行为。 例如：</p>
+<pre><code class="lang-xml">&lt;ResolvedFileToPublish Include=&quot;..\ReadMe2.md&quot;&gt;
+  &lt;RelativePath&gt;wwwroot\ReadMe2.md&lt;/RelativePath&gt;
+  &lt;CopyToPublishDirectory&gt;PreserveNewest&lt;/CopyToPublishDirectory&gt;
+&lt;/ResolvedFileToPublish&gt;
+</code></pre>
+<p>有关更多部署示例，请参阅 <a href="https://github.com/dotnet/sdk/tree/master/src/WebSdk">Web SDK README 文件</a>。</p>
+<h2 id="run-a-target-before-or-after-publishing">在发布前或发布后运行目标</h2>
+<p>内置 <code>BeforePublish</code> 和 <code>AfterPublish</code> 目标在发布目标前/后执行目标。 将以下元素添加到发布配置文件，以在发布前/后均记录控制台消息：</p>
+<pre><code class="lang-xml">&lt;Target Name=&quot;CustomActionsBeforePublish&quot; BeforeTargets=&quot;BeforePublish&quot;&gt;
+    &lt;Message Text=&quot;Inside BeforePublish&quot; Importance=&quot;high&quot; /&gt;
+  &lt;/Target&gt;
+  &lt;Target Name=&quot;CustomActionsAfterPublish&quot; AfterTargets=&quot;AfterPublish&quot;&gt;
+    &lt;Message Text=&quot;Inside AfterPublish&quot; Importance=&quot;high&quot; /&gt;
+&lt;/Target&gt;
+</code></pre>
+<h2 id="publish-to-a-server-using-an-untrusted-certificate">使用不受信任的证书发布到服务器</h2>
+<p>将值为 <code>True</code> 的 <code>&lt;AllowUntrustedCertificate&gt;</code> 属性添加到发布配置文件：</p>
+<pre><code class="lang-xml">&lt;PropertyGroup&gt;
+  &lt;AllowUntrustedCertificate&gt;True&lt;/AllowUntrustedCertificate&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+<h2 id="the-kudu-service">Kudu 服务</h2>
+<p>要查看 Azure 应用服务 Web 应用部署中的文件，请使用 <a href="https://github.com/projectkudu/kudu/wiki/Accessing-the-kudu-service">Kudu 服务</a>。 将 <code>scm</code> 令牌追加到 Web 应用名称。 例如：</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>http://mysite.azurewebsites.net/</code></td>
+<td>Web 应用</td>
+</tr>
+<tr>
+<td><code>http://mysite.scm.azurewebsites.net/</code></td>
+<td>Kudu 服务</td>
+</tr>
+</tbody>
+</table>
+<p>选择<a href="https://github.com/projectkudu/kudu/wiki/Kudu-console">调试控制台</a>菜单项来查看、编辑、删除或添加文件。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://www.iis.net/downloads/microsoft/web-deploy">Web 部署</a> (MSDeploy) 简化了 Web 应用和网站到 IIS 服务器的部署。</li>
+<li><a href="https://github.com/dotnet/websdk/issues">Web SDK GitHub 存储库</a>：文件问题和部署的请求功能。</li>
+<li><a href="/azure/virtual-machines/windows/publish-web-app-from-visual-studio">从 Visual Studio 将 ASP.NET Web 应用发布到 Azure VM</a></li>
+<li><a class="xref" href="iis/transform-webconfig.html">转换 web.config</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

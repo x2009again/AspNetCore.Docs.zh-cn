@@ -1,0 +1,613 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#38745;&#24577;&#25991;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#38745;&#24577;&#25991;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/static-files">
+<h1 id="static-files-in-aspnet-core">ASP.NET Core 中的静态文件</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://twitter.com/serpent5">Kirk Larkin</a></p>
+<p>默认情况下，静态文件（如 HTML、CSS、图像和 JavaScript）是 ASP.NET Core 应用直接提供给客户端的资产。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/static-files/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="serve-static-files">提供静态文件</h2>
+<p>静态文件存储在项目的 <a class="xref" href="index.html#web-root">Web 根</a>目录中。 默认目录为 <code>{content root}/wwwroot</code>，但可通过 &lt;xref:Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseWebRoot%2A&gt; 方法更改目录。 有关详细信息，请参阅<a class="xref" href="index.html#content-root">内容根目录</a>和 <a class="xref" href="index.html#web-root">Web 根目录</a>。</p>
+<p>采用 &lt;xref:Microsoft.AspNetCore.WebHost.CreateDefaultBuilder%2A&gt; 方法可将内容根目录设置为当前目录：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码是使用 Web 应用程序模板创建的。</p>
+<p>可通过 <a class="xref" href="index.html#web-root">Web 根目录</a>的相关路径访问静态文件。 例如，Web 应用程序项目模板包含 <code>wwwroot</code> 文件夹中的多个文件夹：</p>
+<ul>
+<li><code>wwwroot</code>
+<ul>
+<li><code>css</code></li>
+<li><code>js</code></li>
+<li><code>lib</code></li>
+</ul>
+</li>
+</ul>
+<p>请考虑创建 wwwroot/images 文件夹，并添加 wwwroot/images/MyImage 文件。  用于访问 <code>images</code> 文件夹中的文件的 URI 格式为 <code>https://&lt;hostname&gt;/images/&lt;image_file_name&gt;</code>。 例如，<code>https://localhost:5001/images/MyImage.jpg</code></p>
+<h3 id="serve-files-in-web-root">在 Web 根目录中提供文件</h3>
+<p>默认 Web 应用模板在 <code>Startup.Configure</code> 中调用 &lt;xref:Owin.StaticFileExtensions.UseStaticFiles%2A&gt; 方法，这将允许提供静态文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>无参数 <code>UseStaticFiles</code> 方法重载将 <a class="xref" href="index.html#web-root">Web 根目录</a>中的文件标记为可用。 以下标记引用 wwwroot/images/MyImage.jpg：</p>
+<pre><code class="lang-html">&lt;img src=&quot;~/images/MyImage.jpg&quot; class=&quot;img&quot; alt=&quot;My image&quot; /&gt;
+</code></pre>
+<p>在上面的代码中，波形符 <code>~/</code> 指向 <a class="xref" href="index.html#web-root">Web 根目录</a>。</p>
+<h3 id="serve-files-outside-of-web-root">提供 Web 根目录外的文件</h3>
+<p>考虑一个目录层次结构，其中要提供的静态文件位于 <a class="xref" href="index.html#web-root">Web 根目录</a>之外：</p>
+<ul>
+<li><code>wwwroot</code>
+<ul>
+<li><code>css</code></li>
+<li><code>images</code></li>
+<li><code>js</code></li>
+</ul>
+</li>
+<li><code>MyStaticFiles</code>
+<ul>
+<li><code>images</code>
+<ul>
+<li><code>red-rose.jpg</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>按如下方式配置静态文件中间件后，请求可访问 <code>red-rose.jpg</code> 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，MyStaticFiles 目录层次结构通过 StaticFiles URI 段公开 。 对 <code>https://&lt;hostname&gt;/StaticFiles/images/red-rose.jpg</code> 的请求将提供 red-rose.jpg 文件。</p>
+<p>以下标记引用 MyStaticFiles/images/red-rose.jpg：</p>
+<pre><code class="lang-html">&lt;img src=&quot;~/StaticFiles/images/red-rose.jpg&quot; class=&quot;img&quot; alt=&quot;A red rose&quot; /&gt;
+</code></pre>
+<h3 id="set-http-response-headers">设置 HTTP 响应标头</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.StaticFileOptions&gt; 对象可用于设置 HTTP 响应标头。 除配置从 <a class="xref" href="index.html#web-root">Web 根目录</a>提供静态文件外，以下代码还设置 <code>Cache-Control</code> 标头：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><!-- Q: The preceding code sets max-age to 604800 seconds (7 days), so what does the following mean? -->
+<p>静态文件可在 600 秒内公开缓存：</p>
+<p><img src="static-files/_static/add-header.png" alt="已添加显示 Cache-Control 标头的响应头"></p>
+<h2 id="static-file-authorization">静态文件授权</h2>
+<p>静态文件中间件不提供授权检查。 可公开访问由静态文件中间件提供的任何文件，包括 <code>wwwroot</code> 下的文件。 根据授权提供文件：</p>
+<ul>
+<li><p>将文件存储在 <code>wwwroot</code> 和默认静态文件中间件可访问的任何目录之外。</p>
+</li>
+<li><p>在 <code>UseAuthorization</code> 后面调用 <code>UseStaticFiles</code> 并指定路径：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述方法要求用户已进行身份验证：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>有关如何全局要求所有用户进行身份验证的信息，请参阅<a class="xref" href="../security/authorization/secure-data.html#rau">需要经过身份验证的用户</a>。</p>
+</li>
+</ul>
+<p>还有一种根据授权提供文件的方法是：</p>
+<ul>
+<li><p>将文件存储在 <code>wwwroot</code> 和静态文件中间件可访问的任何目录之外。</p>
+</li>
+<li><p>通过应用授权的操作方法为其提供服务，并返回 &lt;xref:Microsoft.AspNetCore.Mvc.FileResult&gt; 对象：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+</ul>
+<h2 id="directory-browsing">目录浏览</h2>
+<p>目录浏览允许在指定目录中列出目录。</p>
+<p>出于安全考虑，目录浏览默认处于禁用状态。 有关详细信息，请参阅<a href="#considerations">注意事项</a>。</p>
+<p>通过以下方式启用目录浏览：</p>
+<ul>
+<li><code>Startup.ConfigureServices</code> 中的 &lt;xref:Microsoft.Extensions.DependencyInjection.DirectoryBrowserServiceExtensions.AddDirectoryBrowser%2A&gt;。</li>
+<li><code>Startup.Configure</code> 中的 &lt;xref:Microsoft.AspNetCore.Builder.DirectoryBrowserExtensions.UseDirectoryBrowser%2A&gt;。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码允许使用 URL <code>https://&lt;hostname&gt;/MyImages</code> 浏览 wwwroot/images 文件夹的目录，并链接到每个文件和文件夹：</p>
+<p><img src="static-files/_static/dir-browse.png" alt="目录浏览"></p>
+<h2 id="serve-default-documents">提供默认文档</h2>
+<p>设置默认页面为访问者提供网站的起点。 若要在没有完全限定 URI 的情况下提供 <code>wwwroot</code> 的默认页面，请调用 &lt;xref:Owin.DefaultFilesExtensions.UseDefaultFiles%2A&gt; 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>要提供默认文件，必须在 <code>UseStaticFiles</code> 前调用 <code>UseDefaultFiles</code>。 <code>UseDefaultFiles</code> 是不提供文件的 URL 重写工具。</p>
+<p>使用 <code>UseDefaultFiles</code> 请求对 <code>wwwroot</code> 中的文件夹搜索：</p>
+<ul>
+<li>default.htm</li>
+<li>default.html</li>
+<li>index.htm</li>
+<li>index.html</li>
+</ul>
+<p>将请求视为完全限定 URI，提供在列表中找到的第一个文件。 浏览器 URL 继续反映请求的 URI。</p>
+<p>以下代码将默认文件名更改为 mydefault.html：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下代码通过上述代码演示了 <code>Startup.Configure</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="usefileserver-for-default-documents">默认文档的 UseFileServer</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.FileServerExtensions.UseFileServer*&gt; 结合了 <code>UseStaticFiles</code>、<code>UseDefaultFiles</code> 和 <code>UseDirectoryBrowser</code>（可选）的功能。</p>
+<p>调用 <code>app.UseFileServer</code> 以提供静态文件和默认文件。 未启用目录浏览。 以下代码通过 <code>UseFileServer</code> 演示了 <code>Startup.Configure</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下代码提供静态文件、默认文件和目录浏览：</p>
+<pre><code class="lang-csharp">app.UseFileServer(enableDirectoryBrowsing: true);
+</code></pre>
+<p>以下代码通过上述代码演示了 <code>Startup.Configure</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>考虑以下目录层次结构：</p>
+<ul>
+<li><code>wwwroot</code>
+<ul>
+<li><code>css</code></li>
+<li><code>images</code></li>
+<li><code>js</code></li>
+</ul>
+</li>
+<li><code>MyStaticFiles</code>
+<ul>
+<li><code>images</code>
+<ul>
+<li><code>MyImage.jpg</code></li>
+</ul>
+</li>
+<li><code>default.html</code></li>
+</ul>
+</li>
+</ul>
+<p>以下代码提供静态文件、默认文件和 <code>MyStaticFiles</code> 的目录浏览：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>必须在 <code>EnableDirectoryBrowsing</code> 属性值为 <code>true</code> 时调用 &lt;xref:Microsoft.Extensions.DependencyInjection.DirectoryBrowserServiceExtensions.AddDirectoryBrowser%2A&gt;。</p>
+<p>使用文件层次结构和前面的代码，URL 解析如下：</p>
+<table>
+<thead>
+<tr>
+<th>URI</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>https://&lt;hostname&gt;/StaticFiles/images/MyImage.jpg</code></td>
+<td>MyStaticFiles/images/MyImage.jpg</td>
+</tr>
+<tr>
+<td><code>https://&lt;hostname&gt;/StaticFiles</code></td>
+<td>MyStaticFiles/default.html</td>
+</tr>
+</tbody>
+</table>
+<p>如果 MyStaticFiles 目录中不存在默认命名文件，则 <code>https://&lt;hostname&gt;/StaticFiles</code> 返回包含可单击链接的目录列表：</p>
+<p><img src="static-files/_static/db2.png" alt="静态文件列表"></p>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.DefaultFilesExtensions.UseDefaultFiles*&gt; 和 &lt;xref:Microsoft.AspNetCore.Builder.DirectoryBrowserExtensions.UseDirectoryBrowser*&gt; 执行从不带尾部 <code>/</code> 的目标 URI 到带尾部 <code>/</code> 的目标 URI 的客户端重定向。 例如，从 <code>https://&lt;hostname&gt;/StaticFiles</code> 到 <code>https://&lt;hostname&gt;/StaticFiles/</code>。 如果没有尾部斜杠 (<code>/</code>)，StaticFiles 目录中的相对 URL 无效。</p>
+<h2 id="fileextensioncontenttypeprovider">FileExtensionContentTypeProvider</h2>
+<p>&lt;xref:Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider&gt; 类包含 <code>Mappings</code> 属性，用作文件扩展名到 MIME 内容类型的映射。 在以下示例中，多个文件扩展名映射到了已知的 MIME 类型。 替换了 .rtf 扩展名，删除了 .mp4 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下代码通过上述代码演示了 <code>Startup.Configure</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请参阅 <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">MIME 内容类型</a>。</p>
+<h2 id="non-standard-content-types">非标准内容类型</h2>
+<p>静态文件中间件可理解近 400 种已知文件内容类型。 如果用户请求文件类型未知的文件，则静态文件中间件将请求传递给管道中的下一个中间件。 如果没有中间件处理请求，则返回“404 未找到”响应。 如果启用了目录浏览，则在目录列表中会显示该文件的链接。</p>
+<p>以下代码提供未知类型，并以图像形式呈现未知文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下代码通过上述代码演示了 <code>Startup.Configure</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用前面的代码，请求的文件含未知内容类型时，以图像形式返回请求。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>启用 &lt;xref:Microsoft.AspNetCore.Builder.StaticFileOptions.ServeUnknownFileTypes&gt; 会形成安全隐患。 它默认处于禁用状态，不建议使用。 <a href="#fileextensioncontenttypeprovider">FileExtensionContentTypeProvider</a> 提供了更安全的替代方法来提供含非标准扩展名的文件。</p>
+</div>
+<h2 id="serve-files-from-multiple-locations">从多个位置提供文件</h2>
+<p><code>UseStaticFiles</code> 和 <code>UseFileServer</code> 默认为指向 <code>wwwroot</code> 的文件提供程序。 可使用其他文件提供程序提供 <code>UseStaticFiles</code> 和 <code>UseFileServer</code> 的其他实例，从多个位置提供文件。 有关详细信息，请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/issues/15578">此 GitHub 问题</a>。</p>
+<p><a name="sc"></a></p>
+<h3 id="security-considerations-for-static-files">静态文件的安全注意事项</h3>
+<div class="WARNING">
+<h5>Warning</h5>
+<p><code>UseDirectoryBrowser</code> 和 <code>UseStaticFiles</code> 可能会泄漏机密。 强烈建议在生产中禁用目录浏览。 请仔细查看 <code>UseStaticFiles</code> 或 <code>UseDirectoryBrowser</code> 启用了哪些目录。 整个目录及其子目录均可公开访问。 将适合公开的文件存储在专用目录中，如 <code>&lt;content_root&gt;/wwwroot</code>。 将这些文件与 MVC 视图、Razor Pages 和配置文件等分开。</p>
+</div>
+<ul>
+<li><p>使用 <code>UseDirectoryBrowser</code> 和 <code>UseStaticFiles</code> 公开的内容的 URL 受大小写和基础文件系统字符限制的影响。 例如，Windows 不区分大小写，但 macOS 和 Linux 区分大小写。</p>
+</li>
+<li><p>托管于 IIS 中的 ASP.NET Core 应用使用 <a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>将所有请求转发到应用，包括静态文件请求。 不使用 IIS 静态文件处理程序，并且没有机会处理请求。</p>
+</li>
+<li><p>在 IIS Manager 中完成以下步骤，删除服务器或网站级别的 IIS 静态文件处理程序：</p>
+<ol>
+<li>转到“模块”功能。</li>
+<li>在列表中选择 StaticFileModule。</li>
+<li>单击“操作”侧栏中的“删除” 。</li>
+</ol>
+</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果启用了 IIS 静态文件处理程序且 ASP.NET Core 模块配置不正确，则会提供静态文件。 例如，如果未部署 web.config 文件，则会发生这种情况。</p>
+</div>
+<ul>
+<li>将代码文件（包括 .cs 和 .cshtml）放在应用项目的 <a class="xref" href="index.html#web-root">Web 根目录</a>之外 。 这样就在应用的客户端内容和基于服务器的代码间创建了逻辑分隔。 可以防止服务器端代码泄漏。</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="middleware/index.html">中间件</a></li>
+<li><a class="xref" href="../introduction-to-aspnet-core.html">ASP.NET Core 简介</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://twitter.com/Scott_Addie">Scott Addie</a></p>
+<p>静态文件（如 HTML、CSS、图像和 JavaScript）是 ASP.NET Core 应用直接提供给客户端的资产。 需要进行一些配置才能提供这些文件。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/static-files/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="serve-static-files">提供静态文件</h2>
+<p>静态文件存储在项目的 <a class="xref" href="index.html#web-root">Web 根</a>目录中。 默认目录是 {content root}/wwwroot，但可通过 &lt;xref:Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseWebRoot%2A&gt; 方法更改目录。 有关详细信息，请参阅<a class="xref" href="index.html#content-root">内容根目录</a>和 <a class="xref" href="index.html#web-root">Web 根目录</a>。</p>
+<p>应用的 Web 主机必须识别内容根目录。</p>
+<p>采用 <code>WebHost.CreateDefaultBuilder</code> 方法可将内容根目录设置为当前目录：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可通过 <a class="xref" href="index.html#web-root">Web 根目录</a>的相关路径访问静态文件。 例如，Web 应用程序项目模板包含 <code>wwwroot</code> 文件夹中的多个文件夹：</p>
+<ul>
+<li><code>wwwroot</code>
+<ul>
+<li><code>css</code></li>
+<li><code>images</code></li>
+<li><code>js</code></li>
+</ul>
+</li>
+</ul>
+<p>用于访问 images 子文件夹中的文件的 URI 格式为 http://&lt;server_address&gt;/images/&lt;image_file_name&gt; 。 例如， <em>http://localhost:9189/images/banner3.svg</em> 。</p>
+<p>如果以 .NET Framework 为目标，请将 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.StaticFiles/">Microsoft.AspNetCore.StaticFiles</a> 包添加到项目。 如果以 .NET Core 为目标，<a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App 元包</a>将包括此包。</p>
+<p>配置提供静态文件的<a class="xref" href="middleware/index.html">中间件</a>。</p>
+<h3 id="serve-files-inside-of-web-root">提供 Web 根目录内的文件</h3>
+<p>调用 <code>Startup.Configure</code> 中的 &lt;xref:Microsoft.AspNetCore.Builder.StaticFileExtensions.UseStaticFiles%2A&gt; 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>无参数 <code>UseStaticFiles</code> 方法重载将 <a class="xref" href="index.html#web-root">Web 根目录</a>中的文件标记为可用。 以下标记引用 wwwroot/images/banner1.svg：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上面的代码中，波形符 <code>~/</code> 指向 <a class="xref" href="index.html#web-root">Web 根目录</a>。</p>
+<h3 id="serve-files-outside-of-web-root">提供 Web 根目录外的文件</h3>
+<p>考虑一个目录层次结构，其中要提供的静态文件位于 <a class="xref" href="index.html#web-root">Web 根目录</a>之外：</p>
+<ul>
+<li><code>wwwroot</code>
+<ul>
+<li><code>css</code></li>
+<li><code>images</code></li>
+<li><code>js</code></li>
+</ul>
+</li>
+<li><code>MyStaticFiles</code>
+<ul>
+<li><code>images</code>
+<ul>
+<li><code>banner1.svg</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>按如下方式配置静态文件中间件后，请求可访问 banner1.svg 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在前面的代码中，MyStaticFiles 目录层次结构通过 StaticFiles URI 段公开 。 请求 http://&lt;server_address&gt;/StaticFiles/images/banner1.svg 提供 banner1.svg 文件 。</p>
+<p>以下标记引用 MyStaticFiles/images/banner1.svg：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="set-http-response-headers">设置 HTTP 响应标头</h3>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.StaticFileOptions&gt; 对象可用于设置 HTTP 响应标头。 除配置从 <a class="xref" href="index.html#web-root">Web 根目录</a>提供静态文件外，以下代码还设置 <code>Cache-Control</code> 标头：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>若要查看翻译为非英语语言的代码注释，请在 <a href="https://github.com/MicrosoftDocs/feedback/issues/2515">此 GitHub 讨论问题</a>中告诉我们。</p>
+
+<p>&lt;xref:Microsoft.AspNetCore.Http.HeaderDictionaryExtensions.Append%2A?displayProperty=nameWithType&gt; 方法位于 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.Http/">Microsoft.AspNetCore.Http</a> 包中。</p>
+<p>在开发环境中可公开缓存这些文件 10 分钟（600 秒）：</p>
+<p><img src="static-files/_static/add-header.png" alt="已添加显示 Cache-Control 标头的响应头"></p>
+<h2 id="static-file-authorization">静态文件授权</h2>
+<p>静态文件中间件不提供授权检查。 可公开访问由静态文件中间件提供的任何文件，包括 wwwroot 下的文件。 根据授权提供文件：</p>
+<ul>
+<li><p>将文件存储在 wwwroot 和静态文件中间件可访问的任何目录之外。</p>
+</li>
+<li><p>通过有授权的操作方法提供文件。 返回一个 &lt;xref:Microsoft.AspNetCore.Mvc.FileResult&gt; 对象：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+</ul>
+<h2 id="enable-directory-browsing">启用目录浏览</h2>
+<p>通过目录浏览，Web 应用的用户可查看目录列表和指定目录中的文件。 出于安全考虑，目录浏览默认处于禁用状态（请参阅<a href="#considerations">注意事项</a>）。 调用 <code>Startup.Configure</code> 中的 &lt;xref:Microsoft.AspNetCore.Builder.DirectoryBrowserExtensions.UseDirectoryBrowser%2A&gt; 方法来启用目录浏览：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过从 <code>Startup.ConfigureServices</code> 调用 &lt;xref:Microsoft.Extensions.DependencyInjection.DirectoryBrowserServiceExtensions.AddDirectoryBrowser%2A&gt; 方法添加所需服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码允许使用 URL http://&lt;server_address&gt;/MyImages 浏览 wwwroot/images 文件夹的目录，并链接到每个文件和文件夹 ：</p>
+<p><img src="static-files/_static/dir-browse.png" alt="目录浏览"></p>
+<p>有关启用浏览时的安全风险，请参阅<a href="#considerations">注意事项</a>。</p>
+<p>请注意以下示例中的两个 <code>UseStaticFiles</code> 调用。 第一个调用提供 wwwroot 文件夹中的静态文件。 第二个调用使用 URL http://&lt;server_address&gt;/MyImages 浏览 wwwroot/images 文件夹的目录 ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="serve-a-default-document">提供默认文档</h2>
+<p>设置默认主页为访问者访问网站时提供了逻辑起点。 若要在用户不完全限定 URI 的情况下提供默认页面，请调用 <code>Startup.Configure</code> 中的 &lt;xref:Microsoft.AspNetCore.Builder.DefaultFilesExtensions.UseDefaultFiles%2A&gt; 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>要提供默认文件，必须在 <code>UseStaticFiles</code> 前调用 <code>UseDefaultFiles</code>。 <code>UseDefaultFiles</code> 实际上用于重写 URL，不提供文件。 通过 <code>UseStaticFiles</code> 启用静态文件中间件来提供文件。</p>
+</div>
+<p>使用 <code>UseDefaultFiles</code> 请求文件夹搜索：</p>
+<ul>
+<li>default.htm</li>
+<li>default.html</li>
+<li>index.htm</li>
+<li>index.html</li>
+</ul>
+<p>将请求视为完全限定 URI，提供在列表中找到的第一个文件。 浏览器 URL 继续反映请求的 URI。</p>
+<p>以下代码将默认文件名更改为 mydefault.html：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="usefileserver">UseFileServer</h2>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.FileServerExtensions.UseFileServer*&gt; 结合了 <code>UseStaticFiles</code>、<code>UseDefaultFiles</code> 和 <code>UseDirectoryBrowser</code>（可选）的功能。</p>
+<p>以下代码提供静态文件和默认文件。 未启用目录浏览。</p>
+<pre><code class="lang-csharp">app.UseFileServer();
+</code></pre>
+<p>以下代码通过启用目录浏览基于无参数重载进行构建：</p>
+<pre><code class="lang-csharp">app.UseFileServer(enableDirectoryBrowsing: true);
+</code></pre>
+<p>考虑以下目录层次结构：</p>
+<ul>
+<li><strong>wwwroot</strong>
+<ul>
+<li><strong>css</strong></li>
+<li><strong>images</strong></li>
+<li><strong>js</strong></li>
+</ul>
+</li>
+<li><strong>MyStaticFiles</strong>
+<ul>
+<li><strong>images</strong>
+<ul>
+<li>banner1.svg</li>
+</ul>
+</li>
+<li>default.html</li>
+</ul>
+</li>
+</ul>
+<p>以下代码启用静态文件、默认文件和及 <code>MyStaticFiles</code> 的目录浏览：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>EnableDirectoryBrowsing</code> 属性值为 <code>true</code> 时必须调用 <code>AddDirectoryBrowser</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用文件层次结构和前面的代码，URL 解析如下：</p>
+<table>
+<thead>
+<tr>
+<th>URI</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>http://&lt;server_address&gt;/StaticFiles/images/banner1.svg</td>
+<td>MyStaticFiles/images/banner1.svg</td>
+</tr>
+<tr>
+<td>http://&lt;server_address&gt;/StaticFiles</td>
+<td>MyStaticFiles/default.html</td>
+</tr>
+</tbody>
+</table>
+<p>如果 MyStaticFiles 目录中不存在默认命名文件，则 http://&lt;server_address&gt;/StaticFiles 返回包含可单击链接的目录列表 ：</p>
+<p><img src="static-files/_static/db2.png" alt="静态文件列表"></p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>&lt;xref:Microsoft.AspNetCore.Builder.DefaultFilesExtensions.UseDefaultFiles*&gt; 和 &lt;xref:Microsoft.AspNetCore.Builder.DirectoryBrowserExtensions.UseDirectoryBrowser*&gt; 执行从 <code>http://{SERVER ADDRESS}/StaticFiles</code>（不带尾部斜杠）到 <code>http://{SERVER ADDRESS}/StaticFiles/</code>（带尾部斜杠）的客户端重定向。 如果没有尾部斜杠，StaticFiles 目录中的相对 URL 无效。</p>
+</div>
+<h2 id="fileextensioncontenttypeprovider">FileExtensionContentTypeProvider</h2>
+<p>&lt;xref:Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider&gt; 类包含 <code>Mappings</code> 属性，用作文件扩展名到 MIME 内容类型的映射。 在以下示例中，多个文件扩展名注册到了已知的 MIME 类型。 替换了 .rtf 扩展名，删除了 .mp4 。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>请参阅 <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">MIME 内容类型</a>。</p>
+<p>若要了解如何使用自定义 &lt;xref:Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider&gt;，或者要配置 Blazor Server 应用中的其他 &lt;xref:Microsoft.AspNetCore.Builder.StaticFileOptions&gt;，请参阅 <a class="xref" href="../blazor/fundamentals/additional-scenarios.html#static-files">ASP.NET Core Blazor 托管模型配置</a>。</p>
+<h2 id="non-standard-content-types">非标准内容类型</h2>
+<p>静态文件中间件可理解近 400 种已知文件内容类型。 如果用户请求文件类型未知的文件，则静态文件中间件将请求传递给管道中的下一个中间件。 如果没有中间件处理请求，则返回“404 未找到”响应。 如果启用了目录浏览，则在目录列表中会显示该文件的链接。</p>
+<p>以下代码提供未知类型，并以图像形式呈现未知文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用前面的代码，请求的文件含未知内容类型时，以图像形式返回请求。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>启用 &lt;xref:Microsoft.AspNetCore.Builder.StaticFileOptions.ServeUnknownFileTypes&gt; 会形成安全隐患。 它默认处于禁用状态，不建议使用。 <a href="#fileextensioncontenttypeprovider">FileExtensionContentTypeProvider</a> 提供了更安全的替代方法来提供含非标准扩展名的文件。</p>
+</div>
+<h2 id="serve-files-from-multiple-locations">从多个位置提供文件</h2>
+<p><code>UseStaticFiles</code> 和 <code>UseFileServer</code> 默认为指向 wwwroot 的文件提供程序。 可使用其他文件提供程序提供 <code>UseStaticFiles</code> 和 <code>UseFileServer</code> 的其他实例，从多个位置提供文件。 有关详细信息，请参阅<a href="https://github.com/dotnet/AspNetCore.Docs/issues/15578">此 GitHub 问题</a>。</p>
+<h3 id="considerations">注意事项</h3>
+<div class="WARNING">
+<h5>Warning</h5>
+<p><code>UseDirectoryBrowser</code> 和 <code>UseStaticFiles</code> 可能会泄漏机密。 强烈建议在生产中禁用目录浏览。 请仔细查看 <code>UseStaticFiles</code> 或 <code>UseDirectoryBrowser</code> 启用了哪些目录。 整个目录及其子目录均可公开访问。 将适合公开的文件存储在专用目录中，如 &lt;content_root&gt;/wwwroot。 将这些文件与 MVC 视图、Razor 页面（仅限 2.x）和配置文件等分开。</p>
+</div>
+<ul>
+<li><p>使用 <code>UseDirectoryBrowser</code> 和 <code>UseStaticFiles</code> 公开的内容的 URL 受大小写和基础文件系统字符限制的影响。 例如，Windows 不区分大小写 — macOS 和 Linux 却要区分。</p>
+</li>
+<li><p>托管于 IIS 中的 ASP.NET Core 应用使用 <a class="xref" href="../host-and-deploy/aspnet-core-module.html">ASP.NET Core 模块</a>将所有请求转发到应用，包括静态文件请求。 未使用 IIS 静态文件处理程序。 在模块处理请求前，处理程序没有机会处理请求。</p>
+</li>
+<li><p>在 IIS Manager 中完成以下步骤，删除服务器或网站级别的 IIS 静态文件处理程序：</p>
+<ol>
+<li>转到“模块”功能。</li>
+<li>在列表中选择 StaticFileModule。</li>
+<li>单击“操作”侧栏中的“删除” 。</li>
+</ol>
+</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>如果启用了 IIS 静态文件处理程序且 ASP.NET Core 模块配置不正确，则会提供静态文件。 例如，如果未部署 web.config 文件，则会发生这种情况。</p>
+</div>
+<ul>
+<li>将代码文件（包括 .cs 和 .cshtml ）放在应用项目的 <a class="xref" href="index.html#web-root">Web 根目录</a>之外 。 这样就在应用的客户端内容和基于服务器的代码间创建了逻辑分隔。 可以防止服务器端代码泄漏。</li>
+</ul>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="middleware/index.html">中间件</a></li>
+<li><a class="xref" href="../introduction-to-aspnet-core.html">ASP.NET Core 简介</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

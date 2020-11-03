@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Razor &#32452;&#20214;&#31867;&#24211; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Razor &#32452;&#20214;&#31867;&#24211; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/components/class-libraries">
+<h1 id="aspnet-core-no-locrazor-components-class-libraries">ASP.NET Core Razor 组件类库</h1>
+
+<p>作者：<a href="https://github.com/stimms">Simon Timms</a></p>
+<p>组件可在 <a class="xref" href="../../razor-pages/ui-class.html">Razor 类库 (RCL)</a> 中跨项目共享。 Razor 组件类库可以包含在以下各项中：</p>
+<ul>
+<li>解决方案中的另一个项目。</li>
+<li>NuGet 程序包。</li>
+<li>引用的 .NET 库。</li>
+</ul>
+<p>正如组件是常规的 .NET 类型一样，RCL 提供的组件也是普通的 .NET 程序集。</p>
+<h2 id="create-an-rcl">创建 RCL</h2>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_visual-studio" role="tab" aria-controls="tabpanel_CeZOj-G++Q_visual-studio" data-tab="visual-studio" tabindex="0" aria-selected="true">Visual Studio</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_netcore-cli" role="tab" aria-controls="tabpanel_CeZOj-G++Q_netcore-cli" data-tab="netcore-cli" tabindex="-1">.NET Core CLI</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_visual-studio" role="tabpanel" data-tab="visual-studio">
+
+<ol>
+<li>创建新项目。</li>
+<li>选择“Razor 类库”。 选择“下一步”。</li>
+<li>在“创建新的 Razor 类库”对话框中，选择“创建” 。</li>
+<li>在“项目名称”字段提供项目名称，或接受默认项目名称。 本主题中的示例使用项目名称 <code>ComponentLibrary</code>。 选择“创建”。</li>
+<li>将 RCL 添加到一个解决方案：
+<ol>
+<li>右键单击该解决方案。 选择“添加” &gt; “现有项目” 。</li>
+<li>导航到 RCL 的项目文件。</li>
+<li>选择 RCL 的项目文件 (<code>.csproj</code>)。</li>
+</ol>
+</li>
+<li>从应用中添加 RCL 的引用：
+<ol>
+<li>右键单击该应用项目。 选择“添加” &gt; “引用” 。</li>
+<li>选择 RCL 项目。 选择“确定”。</li>
+</ol>
+</li>
+</ol>
+<div class="NOTE">
+<h5>Note</h5>
+<p>如果在从模板生成 RCL 时选中了“支持页面和视图”复选框，还请通过以下内容，将 <code>_Imports.razor</code> 文件添加到所生成项目的根目录中，以启用 Razor 组件创作：</p>
+<pre><code class="lang-razor">@using Microsoft.AspNetCore.Components.Web
+</code></pre>
+<p>手动将该文件添加到所生成项目的根目录中。</p>
+</div>
+</section>
+<section id="tabpanel_CeZOj-G++Q_netcore-cli" role="tabpanel" data-tab="netcore-cli" aria-hidden="true" hidden="hidden">
+
+<ol>
+<li><p>在命令行界面中通过 <a href="/dotnet/core/tools/dotnet-new"><code>dotnet new</code></a> 命令使用 Razor 类库模板 (<code>razorclasslib</code>)。 下面的示例创建了名为 <code>ComponentLibrary</code> 的 RCL。 执行命令时，自动创建包含 <code>ComponentLibrary</code> 的文件夹：</p>
+<pre><code class="lang-dotnetcli">dotnet new razorclasslib -o ComponentLibrary
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>如果在从模板生成 RCL 时使用 <code>-s|--support-pages-and-views</code> 开关，还请通过以下内容将 <code>_Imports.razor</code> 文件添加到所生成项目的根目录中，以启用 Razor 组件创作：</p>
+<pre><code class="lang-razor">@using Microsoft.AspNetCore.Components.Web
+</code></pre>
+<p>手动将该文件添加到所生成项目的根目录中。</p>
+</div>
+</li>
+<li><p>若要将库添加到现有项目中，请在命令行界面中使用 <a href="/dotnet/core/tools/dotnet-add-reference"><code>dotnet add reference</code></a> 命令。 在下面的示例中，将 RCL 添加到应用中。 使用指向库的路径从应用的项目文件夹执行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet add reference {PATH TO LIBRARY}
+</code></pre>
+</li>
+</ol>
+</section>
+</div>
+<h2 id="consume-a-library-component">使用库组件</h2>
+<p>若要使用另一项目的库中定义的组件，请使用以下任一方法：</p>
+<ul>
+<li>使用命名空间的完整类型名称。</li>
+<li>使用 Razor 的 <a class="xref" href="../../mvc/views/razor.html#using"><code>@using</code></a> 指令。 单个组件可以按名称添加。</li>
+</ul>
+<p>在下面的示例中，<code>ComponentLibrary</code> 是一个包含 <code>Component1</code> 组件 (<code>Component1.razor</code>) 的组件库。 <code>Component1</code> 是库创建成功后，RCL 项目模板会自动添加的示例组件。</p>
+<p>使用 <code>Component1</code> 组件的命名空间引用它：</p>
+<pre><code class="lang-razor">&lt;h1&gt;Hello, world!&lt;/h1&gt;
+
+Welcome to your new app.
+
+&lt;ComponentLibrary.Component1 /&gt;
+</code></pre>
+<p>或者，使用 <a class="xref" href="../../mvc/views/razor.html#using"><code>@using</code></a> 指令将库纳入范围，并在没有命名空间的情况下使用该组件：</p>
+<pre><code class="lang-razor">@using ComponentLibrary
+
+&lt;h1&gt;Hello, world!&lt;/h1&gt;
+
+Welcome to your new app.
+
+&lt;Component1 /&gt;
+</code></pre>
+<p>可以选择在顶级 <code>_Import.razor</code> 文件中包含 <code>@using ComponentLibrary</code> 指令，使库的组件可用于整个项目。 将指令添加到任何级别的 <code>_Import.razor</code> 文件，将命名空间应用于文件夹中的单个组件或一组组件。</p>
+<div range="&gt;= aspnetcore-5.0">
+<p>若要向组件提供 <code>Component1</code> 的 <code>my-component</code> CSS 类，请在 <code>Component1.razor</code> 中使用框架的 <a class="xref" href="../fundamentals/additional-scenarios.html#influence-html-head-tag-elements"><code>Link</code> 组件</a>链接到库的样式表：</p>
+<pre><code class="lang-razor">&lt;div class=&quot;my-component&quot;&gt;
+    &lt;Link href=&quot;_content/ComponentLibrary/styles.css&quot; rel=&quot;stylesheet&quot; /&gt;
+
+    &lt;p&gt;
+        This Blazor component is defined in the &lt;strong&gt;ComponentLibrary&lt;/strong&gt; package.
+    &lt;/p&gt;
+&lt;/div&gt;
+</code></pre>
+<p>若要在应用中提供样式表，可以在应用的 <code>wwwroot/index.html</code> 文件 (Blazor WebAssembly) 或 <code>Pages/_Host.cshtml</code> 文件 (Blazor Server) 中链接到库的样式表：</p>
+<pre><code class="lang-html">&lt;head&gt;
+    ...
+    &lt;link href=&quot;_content/ComponentLibrary/styles.css&quot; rel=&quot;stylesheet&quot; /&gt;
+&lt;/head&gt;
+</code></pre>
+<p>在子组件中使用 <code>Link</code> 组件时，只要呈现 <code>Link</code> 组件的子组件，链接的资源就可用于父组件的任何其他子组件。 在子组件中使用 <code>Link</code> 组件，与在 <code>wwwroot/index.html</code> 或 <code>Pages/_Host.cshtml</code> 中放置一个 <code>&lt;link&gt;</code> HTML 标记之间的区别是，框架组件已呈现的 HTML 标记：</p>
+<ul>
+<li>可以根据应用程序状态进行修改。 不能根据应用程序状态修改硬编码 <code>&lt;link&gt;</code> HTML 标记。</li>
+<li>将在不再呈现父组件的情况下从 HTML <code>&lt;head&gt;</code> 中被删除。</li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-5.0">
+<p>若要提供 <code>Component1</code> 的 <code>my-component</code> CSS 类，请在应用的 <code>wwwroot/index.html</code> 文件 (Blazor WebAssembly) 或 <code>Pages/_Host.cshtml</code> 文件 (Blazor Server) 中链接到库的样式表：</p>
+<pre><code class="lang-html">&lt;head&gt;
+    ...
+    &lt;link href=&quot;_content/ComponentLibrary/styles.css&quot; rel=&quot;stylesheet&quot; /&gt;
+&lt;/head&gt;
+</code></pre>
+</div>
+<h2 id="create-a-no-locrazor-components-class-library-with-static-assets">创建包括静态资源的 Razor 组件类库</h2>
+<p>RCL 可以包括静态资产。 静态资产可用于任何使用该库的应用。 有关详细信息，请参阅 <a class="xref" href="../../razor-pages/ui-class.html#create-an-rcl-with-static-assets">ASP.NET Core 的类库中的可重用 Razor UI</a>。</p>
+<h2 id="supply-components-and-static-assets-to-multiple-hosted-no-locblazor-apps">向多个托管的 Blazor 应用提供组件和静态资产</h2>
+<p>有关详细信息，请参阅 <a class="xref" href="../host-and-deploy/webassembly.html#static-assets-and-class-libraries">托管和部署 ASP.NET Core Blazor WebAssembly</a>。</p>
+<div range="&gt;= aspnetcore-5.0">
+<h2 id="browser-compatibility-analyzer-for-no-locblazor-webassembly">Blazor WebAssembly 的浏览器兼容性分析器</h2>
+<p>Blazor WebAssembly 应用面向整个 .NET API 外围应用，但由于浏览器沙盒约束，并非所有 .NET API 在 WebAssembly 上都受支持。 在 WebAssembly 上运行时，不支持的 API 将引发 &lt;xref:System.PlatformNotSupportedException&gt;。 当应用使用应用目标平台不支持的 API 时，平台兼容性分析器会向开发人员发出警告。 对于 Blazor WebAssembly 应用，这意味着需要检查浏览器是否支持这些 API。 为兼容性分析器注释 .NET Framework API 是一个持续的过程，因此并不是所有的 .NET Framework API 当前都已进行注释。</p>
+<p>Blazor WebAssembly 和 Razor 类库项目自动启用浏览器兼容性检查，方法是使用 <code>SupportedPlatform</code> MSBuild 项将 <code>browser</code> 添加为支持的平台。 库开发人员可以手动将 <code>SupportedPlatform</code> 项添加到库的项目文件以启用该功能：</p>
+<pre><code class="lang-xml">&lt;ItemGroup&gt;
+  &lt;SupportedPlatform Include=&quot;browser&quot; /&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+<p>编写库时，通过将 <code>browser</code> 指定为 &lt;xref:System.Runtime.Versioning.UnsupportedOSPlatformAttribute&gt; 来指示浏览器不支持特定的 API：</p>
+<pre><code class="lang-csharp">[UnsupportedOSPlatform(&quot;browser&quot;)]
+private static string GetLoggingDirectory()
+{
+    ...
+}
+</code></pre>
+<p>有关详细信息，请参阅<a href="https://github.com/dotnet/designs/blob/main/accepted/2020/platform-exclusion/platform-exclusion.md#build-configuration-for-platforms">在特定平台（dotnet/designs GitHub 存储库）上将 API 注释为不受支持</a>。</p>
+<h2 id="no-locblazor-javascript-isolation-and-object-references">Blazor JavaScript 隔离和对象引用</h2>
+<p>Blazor 在标准 <a href="https://developer.mozilla.org/docs/Web/JavaScript/Guide/Modules">JavaScript 模块</a>中启用 JavaScript 隔离。 JavaScript 隔离具有以下优势：</p>
+<ul>
+<li>导入的 JavaScript 不再污染全局命名空间。</li>
+<li>库和组件的使用者不需要手动导入相关的 JavaScript。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="../call-javascript-from-dotnet.html#blazor-javascript-isolation-and-object-references">在 ASP.NET Core Blazor 中从 .NET 方法调用 JavaScript 函数</a>。</p>
+</div>
+<h2 id="build-pack-and-ship-to-nuget">生成并打包库，再将其传送到 NuGet</h2>
+<p>由于组件库是标准的 .NET 库，因此将它们打包并传送到 NuGet 与将任何库打包并传送到 NuGet 没有什么区别。 在命令行界面中使用 <a href="/dotnet/core/tools/dotnet-pack"><code>dotnet pack</code></a> 命令，执行打包操作：</p>
+<pre><code class="lang-dotnetcli">dotnet pack
+</code></pre>
+<p>在命令行界面中使用 <a href="/dotnet/core/tools/dotnet-nuget-push"><code>dotnet nuget push</code></a> 命令，将包上传到 NuGet。</p>
+<h2 id="additional-resources">其他资源</h2>
+<div range="&gt;= aspnetcore-5.0">
+<ul>
+<li><a class="xref" href="../../razor-pages/ui-class.html">ASP.NET Core 的类库中的可重用 Razor UI</a></li>
+<li><a class="xref" href="../host-and-deploy/configure-trimmer.html">向库添加 XML 中间语言 (IL) 裁边器配置文件</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-5.0">
+<ul>
+<li><a class="xref" href="../../razor-pages/ui-class.html">ASP.NET Core 的类库中的可重用 Razor UI</a></li>
+<li><a class="xref" href="../host-and-deploy/configure-linker.html#add-an-xml-linker-configuration-file-to-a-library">向库添加 XML 中间语言 (IL) 链接器配置文件</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,607 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#31532; 3 &#37096;&#20998;&#65292;ASP.NET Core &#20013;&#30340; Razor &#39029;&#38754;&#21644; EF Core - &#25490;&#24207;&#12289;&#31579;&#36873;&#12289;&#20998;&#39029; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#31532; 3 &#37096;&#20998;&#65292;ASP.NET Core &#20013;&#30340; Razor &#39029;&#38754;&#21644; EF Core - &#25490;&#24207;&#12289;&#31579;&#36873;&#12289;&#20998;&#39029; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="data/ef-rp/sort-filter-page">
+<h1 id="part-3-no-locrazor-pages-with-ef-core-in-aspnet-core---sort-filter-paging">第 3 部分，ASP.NET Core 中的 Razor 页面和 EF Core - 排序、筛选、分页</h1>
+
+<p>作者：<a href="https://github.com/tdykstra">Tom Dykstra</a>、<a href="https://twitter.com/RickAndMSFT">Rick Anderson</a> 和 <a href="https://twitter.com/thereformedprog">Jon P Smith</a></p>
+<p>Contoso University Web 应用演示了如何使用 EF Core 和 Visual Studio 创建 Razor 页面 Web 应用。 若要了解系列教程，请参阅<a class="xref" href="intro.html">第一个教程</a>。</p>
+<p>如果遇到无法解决的问题，请下载<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/data/ef-rp/intro/samples">已完成的应用</a>，然后对比该代码与按教程所创建的代码。</p>
+<div range="&gt;= aspnetcore-3.0">
+<p>本教程将向学生页面添加排序、筛选和分页功能。</p>
+<p>下图显示完整的页面。 列标题是可单击的链接，可用于对列进行排序。 重复单击列标题可在升降排序顺序之间切换。</p>
+<p><img src="sort-filter-page/_static/paging30.png" alt="“学生索引”页"></p>
+<h2 id="add-sorting">添加排序</h2>
+<p>使用以下代码替换 Pages/Students/Index.cshtml.cs 中的代码，以添加排序。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>需要添加 <code>using System;</code>。</li>
+<li>添加包含排序参数的属性。</li>
+<li>将 <code>Student</code> 属性的名称更改为 <code>Students</code>。</li>
+<li>替换 <code>OnGetAsync</code> 方法中的代码。</li>
+</ul>
+<p><code>OnGetAsync</code> 方法接收来自 URL 中的查询字符串的 <code>sortOrder</code> 参数。 该 URL 及查询字符串由<a class="xref" href="../../mvc/views/tag-helpers/built-in/anchor-tag-helper.html">定位点标记帮助器</a>生成。</p>
+<p><code>sortOrder</code> 参数为 <code>Name</code> 或 <code>Date</code>。 <code>sortOrder</code> 参数后面可跟 <code>_desc</code> 以指定降序（可选）。 默认排序顺序为升序。</p>
+<p>如果通过“学生”链接对“索引”页发起请求，则不会有任何查询字符串。 学生按姓氏升序显示。 按姓氏升序是 <code>switch</code> 语句中的 <code>default</code>。 用户单击列标题链接时，查询字符串值中会提供相应的 <code>sortOrder</code> 值。</p>
+<p>Razor 页面使用 <code>NameSort</code> 和 <code>DateSort</code> 为列标题超链接配置相应的查询字符串值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>该代码使用 C# <a href="/dotnet/csharp/language-reference/operators/conditional-operator">条件运算符 ?:</a>。 <code>?:</code> 运算符是三元运算符，它采用三个操作数。 第一行指定当 <code>sortOrder</code> 为 NULL 或为空时，<code>NameSort</code> 设置为 <code>name_desc</code>。 如果 <code>sortOrder</code> 不为 NULL 或不为空，则 <code>NameSort</code> 设置为空字符串。</p>
+<p>通过这两个语句，页面可如下设置列标题超链接：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">当前排序顺序</th>
+<th style="text-align: center;">姓氏超链接</th>
+<th style="text-align: center;">日期超链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">姓氏升序</td>
+<td style="text-align: center;">descending</td>
+<td style="text-align: center;">ascending</td>
+</tr>
+<tr>
+<td style="text-align: center;">姓氏降序</td>
+<td style="text-align: center;">ascending</td>
+<td style="text-align: center;">ascending</td>
+</tr>
+<tr>
+<td style="text-align: center;">日期升序</td>
+<td style="text-align: center;">ascending</td>
+<td style="text-align: center;">descending</td>
+</tr>
+<tr>
+<td style="text-align: center;">日期降序</td>
+<td style="text-align: center;">ascending</td>
+<td style="text-align: center;">ascending</td>
+</tr>
+</tbody>
+</table>
+<p>该方法使用 LINQ to Entities 指定要作为排序依据的列。 此代码会初始化 switch 语句前面的 <code>IQueryable&lt;Student&gt;</code>，并在 switch 语句中对其进行修改：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建或修改 <code>IQueryable</code> 时，不会向数据库发送任何查询。 将 <code>IQueryable</code> 对象转换成集合后才能执行查询。 通过调用 <code>IQueryable</code> 等方法可将 <code>ToListAsync</code> 转换成集合。 因此，<code>IQueryable</code> 代码会生成单个查询，此查询直到出现以下语句才执行：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>OnGetAsync</code> 可能获得包含大量可排序列的详细信息。 要了解如何通过另一种方式使用代码编写此功能，请参阅本系列教程的 MVC 版本中的<a class="xref" href="../ef-mvc/advanced.html#dynamic-linq">使用动态 LINQ 简化代码</a>。</p>
+<h3 id="add-column-heading-hyperlinks-to-the-student-index-page">向“学生索引”页添加列标题超链接</h3>
+<p>使用以下代码替换 Students/Index.cshtml 中的代码。 突出显示所作更改。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>向 <code>LastName</code> 和 <code>EnrollmentDate</code> 列标题添加超链接。</li>
+<li>使用 <code>NameSort</code> 和 <code>DateSort</code> 中的信息为超链接设置当前的排序顺序值。</li>
+<li>将页面标题从“索引”更改为“学生”。</li>
+<li>将 <code>Model.Student</code> 更改为 <code>Model.Students</code>。</li>
+</ul>
+<p>若要验证排序是否生效：</p>
+<ul>
+<li>运行应用并选择“学生”选项卡。</li>
+<li>单击列标题。</li>
+</ul>
+<h2 id="add-filtering">添加筛选</h2>
+<p>若要向“学生索引”页添加筛选：</p>
+<ul>
+<li>需要向 Razor 页面添加一个文本框和一个提交按钮。 文本框会针对名字或姓氏提供一个搜索字符串。</li>
+<li>页面模型随即更新以使用文本框值。</li>
+</ul>
+<h3 id="update-the-ongetasync-method">更新 OnGetAsync 方法</h3>
+<p>使用以下代码替换 Students/Index.cshtml.cs 中的代码，以添加筛选：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>将 <code>searchString</code> 参数添加到 <code>OnGetAsync</code> 方法，然后保存 <code>CurrentFilter</code> 属性中的参数值。 从下一部分中添加的文本框中所接收搜索字符串值。</li>
+<li>向 LINQ 语句添加 <code>Where</code> 子句。 <code>Where</code> 子句仅选择其名字或姓氏中包含搜索字符串的学生。 只有存在要搜索的值时才执行 LINQ 语句。</li>
+</ul>
+<h3 id="iqueryable-vs-ienumerable">IQueryable vs.IEnumerable</h3>
+<p>该代码对 <code>IQueryable</code> 对象调用 &lt;xref:System.Linq.Queryable.Where%2A&gt; 方法，筛选在服务器上处理。 在某些情况下，应用可能会对内存中的集合调用 <code>Where</code> 方法作为扩展方法。 例如，假设 <code>_context.Students</code> 从 EF Core <code>DbSet</code> 更改为可返回 <code>IEnumerable</code> 集合的存储库方法。 结果通常是相同的，但在某些情况下可能不同。</p>
+<p>例如，<code>Contains</code> 的 .NET Framework 实现会默认执行区分大小写的比较。 在 SQL Server 中，<code>Contains</code> 区分大小写由 SQL Server 实例的排序规则设置决定。 SQL Server 默认为不区分大小写。 SQLite 默认为区分大小写。 可调用 <code>ToUpper</code>，进行不区分大小写的显式测试：</p>
+<pre><code class="lang-csharp">Where(s =&gt; s.LastName.ToUpper().Contains(searchString.ToUpper())`
+</code></pre>
+<p>即使是对 <code>IEnumerable</code> 调用 <code>Where</code> 方法或者该方法在 SQLite 上运行，上述代码也应确保筛选不区分大小写。</p>
+<p>如果在 <code>IEnumerable</code> 集合上调用 <code>Contains</code>，则使用 .NET Core 实现。 如果在 <code>IQueryable</code> 对象上调用 <code>Contains</code>，则使用数据库实现。</p>
+<p>出于性能考虑，通常首选对 <code>IQueryable</code> 调用 <code>Contains</code>。 数据库服务器利用 <code>IQueryable</code> 完成筛选。 如果先创建 <code>IEnumerable</code>，则必须从数据库服务器返回所有行。</p>
+<p>调用 <code>ToUpper</code> 不会对性能产生负面影响。 <code>ToUpper</code> 代码会在 TSQL SELECT 语句的 WHERE 子句中添加一个函数。 添加的函数会防止优化器使用索引。 如果安装的 SQL 区分大小写，则最好避免在不必要时调用 <code>ToUpper</code>。</p>
+<p>有关详细信息，请参阅 <a href="https://github.com/aspnet/EntityFrameworkCore/issues/11414">How to use case-insensitive query with Sqlite provider</a>（如何在 Sqlite 提供程序中使用不区分大小写的查询）。</p>
+<h3 id="update-the-no-locrazor-page">更新 Razor 页面</h3>
+<p>替换 Pages/Students/Index.cshtml 中的代码，以添加“搜索”按钮。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码使用 <code>&lt;form&gt;</code> <a class="xref" href="../../mvc/views/tag-helpers/intro.html">标记帮助程序</a>来添加搜索文本框和按钮。 默认情况下，<code>&lt;form&gt;</code> 标记帮助器利用 POST 提交表单数据。 借助 POST，会在 HTTP 消息正文中而不是在 URL 中传递参数。 使用 HTTP GET 时，表单数据作为查询字符串在 URL 中进行传递。 通过查询字符串传递数据时，用户可对 URL 添加书签。 <a href="https://www.w3.org/2001/tag/doc/whenToUseGet.html">W3C 指南</a>建议应在操作不引起更新的情况下使用 GET。</p>
+<p>测试应用：</p>
+<ul>
+<li><p>选择“学生”选项卡并输入搜索字符串。 如果使用 SQLite，则只有在实现上述可选 <code>ToUpper</code> 代码时，筛选器才不区分大小写。</p>
+</li>
+<li><p>选择“搜索”。</p>
+</li>
+</ul>
+<p>请注意，该 URL 包含搜索字符串。 例如：</p>
+<pre><code class="lang-browser-address-bar">https://localhost:5001/Students?SearchString=an
+</code></pre>
+<p>如果页面具有书签，该书签将包含该页面的 URL 和 <code>SearchString</code> 查询字符串。 <code>form</code> 标记中的 <code>method=&quot;get&quot;</code> 会导致生成查询字符串。</p>
+<p>目前，选中列标题排序链接时，“搜索”框中的筛选值会丢失。 丢失的筛选值在下一部分进行修复。</p>
+<h2 id="add-paging">添加分页</h2>
+<p>本部分将创建一个 <code>PaginatedList</code> 类来支持分页。 <code>PaginatedList</code> 类使用 <code>Skip</code> 和 <code>Take</code> 语句在服务器上筛选数据，而不是检索所有表格行。 下图显示了分页按钮。</p>
+<p><img src="sort-filter-page/_static/paging30.png" alt="带有分页链接的“学生索引”页"></p>
+<h3 id="create-the-paginatedlist-class">创建 PaginatedList 类</h3>
+<p>在项目文件夹中，使用以下代码创建 <code>PaginatedList.cs</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码中的 <code>CreateAsync</code> 方法会提取页面大小和页码，并将相应的 <code>Skip</code> 和 <code>Take</code> 语句应用于 <code>IQueryable</code>。 当在 <code>IQueryable</code> 上调用 <code>ToListAsync</code> 时，它将返回仅包含所请求页的列表。 属性 <code>HasPreviousPage</code> 和 <code>HasNextPage</code> 用于启用或禁用“上一页”和“下一页”分页按钮 。</p>
+<p><code>CreateAsync</code> 方法用于创建 <code>PaginatedList&lt;T&gt;</code>。 构造函数不能创建 <code>PaginatedList&lt;T&gt;</code> 对象；构造函数不能运行异步代码。</p>
+<h3 id="add-paging-to-the-pagemodel-class">向 PageModel 类添加分页</h3>
+<p>替换 Students/Index.cshtml.cs 中的代码以添加分页。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>将 <code>Students</code> 属性的类型从 <code>IList&lt;Student&gt;</code> 更改为 <code>PaginatedList&lt;Student&gt;</code>。</li>
+<li>向 <code>OnGetAsync</code> 方法签名添加页面索引、当前的 <code>sortOrder</code> 和 <code>currentFilter</code>。</li>
+<li>在 <code>CurrentSort</code> 属性中保存排序顺序。</li>
+<li>如果有新的搜索字符串，则将页面索引重置为 1。</li>
+<li>使用 <code>PaginatedList</code> 类获取 Student 实体。</li>
+<li>将 <code>pageSize</code> 设置为 3。 真实的应用会使用<a class="xref" href="../../fundamentals/configuration/index.html">配置</a>来设置页面大小值。</li>
+</ul>
+<p>出现以下情况时，<code>OnGetAsync</code> 接收到的所有参数均为 NULL：</p>
+<ul>
+<li>从“学生”链接调用页面。</li>
+<li>用户尚未单击分页或排序链接。</li>
+</ul>
+<p>单击分页链接后，页面索引变量将包含要显示的页码。</p>
+<p><code>CurrentSort</code> 属性为 Razor 页面提供当前排序顺序。 必须在分页链接中包含当前排序顺序才能在分页时保留排序顺序。</p>
+<p><code>CurrentFilter</code> 属性为 Razor 页面提供当前筛选字符串。 <code>CurrentFilter</code> 值：</p>
+<ul>
+<li>必须包含在分页链接中才能在分页过程中保留筛选设置。</li>
+<li>必须在重新显示页面时还原到文本框。</li>
+</ul>
+<p>如果在分页时更改搜索字符串，页码会重置为 1。 页面必须重置为 1，因为新的筛选器会导致显示不同的数据。 输入搜索值并选择“提交”时：</p>
+<ul>
+<li>搜索字符串将会更改。</li>
+<li><code>searchString</code> 参数不为 NULL。</li>
+</ul>
+<p><code>PaginatedList.CreateAsync</code> 方法会将学生查询转换为支持分页的集合类型中的单个学生页面。 单个学生页面会传递到 Razor 页面。</p>
+<p><code>PaginatedList.CreateAsync</code> 调用中的 <code>pageIndex</code> 之后的两个问号表示 <a href="/dotnet/csharp/language-reference/operators/null-conditional-operator">NULL 合并运算符</a>。 NULL 合并运算符定义可为 NULL 的类型的默认值。 若 <code>pageIndex</code> 具有值，则表达式 <code>pageIndex ?? 1</code> 返回其值，若其没有值，则表达式返回 1。</p>
+<h3 id="add-paging-links-to-the-no-locrazor-page">向 Razor 页面添加分页链接</h3>
+<p>使用以下代码替换 Students/Index.cshtml 中的代码。 突出显示所作更改：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>列标题链接使用查询字符串将当前搜索字符串传递到 <code>OnGetAsync</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>分页按钮由标记帮助器显示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>运行应用并导航到学生页面。</p>
+<ul>
+<li>为确保分页生效，请单击不同排序顺序的分页链接。</li>
+<li>要验证确保分页后可正确地排序和筛选，请输入搜索字符串并尝试分页。</li>
+</ul>
+<p><img src="sort-filter-page/_static/paging30.png" alt="带有分页链接的“学生索引”页"></p>
+<h2 id="add-grouping">添加分组</h2>
+<p>本节创建“关于”页面，页面中显示每个注册日期的注册学生数。 更新需使用分组并包括以下步骤：</p>
+<ul>
+<li>为“关于”页使用的数据创建视图模型。</li>
+<li>更新“关于”页以使用视图模型。</li>
+</ul>
+<h3 id="create-the-view-model">创建视图模型</h3>
+<p>创建“Models/SchoolViewModels”文件夹。</p>
+<p>使用以下代码创建 SchoolViewModels/EnrollmentDateGroup.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="create-the-no-locrazor-page">创建 Razor 页面</h3>
+<p>使用以下代码创建 Pages/About.cshtml 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="create-the-page-model">创建页面模型</h3>
+<p>用以下代码更新 Pages/About.cshtml.cs 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>LINQ 语句按注册日期对学生实体进行分组，计算每组中实体的数量，并将结果存储在 <code>EnrollmentDateGroup</code> 视图模型对象的集合中。</p>
+<p>运行应用并导航到“关于”页面。 表格中会显示每个注册日期的学生计数。</p>
+<p><img src="sort-filter-page/_static/about30.png" alt="“关于”页面"></p>
+<h2 id="next-steps">后续步骤</h2>
+<p>在下一教程中，应用将利用迁移更新数据模型。</p>
+<div class="step-by-step">
+<p><a class="xref" href="crud.html">上一个教程</a>
+<a class="xref" href="migrations.html">下一个教程</a></p>
+</div>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>本教程将添加排序、筛选、分组和分页功能。</p>
+<p>下图显示完整的页面。 列标题是可单击的链接，可用于对列进行排序。 重复单击列标题可在升降和降序排序顺序之间切换。</p>
+<p><img src="sort-filter-page/_static/paging.png" alt="“学生索引”页"></p>
+<p>如果遇到无法解决的问题，请下载<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/data/ef-rp/intro/samples">已完成应用</a>。</p>
+<h2 id="add-sorting-to-the-index-page">向索引页添加排序</h2>
+<p>向 Students/Index.cshtml.cs <code>PageModel</code> 添加字符串，使其包含排序参数：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>用以下代码更新 Students/Index.cshtml.cs <code>OnGetAsync</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码接收来自 URL 中的查询字符串的 <code>sortOrder</code> 参数。 该 URL（包括查询字符串）由<a class="xref" href="../../mvc/views/tag-helpers/built-in/anchor-tag-helper.html">定位点标记帮助器</a>生成</p>
+<p><code>sortOrder</code> 参数为“名称”或“日期”。 <code>sortOrder</code> 参数后面可跟“_desc”以指定降序（可选）。 默认排序顺序为升序。</p>
+<p>如果通过“学生”链接对“索引”页发起请求，则不会有任何查询字符串。 学生按姓氏升序显示。 按姓氏升序是 <code>switch</code> 语句中的默认顺序 (fall-through case)。 用户单击列标题链接时，查询字符串值中会提供相应的 <code>sortOrder</code> 值。</p>
+<p>Razor 页面使用 <code>NameSort</code> 和 <code>DateSort</code> 为列标题超链接配置相应的查询字符串值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下代码包含 C# 条件 <a href="/dotnet/csharp/language-reference/operators/conditional-operator">?: 运算符</a>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>第一行指定当 <code>sortOrder</code> 为 NULL 或为空时，<code>NameSort</code> 设置为“name_desc”。 如果 <code>sortOrder</code> 不为 NULL 或不为空，则 <code>NameSort</code> 设置为空字符串。</p>
+<p><code>?: operator</code> 也称为三元运算符。</p>
+<p>通过这两个语句，页面可如下设置列标题超链接：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">当前排序顺序</th>
+<th style="text-align: center;">姓氏超链接</th>
+<th style="text-align: center;">日期超链接</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">姓氏升序</td>
+<td style="text-align: center;">descending</td>
+<td style="text-align: center;">ascending</td>
+</tr>
+<tr>
+<td style="text-align: center;">姓氏降序</td>
+<td style="text-align: center;">ascending</td>
+<td style="text-align: center;">ascending</td>
+</tr>
+<tr>
+<td style="text-align: center;">日期升序</td>
+<td style="text-align: center;">ascending</td>
+<td style="text-align: center;">descending</td>
+</tr>
+<tr>
+<td style="text-align: center;">日期降序</td>
+<td style="text-align: center;">ascending</td>
+<td style="text-align: center;">ascending</td>
+</tr>
+</tbody>
+</table>
+<p>该方法使用 LINQ to Entities 指定要作为排序依据的列。 此代码会初始化 switch 语句前面的 <code>IQueryable&lt;Student&gt;</code>，并在 switch 语句中对其进行修改：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建或修改 <code>IQueryable</code> 时，不会向数据库发送任何查询。 将 <code>IQueryable</code> 对象转换成集合后才能执行查询。 通过调用 <code>IQueryable</code> 等方法可将 <code>ToListAsync</code> 转换成集合。 因此，<code>IQueryable</code> 代码会生成单个查询，此查询直到出现以下语句才执行：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>OnGetAsync</code> 可能获得包含大量可排序列的详细信息。</p>
+<h3 id="add-column-heading-hyperlinks-to-the-student-index-page">向“学生索引”页添加列标题超链接</h3>
+<p>将 Students/Index.cshtml 中的代码替换为以下突出显示的代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>向 <code>LastName</code> 和 <code>EnrollmentDate</code> 列标题添加超链接。</li>
+<li>使用 <code>NameSort</code> 和 <code>DateSort</code> 中的信息为超链接设置当前的排序顺序值。</li>
+</ul>
+<p>若要验证排序是否生效：</p>
+<ul>
+<li>运行应用并选择“学生”选项卡。</li>
+<li>单击“姓氏”。</li>
+<li>单击“注册日期”。</li>
+</ul>
+<p>若要更好地了解此代码：</p>
+<ul>
+<li>请在 Student/Index.cshtml.cs 中的 <code>switch (sortOrder)</code> 上设置断点。</li>
+<li>添加对 <code>NameSort</code> 和 <code>DateSort</code> 的监视。</li>
+<li>请在 Student/Index.cshtml.cs 中的 <code>@Html.DisplayNameFor(model =&gt; model.Student[0].LastName)</code> 上设置断点。</li>
+</ul>
+<p>单步执行调试程序。</p>
+<h2 id="add-a-search-box-to-the-students-index-page">向“学生索引”页添加搜索框</h2>
+<p>若要向“学生索引”页添加筛选：</p>
+<ul>
+<li>需要向 Razor 页面添加一个文本框和一个提交按钮。 文本框会针对名字或姓氏提供一个搜索字符串。</li>
+<li>页面模型随即更新以使用文本框值。</li>
+</ul>
+<h3 id="add-filtering-functionality-to-the-index-method">向 Index 方法添加筛选功能</h3>
+<p>用以下代码更新 Students/Index.cshtml.cs <code>OnGetAsync</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>前面的代码：</p>
+<ul>
+<li>向 <code>OnGetAsync</code> 方法添加 <code>searchString</code> 参数。 从下一部分中添加的文本框中所接收搜索字符串值。</li>
+<li>已向 LINQ 语句添加 <code>Where</code> 子句。 <code>Where</code> 子句仅选择其名字或姓氏中包含搜索字符串的学生。 只有存在要搜索的值时才执行 LINQ 语句。</li>
+</ul>
+<p>注意：上述代码调用 <code>IQueryable</code> 对象上的 <code>Where</code> 方法，且在服务器上处理该筛选器。 在某些情况下，应用可能会对内存中的集合调用 <code>Where</code> 方法作为扩展方法。 例如，假设 <code>_context.Students</code> 从 EF Core <code>DbSet</code> 更改为可返回 <code>IEnumerable</code> 集合的存储库方法。 结果通常是相同的，但在某些情况下可能不同。</p>
+<p>例如，<code>Contains</code> 的 .NET Framework 实现会默认执行区分大小写的比较。 在 SQL Server 中，<code>Contains</code> 区分大小写由 SQL Server 实例的排序规则设置决定。 SQL Server 默认为不区分大小写。 可调用 <code>ToUpper</code>，进行不区分大小写的显式测试：</p>
+<p><code>Where(s =&gt; s.LastName.ToUpper().Contains(searchString.ToUpper())</code></p>
+<p>如果上述代码改为使用 <code>IEnumerable</code>，则该代码会确保结果区分大小写。 如果在 <code>IEnumerable</code> 集合上调用 <code>Contains</code>，则使用 .NET Core 实现。 如果在 <code>IQueryable</code> 对象上调用 <code>Contains</code>，则使用数据库实现。 从存储库返回 <code>IEnumerable</code> 可能会大幅降低性能：</p>
+<ol>
+<li>所有行均从 DB 服务器返回。</li>
+<li>筛选应用于应用程序中所有返回的行。</li>
+</ol>
+<p>调用 <code>ToUpper</code> 不会对性能产生负面影响。 <code>ToUpper</code> 代码会在 TSQL SELECT 语句的 WHERE 子句中添加一个函数。 添加的函数会防止优化器使用索引。 如果安装的 SQL 区分大小写，则最好避免在不必要时调用 <code>ToUpper</code>。</p>
+<h3 id="add-a-search-box-to-the-student-index-page">向“学生索引”页添加搜索框</h3>
+<p>在 Pages/Students/Index.cshtml中，添加以下突出显示的代码以创建“搜索”按钮和各种 chrome。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码使用 <code>&lt;form&gt;</code> <a class="xref" href="../../mvc/views/tag-helpers/intro.html">标记帮助程序</a>来添加搜索文本框和按钮。 默认情况下，<code>&lt;form&gt;</code> 标记帮助器利用 POST 提交表单数据。 借助 POST，会在 HTTP 消息正文中而不是在 URL 中传递参数。 使用 HTTP GET 时，表单数据作为查询字符串在 URL 中进行传递。 通过查询字符串传递数据时，用户可对 URL 添加书签。 <a href="https://www.w3.org/2001/tag/doc/whenToUseGet.html">W3C 指南</a>建议应在操作不引起更新的情况下使用 GET。</p>
+<p>测试应用：</p>
+<ul>
+<li>选择“学生”选项卡并输入搜索字符串。</li>
+<li>选择“搜索”。</li>
+</ul>
+<p>请注意，该 URL 包含搜索字符串。</p>
+<pre><code class="lang-html">http://localhost:5000/Students?SearchString=an
+</code></pre>
+<p>如果页面具有书签，该书签将包含该页面的 URL 和 <code>SearchString</code> 查询字符串。 <code>form</code> 标记中的 <code>method=&quot;get&quot;</code> 会导致生成查询字符串。</p>
+<p>目前，选中列标题排序链接时，“搜索”框中的筛选值会丢失。 丢失的筛选值在下一部分进行修复。</p>
+<h2 id="add-paging-functionality-to-the-students-index-page">向“学生索引”页添加分页功能</h2>
+<p>本部分将创建一个 <code>PaginatedList</code> 类来支持分页。 <code>PaginatedList</code> 类使用 <code>Skip</code> 和 <code>Take</code> 语句在服务器上筛选数据，而不是检索所有表格行。 下图显示了分页按钮。</p>
+<p><img src="sort-filter-page/_static/paging.png" alt="带有分页链接的“学生索引”页"></p>
+<p>在项目文件夹中，使用以下代码创建 <code>PaginatedList.cs</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码中的 <code>CreateAsync</code> 方法会提取页面大小和页码，并将相应的 <code>Skip</code> 和 <code>Take</code> 语句应用于 <code>IQueryable</code>。 当在 <code>IQueryable</code> 上调用 <code>ToListAsync</code> 时，它将返回仅包含所请求页的列表。 属性 <code>HasPreviousPage</code> 和 <code>HasNextPage</code> 用于启用或禁用“上一页”和“下一页”分页按钮 。</p>
+<p><code>CreateAsync</code> 方法用于创建 <code>PaginatedList&lt;T&gt;</code>。 构造函数不能创建 <code>PaginatedList&lt;T&gt;</code> 对象；构造函数不能运行异步代码。</p>
+<h2 id="add-paging-functionality-to-the-index-method">向 Index 方法添加分页功能</h2>
+<p>在 Students/Index.cshtml.cs 中，将 <code>Student</code> 的类型从 <code>IList&lt;Student&gt;</code> 更新到 <code>PaginatedList&lt;Student&gt;</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>用以下代码更新 Students/Index.cshtml.cs <code>OnGetAsync</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上述代码会向方法签名添加页面索引、当前的 <code>sortOrder</code> 和 <code>currentFilter</code>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>出现以下情况时，所有参数均为 NULL：</p>
+<ul>
+<li>从“学生”链接调用页面。</li>
+<li>用户尚未单击分页或排序链接。</li>
+</ul>
+<p>单击分页链接后，页面索引变量将包含要显示的页码。</p>
+<p><code>CurrentSort</code> 为 Razor 页面提供当前排序顺序。 必须在分页链接中包含当前排序顺序才能在分页时保留排序顺序。</p>
+<p><code>CurrentFilter</code> 为 Razor 页面提供当前的筛选字符串。 <code>CurrentFilter</code> 值：</p>
+<ul>
+<li>必须包含在分页链接中才能在分页过程中保留筛选设置。</li>
+<li>必须在重新显示页面时还原到文本框。</li>
+</ul>
+<p>如果在分页时更改搜索字符串，页码会重置为 1。 页面必须重置为 1，因为新的筛选器会导致显示不同的数据。 输入搜索值并选择“提交”时：</p>
+<ul>
+<li>搜索字符串将会更改。</li>
+<li><code>searchString</code> 参数不为 NULL。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>PaginatedList.CreateAsync</code> 方法会将学生查询转换为支持分页的集合类型中的单个学生页面。 单个学生页面会传递到 Razor 页面。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>PaginatedList.CreateAsync</code> 中的两个问号表示 <a href="/dotnet/csharp/language-reference/operators/null-conditional-operator">NULL 合并运算符</a>。 NULL 合并运算符定义可为 NULL 的类型的默认值。 <code>(pageIndex ?? 1)</code> 表达式表示返回 <code>pageIndex</code> 的值（若带有值）。 如果 <code>pageIndex</code> 没有值，则返回 1。</p>
+<h2 id="add-paging-links-to-the-student-no-locrazor-page">向“学生”Razor 页面添加分页链接</h2>
+<p>更新 Students/Index.cshtml 中的标记。 突出显示所作更改：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>列标题链接使用查询字符串将当前搜索字符串传递到 <code>OnGetAsync</code> 方法，让用户可对筛选结果进行排序：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>分页按钮由标记帮助器显示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>运行应用并导航到学生页面。</p>
+<ul>
+<li>为确保分页生效，请单击不同排序顺序的分页链接。</li>
+<li>要验证确保分页后可正确地排序和筛选，请输入搜索字符串并尝试分页。</li>
+</ul>
+<p><img src="sort-filter-page/_static/paging.png" alt="带有分页链接的“学生索引”页"></p>
+<p>若要更好地了解此代码：</p>
+<ul>
+<li>请在 Student/Index.cshtml.cs 中的 <code>switch (sortOrder)</code> 上设置断点。</li>
+<li>添加对 <code>NameSort</code>、<code>DateSort</code>、<code>CurrentSort</code> 和 <code>Model.Student.PageIndex</code> 的监视。</li>
+<li>请在 Student/Index.cshtml.cs 中的 <code>@Html.DisplayNameFor(model =&gt; model.Student[0].LastName)</code> 上设置断点。</li>
+</ul>
+<p>单步执行调试程序。</p>
+<h2 id="update-the-about-page-to-show-student-statistics">更新“关于”页以显示学生统计信息</h2>
+<p>此步骤将更新 Pages/About.cshtml，显示每个注册日期的已注册学生的数量。 更新需使用分组并包括以下步骤：</p>
+<ul>
+<li>为“关于”页使用的数据创建视图模型。</li>
+<li>更新“关于”页以使用视图模型。</li>
+</ul>
+<h3 id="create-the-view-model">创建视图模型</h3>
+<p>在 Models 文件夹中创建一个 SchoolViewModels 文件夹 。</p>
+<p>在 SchoolViewModels 文件夹中，使用以下代码添加 EnrollmentDateGroup.cs ：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="update-the-about-page-model">更新“关于”页面模型</h3>
+<p>ASP.NET Core 2.2 中的 Web 模板不包含“关于”页面。 如果使用的是 ASP.NET Core 2.2，请创建“关于”Razor页面。</p>
+<p>用以下代码更新 Pages/About.cshtml.cs 文件：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>LINQ 语句按注册日期对学生实体进行分组，计算每组中实体的数量，并将结果存储在 <code>EnrollmentDateGroup</code> 视图模型对象的集合中。</p>
+<h3 id="modify-the-about-no-locrazor-page">修改“关于”Razor 页面</h3>
+<p>将 Pages/About.cshtml 文件中的代码替换为以下代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>运行应用并导航到“关于”页面。 表格中会显示每个注册日期的学生计数。</p>
+<p>如果遇到无法解决的问题，请下载<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/data/ef-rp/intro/samples/StageSnapShots/cu-part3-sorting">本阶段的已完成应用</a>。</p>
+<p><img src="sort-filter-page/_static/about.png" alt="“关于”页面"></p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://github.com/dotnet/AspNetCore.Docs/issues/4155">调试 ASP.NET Core 2.x 源</a></li>
+<li><a href="https://www.youtube.com/watch?v=MDs7PFpoMqI">本教程的 YouTube 版本</a></li>
+</ul>
+<p>在下一教程中，应用将利用迁移更新数据模型。</p>
+<div class="step-by-step">
+<p><a class="xref" href="crud.html">上一页</a>
+<a class="xref" href="migrations.html">下一页</a></p>
+</div>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

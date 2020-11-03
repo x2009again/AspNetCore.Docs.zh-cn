@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#35775;&#38382; HttpContext </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#35775;&#38382; HttpContext ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/httpcontext">
+<h1 id="access-httpcontext-in-aspnet-core">在 ASP.NET Core 中访问 HttpContext</h1>
+
+<p>ASP.NET Core 应用通过 &lt;xref:Microsoft.AspNetCore.Http.IHttpContextAccessor&gt; 接口及其默认实现 &lt;xref:Microsoft.AspNetCore.Http.HttpContextAccessor&gt; 访问 <code>HttpContext</code>。 只有在需要访问服务内的 <code>HttpContext</code> 时，才有必要使用 <code>IHttpContextAccessor</code>。</p>
+<h2 id="use-httpcontext-from-no-locrazor-pages">通过 Razor Pages 使用 HttpContext</h2>
+<p>Razor Pages &lt;xref:Microsoft.AspNetCore.Mvc.RazorPages.PageModel&gt; 公开 &lt;xref:Microsoft.AspNetCore.Mvc.RazorPages.PageModel.HttpContext&gt; 属性：</p>
+<pre><code class="lang-csharp">public class AboutModel : PageModel
+{
+    public string Message { get; set; }
+
+    public void OnGet()
+    {
+        Message = HttpContext.Request.PathBase;
+    }
+}
+</code></pre>
+<h2 id="use-httpcontext-from-a-no-locrazor-view">通过 Razor 视图使用 HttpContext</h2>
+<p>Razor 视图通过视图上的 <a href="xref:Microsoft.AspNetCore.Mvc.Razor.RazorPage.Context">RazorPage.Context</a> 属性直接公开 <code>HttpContext</code>。 下面的示例使用 Windows 身份验证检索 Intranet 应用中的当前用户名：</p>
+<pre><code class="lang-cshtml">@{
+    var username = Context.User.Identity.Name;
+    
+    ...
+}
+</code></pre>
+<h2 id="use-httpcontext-from-a-controller">通过控制器使用 HttpContext</h2>
+<p>控制器公开 <a href="xref:Microsoft.AspNetCore.Mvc.ControllerBase.HttpContext">ControllerBase.HttpContext</a> 属性：</p>
+<pre><code class="lang-csharp">public class HomeController : Controller
+{
+    public IActionResult About()
+    {
+        var pathBase = HttpContext.Request.PathBase;
+
+        ...
+
+        return View();
+    }
+}
+</code></pre>
+<h2 id="use-httpcontext-from-middleware">通过中间件使用 HttpContext</h2>
+<p>使用自定义中间件组件时，<code>HttpContext</code> 传递到 <code>Invoke</code> 或 <code>InvokeAsync</code> 方法，在中间件配置后可供访问：</p>
+<pre><code class="lang-csharp">public class MyCustomMiddleware
+{
+    public Task InvokeAsync(HttpContext context)
+    {
+        ...
+    }
+}
+</code></pre>
+<h2 id="use-httpcontext-from-custom-components">通过自定义组件使用 HttpContext</h2>
+<p>对于需要访问 <code>HttpContext</code> 的其他框架和自定义组件，建议使用内置的<a class="xref" href="dependency-injection.html">依赖项注入</a>容器来注册依赖项。 依赖项注入容器向任意类提供 <code>IHttpContextAccessor</code>，以供类在自己的构造函数中将它声明为依赖项：</p>
+<div range="&gt;= aspnetcore-3.0">
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+     services.AddControllersWithViews();
+     services.AddHttpContextAccessor();
+     services.AddTransient&lt;IUserRepository, UserRepository&gt;();
+}
+</code></pre>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+     services.AddMvc()
+         .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+     services.AddHttpContextAccessor();
+     services.AddTransient&lt;IUserRepository, UserRepository&gt;();
+}
+</code></pre>
+</div>
+<p>如下示例中：</p>
+<ul>
+<li><code>UserRepository</code> 声明自己对 <code>IHttpContextAccessor</code> 的依赖。</li>
+<li>当依赖项注入容器解析依赖链并创建 <code>UserRepository</code> 实例时，就会注入依赖项。</li>
+</ul>
+<pre><code class="lang-csharp">public class UserRepository : IUserRepository
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public UserRepository(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public void LogCurrentUser()
+    {
+        var username = _httpContextAccessor.HttpContext.User.Identity.Name;
+        service.LogAccessRequest(username);
+    }
+}
+</code></pre>
+<h2 id="httpcontext-access-from-a-background-thread">从后台线程访问 HttpContext</h2>
+<p><code>HttpContext</code> 不是线程安全型。 在处理请求之外读取或写入 <code>HttpContext</code> 的属性可能会导致 &lt;xref:System.NullReferenceException&gt;。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>如果应用生成偶发的 <code>NullReferenceException</code> 错误，请评审启动后台处理的部分代码，或者在请求完成后继续处理的部分代码。 查找诸如将控制器方法定义为 <code>async void</code> 的错误。</p>
+</div>
+<p>要使用 <code>HttpContext</code> 数据安全地执行后台工作，请执行以下操作：</p>
+<ul>
+<li>在请求处理过程中复制所需的数据。</li>
+<li>将复制的数据传递给后台任务。</li>
+</ul>
+<p>要避免不安全代码，请勿将 <code>HttpContext</code> 传递给执行后台工作的方法。 而是传递所需要的数据。 在以下示例中，调用 <code>SendEmailCore</code>，开始发送电子邮件。 将 <code>correlationId</code> 传递到 <code>SendEmailCore</code>，而不是 <code>HttpContext</code>。 代码执行不会等待 <code>SendEmailCore</code> 完成：</p>
+<pre><code class="lang-csharp">public class EmailController : Controller
+{
+    public IActionResult SendEmail(string email)
+    {
+        var correlationId = HttpContext.Request.Headers[&quot;x-correlation-id&quot;].ToString();
+
+        _ = SendEmailCore(correlationId);
+
+        return View();
+    }
+
+    private async Task SendEmailCore(string correlationId)
+    {
+        ...
+    }
+}
+</code></pre>
+<h2 id="no-locblazor-and-shared-state">Blazor 和共享状态</h2>
+<p>Blazor 服务器应用位于服务器内存中。 这意味着同一进程中托管了多个应用。 对于每个应用会话，Blazor 会启动具有其自己的 DI 容器作用域的线路。 这意味着，每个 Blazor 会话的作用域内服务都是唯一的。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>我们不建议同一服务器上的应用共享使用单一实例服务的状态，除非采取了极其谨慎的措施，因为这可能会带来安全漏洞，如跨线路泄露用户状态。</p>
+</div>
+<p>如果有状态的单一实例服务是专门为 Blazor 应用设计的，则可以在该应用中使用这些服务。 例如，假设用户无法控制使用哪些缓存密钥，则可以将内存缓存用作单一实例，因为它需要一个密钥来访问给定的条目。</p>
+<p><strong>另外，出于安全原因，不得在 Blazor 应用中使用 &lt;xref:Microsoft.AspNetCore.Http.IHttpContextAccessor&gt;。</strong> Blazor 应用在 ASP.NET Core 管道的上下文之外运行。 &lt;xref:Microsoft.AspNetCore.Http.HttpContext&gt; 既不保证在 &lt;xref:Microsoft.AspNetCore.Http.IHttpContextAccessor&gt; 中可用，也不保证它会保留启动了 Blazor 应用的上下文。</p>
+<p>若要向 Blazor 应用传递请求状态，建议在初次呈现应用时通过传递到根组件的参数进行传递：</p>
+<ul>
+<li>使用要传递到 Blazor 应用的所有数据定义类。</li>
+<li>使用目前可用的 &lt;xref:Microsoft.AspNetCore.Http.HttpContext&gt; 在 Razor 页中填充该数据。</li>
+<li>将数据作为传递给根组件（应用）的参数传递给 Blazor 应用。</li>
+<li>在根组件中定义一个参数，用于保存即将传递给应用的数据。</li>
+<li>在应用中使用用户特定的数据；或者，将该数据复制到 &lt;xref:Microsoft.AspNetCore.Components.ComponentBase.OnInitializedAsync%2A&gt; 中的作用域内的服务，以便可以跨应用使用该数据。</li>
+</ul>
+<p>有关更多信息及代码示例，请参见 <a class="xref" href="../blazor/security/server/additional-scenarios.html#pass-tokens-to-a-blazor-server-app">ASP.NET Core Blazor Server 其他安全方案</a>。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

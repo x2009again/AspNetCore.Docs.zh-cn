@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core Blazor &#27169;&#26495;&#21270;&#32452;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core Blazor &#27169;&#26495;&#21270;&#32452;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/components/templated-components">
+<h1 id="aspnet-core-no-locblazor-templated-components">ASP.NET Core Blazor 模板化组件</h1>
+
+<p>作者：<a href="https://github.com/guardrex">Luke Latham</a> 和 <a href="https://github.com/danroth27">Daniel Roth</a></p>
+<p>模板化组件是接受一个或多个 UI 模板作为参数的组件，然后可将其用作组件呈现逻辑的一部分。 通过模板化组件，可以创作适用面更广、比常规组件更便于重复使用的组件。 下面是一些示例：</p>
+<ul>
+<li>表组件，用户可通过它指定表的标题、行和页脚的模板。</li>
+<li>列表组件，用户可通过它指定用于呈现列表中项的模板。</li>
+</ul>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/common/samples/">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="template-parameters">模板参数</h2>
+<p>通过指定一个或多个 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment&gt; 或 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment%601&gt; 类型的组件参数来定义模板化组件。 呈现片段，表示要呈现的 UI 段。 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment%601&gt; 采用可在调用呈现片段时指定的类型参数。</p>
+<p><code>TableTemplate</code> 组件 (<code>TableTemplate.razor</code>)：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用模板化组件时，可以使用与参数名称匹配的子元素（在以下示例中为 <code>TableHeader</code> 和 <code>RowTemplate</code>）指定模板参数：</p>
+<pre><code class="lang-razor">&lt;TableTemplate Items=&quot;pets&quot;&gt;
+    &lt;TableHeader&gt;
+        &lt;th&gt;ID&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+    &lt;/TableHeader&gt;
+    &lt;RowTemplate&gt;
+        &lt;td&gt;@context.PetId&lt;/td&gt;
+        &lt;td&gt;@context.Name&lt;/td&gt;
+    &lt;/RowTemplate&gt;
+&lt;/TableTemplate&gt;
+
+@code {
+    private List&lt;Pet&gt; pets = new List&lt;Pet&gt;
+    {
+        new Pet { PetId = 2, Name = &quot;Mr. Bigglesworth&quot; },
+        new Pet { PetId = 4, Name = &quot;Salem Saberhagen&quot; },
+        new Pet { PetId = 7, Name = &quot;K-9&quot; }
+    };
+
+    private class Pet
+    {
+        public int PetId { get; set; }
+        public string Name { get; set; }
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>未来版本将支持泛型类型约束。 有关详细信息，请参阅<a href="https://github.com/dotnet/aspnetcore/issues/8433">允许泛型类型约束 (dotnet/aspnetcore #8433)</a>。</p>
+</div>
+<h2 id="template-context-parameters">模板上下文参数</h2>
+<p>作为元素传递的 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment%601&gt; 类型的组件实参具有一个名为 <code>context</code> 的隐式形参（例如前面的代码示例 <code>@context.PetId</code>），但可以使用子元素上的 <code>Context</code> 属性来更改形参名称。 在下面的示例中，<code>RowTemplate</code> 元素的 <code>Context</code> 属性指定了 <code>pet</code> 参数：</p>
+<pre><code class="lang-razor">&lt;TableTemplate Items=&quot;pets&quot;&gt;
+    &lt;TableHeader&gt;
+        &lt;th&gt;ID&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+    &lt;/TableHeader&gt;
+    &lt;RowTemplate Context=&quot;pet&quot;&gt;
+        &lt;td&gt;@pet.PetId&lt;/td&gt;
+        &lt;td&gt;@pet.Name&lt;/td&gt;
+    &lt;/RowTemplate&gt;
+&lt;/TableTemplate&gt;
+
+@code {
+    ...
+}
+</code></pre>
+<p>或者，可以在组件元素上指定 <code>Context</code> 属性。 指定的 <code>Context</code> 属性适用于所有指定的模板参数。 如果你想为隐式子内容指定内容参数名称（不包含任何包装子元素），这可能很有用。 在下面的示例中，<code>Context</code> 属性显示在 <code>TableTemplate</code> 元素上，并应用于所有模板参数：</p>
+<pre><code class="lang-razor">&lt;TableTemplate Items=&quot;pets&quot; Context=&quot;pet&quot;&gt;
+    &lt;TableHeader&gt;
+        &lt;th&gt;ID&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;
+    &lt;/TableHeader&gt;
+    &lt;RowTemplate&gt;
+        &lt;td&gt;@pet.PetId&lt;/td&gt;
+        &lt;td&gt;@pet.Name&lt;/td&gt;
+    &lt;/RowTemplate&gt;
+&lt;/TableTemplate&gt;
+
+@code {
+    ...
+}
+</code></pre>
+<h2 id="generic-typed-components">泛型类型化组件</h2>
+<p>模板化组件通常是泛型类型。 例如，泛型 <code>ListViewTemplate</code> 组件 (<code>ListViewTemplate.razor</code>) 可用于呈现 <code>IEnumerable&lt;T&gt;</code> 值。 若要定义泛型组件，请使用 <a class="xref" href="../../mvc/views/razor.html#typeparam"><code>@typeparam</code></a> 指令指定类型参数：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用泛型类型化组件时，将在可能的情况下推断类型参数：</p>
+<pre><code class="lang-razor">&lt;ListViewTemplate Items=&quot;pets&quot;&gt;
+    &lt;ItemTemplate Context=&quot;pet&quot;&gt;
+        &lt;li&gt;@pet.Name&lt;/li&gt;
+    &lt;/ItemTemplate&gt;
+&lt;/ListViewTemplate&gt;
+
+@code {
+    private List&lt;Pet&gt; pets = new List&lt;Pet&gt;
+    {
+        new Pet { Name = &quot;Mr. Bigglesworth&quot; },
+        new Pet { Name = &quot;Salem Saberhagen&quot; },
+        new Pet { Name = &quot;K-9&quot; }
+    };
+
+    private class Pet
+    {
+        public string Name { get; set; }
+    }
+}
+</code></pre>
+<p>否则，必须使用与类型参数的名称匹配的属性显式指定类型参数。 在下面的示例中，<code>TItem=&quot;Pet&quot;</code> 指定类型：</p>
+<pre><code class="lang-razor">&lt;ListViewTemplate Items=&quot;pets&quot; TItem=&quot;Pet&quot;&gt;
+    &lt;ItemTemplate Context=&quot;pet&quot;&gt;
+        &lt;li&gt;@pet.Name&lt;/li&gt;
+    &lt;/ItemTemplate&gt;
+&lt;/ListViewTemplate&gt;
+
+@code {
+    ...
+}
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

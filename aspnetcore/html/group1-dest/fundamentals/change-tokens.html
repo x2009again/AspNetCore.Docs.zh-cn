@@ -1,0 +1,453 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; ASP.NET Core &#20013;&#30340;&#26356;&#25913;&#20196;&#29260;&#26816;&#27979;&#26356;&#25913; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; ASP.NET Core &#20013;&#30340;&#26356;&#25913;&#20196;&#29260;&#26816;&#27979;&#26356;&#25913; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/change-tokens">
+<h1 id="detect-changes-with-change-tokens-in-aspnet-core">使用 ASP.NET Core 中的更改令牌检测更改</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>更改令牌是用于跟踪状态更改的通用、低级别构建基块。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/change-tokens/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="ichangetoken-interface">IChangeToken 接口</h2>
+<p>&lt;xref:Microsoft.Extensions.Primitives.IChangeToken&gt; 传播已发生更改的通知。 <code>IChangeToken</code> 驻留在 &lt;xref:Microsoft.Extensions.Primitives?displayProperty=fullName&gt; 命名空间中。 将 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Primitives/">Microsoft.Extensions.Primitives</a> NuGet 包隐式提供给 ASP.NET Core 应用。</p>
+<p><code>IChangeToken</code> 具有以下两个属性：</p>
+<ul>
+<li>&lt;xref:Microsoft.Extensions.Primitives.IChangeToken.ActiveChangeCallbacks&gt;，指示令牌是否主动引发回调。 如果将 <code>ActiveChangedCallbacks</code> 设置为 <code>false</code>，则不会调用回调，并且应用必须轮询 <code>HasChanged</code> 获取更改。 如果未发生任何更改，或者丢弃或禁用基础更改侦听器，还可能永远不会取消令牌。</li>
+<li>&lt;xref:Microsoft.Extensions.Primitives.IChangeToken.HasChanged&gt;，接收一个指示是否发生更改的值。</li>
+</ul>
+<p><code>IChangeToken</code> 接口具有 <a href="xref:Microsoft.Extensions.Primitives.IChangeToken.RegisterChangeCallback*">RegisterChangeCallback(Action&lt;Object&gt;, Object)</a> 方法，用于注册在令牌更改时调用的回调。 调用回调之前，必须设置 <code>HasChanged</code>。</p>
+<h2 id="changetoken-class">ChangeToken 类</h2>
+<p>&lt;xref:Microsoft.Extensions.Primitives.ChangeToken&gt; 是静态类，用于传播已发生更改的通知。 <code>ChangeToken</code> 驻留在 &lt;xref:Microsoft.Extensions.Primitives?displayProperty=fullName&gt; 命名空间中。 将 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Primitives/">Microsoft.Extensions.Primitives</a> NuGet 包隐式提供给 ASP.NET Core 应用。</p>
+<p><a href="xref:Microsoft.Extensions.Primitives.ChangeToken.OnChange*">ChangeToken.OnChange(Func&lt;IChangeToken&gt;, Action)</a> 方法注册令牌更改时要调用的 <code>Action</code>：</p>
+<ul>
+<li><code>Func&lt;IChangeToken&gt;</code> 生成令牌。</li>
+<li>令牌更改时，调用 <code>Action</code>。</li>
+</ul>
+<p><a href="xref:Microsoft.Extensions.Primitives.ChangeToken.OnChange*">ChangeToken.OnChange&lt;TState&gt;(Func&lt;IChangeToken&gt;, Action&lt;TState&gt;, TState)</a> 重载还具有一个 <code>TState</code> 参数，该参数传递给令牌使用者 <code>Action</code>。</p>
+<p><code>OnChange</code> 返回 &lt;xref:System.IDisposable&gt;。 调用 &lt;xref:System.IDisposable.Dispose*&gt; 将使令牌停止侦听更多更改并释放令牌的资源。</p>
+<h2 id="example-uses-of-change-tokens-in-aspnet-core">ASP.NET Core 中更改令牌的使用示例</h2>
+<p>更改令牌主要用于在 ASP.NET Core 中监视对象更改：</p>
+<ul>
+<li>为了监视文件更改，&lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt; 的 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider.Watch*&gt; 方法将为要监视的指定文件或文件夹创建 <code>IChangeToken</code>。</li>
+<li>可以将 <code>IChangeToken</code> 令牌添加到缓存条目，以在更改时触发缓存逐出。</li>
+<li>对于 <code>TOptions</code> 更改，&lt;xref:Microsoft.Extensions.Options.IOptionsMonitor`1&gt; 的默认 &lt;xref:Microsoft.Extensions.Options.OptionsMonitor`1&gt; 实现有一个重载，可接受一个或多个 &lt;xref:Microsoft.Extensions.Options.IOptionsChangeTokenSource`1&gt; 实例。 每个实例返回 <code>IChangeToken</code>，以注册用于跟踪选项更改的更改通知回调。</li>
+</ul>
+<h2 id="monitor-for-configuration-changes">监视配置更改</h2>
+<p>默认情况下，ASP.NET Core 模板使用 <a class="xref" href="configuration/index.html#json-configuration-provider">JSON 配置文件</a>（appsettings.json、appsettings.Development.json 和 appsettings.Production.json）来加载应用配置设置。</p>
+<p>使用接受 <code>reloadOnChange</code> 参数的 &lt;xref:Microsoft.Extensions.Configuration.ConfigurationBuilder&gt; 上的 <a href="xref:Microsoft.Extensions.Configuration.JsonConfigurationExtensions.AddJsonFile*">AddJsonFile(IConfigurationBuilder, String, Boolean, Boolean)</a> 扩展方法配置这些文件。 <code>reloadOnChange</code> 指示文件更改时是否应该重载配置。 此设置出现在 &lt;xref:Microsoft.Extensions.Hosting.Host&gt; 便捷方法 &lt;xref:Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder*&gt; 中：</p>
+<pre><code class="lang-csharp">config.AddJsonFile(&quot;appsettings.json&quot;, optional: true, reloadOnChange: true)
+      .AddJsonFile($&quot;appsettings.{env.EnvironmentName}.json&quot;, optional: true, 
+          reloadOnChange: true);
+</code></pre>
+<p>基于文件的配置由 &lt;xref:Microsoft.Extensions.Configuration.FileConfigurationSource&gt; 表示。 <code>FileConfigurationSource</code> 使用 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt; 来监视文件。</p>
+<p>默认情况下，由使用 &lt;xref:System.IO.FileSystemWatcher&gt; 来监视配置文件更改的 &lt;xref:Microsoft.Extensions.FileProviders.PhysicalFileProvider&gt; 提供 <code>IFileMonitor</code>。</p>
+<p>示例应用演示监视配置更改的两个实现。 如果任一 appsettings 文件发生更改，这两个文件监视实现将执行自定义代码：示例应用向控制台写入一条消息。</p>
+<p>配置文件的 <code>FileSystemWatcher</code> 可以触发多个令牌回调，以用于单个配置文件更改。 为确保自定义代码仅在触发多个令牌回调时运行一次，示例的实现将检查文件哈希。 此示例使用 SHA1 文件哈希。 使用指数回退实现重试。 进行重试是因为可能发生文件锁定，暂时阻止对某个文件计算新的哈希。</p>
+<p>Utilities/Utilities.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="simple-startup-change-token">简单启动更改令牌</h3>
+<p>将用于更改通知的令牌使用者 <code>Action</code> 回调注册到配置重载令牌。</p>
+<p>在 <code>Startup.Configure</code>中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>config.GetReloadToken()</code> 提供令牌。 回调是 <code>InvokeChanged</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>回调的 <code>state</code> 用于在 <code>IWebHostEnvironment</code> 中传递，这可以帮助指定要监视的正确 appsettings 配置文件（例如开发环境中的 appsettings.Development.json）。 只更改了一次配置文件时，文件哈希用于防止 <code>WriteConsole</code> 语句由于多个令牌回调而多次运行。</p>
+<p>只要应用正在运行，该系统就会运行，并且用户不能禁用。</p>
+<h3 id="monitor-configuration-changes-as-a-service">将配置更改作为服务进行监视</h3>
+<p>示例实现：</p>
+<ul>
+<li>基本启动令牌监视。</li>
+<li>作为服务监视。</li>
+<li>启用和禁用监视的机制。</li>
+</ul>
+<p>示例建立 <code>IConfigurationMonitor</code> 接口。</p>
+<p>Extensions/ConfigurationMonitor.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>已实现的类的构造函数 <code>ConfigurationMonitor</code> 注册用于更改通知的回调：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>config.GetReloadToken()</code> 提供令牌。 <code>InvokeChanged</code> 是回调方法。 此实例中的 <code>state</code> 是对 <code>IConfigurationMonitor</code> 实例的引用，用于访问监视状态。 使用了以下两个属性：</p>
+<ul>
+<li><code>MonitoringEnabled</code>：指示回调是否应该运行其自定义代码。</li>
+<li><code>CurrentState</code>：描述在 UI 中使用的当前监视状态。</li>
+</ul>
+<p><code>InvokeChanged</code> 方法类似于前面的方法，不同之处在于：</p>
+<ul>
+<li>不运行其代码，除非 <code>MonitoringEnabled</code> 为 <code>true</code>。</li>
+<li>输出其 <code>WriteConsole</code> 输出中的当前 <code>state</code>。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将实例 <code>ConfigurationMonitor</code> 作为服务在 <code>Startup.ConfigureServices</code> 中注册：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>索引页提供对配置监视的用户控制。 将 <code>IConfigurationMonitor</code> 的实例注入到 <code>IndexModel</code> 中。</p>
+<p>Pages/Index.cshtml.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>配置监视器 (<code>_monitor</code>) 用于启用或禁用监视，并设置 UI 反馈的当前状态：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>触发 <code>OnPostStartMonitoring</code> 时，会启用监视并清除当前状态。 触发 <code>OnPostStopMonitoring</code> 时，会禁用监视并设置状态以反映未进行监视。</p>
+<p>UI 启用和禁用监视的按钮。</p>
+<p>Pages/Index.cshtml：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="monitor-cached-file-changes">监视缓存文件更改</h2>
+<p>可以使用 &lt;xref:Microsoft.Extensions.Caching.Memory.IMemoryCache&gt; 将文件内容缓存在内存中。 <a class="xref" href="../performance/caching/memory.html">内存中缓存</a>主题中介绍了在内存中缓存。 无需采取其他步骤（如下面所述的实现），如果源数据更改，将从缓存返回陈旧（过时）数据。</p>
+<p>例如，当续订<a href="xref:Microsoft.Extensions.Caching.Memory.MemoryCacheEntryOptions.SlidingExpiration">可调过期</a>时段造成陈旧缓存文件数据时，不考虑所缓存源文件的状态。 数据的每个请求续订可调过期时段，但不会将文件重载到缓存中。 任何使用文件缓存内容的应用功能都可能会收到陈旧的内容。</p>
+<p>在文件缓存方案中使用更改令牌可防止缓存中出现陈旧的文件内容。 示例应用演示方法的实现。</p>
+<p>示例使用 <code>GetFileContent</code> 来完成以下操作：</p>
+<ul>
+<li>返回文件内容。</li>
+<li>实现具有指数回退的重试算法，以涵盖文件锁暂时阻止读取文件的情况。</li>
+</ul>
+<p>Utilities/Utilities.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建 <code>FileService</code> 以处理缓存文件查找。 服务的 <code>GetFileContent</code> 方法调用尝试从内存中缓存获取文件内容并将其返回到调用方 (Services/FileService.cs)。</p>
+<p>如果使用缓存键未找到缓存的内容，则将执行以下操作：</p>
+<ol>
+<li>使用 <code>GetFileContent</code> 获取文件内容。</li>
+<li>使用 <a href="xref:Microsoft.Extensions.FileProviders.IFileProvider.Watch*">IFileProviders.Watch</a> 从文件提供程序获取更改令牌。 修改该文件时，会触发令牌的回调。</li>
+<li><a href="xref:Microsoft.Extensions.Caching.Memory.MemoryCacheEntryOptions.SlidingExpiration">可调过期</a>时段将缓存文件内容。 如果缓存文件时发生了更改，则将更改令牌与 <a href="xref:Microsoft.Extensions.Caching.Memory.MemoryCacheEntryExtensions.AddExpirationToken*">MemoryCacheEntryExtensions.AddExpirationToken</a> 连接在一起，以逐出缓存条目。</li>
+</ol>
+<p>在下面的示例中，文件存储在应用的<a class="xref" href="index.html#content-root">内容根目录</a>中。 <code>IWebHostEnvironment.ContentRootFileProvider</code> 用于获取指向应用的 <code>IWebHostEnvironment.ContentRootPath</code> 的 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt;。 <code>filePath</code> 通过 <a href="xref:Microsoft.Extensions.FileProviders.IFileInfo.PhysicalPath">IFileInfo.PhysicalPath</a> 获取。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将 <code>FileService</code> 与内存缓存服务一起注册在服务容器中。</p>
+<p>在 <code>Startup.ConfigureServices</code>中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>页面模型使用服务加载文件内容。</p>
+<p>在索引页的 <code>OnGet</code> 方法 (Pages/Index.cshtml.cs) 中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="compositechangetoken-class">CompositeChangeToken 类</h2>
+<p>要在单个对象中表示一个或多个 <code>IChangeToken</code> 实例，请使用 &lt;xref:Microsoft.Extensions.Primitives.CompositeChangeToken&gt; 类。</p>
+<pre><code class="lang-csharp">var firstCancellationTokenSource = new CancellationTokenSource();
+var secondCancellationTokenSource = new CancellationTokenSource();
+
+var firstCancellationToken = firstCancellationTokenSource.Token;
+var secondCancellationToken = secondCancellationTokenSource.Token;
+
+var firstCancellationChangeToken = new CancellationChangeToken(firstCancellationToken);
+var secondCancellationChangeToken = new CancellationChangeToken(secondCancellationToken);
+
+var compositeChangeToken = 
+    new CompositeChangeToken(
+        new List&lt;IChangeToken&gt; 
+        {
+            firstCancellationChangeToken, 
+            secondCancellationChangeToken
+        });
+</code></pre>
+<p>如果任何表示的令牌 <code>HasChanged</code> 为 <code>true</code>，则复合令牌上的 <code>HasChanged</code> 报告 <code>true</code>。 如果任何表示的令牌 <code>ActiveChangeCallbacks</code> 为 <code>true</code>，则复合令牌上的 <code>ActiveChangeCallbacks</code> 报告 <code>true</code>。 如果发生多个并发更改事件，则调用一次复合更改回调。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>更改令牌是用于跟踪状态更改的通用、低级别构建基块。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/change-tokens/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="ichangetoken-interface">IChangeToken 接口</h2>
+<p>&lt;xref:Microsoft.Extensions.Primitives.IChangeToken&gt; 传播已发生更改的通知。 <code>IChangeToken</code> 驻留在 &lt;xref:Microsoft.Extensions.Primitives?displayProperty=fullName&gt; 命名空间中。 对于不使用 <a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App 元包</a>的应用，将为 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Primitives/">Microsoft.Extensions.Primitives</a> NuGet 包创建一个包引用。</p>
+<p><code>IChangeToken</code> 具有以下两个属性：</p>
+<ul>
+<li>&lt;xref:Microsoft.Extensions.Primitives.IChangeToken.ActiveChangeCallbacks&gt;，指示令牌是否主动引发回调。 如果将 <code>ActiveChangedCallbacks</code> 设置为 <code>false</code>，则不会调用回调，并且应用必须轮询 <code>HasChanged</code> 获取更改。 如果未发生任何更改，或者丢弃或禁用基础更改侦听器，还可能永远不会取消令牌。</li>
+<li>&lt;xref:Microsoft.Extensions.Primitives.IChangeToken.HasChanged&gt;，接收一个指示是否发生更改的值。</li>
+</ul>
+<p><code>IChangeToken</code> 接口具有 <a href="xref:Microsoft.Extensions.Primitives.IChangeToken.RegisterChangeCallback*">RegisterChangeCallback(Action&lt;Object&gt;, Object)</a> 方法，用于注册在令牌更改时调用的回调。 调用回调之前，必须设置 <code>HasChanged</code>。</p>
+<h2 id="changetoken-class">ChangeToken 类</h2>
+<p>&lt;xref:Microsoft.Extensions.Primitives.ChangeToken&gt; 是静态类，用于传播已发生更改的通知。 <code>ChangeToken</code> 驻留在 &lt;xref:Microsoft.Extensions.Primitives?displayProperty=fullName&gt; 命名空间中。 对于不使用 <a class="xref" href="metapackage-app.html">Microsoft.AspNetCore.App 元包</a>的应用，将为 <a href="https://www.nuget.org/packages/Microsoft.Extensions.Primitives/">Microsoft.Extensions.Primitives</a> NuGet 包创建一个包引用。</p>
+<p><a href="xref:Microsoft.Extensions.Primitives.ChangeToken.OnChange*">ChangeToken.OnChange(Func&lt;IChangeToken&gt;, Action)</a> 方法注册令牌更改时要调用的 <code>Action</code>：</p>
+<ul>
+<li><code>Func&lt;IChangeToken&gt;</code> 生成令牌。</li>
+<li>令牌更改时，调用 <code>Action</code>。</li>
+</ul>
+<p><a href="xref:Microsoft.Extensions.Primitives.ChangeToken.OnChange*">ChangeToken.OnChange&lt;TState&gt;(Func&lt;IChangeToken&gt;, Action&lt;TState&gt;, TState)</a> 重载还具有一个 <code>TState</code> 参数，该参数传递给令牌使用者 <code>Action</code>。</p>
+<p><code>OnChange</code> 返回 &lt;xref:System.IDisposable&gt;。 调用 &lt;xref:System.IDisposable.Dispose*&gt; 将使令牌停止侦听更多更改并释放令牌的资源。</p>
+<h2 id="example-uses-of-change-tokens-in-aspnet-core">ASP.NET Core 中更改令牌的使用示例</h2>
+<p>更改令牌主要用于在 ASP.NET Core 中监视对象更改：</p>
+<ul>
+<li>为了监视文件更改，&lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt; 的 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider.Watch*&gt; 方法将为要监视的指定文件或文件夹创建 <code>IChangeToken</code>。</li>
+<li>可以将 <code>IChangeToken</code> 令牌添加到缓存条目，以在更改时触发缓存逐出。</li>
+<li>对于 <code>TOptions</code> 更改，&lt;xref:Microsoft.Extensions.Options.IOptionsMonitor`1&gt; 的默认 &lt;xref:Microsoft.Extensions.Options.OptionsMonitor`1&gt; 实现有一个重载，可接受一个或多个 &lt;xref:Microsoft.Extensions.Options.IOptionsChangeTokenSource`1&gt; 实例。 每个实例返回 <code>IChangeToken</code>，以注册用于跟踪选项更改的更改通知回调。</li>
+</ul>
+<h2 id="monitor-for-configuration-changes">监视配置更改</h2>
+<p>默认情况下，ASP.NET Core 模板使用 <a class="xref" href="configuration/index.html#json-configuration-provider">JSON 配置文件</a>（appsettings.json、appsettings.Development.json 和 appsettings.Production.json）来加载应用配置设置。</p>
+<p>使用接受 <code>reloadOnChange</code> 参数的 &lt;xref:Microsoft.Extensions.Configuration.ConfigurationBuilder&gt; 上的 <a href="xref:Microsoft.Extensions.Configuration.JsonConfigurationExtensions.AddJsonFile*">AddJsonFile(IConfigurationBuilder, String, Boolean, Boolean)</a> 扩展方法配置这些文件。 <code>reloadOnChange</code> 指示文件更改时是否应该重载配置。 此设置出现在 &lt;xref:Microsoft.AspNetCore.WebHost&gt; 便捷方法 &lt;xref:Microsoft.AspNetCore.WebHost.CreateDefaultBuilder*&gt; 中：</p>
+<pre><code class="lang-csharp">config.AddJsonFile(&quot;appsettings.json&quot;, optional: true, reloadOnChange: true)
+      .AddJsonFile($&quot;appsettings.{env.EnvironmentName}.json&quot;, optional: true, 
+          reloadOnChange: true);
+</code></pre>
+<p>基于文件的配置由 &lt;xref:Microsoft.Extensions.Configuration.FileConfigurationSource&gt; 表示。 <code>FileConfigurationSource</code> 使用 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt; 来监视文件。</p>
+<p>默认情况下，由使用 &lt;xref:System.IO.FileSystemWatcher&gt; 来监视配置文件更改的 &lt;xref:Microsoft.Extensions.FileProviders.PhysicalFileProvider&gt; 提供 <code>IFileMonitor</code>。</p>
+<p>示例应用演示监视配置更改的两个实现。 如果任一 appsettings 文件发生更改，这两个文件监视实现将执行自定义代码：示例应用向控制台写入一条消息。</p>
+<p>配置文件的 <code>FileSystemWatcher</code> 可以触发多个令牌回调，以用于单个配置文件更改。 为确保自定义代码仅在触发多个令牌回调时运行一次，示例的实现将检查文件哈希。 此示例使用 SHA1 文件哈希。 使用指数回退实现重试。 进行重试是因为可能发生文件锁定，暂时阻止对某个文件计算新的哈希。</p>
+<p>Utilities/Utilities.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="simple-startup-change-token">简单启动更改令牌</h3>
+<p>将用于更改通知的令牌使用者 <code>Action</code> 回调注册到配置重载令牌。</p>
+<p>在 <code>Startup.Configure</code>中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>config.GetReloadToken()</code> 提供令牌。 回调是 <code>InvokeChanged</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>回调的 <code>state</code> 用于在 <code>IHostingEnvironment</code> 中传递，这可以帮助指定要监视的正确 appsettings 配置文件（例如开发环境中的 appsettings.Development.json）。 只更改了一次配置文件时，文件哈希用于防止 <code>WriteConsole</code> 语句由于多个令牌回调而多次运行。</p>
+<p>只要应用正在运行，该系统就会运行，并且用户不能禁用。</p>
+<h3 id="monitor-configuration-changes-as-a-service">将配置更改作为服务进行监视</h3>
+<p>示例实现：</p>
+<ul>
+<li>基本启动令牌监视。</li>
+<li>作为服务监视。</li>
+<li>启用和禁用监视的机制。</li>
+</ul>
+<p>示例建立 <code>IConfigurationMonitor</code> 接口。</p>
+<p>Extensions/ConfigurationMonitor.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>已实现的类的构造函数 <code>ConfigurationMonitor</code> 注册用于更改通知的回调：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>config.GetReloadToken()</code> 提供令牌。 <code>InvokeChanged</code> 是回调方法。 此实例中的 <code>state</code> 是对 <code>IConfigurationMonitor</code> 实例的引用，用于访问监视状态。 使用了以下两个属性：</p>
+<ul>
+<li><code>MonitoringEnabled</code>：指示回调是否应该运行其自定义代码。</li>
+<li><code>CurrentState</code>：描述在 UI 中使用的当前监视状态。</li>
+</ul>
+<p><code>InvokeChanged</code> 方法类似于前面的方法，不同之处在于：</p>
+<ul>
+<li>不运行其代码，除非 <code>MonitoringEnabled</code> 为 <code>true</code>。</li>
+<li>输出其 <code>WriteConsole</code> 输出中的当前 <code>state</code>。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将实例 <code>ConfigurationMonitor</code> 作为服务在 <code>Startup.ConfigureServices</code> 中注册：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>索引页提供对配置监视的用户控制。 将 <code>IConfigurationMonitor</code> 的实例注入到 <code>IndexModel</code> 中。</p>
+<p>Pages/Index.cshtml.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>配置监视器 (<code>_monitor</code>) 用于启用或禁用监视，并设置 UI 反馈的当前状态：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>触发 <code>OnPostStartMonitoring</code> 时，会启用监视并清除当前状态。 触发 <code>OnPostStopMonitoring</code> 时，会禁用监视并设置状态以反映未进行监视。</p>
+<p>UI 启用和禁用监视的按钮。</p>
+<p>Pages/Index.cshtml：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="monitor-cached-file-changes">监视缓存文件更改</h2>
+<p>可以使用 &lt;xref:Microsoft.Extensions.Caching.Memory.IMemoryCache&gt; 将文件内容缓存在内存中。 <a class="xref" href="../performance/caching/memory.html">内存中缓存</a>主题中介绍了在内存中缓存。 无需采取其他步骤（如下面所述的实现），如果源数据更改，将从缓存返回陈旧（过时）数据。</p>
+<p>例如，当续订<a href="xref:Microsoft.Extensions.Caching.Memory.MemoryCacheEntryOptions.SlidingExpiration">可调过期</a>时段造成陈旧缓存文件数据时，不考虑所缓存源文件的状态。 数据的每个请求续订可调过期时段，但不会将文件重载到缓存中。 任何使用文件缓存内容的应用功能都可能会收到陈旧的内容。</p>
+<p>在文件缓存方案中使用更改令牌可防止缓存中出现陈旧的文件内容。 示例应用演示方法的实现。</p>
+<p>示例使用 <code>GetFileContent</code> 来完成以下操作：</p>
+<ul>
+<li>返回文件内容。</li>
+<li>实现具有指数回退的重试算法，以涵盖文件锁暂时阻止读取文件的情况。</li>
+</ul>
+<p>Utilities/Utilities.cs：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>创建 <code>FileService</code> 以处理缓存文件查找。 服务的 <code>GetFileContent</code> 方法调用尝试从内存中缓存获取文件内容并将其返回到调用方 (Services/FileService.cs)。</p>
+<p>如果使用缓存键未找到缓存的内容，则将执行以下操作：</p>
+<ol>
+<li>使用 <code>GetFileContent</code> 获取文件内容。</li>
+<li>使用 <a href="xref:Microsoft.Extensions.FileProviders.IFileProvider.Watch*">IFileProviders.Watch</a> 从文件提供程序获取更改令牌。 修改该文件时，会触发令牌的回调。</li>
+<li><a href="xref:Microsoft.Extensions.Caching.Memory.MemoryCacheEntryOptions.SlidingExpiration">可调过期</a>时段将缓存文件内容。 如果缓存文件时发生了更改，则将更改令牌与 <a href="xref:Microsoft.Extensions.Caching.Memory.MemoryCacheEntryExtensions.AddExpirationToken*">MemoryCacheEntryExtensions.AddExpirationToken</a> 连接在一起，以逐出缓存条目。</li>
+</ol>
+<p>在下面的示例中，文件存储在应用的<a class="xref" href="index.html#content-root">内容根目录</a>中。 <a href="xref:Microsoft.AspNetCore.Hosting.IHostingEnvironment.ContentRootFileProvider">IHostingEnvironment.ContentRootFileProvider</a> 用于获取指向应用的 &lt;xref:Microsoft.AspNetCore.Hosting.IHostingEnvironment.ContentRootPath&gt; 的 &lt;xref:Microsoft.Extensions.FileProviders.IFileProvider&gt;。 <code>filePath</code> 通过 <a href="xref:Microsoft.Extensions.FileProviders.IFileInfo.PhysicalPath">IFileInfo.PhysicalPath</a> 获取。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将 <code>FileService</code> 与内存缓存服务一起注册在服务容器中。</p>
+<p>在 <code>Startup.ConfigureServices</code>中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>页面模型使用服务加载文件内容。</p>
+<p>在索引页的 <code>OnGet</code> 方法 (Pages/Index.cshtml.cs) 中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="compositechangetoken-class">CompositeChangeToken 类</h2>
+<p>要在单个对象中表示一个或多个 <code>IChangeToken</code> 实例，请使用 &lt;xref:Microsoft.Extensions.Primitives.CompositeChangeToken&gt; 类。</p>
+<pre><code class="lang-csharp">var firstCancellationTokenSource = new CancellationTokenSource();
+var secondCancellationTokenSource = new CancellationTokenSource();
+
+var firstCancellationToken = firstCancellationTokenSource.Token;
+var secondCancellationToken = secondCancellationTokenSource.Token;
+
+var firstCancellationChangeToken = new CancellationChangeToken(firstCancellationToken);
+var secondCancellationChangeToken = new CancellationChangeToken(secondCancellationToken);
+
+var compositeChangeToken = 
+    new CompositeChangeToken(
+        new List&lt;IChangeToken&gt; 
+        {
+            firstCancellationChangeToken, 
+            secondCancellationChangeToken
+        });
+</code></pre>
+<p>如果任何表示的令牌 <code>HasChanged</code> 为 <code>true</code>，则复合令牌上的 <code>HasChanged</code> 报告 <code>true</code>。 如果任何表示的令牌 <code>ActiveChangeCallbacks</code> 为 <code>true</code>，则复合令牌上的 <code>ActiveChangeCallbacks</code> 报告 <code>true</code>。 如果发生多个并发更改事件，则调用一次复合更改回调。</p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../performance/caching/memory.html">ASP.NET Core 中的缓存内存</a></li>
+<li><a class="xref" href="../performance/caching/distributed.html">ASP.NET Core 中的分布式缓存</a></li>
+<li><a class="xref" href="../performance/caching/response.html">ASP.NET Core 中的响应缓存</a></li>
+<li><a class="xref" href="../performance/caching/middleware.html">ASP.NET Core 中的响应缓存中间件</a></li>
+<li><a class="xref" href="../mvc/views/tag-helpers/built-in/cache-tag-helper.html">ASP.NET Core MVC 中的缓存标记帮助程序</a></li>
+<li><a class="xref" href="../mvc/views/tag-helpers/built-in/distributed-cache-tag-helper.html">ASP.NET Core 中的分布式缓存标记帮助程序</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

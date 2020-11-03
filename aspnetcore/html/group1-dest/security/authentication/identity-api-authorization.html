@@ -1,0 +1,421 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#19978;&#30340;&#21333;&#39029;&#38754;&#24212;&#29992;&#30340;&#36523;&#20221;&#39564;&#35777;&#31616;&#20171; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#19978;&#30340;&#21333;&#39029;&#38754;&#24212;&#29992;&#30340;&#36523;&#20221;&#39564;&#35777;&#31616;&#20171; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="security/authentication/identity/spa">
+<h1 id="authentication-and-authorization-for-spas">Spa 的身份验证和授权</h1>
+
+<p>ASP.NET Core 3.1 和更高版本模板在单页面应用中提供身份验证， (Spa) 使用对 API 授权的支持。 ASP.NET Core Identity对于身份验证和存储用户，将与用于实现 OpenID Connect 的<a href="https://identityserver.io/"> Identity 服务器</a>结合。</p>
+<p>已将身份验证参数添加到 &quot; <strong>角度</strong> &quot; 和 &quot; <strong>响应</strong> &quot; 项目模板，该模板类似于 Web 应用程序中的身份验证参数 <strong>(模型-视图-控制器)</strong> (MVC) 和 <strong>web 应用</strong> (Razor 页) 项目模板。 允许的参数值为 <strong>None</strong> 和 <strong>个体</strong> 。 <strong>React.js 和 Redux</strong> 项目模板此时不支持身份验证参数。</p>
+<h2 id="create-an-app-with-api-authorization-support">使用 API 授权支持创建应用</h2>
+<p>用户身份验证和授权可用于角度和响应 Spa。 打开命令 shell，并运行以下命令：</p>
+<p><strong>角</strong> ：</p>
+<pre><code class="lang-dotnetcli">dotnet new angular -o &lt;output_directory_name&gt; -au Individual
+</code></pre>
+<p><strong>响应</strong> ：</p>
+<pre><code class="lang-dotnetcli">dotnet new react -o &lt;output_directory_name&gt; -au Individual
+</code></pre>
+<p>上述命令创建一个 ASP.NET Core 应用，其中包含包含 SPA 的 <em>ClientApp</em> 目录。</p>
+<h2 id="general-description-of-the-aspnet-core-components-of-the-app">应用的 ASP.NET Core 组件的一般描述</h2>
+<p>以下各节介绍了在包括身份验证支持的情况下对项目添加的内容：</p>
+<h3 id="startup-class">Startup 类</h3>
+<p>下面的代码示例依赖于 <a href="https://www.nuget.org/packages/Microsoft.AspNetCore.ApiAuthorization.IdentityServer">AspNetCore. ApiAuthorization。 IdentityServer</a> NuGet 包。 示例使用 &lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServerBuilderConfigurationExtensions.AddApiAuthorization%2A&gt; 和扩展方法配置 API 身份验证和授权 &lt;xref:Microsoft.AspNetCore.ApiAuthorization.IdentityServer.ApiResourceCollection.AddIdentityServerJwt%2A&gt; 。 使用带有身份验证的响应或角 SPA 项目模板的项目包括对此包的引用。</p>
+<p><code>Startup</code>类添加了以下内容：</p>
+<ul>
+<li><p>在 <code>Startup.ConfigureServices</code> 方法中：</p>
+<ul>
+<li><p>Identity 对于默认的 UI：</p>
+<pre><code class="lang-csharp">services.AddDbContext&lt;ApplicationDbContext&gt;(options =&gt;
+    options.UseSqlite(Configuration.GetConnectionString(&quot;DefaultConnection&quot;)));
+
+services.AddDefaultIdentity&lt;ApplicationUser&gt;()
+    .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;();
+</code></pre>
+</li>
+<li><p>Identity具有其他 <code>AddApiAuthorization</code> 帮助器方法的服务器，用于在服务器上设置某些默认 ASP.NET Core 约定 Identity ：</p>
+<pre><code class="lang-csharp">services.AddIdentityServer()
+    .AddApiAuthorization&lt;ApplicationUser, ApplicationDbContext&gt;();
+</code></pre>
+</li>
+<li><p>包含附加 <code>AddIdentityServerJwt</code> 帮助器方法的身份验证，该方法将应用配置为验证由 IdentityServer 生成的 JWT 令牌：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddIdentityServerJwt();
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>在 <code>Startup.Configure</code> 方法中：</p>
+<ul>
+<li><p>负责验证请求凭据并在请求上下文上设置用户的身份验证中间件：</p>
+<pre><code class="lang-csharp">app.UseAuthentication();
+</code></pre>
+</li>
+<li><p>Identity公开 OpenID connect 终结点的服务器中间件：</p>
+<pre><code class="lang-csharp">app.UseIdentityServer();
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="addapiauthorization">AddApiAuthorization</h3>
+<p>此帮助程序方法将 Identity 服务器配置为使用受支持的配置。 IdentityServer 是一个功能强大且可扩展的框架，用于处理应用安全问题。 同时，对于最常见的方案，这会造成不必要的复杂性。 因此，系统会为您提供一组约定和配置选项，这是一个很好的起点。 一旦你的身份验证需要更改，服务器的全部功能 Identity 仍可用于自定义身份验证以满足你的需求。</p>
+<h3 id="addno-locidentityserverjwt">AddIdentityServerJwt</h3>
+<p>此帮助器方法将应用程序的策略方案配置为默认的身份验证处理程序。 此策略配置为允许 Identity 处理路由到 Identity URL 空间 &quot;/&quot; 中任何子路径的所有请求 Identity 。 <code>JwtBearerHandler</code> 处理所有其他请求。 此外，此方法向服务器注册一个 <code>&lt;&lt;ApplicationName&gt;&gt;API</code> Identity 具有默认作用域的 API 资源 <code>&lt;&lt;ApplicationName&gt;&gt;API</code> ，并将 JWT 持有者令牌中间件配置为验证 Identity 服务器为应用程序颁发的令牌。</p>
+<h3 id="weatherforecastcontroller">WeatherForecastController</h3>
+<p>在 <em>Controllers\WeatherForecastController.cs</em> 文件中，请注意 <code>[Authorize]</code> 应用于类的属性，该属性指示用户需要根据默认策略进行授权才能访问资源。 默认授权策略将配置为使用默认的身份验证方案，该方案由设置 <code>AddIdentityServerJwt</code> 为上面提到的策略方案，并使此 <code>JwtBearerHandler</code> 类 helper 方法配置的应用程序请求的默认处理程序。</p>
+<h3 id="applicationdbcontext">ApplicationDbContext</h3>
+<p>在 <em>Data\ApplicationDbContext.cs</em> 文件中，请注意， <code>DbContext</code> 在中使用了相同的， Identity 因为它将扩展 <code>ApiAuthorizationDbContext</code> (一个派生程度更高的类 <code>IdentityDbContext</code>) 以包括服务器的架构 Identity 。</p>
+<p>若要完全控制数据库架构，请从某个可用的类继承， Identity <code>DbContext</code> 并将上下文配置为 Identity 通过调用方法来包含架构 <code>builder.ConfigurePersistedGrantContext(_operationalStoreOptions.Value)</code> <code>OnModelCreating</code> 。</p>
+<h3 id="oidcconfigurationcontroller">OidcConfigurationController</h3>
+<p>在 <em>Controllers\OidcConfigurationController.cs</em> 文件中，请注意为提供客户端需要使用的 OIDC 参数而设置的终结点。</p>
+<h3 id="appsettingsjson">appsettings.json</h3>
+<p>在 <em>appsettings.json</em> 项目根目录的文件中，有一个新 <code>IdentityServer</code> 部分描述了已配置的客户端的列表。 下例中存在一个客户端。 客户端名称对应于应用名称，并通过约定映射到 OAuth <code>ClientId</code> 参数。 配置文件指示正在配置的应用类型。 它在内部用于驱动约定，以简化服务器的配置过程。 有几个配置文件可用，如 &quot; <a href="#application-profiles">应用程序配置文件</a> &quot; 部分中所述。</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Clients&quot;: {
+    &quot;angularindividualpreview3final&quot;: {
+      &quot;Profile&quot;: &quot;IdentityServerSPA&quot;
+    }
+  }
+}
+</code></pre>
+<h3 id="appsettingsdevelopmentjson">appsettings.Development.js</h3>
+<p>在项目根的 <em>appsettings.Development.js</em> 文件中，有一个 <code>IdentityServer</code> 描述用于对令牌进行签名的密钥的部分。 部署到生产环境时，需要在应用中预配和部署密钥，如 &quot; <a href="#deploy-to-production">部署到生产</a> &quot; 一节中所述。</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Key&quot;: {
+    &quot;Type&quot;: &quot;Development&quot;
+  }
+}
+</code></pre>
+<h2 id="general-description-of-the-angular-app">角应用的一般说明</h2>
+<p>角度模板中的身份验证和 API 授权支持位于其自身的 <em>ClientApp\src\api-authorization</em> 目录中。 模块由以下元素组成：</p>
+<ul>
+<li>3个组件：
+<ul>
+<li><em>login. ts</em> ：处理应用的登录流。</li>
+<li>node.js：处理应用程序的注销 <em>流。</em></li>
+<li><em>login-menu. ts</em> ：一个小组件，显示以下一组链接：
+<ul>
+<li>用户进行身份验证时，用户配置文件管理和注销链接。</li>
+<li>用户未通过身份验证时的注册和登录链接。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>AuthorizeGuard</code>可以添加到路由中的路由防护，要求先对用户进行身份验证，然后才能访问路由。</li>
+<li><code>AuthorizeInterceptor</code>向用户进行身份验证时，将访问令牌附加到针对 API 的传出 HTTP 请求的 http 侦听器。</li>
+<li>一 <code>AuthorizeService</code> 项服务，用于处理身份验证过程的较低级别详细信息，并向应用程序的其余部分提供有关使用情况的已通过身份验证的用户的信息。</li>
+<li>用于定义与应用的身份验证部分关联的路由的角模块。 它公开登录菜单组件、侦听器、防护和服务，以便从应用程序的其余部分使用。</li>
+</ul>
+<h2 id="general-description-of-the-react-app">响应应用的一般说明</h2>
+<p>响应模板中的身份验证和 API 授权支持位于 <em>ClientApp\src\components\api-authorization</em> 目录中。 它由以下元素组成：</p>
+<ul>
+<li>4个组件：
+<ul>
+<li><em>Login.js</em> ：处理应用的登录流。</li>
+<li><em>Logout.js</em> ：处理应用程序的注销流。</li>
+<li><em>LoginMenu.js</em> ：显示以下链接集之一的小组件：
+<ul>
+<li>用户进行身份验证时，用户配置文件管理和注销链接。</li>
+<li>用户未通过身份验证时的注册和登录链接。</li>
+</ul>
+</li>
+<li><em>AuthorizeRoute.js</em> ：路由组件，需要先对用户进行身份验证，然后才能呈现参数中指示的组件 <code>Component</code> 。</li>
+</ul>
+</li>
+<li><code>authService</code>类的导出实例 <code>AuthorizeService</code> ，用于处理身份验证过程的较低级别细节，并向应用程序的其余部分提供有关使用情况的已通过身份验证的用户的信息。</li>
+</ul>
+<p>现在，你已了解解决方案的主要组件，可以更深入地了解应用程序的各个方案。</p>
+<h2 id="require-authorization-on-a-new-api">要求对新 API 进行授权</h2>
+<p>默认情况下，系统配置为轻松地要求对新 Api 进行授权。 为此，请创建新的控制器，将 <code>[Authorize]</code> 属性添加到控制器类或控制器中的任何操作。</p>
+<h2 id="customize-the-api-authentication-handler">自定义 API 身份验证处理程序</h2>
+<p>若要自定义 API 的 JWT 处理程序的配置，请配置其 &lt;xref:Microsoft.AspNetCore.Builder.JwtBearerOptions&gt; 实例：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddIdentityServerJwt();
+
+services.Configure&lt;JwtBearerOptions&gt;(
+    IdentityServerJwtConstants.IdentityServerJwtBearerScheme,
+    options =&gt;
+    {
+        ...
+    });
+</code></pre>
+<p>API 的 JWT 处理程序会引发事件，这些事件可以使用来控制身份验证过程 <code>JwtBearerEvents</code> 。 若要为 API 授权提供支持，请 <code>AddIdentityServerJwt</code> 注册其自己的事件处理程序。</p>
+<p>若要自定义事件的处理，请根据需要使用其他逻辑来包装现有的事件处理程序。 例如： 。</p>
+<pre><code class="lang-csharp">services.Configure&lt;JwtBearerOptions&gt;(
+    IdentityServerJwtConstants.IdentityServerJwtBearerScheme,
+    options =&gt;
+    {
+        var onTokenValidated = options.Events.OnTokenValidated;       
+        
+        options.Events.OnTokenValidated = async context =&gt;
+        {
+            await onTokenValidated(context);
+            ...
+        }
+    });
+</code></pre>
+<p>在前面的代码中， <code>OnTokenValidated</code> 事件处理程序将替换为自定义实现。 此实现：</p>
+<ol>
+<li>调用 API 授权支持提供的原始实现。</li>
+<li>运行自己的自定义逻辑。</li>
+</ol>
+<h2 id="protect-a-client-side-route-angular">保护客户端路由 (角度)</h2>
+<p>通过将授权防护添加到在配置路由时要运行的防护列表，来保护客户端路由。 例如，可以在 <code>fetch-data</code> 主应用角模块内查看路由的配置方式：</p>
+<pre><code class="lang-typescript">RouterModule.forRoot([
+  // ...
+  { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
+])
+</code></pre>
+<p>需要说明的是，保护路由不会保护实际端点 (仍需要 <code>[Authorize]</code> 应用属性) 但它只会阻止用户在未通过身份验证时导航到给定的客户端路由。</p>
+<h2 id="authenticate-api-requests-angular"> (角度) 对 API 请求进行身份验证</h2>
+<p>对与应用程序一起托管的 Api 的请求进行身份验证是通过使用应用定义的 HTTP 客户端侦听器来自动完成的。</p>
+<h2 id="protect-a-client-side-route-react">保护客户端路由 (响应)</h2>
+<p>使用 <code>AuthorizeRoute</code> 组件而不是普通组件来保护客户端路由 <code>Route</code> 。 例如，请注意该 <code>fetch-data</code> 路由在组件中的配置方式 <code>App</code> ：</p>
+<pre><code class="lang-jsx">&lt;AuthorizeRoute path='/fetch-data' component={FetchData} /&gt;
+</code></pre>
+<p>保护路由：</p>
+<ul>
+<li>不保护实际端点 (仍需要将 <code>[Authorize]</code> 属性应用于) 。</li>
+<li>仅阻止用户在未通过身份验证时导航到给定的客户端路由。</li>
+</ul>
+<h2 id="authenticate-api-requests-react">对 API 请求进行身份验证 (响应)</h2>
+<p>通过从中导入实例，对具有反应的请求进行身份验证 <code>authService</code> <code>AuthorizeService</code> 。 访问令牌从检索 <code>authService</code> ，并附加到请求，如下所示。 在做出反应的组件中，这种工作通常是在生命周期方法中完成的， <code>componentDidMount</code> 或者是来自某些用户交互的结果。</p>
+<h3 id="import-the-authservice-into-your-component">将 authService 导入组件</h3>
+<pre><code class="lang-javascript">import authService from './api-authorization/AuthorizeService'
+</code></pre>
+<h3 id="retrieve-and-attach-the-access-token-to-the-response">检索访问令牌并将其附加到响应</h3>
+<pre><code class="lang-javascript">async populateWeatherData() {
+  const token = await authService.getAccessToken();
+  const response = await fetch('api/SampleData/WeatherForecasts', {
+    headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+  });
+  const data = await response.json();
+  this.setState({ forecasts: data, loading: false });
+}
+</code></pre>
+<h2 id="deploy-to-production">部署到生产</h2>
+<p>若要将应用部署到生产环境，需预配以下资源：</p>
+<ul>
+<li>用于存储 Identity 用户帐户和服务器授予的数据库 Identity 。</li>
+<li>用于对令牌进行签名的生产证书。
+<ul>
+<li>此证书没有特定要求;此证书可以是自签名证书，也可以是通过 CA 颁发机构预配的证书。</li>
+<li>它可通过 PowerShell 或 OpenSSL 等标准工具生成。</li>
+<li>可以将其安装到目标计算机上的证书存储中，或部署为带有强密码的 <em>.pfx</em> 文件。</li>
+</ul>
+</li>
+</ul>
+<h3 id="example-deploy-to-a-non-azure-web-hosting-provider">示例：部署到非 Azure web 托管提供程序</h3>
+<p>在 web 托管面板中，创建或加载证书。 然后，在应用的 <em>appsettings.json</em> 文件中修改 <code>IdentityServer</code> 部分以包含关键详细信息。 例如： 。</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Key&quot;: {
+    &quot;Type&quot;: &quot;Store&quot;,
+    &quot;StoreName&quot;: &quot;WebHosting&quot;,
+    &quot;StoreLocation&quot;: &quot;CurrentUser&quot;,
+    &quot;Name&quot;: &quot;CN=MyApplication&quot;
+  }
+}
+</code></pre>
+<p>在上面的示例中：</p>
+<ul>
+<li><code>StoreName</code> 表示存储证书的证书存储区的名称。 在这种情况下，它指向 web 宿主存储区。</li>
+<li><code>StoreLocation</code> 表示 <code>CurrentUser</code> 在这种情况下从 (中加载证书的位置) 。</li>
+<li><code>Name</code> 对应于证书的可分辨主题。</li>
+</ul>
+<h3 id="example-deploy-to-azure-app-service">示例：部署到 Azure App Service</h3>
+<p>本部分介绍如何使用存储在证书存储区中的证书，将应用部署到 Azure App Service。 若要将应用修改为从证书存储区中加载证书，请在稍后的步骤中配置 Azure 门户应用时，需要使用标准层服务计划或更高版本。</p>
+<p>在应用的 <em>appsettings.json</em> 文件中，修改 <code>IdentityServer</code> 部分以包含关键详细信息：</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Key&quot;: {
+    &quot;Type&quot;: &quot;Store&quot;,
+    &quot;StoreName&quot;: &quot;My&quot;,
+    &quot;StoreLocation&quot;: &quot;CurrentUser&quot;,
+    &quot;Name&quot;: &quot;CN=MyApplication&quot;
+  }
+}
+</code></pre>
+<ul>
+<li>存储名称表示存储证书的证书存储区的名称。 在这种情况下，它指向个人用户存储区。</li>
+<li>应用商店位置表示从 (或) 中加载证书的位置 <code>CurrentUser</code> <code>LocalMachine</code> 。</li>
+<li>证书上的名称属性对应于证书的可分辨主题。</li>
+</ul>
+<p>若要部署到 Azure App Service，请按照将 <a class="xref" href="../../tutorials/publish-to-azure-webapp-using-vs.html#deploy-the-app-to-azure">应用程序部署到 Azure</a>中的步骤操作，该步骤介绍了如何创建必要的 Azure 资源，以及如何将应用程序部署到生产环境。</p>
+<p>按照前面的说明操作后，应用程序将部署到 Azure，但尚不起作用。 应用使用的证书必须在 Azure 门户中进行配置。 找到证书的指纹，并按照 <a href="/azure/app-service/app-service-web-ssl-cert-load#load-the-certificate-in-code">加载证书</a>中所述的步骤进行操作。</p>
+<p>虽然这些步骤提及 SSL，但在 Azure 门户中有一个 &quot; <strong>私有证书</strong> &quot; 部分，你可以在其中上传预配的证书以与应用一起使用。</p>
+<p>在 Azure 门户中配置应用和应用设置后，请在门户中重新启动应用。</p>
+<h2 id="other-configuration-options">其他配置选项</h2>
+<p>支持 API 授权构建在 Identity 服务器之上，具有一组约定、默认值和增强功能，可简化 spa 的体验。 不用说， Identity 如果 ASP.NET Core 集成不涵盖方案，则可以在幕后使用服务器的完整功能。 ASP.NET Core 支持重点介绍 &quot;第一方&quot; 应用，其中的所有应用都是由我们的组织创建和部署的。 因此，不支持许可或联合等。 对于这些方案，请使用 Identity 服务器并按照其文档进行操作。</p>
+<h3 id="application-profiles">应用程序配置文件</h3>
+<p>应用程序配置文件是用于进一步定义其参数的应用的预定义配置。 目前支持以下配置文件：</p>
+<ul>
+<li><code>IdentityServerSPA</code>：表示 Identity 作为一个单元与服务器一起托管的 SPA。
+<ul>
+<li><code>redirect_uri</code>默认值为 <code>/authentication/login-callback</code> 。</li>
+<li><code>post_logout_redirect_uri</code>默认值为 <code>/authentication/logout-callback</code> 。</li>
+<li>作用域集包括 <code>openid</code> <code>profile</code> 为应用中的 api 定义的、和每个作用域。</li>
+<li>一组允许的 OIDC 响应类型为 <code>id_token token</code> ，每个响应类型分别 <code>id_token</code> (<code>token</code>) 。</li>
+<li>允许的响应模式为 <code>fragment</code> 。</li>
+</ul>
+</li>
+<li><code>SPA</code>：表示不随服务器承载的 SPA Identity 。
+<ul>
+<li>作用域集包括 <code>openid</code> <code>profile</code> 为应用中的 api 定义的、和每个作用域。</li>
+<li>一组允许的 OIDC 响应类型为 <code>id_token token</code> ，每个响应类型分别 <code>id_token</code> (<code>token</code>) 。</li>
+<li>允许的响应模式为 <code>fragment</code> 。</li>
+</ul>
+</li>
+<li><code>IdentityServerJwt</code>：表示与服务器一起托管的 API Identity 。
+<ul>
+<li>应用配置为具有一个默认为应用名称的作用域。</li>
+</ul>
+</li>
+<li><code>API</code>：表示不与服务器托管的 API Identity 。
+<ul>
+<li>应用配置为具有一个默认为应用名称的作用域。</li>
+</ul>
+</li>
+</ul>
+<h3 id="configuration-through-appsettings">通过 AppSettings 配置</h3>
+<p>通过将应用添加到或列表，通过配置系统配置应用 <code>Clients</code> <code>Resources</code> 。</p>
+<p>配置每个客户端的 <code>redirect_uri</code> 和 <code>post_logout_redirect_uri</code> 属性，如以下示例中所示：</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Clients&quot;: {
+    &quot;MySPA&quot;: {
+      &quot;Profile&quot;: &quot;SPA&quot;,
+      &quot;RedirectUri&quot;: &quot;https://www.example.com/authentication/login-callback&quot;,
+      &quot;LogoutUri&quot;: &quot;https://www.example.com/authentication/logout-callback&quot;
+    }
+  }
+}
+</code></pre>
+<p>配置资源时，可以按如下所示配置资源的作用域：</p>
+<pre><code class="lang-json">&quot;IdentityServer&quot;: {
+  &quot;Resources&quot;: {
+    &quot;MyExternalApi&quot;: {
+      &quot;Profile&quot;: &quot;API&quot;,
+      &quot;Scopes&quot;: &quot;a b c&quot;
+    }
+  }
+}
+</code></pre>
+<h3 id="configuration-through-code">通过代码进行配置</h3>
+<p>你还可以通过代码使用的重载来配置客户端和资源 <code>AddApiAuthorization</code> ，该重载采用操作来配置选项。</p>
+<pre><code class="lang-csharp">AddApiAuthorization&lt;ApplicationUser, ApplicationDbContext&gt;(options =&gt;
+{
+    options.Clients.AddSPA(
+        &quot;My SPA&quot;, spa =&gt;
+        spa.WithRedirectUri(&quot;http://www.example.com/authentication/login-callback&quot;)
+           .WithLogoutRedirectUri(
+               &quot;http://www.example.com/authentication/logout-callback&quot;));
+
+    options.ApiResources.AddApiResource(&quot;MyExternalApi&quot;, resource =&gt;
+        resource.WithScopes(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;));
+});
+</code></pre>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../../client-side/spa/angular.html">通过 ASP.NET Core 使用 Angular 项目模板</a></li>
+<li><a class="xref" href="../../client-side/spa/react.html">通过 ASP.NET Core 使用 React 项目模板</a></li>
+<li><a class="xref" href="scaffold-identity.html">IdentityASP.NET Core 项目中的基架</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

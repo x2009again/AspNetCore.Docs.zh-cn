@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#36523;&#20221;&#39564;&#35777;&#21644;&#25480;&#26435; SignalR </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#36523;&#20221;&#39564;&#35777;&#21644;&#25480;&#26435; SignalR ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/authn-and-authz">
+<h1 id="authentication-and-authorization-in-aspnet-core-no-locsignalr">ASP.NET Core 中的身份验证和授权 SignalR</h1>
+
+<p>作者： <a href="https://twitter.com/anurse">Andrew Stanton</a></p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/signalr/authn-and-authz/sample/">查看或下载示例代码</a><a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">（如何下载）</a></p>
+<h2 id="authenticate-users-connecting-to-a-no-locsignalr-hub">对连接到集线器的用户进行身份验证 SignalR</h2>
+<p>SignalR 可以与 <a class="xref" href="../security/authentication/identity.html">ASP.NET Core authentication</a> 一起使用，以将用户与每个连接相关联。 在中心中，可以从 <a href="/dotnet/api/microsoft.aspnetcore.signalr.hubconnectioncontext.user">HubConnectionContext</a> 属性访问身份验证数据。 身份验证允许中心对与用户关联的所有连接调用方法。 有关详细信息，请参阅中的 &quot;<a class="xref" href="groups.html">管理 SignalR 用户和组&quot; </a>。 单个用户可以关联多个连接。</p>
+<p>下面是 <code>Startup.Configure</code> 使用 SignalR 和 ASP.NET Core 身份验证的示例：</p>
+<div range="&gt;= aspnetcore-3.0">
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    ...
+
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.UseEndpoints(endpoints =&gt;
+    {
+        endpoints.MapHub&lt;ChatHub&gt;(&quot;/chat&quot;);
+        endpoints.MapControllerRoute(&quot;default&quot;, &quot;{controller=Home}/{action=Index}/{id?}&quot;);
+    });
+}
+</code></pre>
+</div>
+<div range="&lt;= aspnetcore-2.2">
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app)
+{
+    ...
+
+    app.UseStaticFiles();
+
+    app.UseAuthentication();
+
+    app.UseSignalR(hubs =&gt;
+    {
+        hubs.MapHub&lt;ChatHub&gt;(&quot;/chat&quot;);
+    });
+
+    app.UseMvc(routes =&gt;
+    {
+        routes.MapRoute(&quot;default&quot;, &quot;{controller=Home}/{action=Index}/{id?}&quot;);
+    });
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>注册 SignalR 和 ASP.NET Core 身份验证中间件的顺序。 始终调用 <code>UseAuthentication</code> ， <code>UseSignalR</code> 以便在 SignalR 上有用户 <code>HttpContext</code> 。</p>
+</div>
+</div>
+<h3 id="no-loccookie-authentication">Cookie身份验证</h3>
+<p>在基于浏览器的应用程序中， cookie 身份验证允许现有用户凭据自动流动到 SignalR 连接。 使用浏览器客户端时，无需进行其他配置。 如果用户已登录到你的应用，则 SignalR 连接将自动继承此身份验证。</p>
+<p>Cookies 是一种特定于浏览器的发送访问令牌的方法，但非浏览器客户端可以发送这些令牌。 使用 <a class="xref" href="dotnet-client.html">.Net 客户端</a>时， <code>Cookies</code> 可以在调用中配置属性 <code>.WithUrl</code> 以提供 cookie 。 但是，在 cookie .net 客户端中使用身份验证要求应用提供一个 API 来交换的身份验证数据 cookie 。</p>
+<h3 id="bearer-token-authentication">持有者令牌身份验证</h3>
+<p>客户端可以提供访问令牌，而不是使用 cookie 。 服务器验证令牌并使用它来标识用户。 仅在建立连接时才执行此验证。 在连接的生命周期内，服务器不会自动重新验证以检查令牌是否已吊销。</p>
+<p>在 JavaScript 客户端中，可使用 <a class="xref" href="configuration.html#configure-bearer-authentication">accessTokenFactory</a> 选项提供令牌。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 .NET 客户端中，有一个类似的 <a class="xref" href="configuration.html#configure-bearer-authentication">AccessTokenProvider</a> 属性，可用于配置令牌：</p>
+<pre><code class="lang-csharp">var connection = new HubConnectionBuilder()
+    .WithUrl(&quot;https://example.com/chathub&quot;, options =&gt;
+    { 
+        options.AccessTokenProvider = () =&gt; Task.FromResult(_myAccessToken);
+    })
+    .Build();
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>提供的访问令牌函数在发出的 <strong>每个</strong> HTTP 请求之前调用 SignalR 。 如果你需要续订标记以便保持连接处于活动状态， (因为它可能会在连接) 期间过期，请在此函数中执行此操作，并返回已更新的令牌。</p>
+</div>
+<p>在标准 web Api 中，持有者令牌是在 HTTP 标头中发送的。 但是，在 SignalR 使用某些传输时，无法在浏览器中设置这些标头。 使用 Websocket 和 Server-Sent 事件时，会将令牌作为查询字符串参数进行传输。</p>
+<h4 id="built-in-jwt-authentication">内置的 JWT 身份验证</h4>
+<p>在服务器上，使用 <a href="xref:Microsoft.Extensions.DependencyInjection.JwtBearerExtensions.AddJwtBearer%2A">JWT 持有者中间件</a>配置持有者令牌身份验证：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>若要查看翻译为非英语语言的代码注释，请在 <a href="https://github.com/MicrosoftDocs/feedback/issues/2515">此 GitHub 讨论问题</a>中告诉我们。</p>
+
+<div class="NOTE">
+<h5>Note</h5>
+<p>由于浏览器 API 限制，连接到 Websocket 和 Server-Sent 事件时，将在浏览器上使用查询字符串。 使用 HTTPS 时，查询字符串值受 TLS 连接保护。 但是，许多服务器都记录查询字符串值。 有关详细信息，请参阅<a class="xref" href="security.html">ASP.NET Core SignalR 中的安全注意事项</a>。 SignalR 使用标头在支持 (如 .NET 和 Java 客户端) 的环境中传输标记。</p>
+</div>
+<h4 id="no-locidentity-server-jwt-authentication">Identity 服务器 JWT 身份验证</h4>
+<p>使用 Identity 服务器时，将 &lt;xref:Microsoft.Extensions.Options.PostConfigureOptions%601&gt; 服务添加到项目：</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
+public class ConfigureJwtBearerOptions : IPostConfigureOptions&lt;JwtBearerOptions&gt;
+{
+    public void PostConfigure(string name, JwtBearerOptions options)
+    {
+        var originalOnMessageReceived = options.Events.OnMessageReceived;
+        options.Events.OnMessageReceived = async context =&gt;
+        {
+            await originalOnMessageReceived(context);
+                
+            if (string.IsNullOrEmpty(context.Token))
+            {
+                var accessToken = context.Request.Query[&quot;access_token&quot;];
+                var path = context.HttpContext.Request.Path;
+                
+                if (!string.IsNullOrEmpty(accessToken) &amp;&amp; 
+                    path.StartsWithSegments(&quot;/hubs&quot;))
+                {
+                    context.Token = accessToken;
+                }
+            }
+        };
+    }
+}
+</code></pre>
+<p>将服务添加到 <code>Startup.ConfigureServices</code> 身份验证 (&lt;xref:Microsoft.Extensions.DependencyInjection.AuthenticationServiceCollectionExtensions.AddAuthentication%2A&gt;) 和 Identity 服务器 () 的身份验证处理程序之后，请在中注册该服务 &lt;xref:Microsoft.AspNetCore.Authentication.AuthenticationBuilderExtensions.AddIdentityServerJwt%2A&gt; ：</p>
+<pre><code class="lang-csharp">services.AddAuthentication()
+    .AddIdentityServerJwt();
+services.TryAddEnumerable(
+    ServiceDescriptor.Singleton&lt;IPostConfigureOptions&lt;JwtBearerOptions&gt;, 
+        ConfigureJwtBearerOptions&gt;());
+</code></pre>
+<h3 id="no-loccookies-vs-bearer-tokens">Cookie和持有者令牌</h3>
+<p>Cookie是特定于浏览器的。 与发送持有者令牌相比，从其他类型的客户端发送这些客户端增加了复杂性。 因此， cookie 除非应用只需从浏览器客户端对用户进行身份验证，否则不建议进行身份验证。 当使用浏览器客户端之外的客户端时，建议使用持有者令牌身份验证。</p>
+<h3 id="windows-authentication">Windows 身份验证</h3>
+<p>如果在你的应用中配置了 <a class="xref" href="../security/authentication/windowsauth.html">Windows 身份验证</a> ，则 SignalR 可以使用该标识来保护中心。 但是，若要将消息发送给单个用户，则需要添加自定义用户 ID 提供程序。 Windows 身份验证系统不提供 &quot;名称标识符&quot; 声明。 SignalR 使用声明来确定用户名。</p>
+<p>添加一个新类，该类实现 <code>IUserIdProvider</code> 并检索用户要用作标识符的声明之一。 例如，若要使用 &quot;名称&quot; 声明 (是) 格式的 Windows 用户名 <code>[Domain]\[Username]</code> ，请创建以下类：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>ClaimTypes.Name</code>您可以使用 (中的任何值 <code>User</code> ，例如 Windows SID 标识符，等等) 。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>您选择的值在系统中的所有用户中必须是唯一的。 否则，用于一个用户的消息可能最终会转到其他用户。</p>
+</div>
+<p>在方法中注册此组件 <code>Startup.ConfigureServices</code> 。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    // ... other services ...
+
+    services.AddSignalR();
+    services.AddSingleton&lt;IUserIdProvider, NameUserIdProvider&gt;();
+}
+</code></pre>
+<p>在 .NET 客户端中，必须通过设置 <a href="/dotnet/api/microsoft.aspnetcore.http.connections.client.httpconnectionoptions.usedefaultcredentials">UseDefaultCredentials</a> 属性来启用 Windows 身份验证：</p>
+<pre><code class="lang-csharp">var connection = new HubConnectionBuilder()
+    .WithUrl(&quot;https://example.com/chathub&quot;, options =&gt;
+    {
+        options.UseDefaultCredentials = true;
+    })
+    .Build();
+</code></pre>
+<p>Internet Explorer 和 Microsoft Edge 支持 Windows 身份验证，但在所有浏览器中都不支持。 例如，在 Chrome 和 Safari 中，尝试使用 Windows 身份验证和 Websocket 会失败。 当 Windows 身份验证失败时，客户端将尝试回退到可能工作的其他传输。</p>
+<h3 id="use-claims-to-customize-identity-handling">使用声明自定义标识处理</h3>
+<p>对用户进行身份验证的应用可以 SignalR 从用户声明派生用户 id。 若要指定 SignalR 创建用户 id 的方式，请实现 <code>IUserIdProvider</code> 并注册实现。</p>
+<p>示例代码演示了如何使用声明选择用户的电子邮件地址作为识别属性。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>您选择的值在系统中的所有用户中必须是唯一的。 否则，用于一个用户的消息可能最终会转到其他用户。</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>帐户注册会将类型为的声明添加 <code>ClaimsTypes.Email</code> 到 ASP.NET 标识数据库。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在中注册此组件 <code>Startup.ConfigureServices</code> 。</p>
+<pre><code class="lang-csharp">services.AddSingleton&lt;IUserIdProvider, EmailBasedUserIdProvider&gt;();
+</code></pre>
+<h2 id="authorize-users-to-access-hubs-and-hub-methods">授权用户访问集线器和集线器方法</h2>
+<p>默认情况下，集线器中的所有方法都可由未经身份验证的用户调用。 若要要求身份验证，请将 <a href="/dotnet/api/microsoft.aspnetcore.authorization.authorizeattribute">授权</a> 属性应用于中心：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可使用 <code>[Authorize]</code> 特性的构造函数参数和属性将访问权限仅限于匹配特定<a class="xref" href="../security/authorization/policies.html">授权策略</a>的用户。 例如，如果你有一个名为的自定义授权策略， <code>MyAuthorizationPolicy</code> 则可以确保只有符合该策略的用户才能使用以下代码访问该中心：</p>
+<pre><code class="lang-csharp">[Authorize(&quot;MyAuthorizationPolicy&quot;)]
+public class ChatHub : Hub
+{
+}
+</code></pre>
+<p>单个集线器方法 <code>[Authorize]</code> 也可以应用该属性。 如果当前用户与应用于方法的策略不匹配，则会向调用方返回错误：</p>
+<pre><code class="lang-csharp">[Authorize]
+public class ChatHub : Hub
+{
+    public async Task Send(string message)
+    {
+        // ... send a message to all users ...
+    }
+
+    [Authorize(&quot;Administrators&quot;)]
+    public void BanUser(string userName)
+    {
+        // ... ban a user from the chat room (something only Administrators can do) ...
+    }
+}
+</code></pre>
+<div range="&gt;= aspnetcore-3.0">
+<h3 id="use-authorization-handlers-to-customize-hub-method-authorization">使用授权处理程序自定义集线器方法授权</h3>
+<p>SignalR 当集线器方法要求授权时，为授权处理程序提供自定义资源。 资源是 <code>HubInvocationContext</code> 的一个实例。 <code>HubInvocationContext</code>包括 <code>HubCallerContext</code> 、正在调用的集线器方法的名称，以及中心方法的参数。</p>
+<p>请考虑允许通过 Azure Active Directory 多个组织登录的聊天室的示例。 拥有 Microsoft 帐户的任何人都可以登录到聊天，但只有拥有组织的成员才能阻止用户或查看用户的聊天历史记录。 而且，我们可能希望限制某些用户的某些功能。 使用 ASP.NET Core 3.0 中的更新功能，这是完全可能的。 请注意如何 <code>DomainRestrictedRequirement</code> 充当自定义 <code>IAuthorizationRequirement</code> 。 既然 <code>HubInvocationContext</code> 正在传入资源参数，内部逻辑就可以检查正在调用中心的上下文，并决定是否允许用户执行单个集线器方法。</p>
+<pre><code class="lang-csharp">[Authorize]
+public class ChatHub : Hub
+{
+    public void SendMessage(string message)
+    {
+    }
+
+    [Authorize(&quot;DomainRestricted&quot;)]
+    public void BanUser(string username)
+    {
+    }
+
+    [Authorize(&quot;DomainRestricted&quot;)]
+    public void ViewUserHistory(string username)
+    {
+    }
+}
+
+public class DomainRestrictedRequirement : 
+    AuthorizationHandler&lt;DomainRestrictedRequirement, HubInvocationContext&gt;, 
+    IAuthorizationRequirement
+{
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        DomainRestrictedRequirement requirement, 
+        HubInvocationContext resource)
+    {
+        if (IsUserAllowedToDoThis(resource.HubMethodName, context.User.Identity.Name) &amp;&amp; 
+            context.User.Identity.Name.EndsWith(&quot;@microsoft.com&quot;))
+        {
+            context.Succeed(requirement);
+        }
+        return Task.CompletedTask;
+    }
+
+    private bool IsUserAllowedToDoThis(string hubMethodName,
+        string currentUsername)
+    {
+        return !(currentUsername.Equals(&quot;asdf42@microsoft.com&quot;) &amp;&amp; 
+            hubMethodName.Equals(&quot;banUser&quot;, StringComparison.OrdinalIgnoreCase));
+    }
+}
+</code></pre>
+<p>在中 <code>Startup.ConfigureServices</code> ，添加新策略，并将自定义 <code>DomainRestrictedRequirement</code> 要求用作创建策略的参数 <code>DomainRestricted</code> 。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    // ... other services ...
+
+    services
+        .AddAuthorization(options =&gt;
+        {
+            options.AddPolicy(&quot;DomainRestricted&quot;, policy =&gt;
+            {
+                policy.Requirements.Add(new DomainRestrictedRequirement());
+            });
+        });
+}
+</code></pre>
+<p>在前面的示例中， <code>DomainRestrictedRequirement</code> 类既是 <code>IAuthorizationRequirement</code> 又是 <code>AuthorizationHandler</code> 该要求的。 可以将这两个组件拆分为单独的类，以分隔问题。 该示例方法的优点是，无需在 <code>AuthorizationHandler</code> 启动过程中注入，因为要求和处理程序是相同的。</p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="https://blogs.msdn.microsoft.com/webdev/2016/10/27/bearer-token-authentication-in-asp-net-core/">ASP.NET Core 中的持有者令牌身份验证</a></li>
+<li><a class="xref" href="../security/authorization/resourcebased.html">基于资源的授权</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

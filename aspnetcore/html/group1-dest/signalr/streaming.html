@@ -1,0 +1,351 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; ASP.NET Core &#20013;&#30340;&#27969;&#24335;&#22788;&#29702; SignalR </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; ASP.NET Core &#20013;&#30340;&#27969;&#24335;&#22788;&#29702; SignalR ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="signalr/streaming">
+<h1 id="use-streaming-in-aspnet-core-no-locsignalr">使用 ASP.NET Core 中的流式处理 SignalR</h1>
+
+<p>作者： <a href="https://github.com/BrennanConroy">Brennan Conroy</a></p>
+<div range="&gt;= aspnetcore-3.0">
+<p>ASP.NET Core SignalR 支持从客户端到服务器以及从服务器到客户端的流式传输。 这适用于数据片段随着时间的推移而发生的情况。 流式传输时，每个片段一旦变为可用，就会发送到客户端或服务器，而不是等待所有数据都可用。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>ASP.NET Core SignalR 支持服务器方法的流返回值。 这适用于数据片段随着时间的推移而发生的情况。 将返回值流式传输到客户端时，每个片段会在其可用时立即发送到客户端，而不是等待所有数据都可用。</p>
+</div>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/live/aspnetcore/signalr/streaming/samples/">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="set-up-a-hub-for-streaming">设置用于流式传输的集线器</h2>
+<div range="&gt;= aspnetcore-3.0">
+<p>当集线器方法返回、、或时，它会自动成为流式处理中心方法 &lt;xref:System.Collections.Generic.IAsyncEnumerable`1&gt; &lt;xref:System.Threading.Channels.ChannelReader%601&gt; <code>Task&lt;IAsyncEnumerable&lt;T&gt;&gt;</code> <code>Task&lt;ChannelReader&lt;T&gt;&gt;</code> 。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>当集线器方法返回或时，它会自动成为流式处理中心方法 &lt;xref:System.Threading.Channels.ChannelReader%601&gt; <code>Task&lt;ChannelReader&lt;T&gt;&gt;</code> 。</p>
+</div>
+<h3 id="server-to-client-streaming">服务器到客户端流式处理</h3>
+<div range="&gt;= aspnetcore-3.0">
+<p>除了之外，流集线器方法还可以返回 <code>IAsyncEnumerable&lt;T&gt;</code> <code>ChannelReader&lt;T&gt;</code> 。 返回的最简单方法 <code>IAsyncEnumerable&lt;T&gt;</code> 是将集线器方法设为异步迭代器方法，如下例所示。 中心异步迭代器方法可以接受 <code>CancellationToken</code> 当客户端从流中取消订阅时触发的参数。 异步迭代器方法避免了与通道常见的问题，例如，在没有 <code>ChannelReader</code> 完成的情况下，不能提前返回或退出方法 &lt;xref:System.Threading.Channels.ChannelWriter`1&gt; 。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>以下示例需要C# 8.0 或更高版本。</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<p>下面的示例演示了使用通道将数据流式传输到客户端的基础知识。 每当将对象写入到时 &lt;xref:System.Threading.Channels.ChannelWriter%601&gt; ，都会立即将对象发送到客户端。 结束时，已 <code>ChannelWriter</code> 完成，告诉客户端流已关闭。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>ChannelWriter&lt;T&gt;</code>在后台线程上写入，并尽快返回 <code>ChannelReader</code> 。 在返回之前，其他中心调用会被阻止 <code>ChannelReader</code> 。</p>
+<p>在<a href="/dotnet/csharp/language-reference/keywords/try-catch"> <code>try ... catch</code> 语句</a>中环绕逻辑。 <code>Channel</code>在<a href="/dotnet/csharp/language-reference/keywords/try-catch-finally"> <code>finally</code> 块</a>中完成。 如果要流式传输错误，请将其捕获到块中， <code>catch</code> 并将其写入 <code>finally</code> 块。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="= aspnetcore-2.1">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></div>
+<div range="&gt;= aspnetcore-2.2">
+<p>服务器到客户端流式处理中心方法可以接受 <code>CancellationToken</code> 当客户端从流中取消订阅时触发的参数。 如果客户端在流末尾之前断开连接，请使用此标记停止服务器操作并释放任何资源。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<h3 id="client-to-server-streaming">客户端到服务器的流式处理</h3>
+<p>当某个集线器方法接受一个或多个类型为或的对象时，它会自动成为客户端到服务器的流式处理中心方法 &lt;xref:System.Threading.Channels.ChannelReader%601&gt; &lt;xref:System.Collections.Generic.IAsyncEnumerable%601&gt; 。 下面的示例演示了读取从客户端发送的流式处理数据的基础知识。 每当客户端向中写入 &lt;xref:System.Threading.Channels.ChannelWriter%601&gt; 数据时，数据就会写入 <code>ChannelReader</code> 中心方法所读取的服务器上的。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>&lt;xref:System.Collections.Generic.IAsyncEnumerable%601&gt;下面是方法的版本。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>以下示例需要C# 8.0 或更高版本。</p>
+</div>
+
+<pre><code class="lang-csharp">public async Task UploadStream(IAsyncEnumerable&lt;string&gt; stream)
+{
+    await foreach (var item in stream)
+    {
+        Console.WriteLine(item);
+    }
+}
+</code></pre>
+</div>
+<h2 id="net-client">.NET 客户端</h2>
+<h3 id="server-to-client-streaming">服务器到客户端流式处理</h3>
+<div range="&gt;= aspnetcore-3.0">
+<p><code>StreamAsync</code>上的和 <code>StreamAsChannelAsync</code> 方法 <code>HubConnection</code> 用于调用服务器到客户端的流式处理方法。 将 hub 方法中定义的集线器方法名称和参数传递给 <code>StreamAsync</code> 或 <code>StreamAsChannelAsync</code> 。 和上的泛型 <code>StreamAsync&lt;T&gt;</code> 参数 <code>StreamAsChannelAsync&lt;T&gt;</code> 指定流方法返回的对象的类型。 类型 <code>IAsyncEnumerable&lt;T&gt;</code> 为或的对象 <code>ChannelReader&lt;T&gt;</code> 将从流调用返回，并表示客户端上的流。</p>
+<p><code>StreamAsync</code>返回 <code>IAsyncEnumerable&lt;int&gt;</code> 以下内容的示例：</p>
+<pre><code class="lang-csharp">// Call &quot;Cancel&quot; on this CancellationTokenSource to send a cancellation message to
+// the server, which will trigger the corresponding token in the hub method.
+var cancellationTokenSource = new CancellationTokenSource();
+var stream = await hubConnection.StreamAsync&lt;int&gt;(
+    &quot;Counter&quot;, 10, 500, cancellationTokenSource.Token);
+
+await foreach (var count in stream)
+{
+    Console.WriteLine($&quot;{count}&quot;);
+}
+
+Console.WriteLine(&quot;Streaming completed&quot;);
+</code></pre>
+<p>返回的相应 <code>StreamAsChannelAsync</code> 示例 <code>ChannelReader&lt;int&gt;</code> ：</p>
+<pre><code class="lang-csharp">// Call &quot;Cancel&quot; on this CancellationTokenSource to send a cancellation message to
+// the server, which will trigger the corresponding token in the hub method.
+var cancellationTokenSource = new CancellationTokenSource();
+var channel = await hubConnection.StreamAsChannelAsync&lt;int&gt;(
+    &quot;Counter&quot;, 10, 500, cancellationTokenSource.Token);
+
+// Wait asynchronously for data to become available
+while (await channel.WaitToReadAsync())
+{
+    // Read all currently available data synchronously, before waiting for more data
+    while (channel.TryRead(out var count))
+    {
+        Console.WriteLine($&quot;{count}&quot;);
+    }
+}
+
+Console.WriteLine(&quot;Streaming completed&quot;);
+</code></pre>
+</div>
+<div range="&gt;= aspnetcore-2.2">
+<p><code>StreamAsChannelAsync</code>上的方法 <code>HubConnection</code> 用于调用服务器到客户端流式处理方法。 将中心方法中定义的集线器方法名称和参数传递给 <code>StreamAsChannelAsync</code> 。 上的泛型参数 <code>StreamAsChannelAsync&lt;T&gt;</code> 指定流方法返回的对象的类型。 <code>ChannelReader&lt;T&gt;</code>从流调用返回，表示客户端上的流。</p>
+<pre><code class="lang-csharp">// Call &quot;Cancel&quot; on this CancellationTokenSource to send a cancellation message to
+// the server, which will trigger the corresponding token in the hub method.
+var cancellationTokenSource = new CancellationTokenSource();
+var channel = await hubConnection.StreamAsChannelAsync&lt;int&gt;(
+    &quot;Counter&quot;, 10, 500, cancellationTokenSource.Token);
+
+// Wait asynchronously for data to become available
+while (await channel.WaitToReadAsync())
+{
+    // Read all currently available data synchronously, before waiting for more data
+    while (channel.TryRead(out var count))
+    {
+        Console.WriteLine($&quot;{count}&quot;);
+    }
+}
+
+Console.WriteLine(&quot;Streaming completed&quot;);
+</code></pre>
+</div>
+<div range="= aspnetcore-2.1">
+<p><code>StreamAsChannelAsync</code>上的方法 <code>HubConnection</code> 用于调用服务器到客户端流式处理方法。 将中心方法中定义的集线器方法名称和参数传递给 <code>StreamAsChannelAsync</code> 。 上的泛型参数 <code>StreamAsChannelAsync&lt;T&gt;</code> 指定流方法返回的对象的类型。 <code>ChannelReader&lt;T&gt;</code>从流调用返回，表示客户端上的流。</p>
+<pre><code class="lang-csharp">var channel = await hubConnection
+    .StreamAsChannelAsync&lt;int&gt;(&quot;Counter&quot;, 10, 500, CancellationToken.None);
+
+// Wait asynchronously for data to become available
+while (await channel.WaitToReadAsync())
+{
+    // Read all currently available data synchronously, before waiting for more data
+    while (channel.TryRead(out var count))
+    {
+        Console.WriteLine($&quot;{count}&quot;);
+    }
+}
+
+Console.WriteLine(&quot;Streaming completed&quot;);
+</code></pre>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<h3 id="client-to-server-streaming">客户端到服务器的流式处理</h3>
+<p>可以通过两种方法从 .NET 客户端调用客户端到服务器的流式处理中心方法。 可以将 <code>IAsyncEnumerable&lt;T&gt;</code> 或 <code>ChannelReader</code> 作为参数传入 <code>SendAsync</code> 、 <code>InvokeAsync</code> 或 <code>StreamAsChannelAsync</code> ，具体取决于所调用的中心方法。</p>
+<p>只要将数据写入到 <code>IAsyncEnumerable</code> 或 <code>ChannelWriter</code> 对象，服务器上的集线器方法就会收到来自客户端的数据的新项。</p>
+<p>如果使用 <code>IAsyncEnumerable</code> 对象，则流在返回流项的方法退出后结束。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>以下示例需要C# 8.0 或更高版本。</p>
+</div>
+
+<pre><code class="lang-csharp">async IAsyncEnumerable&lt;string&gt; clientStreamData()
+{
+    for (var i = 0; i &lt; 5; i++)
+    {
+        var data = await FetchSomeData();
+        yield return data;
+    }
+    //After the for loop has completed and the local function exits the stream completion will be sent.
+}
+
+await connection.SendAsync(&quot;UploadStream&quot;, clientStreamData());
+</code></pre>
+<p>或者，如果使用的是 <code>ChannelWriter</code> ，请使用 <code>channel.Writer.Complete()</code> 以下内容完成通道：</p>
+<pre><code class="lang-csharp">var channel = Channel.CreateBounded&lt;string&gt;(10);
+await connection.SendAsync(&quot;UploadStream&quot;, channel.Reader);
+await channel.Writer.WriteAsync(&quot;some data&quot;);
+await channel.Writer.WriteAsync(&quot;some more data&quot;);
+channel.Writer.Complete();
+</code></pre>
+</div>
+<h2 id="javascript-client">JavaScript 客户端</h2>
+<h3 id="server-to-client-streaming">服务器到客户端流式处理</h3>
+<p>JavaScript 客户端通过调用与的集线器上的服务器到客户端流式处理方法 <code>connection.stream</code> 。 此 <code>stream</code> 方法接受两个参数：</p>
+<ul>
+<li>集线器方法的名称。 在下面的示例中，中心方法名称是 <code>Counter</code> 。</li>
+<li>在 hub 方法中定义的参数。 在下面的示例中，参数是要接收的流项数的计数以及流项之间的延迟。</li>
+</ul>
+<p><code>connection.stream</code> 返回一个 <code>IStreamResult</code> ，它包含 <code>subscribe</code> 方法。 向传递 <code>IStreamSubscriber</code> ， <code>subscribe</code> 并设置 <code>next</code> 、 <code>error</code> 和回调， <code>complete</code> 以接收来自调用的通知 <code>stream</code> 。</p>
+<div range="&gt;= aspnetcore-2.2">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要从客户端结束流，请 <code>dispose</code> 对 <code>ISubscription</code> 从方法返回的调用方法 <code>subscribe</code> 。 如果提供了，则调用此方法会导致取消 <code>CancellationToken</code> 集线器方法的参数。</p>
+</div>
+<div range="= aspnetcore-2.1">
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要从客户端结束流，请 <code>dispose</code> 对 <code>ISubscription</code> 从方法返回的调用方法 <code>subscribe</code> 。</p>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<h3 id="client-to-server-streaming">客户端到服务器的流式处理</h3>
+<p>JavaScript 客户端通过将作为自变量传入、或，来调用集线器上的客户端到服务器流式处理方法， <code>Subject</code> <code>send</code> <code>invoke</code> <code>stream</code> 具体取决于所调用的集线器方法。 <code>Subject</code>是一个类似于的类 <code>Subject</code> 。 例如，在 RxJS 中，可以使用该库中的 <a href="https://rxjs-dev.firebaseapp.com/api/index/class/Subject">Subject</a> 类。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用项调用会将 <code>subject.next(item)</code> 项写入流，集线器方法接收服务器上的项。</p>
+<p>若要结束流，请调用 <code>subject.complete()</code> 。</p>
+<h2 id="java-client">Java 客户端</h2>
+<h3 id="server-to-client-streaming">服务器到客户端流式处理</h3>
+<p>SignalRJava 客户端使用 <code>stream</code> 方法来调用流式处理方法。 <code>stream</code> 接受三个或更多参数：</p>
+<ul>
+<li>流项的预期类型。</li>
+<li>集线器方法的名称。</li>
+<li>在 hub 方法中定义的参数。</li>
+</ul>
+<pre><code class="lang-java">hubConnection.stream(String.class, &quot;ExampleStreamingHubMethod&quot;, &quot;Arg1&quot;)
+    .subscribe(
+        (item) -&gt; {/* Define your onNext handler here. */ },
+        (error) -&gt; {/* Define your onError handler here. */},
+        () -&gt; {/* Define your onCompleted handler here. */});
+</code></pre>
+<p><code>stream</code>上的方法 <code>HubConnection</code> 返回流项类型的可观察对象。 可观察的类型的 <code>subscribe</code> 方法是 <code>onNext</code> 定义的位置 <code>onError</code> <code>onCompleted</code> 。</p>
+<h3 id="client-to-server-streaming">客户端到服务器的流式处理</h3>
+<p>SignalRJava 客户端可以通过将可<a href="https://rxjs-dev.firebaseapp.com/api/index/class/Observable">观察</a>的作为自变量传入、或，来调用集线器上的客户端到服务器流式处理方法， <code>send</code> <code>invoke</code> <code>stream</code> 具体取决于所调用的集线器方法。</p>
+<pre><code class="lang-java">ReplaySubject&lt;String&gt; stream = ReplaySubject.create();
+hubConnection.send(&quot;UploadStream&quot;, stream);
+stream.onNext(&quot;FirstItem&quot;);
+stream.onNext(&quot;SecondItem&quot;);
+stream.onComplete();
+</code></pre>
+<p>使用项调用会将 <code>stream.onNext(item)</code> 项写入流，集线器方法接收服务器上的项。</p>
+<p>若要结束流，请调用 <code>stream.onComplete()</code> 。</p>
+</div>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="hubs.html">中心</a></li>
+<li><a class="xref" href="dotnet-client.html">.NET 客户端</a></li>
+<li><a class="xref" href="javascript-client.html">JavaScript 客户端</a></li>
+<li><a class="xref" href="publish-to-azure-web-app.html">发布到 Azure</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

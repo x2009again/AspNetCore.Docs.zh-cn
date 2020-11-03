@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20013;&#30340;&#35831;&#27714;&#21644;&#21709;&#24212;&#25805;&#20316; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20013;&#30340;&#35831;&#27714;&#21644;&#21709;&#24212;&#25805;&#20316; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/middleware/request-response">
+<h1 id="request-and-response-operations-in-aspnet-core">ASP.NET Core 中的请求和响应操作</h1>
+
+<p>作者：<a href="https://github.com/jkotalik">Justin Kotalik</a></p>
+<p>本文介绍如何读取请求正文和写入响应正文。 写入中间件时，可能需要这些操作的代码。 除写入中间件外，通常不需要自定义代码，因为操作由 MVC 和 Razor Pages 处理。</p>
+<p>请求正文和响应正文有两个抽象元素：&lt;xref:System.IO.Stream&gt; 和 &lt;xref:System.IO.Pipelines.Pipe&gt;。 对于请求读取，&lt;xref:Microsoft.AspNetCore.Http.HttpRequest.Body?displayProperty=nameWithType&gt; 为 &lt;xref:System.IO.Stream&gt;，<code>HttpRequest.BodyReader</code> 为 &lt;xref:System.IO.Pipelines.PipeReader&gt;。 对于响应写入，&lt;xref:Microsoft.AspNetCore.Http.HttpResponse.Body?displayProperty=nameWithType&gt; 为 &lt;xref:System.IO.Stream&gt;，<code>HttpResponse.BodyWriter</code> 为 &lt;xref:System.IO.Pipelines.PipeWriter&gt;。</p>
+<p>建议使用<a href="/dotnet/standard/io/pipelines">管道</a>替代流。 在一些简单操作中，使用流会比较简单，但管道具有性能优势，并且在大多数场景中更易于使用。 ASP.NET Core 开始在内部使用管道替代流。 示例包括：</p>
+<ul>
+<li><code>FormReader</code></li>
+<li><code>TextReader</code></li>
+<li><code>TextWriter</code></li>
+<li><code>HttpResponse.WriteAsync</code></li>
+</ul>
+<p>流不会从框架中删除。 流将继续在 .NET 中使用，并且许多流类型不具有等效的管道，如 <code>FileStreams</code> 和 <code>ResponseCompression</code>。</p>
+<h2 id="stream-examples">流示例</h2>
+<p>假设目标是要创建一个中间件，它将整个请求正文作为一个字符串列表读取，并在新行上进行拆分。 一个简单的流实现可能如下例所示：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>下面的代码：</p>
+<ul>
+<li>用于演示不使用管道读取请求正文的问题。</li>
+<li>不应在生产应用中使用。</li>
+</ul>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p>若要查看翻译为非英语语言的代码注释，请在 <a href="https://github.com/MicrosoftDocs/feedback/issues/2515">此 GitHub 讨论问题</a>中告诉我们。</p>
+
+<p>此代码有效，但存在一些问题：</p>
+<ul>
+<li>在追加到 <code>StringBuilder</code> 之前，示例创建另一个字符串 (<code>encodedString</code>)，该字符串会立即被丢弃。 此过程发生在流中的所有字节上，因此结果是为整个请求正文大小分配额外的内存。</li>
+<li>该示例在新行上进行拆分之前读取整个字符串。 检查字节数组中的新行会更有效。</li>
+</ul>
+<p>下面是修复上面其中一些问题的示例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>下面的代码：</p>
+<ul>
+<li>用于演示前面代码中的一些问题的解决方案，而不能解决所有问题。</li>
+<li>不应在生产应用中使用。</li>
+</ul>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>上面的此示例：</p>
+<ul>
+<li>不在 <code>StringBuilder</code> 中缓冲整个请求正文（除非没有任何换行符）。</li>
+<li>不在字符串上调用 <code>Split</code>。</li>
+</ul>
+<p>然而，仍然存在一些问题：</p>
+<ul>
+<li>如果换行符稀疏，则大部分请求正文都在字符串中进行缓冲。</li>
+<li>该代码会继续创建字符串 (<code>remainingString</code>) 并将它们添加到字符串缓冲区，这将导致额外的分配。</li>
+</ul>
+<p>这些问题是可修复的，但代码逐渐变得复杂，几乎没有什么改进。 管道提供了一种以最低的代码复杂性解决这些问题的方法。</p>
+<h2 id="pipelines">管道</h2>
+<p>下面的示例显示了如何使用 <a href="/dotnet/standard/io/pipelines#pipe">PipeReader</a> 处理相同的场景：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此示例解决了流实现中的许多问题：</p>
+<ul>
+<li>不需要字符串缓冲区，因为 <code>PipeReader</code> 会处理未使用的字节。</li>
+<li>编码后的字符串将直接添加到返回的字符串列表。</li>
+<li>除了 <code>ToArray</code> 调用以及字符串使用的内存，创建字符串时无需分配。</li>
+</ul>
+<h2 id="adapters">适配器</h2>
+<p><code>Body</code>、<code>BodyReader</code> 和 <code>BodyWriter</code> 属性可用于 <code>HttpRequest</code> 和 <code>HttpResponse</code>。 将 <code>Body</code> 设置为另一个流时，一组新的适配器会自动使每种类型彼此适应。 如果将 <code>HttpRequest.Body</code> 设置为新流，则 <code>HttpRequest.BodyReader</code> 将自动设置为包装 <code>HttpRequest.Body</code> 的新 <code>PipeReader</code>。</p>
+<h2 id="startasync">StartAsync</h2>
+<p><code>HttpResponse.StartAsync</code> 用于指示标头不可修改并运行 <code>OnStarting</code> 回调。 使用 Kestrel 作为服务器时，在使用 <code>PipeReader</code> 之前调用 <code>StartAsync</code> 可确保 <code>GetMemory</code> 返回的内存属于 Kestrel 的内部 &lt;xref:System.IO.Pipelines.Pipe&gt; 而不是外部缓冲区。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a href="/dotnet/standard/io/pipelines">.NET 中的 System.IO.Pipelines</a></li>
+<li><a class="xref" href="write.html">写入自定义 ASP.NET Core 中间件</a></li>
+</ul>
+<!-- Test with Postman or other tool. See image in static directory. -->
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

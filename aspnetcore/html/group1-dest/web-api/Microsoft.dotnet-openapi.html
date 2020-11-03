@@ -1,0 +1,325 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#20351;&#29992; OpenAPI &#24320;&#21457; ASP.NET Core &#24212;&#29992; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#20351;&#29992; OpenAPI &#24320;&#21457; ASP.NET Core &#24212;&#29992; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="web-api/Microsoft.dotnet-openapi">
+<h1 id="develop-aspnet-core-apps-using-openapi-tools">使用 OpenAPI 工具开发 ASP.NET Core 应用</h1>
+
+<p>作者：Ryan Brandenburg</p>
+<p><a href="https://www.nuget.org/packages/Microsoft.dotnet-openapi">Microsoft.dotnet-openapi</a> 是用于管理项目内 <a href="https://github.com/OAI/OpenAPI-Specification">OpenAPI</a> 引用的 <a href="/dotnet/core/tools/global-tools">.NET Core 全局工具</a>。</p>
+<h2 id="installation">安装</h2>
+<p>若要安装 <code>Microsoft.dotnet-openapi</code>，请运行以下命令：</p>
+<pre><code class="lang-dotnetcli">dotnet tool install -g Microsoft.dotnet-openapi
+</code></pre>
+<h2 id="add">添加</h2>
+<p>使用此页上的任意命令添加 OpenAPI 引用会将类似于 <code>&lt;OpenApiReference /&gt;</code> 下面的元素添加到 <em>.csproj</em> 文件：</p>
+<pre><code class="lang-xml">&lt;OpenApiReference Include=&quot;openapi.json&quot; /&gt;
+</code></pre>
+<p>必须有上述引用，应用才可以调用生成的客户端代码。</p>
+<!-- TODO: Restore after https://github.com/dotnet/AspNetCore/issues/12738
+### Add Project
+
+#### Options
+
+| Short option | Long option | Description | Example |
+|-------|------|-------|---------|
+| -p|--project | The project to operate on. |dotnet openapi add project *--project .\Ref.csproj* ../Ref/ProjRef.csproj |
+
+#### Arguments
+
+|  Argument  | Description | Example |
+|-------------|-------------|---------|
+| source-file | The source to create a reference from. Must be a project file. |dotnet openapi add project *../Ref/ProjRef.csproj* | -->
+<h3 id="add-file">添加文件</h3>
+<h4 id="options">选项</h4>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--updateProject</td>
+<td>要操作的项目。</td>
+<td>dotnet openapi add file --updateProject .\Ref.csproj  .\OpenAPI.json</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>--code-generator</td>
+<td>应用于引用的代码生成器。 选项包括 <code>NSwagCSharp</code> 和 <code>NSwagTypeScript</code>。 如果未指定 <code>--code-generator</code>，则工具将默认为 <code>NSwagCSharp</code>。</td>
+<td>dotnet openapi add file .\OpenApi.json --code-generator</td>
+</tr>
+<tr>
+<td>-H</td>
+<td>--help</td>
+<td>显示帮助信息</td>
+<td>dotnet openapi add file --help</td>
+</tr>
+</tbody>
+</table>
+<h4 id="arguments">自变量</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source-file</td>
+<td>要创建的引用的源。 必须为 OpenAPI 文件。</td>
+<td>dotnet openapi add file .\OpenAPI.json</td>
+</tr>
+</tbody>
+</table>
+<h3 id="add-url">添加 URL</h3>
+<h4 id="options">选项</h4>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--updateProject</td>
+<td>要操作的项目。</td>
+<td>dotnet openapi add url --updateProject .\Ref.csproj  <code>https://contoso.com/openapi.json</code></td>
+</tr>
+<tr>
+<td>-o</td>
+<td>--output-file</td>
+<td>用于放置 OpenAPI 文件本地副本的位置。</td>
+<td>dotnet openapi add url  --output-file myclient.json<code>https://contoso.com/openapi.json</code></td>
+</tr>
+<tr>
+<td>-c</td>
+<td>--code-generator</td>
+<td>应用于引用的代码生成器。 选项包括 <code>NSwagCSharp</code> 和 <code>NSwagTypeScript</code>。</td>
+<td>dotnet openapi add file .\OpenApi.json --code-generator</td>
+</tr>
+<tr>
+<td>-H</td>
+<td>--help</td>
+<td>显示帮助信息</td>
+<td>dotnet openapi add url --help</td>
+</tr>
+</tbody>
+</table>
+<h4 id="arguments">自变量</h4>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source-URL</td>
+<td>要创建的引用的源。 必须是 URL。</td>
+<td>dotnet openapi add url <code>https://contoso.com/openapi.json</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="remove">删除</h2>
+<p>删除与 .csproj 文件中给定文件名匹配的 OpenAPI 引用。  删除 OpenAPI 引用后，将不会生成客户端。 将删除本地 .json 和 .yaml 文件。</p>
+<h3 id="options">选项</h3>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--updateProject</td>
+<td>要操作的项目。</td>
+<td>dotnet openapi remove --updateProject .\Ref.csproj  .\OpenAPI.json</td>
+</tr>
+<tr>
+<td>-H</td>
+<td>--help</td>
+<td>显示帮助信息</td>
+<td>dotnet openapi remove --help</td>
+</tr>
+</tbody>
+</table>
+<h3 id="arguments">自变量</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source-file</td>
+<td>要删除的引用的源。</td>
+<td>dotnet openapi remove .\OpenAPI.json</td>
+</tr>
+</tbody>
+</table>
+<h2 id="refresh">刷新</h2>
+<p>使用下载 URL 中的最新内容刷新已下载的文件本地版本。</p>
+<h3 id="options">选项</h3>
+<table>
+<thead>
+<tr>
+<th>短选项</th>
+<th>长选项</th>
+<th>描述</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-p</td>
+<td>--updateProject</td>
+<td>要操作的项目。</td>
+<td>dotnet openapi refresh --updateProject .\Ref.csproj  <code>https://contoso.com/openapi.json</code></td>
+</tr>
+<tr>
+<td>-H</td>
+<td>--help</td>
+<td>显示帮助信息</td>
+<td>dotnet openapi refresh --help</td>
+</tr>
+</tbody>
+</table>
+<h3 id="arguments">自变量</h3>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source-URL</td>
+<td>用于刷新引用的 URL。</td>
+<td>dotnet openapi refresh <code>https://contoso.com/openapi.json</code></td>
+</tr>
+</tbody>
+</table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

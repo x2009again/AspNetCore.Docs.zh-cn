@@ -1,0 +1,740 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#21019;&#24314;&#21644;&#20351;&#29992; ASP.NET Core Razor &#32452;&#20214; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#21019;&#24314;&#21644;&#20351;&#29992; ASP.NET Core Razor &#32452;&#20214; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../../favicon.ico">
+    <link rel="stylesheet" href="../../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../../styles/docfx.css">
+    <link rel="stylesheet" href="../../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../../index.html">
+                <img id="logo" class="svg" src="../../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="blazor/components/index">
+<h1 id="create-and-use-aspnet-core-no-locrazor-components">创建和使用 ASP.NET Core Razor 组件</h1>
+
+<p>作者：<a href="https://github.com/guardrex">Luke Latham</a>、<a href="https://github.com/danroth27">Daniel Roth</a> 和 <a href="https://www.aveo-solutions.com/">Tobias Bartsch</a></p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/blazor/common/samples/">查看或下载示例代码</a>（<a class="xref" href="../../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<p>Blazor 应用是使用组件构建的。 组件是自包含的用户界面 (UI) 块，例如页、对话框或窗体。 组件包含插入数据或响应 UI 事件所需的 HTML 标记和处理逻辑。 组件非常灵活且轻量。 可在项目之间嵌套、重复使用和共享。</p>
+<h2 id="component-classes">组件类</h2>
+<p>组件是使用 C# 和 HTML 标记的组合在 <a class="xref" href="../../mvc/views/razor.html">Razor</a> 组件文件 (<code>.razor</code>) 中实现的。 Blazor 中的组件正式称为 Razor 组件。</p>
+<h3 id="no-locrazor-syntax">Razor 语法</h3>
+<p>Blazor 应用中的 Razor 组件广泛使用 Razor 语法。 如果你不熟悉 Razor 标记语言，建议先阅读 <a class="xref" href="../../mvc/views/razor.html">razor 语法参考 ASP.NET Core</a>，然后再继续。</p>
+<p>访问 Razor 语法上的内容时，请特别注意以下各节：</p>
+<ul>
+<li><a class="xref" href="../../mvc/views/razor.html#directives">指令</a>：前缀为 <code>@</code> 的保留关键字，通常会更改组件标记的分析或运行方式。</li>
+<li><a class="xref" href="../../mvc/views/razor.html#directive-attributes">指令特性</a>：前缀为 <code>@</code> 的保留关键字，通常会更改组件元素的分析或运行方式。</li>
+</ul>
+<h3 id="names">名称</h3>
+<p>组件的名称必须以大写字符开头。 例如，<code>MyCoolComponent.razor</code> 有效，而 <code>myCoolComponent.razor</code> 无效。</p>
+<h3 id="routing">路由</h3>
+<p>可以通过为应用中的每个可访问组件提供路由模板来实现 Blazor 中的路由。 编译具有 <a class="xref" href="../../mvc/views/razor.html#page"><code>@page</code></a> 指令的 Razor 文件时，将为生成的类提供指定路由模板的 &lt;xref:Microsoft.AspNetCore.Mvc.RouteAttribute&gt;。 在运行时，路由器将使用 &lt;xref:Microsoft.AspNetCore.Mvc.RouteAttribute&gt; 查找组件类，并呈现具有与请求的 URL 匹配的路由模板的任何组件。 有关详细信息，请参阅 <a class="xref" href="../fundamentals/routing.html">ASP.NET Core Blazor 路由</a>。</p>
+<pre><code class="lang-razor">@page &quot;/ParentComponent&quot;
+
+...
+</code></pre>
+<h3 id="markup">标记</h3>
+<p>使用 HTML 定义组件的 UI。 动态呈现逻辑（例如，循环、条件、表达式）是使用名为 <em>Razor</em> 的嵌入式 C# 语法添加的。 在编译应用时，HTML 标记和 C# 呈现逻辑转换为组件类。 生成的类的名称与文件名匹配。</p>
+<p>组件类的成员在 <a class="xref" href="../../mvc/views/razor.html#code"><code>@code</code></a> 块中定义。 在 <a class="xref" href="../../mvc/views/razor.html#code"><code>@code</code></a> 块中，通过用于处理事件或定义其他组件逻辑的方法指定组件状态（属性、字段）。 允许多个 <a class="xref" href="../../mvc/views/razor.html#code"><code>@code</code></a> 块。</p>
+<p>可以使用以 <code>@</code> 开头的 C# 表达式将组件成员作为组件的呈现逻辑的一部分。 例如，通过为字段名称添加 <code>@</code> 前缀来呈现 C# 字段。 下面的示例计算并呈现：</p>
+<ul>
+<li><code>font-style</code> 的 CSS 属性值的 <code>headingFontStyle</code>。</li>
+<li><code>&lt;h1&gt;</code> 元素内容的 <code>headingText</code>。</li>
+</ul>
+<pre><code class="lang-razor">&lt;h1 style=&quot;font-style:@headingFontStyle&quot;&gt;@headingText&lt;/h1&gt;
+
+@code {
+    private string headingFontStyle = &quot;italic&quot;;
+    private string headingText = &quot;Put on your new Blazor!&quot;;
+}
+</code></pre>
+<p>最初呈现组件后，组件会为响应事件而重新生成其呈现树。 然后 Blazor 将新呈现树与前一个呈现树进行比较，并对浏览器文档对象模型 (DOM) 应用任何修改。</p>
+<p>组件是普通 C# 类，可以放置在项目中的任何位置。 生成网页的组件通常位于 <code>Pages</code> 文件夹中。 非页面组件通常放置在 <code>Shared</code> 文件夹或添加到项目的自定义文件夹中。</p>
+<h3 id="namespaces">命名空间</h3>
+<p>通常，组件的命名空间是从应用的根命名空间和该组件在应用内的位置（文件夹）派生而来的。 如果应用的根命名空间是 <code>BlazorSample</code>，并且 <code>Counter</code> 组件位于 <code>Pages</code> 文件夹中：</p>
+<ul>
+<li><code>Counter</code> 组件的命名空间为 <code>BlazorSample.Pages</code>。</li>
+<li>组件的完全限定类型名称为 <code>BlazorSample.Pages.Counter</code>。</li>
+</ul>
+<p>对于保存组件的自定义文件夹，将 <a class="xref" href="../../mvc/views/razor.html#using"><code>@using</code></a> 指令添加到父组件或应用的 <code>_Imports.razor</code> 文件。 下面的示例提供 <code>Components</code> 文件夹中的组件：</p>
+<pre><code class="lang-razor">@using BlazorSample.Components
+</code></pre>
+<p>还可以使用其完全限定的名称来引用组件，而不需要 <a class="xref" href="../../mvc/views/razor.html#using"><code>@using</code></a> 指令：</p>
+<pre><code class="lang-razor">&lt;BlazorSample.Components.MyComponent /&gt;
+</code></pre>
+<p>使用 Razor 创建的组件的命名空间基于（按优先级顺序）：</p>
+<ul>
+<li>Razor 文件 (<code>.razor</code>) 标记 (<code>@namespace BlazorSample.MyNamespace</code>) 中的 <a class="xref" href="../../mvc/views/razor.html#namespace"><code>@namespace</code></a> 指定内容。</li>
+<li>项目文件 (<code>&lt;RootNamespace&gt;BlazorSample&lt;/RootNamespace&gt;</code>) 中项目的 <code>RootNamespace</code>。</li>
+<li>项目名称，取自项目文件的文件名 (<code>.csproj</code>)，以及从项目根到组件的路径。 例如，框架将 <code>{PROJECT ROOT}/Pages/Index.razor</code> (<code>BlazorSample.csproj</code>) 解析为命名空间 <code>BlazorSample.Pages</code>。 组件遵循 C# 名称绑定规则。 对于本示例中的 <code>Index</code> 组件，范围内的组件是所有组件：
+<ul>
+<li>在同一文件夹 <code>Pages</code> 中。</li>
+<li>未显式指定其他命名空间的项目根中的组件。</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE">
+<h5>Note</h5>
+<p>不支持 <code>global::</code> 限定。</p>
+<p>不支持导入具有别名 <a href="/dotnet/csharp/language-reference/keywords/using-statement"><code>using</code></a> 语句的组件（例如，<code>@using Foo = Bar</code>）。</p>
+<p>不支持部分限定名称。 例如，不支持使用 <code>&lt;Shared.NavMenu&gt;&lt;/Shared.NavMenu&gt;</code> 添加 <code>@using BlazorSample</code> 和引用 <code>NavMenu</code> 组件 (<code>NavMenu.razor</code>)。</p>
+</div>
+<h3 id="partial-class-support">分部类支持</h3>
+<p>Razor 组件作为分部类生成。 使用以下方法之一创建 Razor 组件：</p>
+<ul>
+<li>在 <a class="xref" href="../../mvc/views/razor.html#code"><code>@code</code></a> 块中使用单个文件中的 HTML 标记和 Razor 代码定义 C# 代码。 Blazor 模板使用此方法来定义其 Razor 组件。</li>
+<li>C# 代码位于定义为分部类的代码隐藏文件中。</li>
+</ul>
+<p>下面的示例显示了从 Blazor 模板生成的应用中具有 <a class="xref" href="../../mvc/views/razor.html#code"><code>@code</code></a> 块的默认 <code>Counter</code> 组件。 HTML 标记、Razor 代码和 C# 代码位于同一个文件中：</p>
+<p><code>Pages/Counter.razor</code>:</p>
+<pre><code class="lang-razor">@page &quot;/counter&quot;
+
+&lt;h1&gt;Counter&lt;/h1&gt;
+
+&lt;p&gt;Current count: @currentCount&lt;/p&gt;
+
+&lt;button class=&quot;btn btn-primary&quot; @onclick=&quot;IncrementCount&quot;&gt;Click me&lt;/button&gt;
+
+@code {
+    private int currentCount = 0;
+
+    void IncrementCount()
+    {
+        currentCount++;
+    }
+}
+</code></pre>
+<p>还可以使用具有分部类的代码隐藏文件创建 <code>Counter</code> 组件：</p>
+<p><code>Pages/Counter.razor</code>:</p>
+<pre><code class="lang-razor">@page &quot;/counter&quot;
+
+&lt;h1&gt;Counter&lt;/h1&gt;
+
+&lt;p&gt;Current count: @currentCount&lt;/p&gt;
+
+&lt;button class=&quot;btn btn-primary&quot; @onclick=&quot;IncrementCount&quot;&gt;Click me&lt;/button&gt;
+</code></pre>
+<p><code>Counter.razor.cs</code>:</p>
+<pre><code class="lang-csharp">namespace BlazorSample.Pages
+{
+    public partial class Counter
+    {
+        private int currentCount = 0;
+
+        void IncrementCount()
+        {
+            currentCount++;
+        }
+    }
+}
+</code></pre>
+<p>根据需要将任何所需的命名空间添加到分部类文件中。 Razor 组件使用的典型命名空间包括：</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.Web;
+</code></pre>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p><code>_Imports.razor</code> 文件中的 <a class="xref" href="../../mvc/views/razor.html#using"><code>@using</code></a> 指令仅适用于 Razor 文件 (<code>.razor</code>)，而不适用于 C# 文件 (<code>.cs</code>)。</p>
+</div>
+<h3 id="specify-a-base-class">指定基类</h3>
+<p><a class="xref" href="../../mvc/views/razor.html#inherits"><code>@inherits</code></a> 指令可用于指定组件的基类。 下面的示例演示组件如何继承基类 <code>BlazorRocksBase</code> 以提供组件的属性和方法。 基类应派生自 &lt;xref:Microsoft.AspNetCore.Components.ComponentBase&gt;。</p>
+<p><code>Pages/BlazorRocks.razor</code>:</p>
+<pre><code class="lang-razor">@page &quot;/BlazorRocks&quot;
+@inherits BlazorRocksBase
+
+&lt;h1&gt;@BlazorRocksText&lt;/h1&gt;
+</code></pre>
+<p><code>BlazorRocksBase.cs</code>:</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Components;
+
+namespace BlazorSample
+{
+    public class BlazorRocksBase : ComponentBase
+    {
+        public string BlazorRocksText { get; set; } = 
+            &quot;Blazor rocks the browser!&quot;;
+    }
+}
+</code></pre>
+<h3 id="use-components">使用组件</h3>
+<p>通过使用 HTML 元素语法声明组件，组件可以包含其他组件。 使用组件的标记类似于 HTML 标记，其中标记的名称是组件类型。</p>
+<p><code>Pages/Index.razor</code> 中的以下标记呈现了 <code>HeadingComponent</code> 实例：</p>
+<pre><code class="lang-razor">&lt;HeadingComponent /&gt;
+</code></pre>
+<p><code>Components/HeadingComponent.razor</code>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>如果某个组件包含一个 HTML 元素，该元素的大写首字母与组件名称不匹配，则会发出警告，指示该元素名称异常。 为组件的命名空间添加 <a class="xref" href="../../mvc/views/razor.html#using"><code>@using</code></a> 指令使组件可用，从而解决此警告。</p>
+<h2 id="parameters">参数</h2>
+<h3 id="route-parameters">路由参数</h3>
+<p>组件可以接收来自 <a class="xref" href="../../mvc/views/razor.html#page"><code>@page</code></a> 指令所提供的路由模板的路由参数。 路由器使用路由参数来填充相应的组件参数。</p>
+<p><code>Pages/RouteParameter.razor</code>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>不支持可选参数，因此在前面的示例中应用了两个 <a class="xref" href="../../mvc/views/razor.html#page"><code>@page</code></a> 指令。 第一个指令允许导航到没有参数的组件。 第二个 <a class="xref" href="../../mvc/views/razor.html#page"><code>@page</code></a> 指令会接收 <code>{text}</code> 路由参数，并将值赋予 <code>Text</code> 属性。</p>
+<p>要了解 catch-all 路由参数 <code>{*pageRoute}</code>（它可跨多个文件夹边界捕获路径），请参阅 <a class="xref" href="../fundamentals/routing.html#catch-all-route-parameters">ASP.NET Core Blazor 路由</a>。</p>
+<h3 id="component-parameters">组件参数</h3>
+<p>组件可以有组件参数，这些参数是使用组件类中包含 <a href="xref:Microsoft.AspNetCore.Components.ParameterAttribute"><code>[Parameter]</code></a> 特性的公共属性定义的。 使用这些属性在标记中为组件指定参数。</p>
+<p><code>Components/ChildComponent.razor</code>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用的以下示例中，<code>ParentComponent</code> 设置 <code>ChildComponent</code> 的 <code>Title</code> 属性的值。</p>
+<p><code>Pages/ParentComponent.razor</code>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>请勿创建会写入其自己的组件参数的组件，而是使用私有字段。 有关详细信息，请参阅<a href="#overwritten-parameters">重写参数</a>部分。</p>
+</div>
+<h2 id="child-content">子内容</h2>
+<p>组件可以设置另一个组件的内容。 分配组件提供指定接收组件的标记之间的内容。</p>
+<p>在下面的示例中，<code>ChildComponent</code> 具有一个表示 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment&gt;（表示要呈现的 UI 段）的 <code>ChildContent</code> 属性。 <code>ChildContent</code> 的值放置在应呈现内容的组件标记中。 <code>ChildContent</code> 的值是从父组件接收的，并呈现在启动面板的 <code>panel-body</code> 中。</p>
+<p><code>Components/ChildComponent.razor</code>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>必须按约定将接收 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment&gt; 内容的属性命名为 <code>ChildContent</code>。</p>
+</div>
+<p>示例应用中的 <code>ParentComponent</code> 可以通过将内容置于 <code>&lt;ChildComponent&gt;</code> 标记中，提供用于呈现 <code>ChildComponent</code> 的内容。</p>
+<p><code>Pages/ParentComponent.razor</code>:</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>由于 Blazor 呈现子内容的方式，如果在子组件的内容中使用递增循环变量，则在 <code>for</code> 循环内呈现组件需要本地索引变量：</p>
+<blockquote>
+<pre><code class="lang-razor">@for (int c = 0; c &lt; 10; c++)
+{
+    var current = c;
+    &lt;ChildComponent Param1=&quot;@c&quot;&gt;
+        Child Content: Count: @current
+    &lt;/ChildComponent&gt;
+}
+</code></pre>
+<p>或者，将 <code>foreach</code> 循环用于 &lt;xref:System.Linq.Enumerable.Range%2A?displayProperty=nameWithType&gt;：</p>
+<pre><code class="lang-razor">@foreach(var c in Enumerable.Range(0,10))
+{
+    &lt;ChildComponent Param1=&quot;@c&quot;&gt;
+        Child Content: Count: @c
+    &lt;/ChildComponent&gt;
+}
+</code></pre>
+</blockquote>
+<h2 id="attribute-splatting-and-arbitrary-parameters">属性展开和任意参数</h2>
+<p>除了组件的声明参数外，组件还可以捕获和呈现其他属性。 其他属性可以在字典中捕获，然后在使用 <a class="xref" href="../../mvc/views/razor.html#attributes"><code>@attributes</code></a> Razor 指令呈现组件时，将其展开到元素上。 此方案在定义生成支持各种自定义项的标记元素的组件时非常有用。 例如，为支持多个参数的 <code>&lt;input&gt;</code> 单独定义属性可能比较繁琐。</p>
+<p>在下面的示例中，第一个 <code>&lt;input&gt;</code> 元素 (<code>id=&quot;useIndividualParams&quot;</code>) 使用单个组件参数，第二个 <code>&lt;input&gt;</code> 元素 (<code>id=&quot;useAttributesDict&quot;</code>) 使用属性展开：</p>
+<pre><code class="lang-razor">&lt;input id=&quot;useIndividualParams&quot;
+       maxlength=&quot;@maxlength&quot;
+       placeholder=&quot;@placeholder&quot;
+       required=&quot;@required&quot;
+       size=&quot;@size&quot; /&gt;
+
+&lt;input id=&quot;useAttributesDict&quot;
+       @attributes=&quot;InputAttributes&quot; /&gt;
+
+@code {
+    public string maxlength = &quot;10&quot;;
+    public string placeholder = &quot;Input placeholder text&quot;;
+    public string required = &quot;required&quot;;
+    public string size = &quot;50&quot;;
+
+    public Dictionary&lt;string, object&gt; InputAttributes { get; set; } =
+        new Dictionary&lt;string, object&gt;()
+        {
+            { &quot;maxlength&quot;, &quot;10&quot; },
+            { &quot;placeholder&quot;, &quot;Input placeholder text&quot; },
+            { &quot;required&quot;, &quot;required&quot; },
+            { &quot;size&quot;, &quot;50&quot; }
+        };
+}
+</code></pre>
+<p>参数的类型必须使用字符串键实现 <code>IEnumerable&lt;KeyValuePair&lt;string, object&gt;&gt;</code> 或 <code>IReadOnlyDictionary&lt;string, object&gt;</code>。</p>
+<p>使用这两种方法呈现的 <code>&lt;input&gt;</code> 元素相同：</p>
+<pre><code class="lang-html">&lt;input id=&quot;useIndividualParams&quot;
+       maxlength=&quot;10&quot;
+       placeholder=&quot;Input placeholder text&quot;
+       required=&quot;required&quot;
+       size=&quot;50&quot;&gt;
+
+&lt;input id=&quot;useAttributesDict&quot;
+       maxlength=&quot;10&quot;
+       placeholder=&quot;Input placeholder text&quot;
+       required=&quot;required&quot;
+       size=&quot;50&quot;&gt;
+</code></pre>
+<p>若要接受任意特性，请使用 <a href="xref:Microsoft.AspNetCore.Components.ParameterAttribute"><code>[Parameter]</code></a> 特性定义组件参数，并将 &lt;xref:Microsoft.AspNetCore.Components.ParameterAttribute.CaptureUnmatchedValues&gt; 属性设置为 <code>true</code>：</p>
+<pre><code class="lang-razor">@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary&lt;string, object&gt; InputAttributes { get; set; }
+}
+</code></pre>
+<p>借助 <a href="xref:Microsoft.AspNetCore.Components.ParameterAttribute"><code>[Parameter]</code></a> 上的 &lt;xref:Microsoft.AspNetCore.Components.ParameterAttribute.CaptureUnmatchedValues&gt; 属性，参数可以匹配所有不匹配其他任何参数的特性。 组件只能使用 &lt;xref:Microsoft.AspNetCore.Components.ParameterAttribute.CaptureUnmatchedValues&gt; 定义单个参数。 与 &lt;xref:Microsoft.AspNetCore.Components.ParameterAttribute.CaptureUnmatchedValues&gt; 一起使用的属性类型必须可以使用字符串键从 <code>Dictionary&lt;string, object&gt;</code> 中分配。 <code>IEnumerable&lt;KeyValuePair&lt;string, object&gt;&gt;</code> 或 <code>IReadOnlyDictionary&lt;string, object&gt;</code> 也是此方案中的选项。</p>
+<p>相对于元素特性位置的 <a class="xref" href="../../mvc/views/razor.html#attributes"><code>@attributes</code></a> 位置很重要。 在元素上展开 <a class="xref" href="../../mvc/views/razor.html#attributes"><code>@attributes</code></a> 时，将从右到左（从最后一个到第一个）处理特性。 请考虑以下使用 <code>Child</code> 组件的组件示例：</p>
+<p><code>ParentComponent.razor</code>:</p>
+<pre><code class="lang-razor">&lt;ChildComponent extra=&quot;10&quot; /&gt;
+</code></pre>
+<p><code>ChildComponent.razor</code>:</p>
+<pre><code class="lang-razor">&lt;div @attributes=&quot;AdditionalAttributes&quot; extra=&quot;5&quot; /&gt;
+
+[Parameter(CaptureUnmatchedValues = true)]
+public IDictionary&lt;string, object&gt; AdditionalAttributes { get; set; }
+</code></pre>
+<p><code>Child</code> 组件的 <code>extra</code> 属性设置为 <a class="xref" href="../../mvc/views/razor.html#attributes"><code>@attributes</code></a> 右侧。 通过附加特性传递时，<code>Parent</code> 组件的呈现的 <code>&lt;div&gt;</code> 包含 <code>extra=&quot;5&quot;</code>，因为特性是从右到左（从最后一个到第一个）处理的：</p>
+<pre><code class="lang-html">&lt;div extra=&quot;5&quot; /&gt;
+</code></pre>
+<p>在下面的示例中，<code>extra</code> 和 <a class="xref" href="../../mvc/views/razor.html#attributes"><code>@attributes</code></a> 的顺序在 <code>Child</code> 组件的 <code>&lt;div&gt;</code> 中反转：</p>
+<p><code>ParentComponent.razor</code>:</p>
+<pre><code class="lang-razor">&lt;ChildComponent extra=&quot;10&quot; /&gt;
+</code></pre>
+<p><code>ChildComponent.razor</code>:</p>
+<pre><code class="lang-razor">&lt;div extra=&quot;5&quot; @attributes=&quot;AdditionalAttributes&quot; /&gt;
+
+[Parameter(CaptureUnmatchedValues = true)]
+public IDictionary&lt;string, object&gt; AdditionalAttributes { get; set; }
+</code></pre>
+<p>通过附加属性传递时，<code>Parent</code> 组件中呈现的 <code>&lt;div&gt;</code> 包含 <code>extra=&quot;10&quot;</code>：</p>
+<pre><code class="lang-html">&lt;div extra=&quot;10&quot; /&gt;
+</code></pre>
+<h2 id="capture-references-to-components">捕获对组件的引用</h2>
+<p>组件引用提供了一种引用组件实例的方法，以便可以向该实例发出命令，例如 <code>Show</code> 或 <code>Reset</code>。 若要捕获组件引用，请执行以下操作：</p>
+<ul>
+<li>向子组件添加 <a class="xref" href="../../mvc/views/razor.html#ref"><code>@ref</code></a> 特性。</li>
+<li>定义与子组件类型相同的字段。</li>
+</ul>
+<pre><code class="lang-razor">&lt;CustomLoginDialog @ref=&quot;loginDialog&quot; ... /&gt;
+
+@code {
+    private CustomLoginDialog loginDialog;
+
+    private void OnSomething()
+    {
+        loginDialog.Show();
+    }
+}
+</code></pre>
+<p>呈现组件时，将用 <code>MyLoginDialog</code> 子组件实例填充 <code>loginDialog</code> 字段。 然后，可以在组件实例上调用 .NET 方法。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>仅在呈现组件后填充 <code>loginDialog</code> 变量，其输出包含 <code>MyLoginDialog</code> 元素。 在呈现组件之前，没有任何可引用的内容。</p>
+<p>若要在组件完成呈现后操作组件引用，请使用 <a class="xref" href="lifecycle.html#after-component-render"><code>OnAfterRenderAsync</code> 或 <code>OnAfterRender</code> 方法</a>。</p>
+<p>若要结合使用事件处理程序和引用变量，请使用 Lambda 表达式，或在 <a class="xref" href="lifecycle.html#after-component-render"><code>OnAfterRenderAsync</code> 或 <code>OnAfterRender</code> 方法</a>中分配事件处理程序委托。 这可确保在分配事件处理程序之前先分配引用变量。</p>
+<pre><code class="lang-razor">&lt;button type=&quot;button&quot; 
+    @onclick=&quot;@(() =&gt; loginDialog.DoSomething())&quot;&gt;Do Something&lt;/button&gt;
+
+&lt;MyLoginDialog @ref=&quot;loginDialog&quot; ... /&gt;
+
+@code {
+    private MyLoginDialog loginDialog;
+}
+</code></pre>
+</div>
+<p>要引用循环中的组件，请参阅<a href="https://github.com/dotnet/aspnetcore/issues/13358">捕获对多个相似子组件的引用 (dotnet/aspnetcore #13358)</a>。</p>
+<p>尽管捕获组件引用使用与<a class="xref" href="../call-javascript-from-dotnet.html#capture-references-to-elements">捕获元素引用</a>类似的语法，但它不是 JavaScript 互操作功能。 组件引用不会传递给 JavaScript 代码。 组件引用只在 .NET 代码中使用。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>不要使用组件引用来改变子组件的状态。 请改用常规声明性参数将数据传递给子组件。 使用常规声明性参数使子组件在正确的时间自动重新呈现。</p>
+</div>
+<h2 id="synchronization-context">同步上下文</h2>
+<p>Blazor 使用同步上下文 (&lt;xref:System.Threading.SynchronizationContext&gt;) 来强制执行单个逻辑线程。 组件的<a class="xref" href="lifecycle.html">生命周期方法</a>和 Blazor 引发的任何事件回调都在此同步上下文上执行。</p>
+<p>Blazor Server的同步上下文尝试模拟单线程环境，使其与浏览器中的单线程 WebAssembly 模型紧密匹配。 在任意给定的时间点，工作只在一个线程上执行，从而造成单个逻辑线程的印象。 不会同时执行两个操作。</p>
+<h3 id="avoid-thread-blocking-calls">避免阻止线程的调用</h3>
+<p>通常，不要调用以下方法。 以下方法阻止线程，进而阻止应用继续工作，直到基础 &lt;xref:System.Threading.Tasks.Task&gt; 完成：</p>
+<ul>
+<li>&lt;xref:System.Threading.Tasks.Task%601.Result%2A&gt;</li>
+<li>&lt;xref:System.Threading.Tasks.Task.Wait%2A&gt;</li>
+<li>&lt;xref:System.Threading.Tasks.Task.WaitAny%2A&gt;</li>
+<li>&lt;xref:System.Threading.Tasks.Task.WaitAll%2A&gt;</li>
+<li>&lt;xref:System.Threading.Thread.Sleep%2A&gt;</li>
+<li>&lt;xref:System.Runtime.CompilerServices.TaskAwaiter.GetResult%2A&gt;</li>
+</ul>
+<h3 id="invoke-component-methods-externally-to-update-state">在外部调用组件方法以更新状态</h3>
+<p>如果组件必须根据外部事件（如计时器或其他通知）进行更新，请使用 <code>InvokeAsync</code> 方法来调度到 Blazor 的同步上下文。 例如，假设有一个可通知任何侦听组件更新状态的通告程序服务：</p>
+<pre><code class="lang-csharp">public class NotifierService
+{
+    // Can be called from anywhere
+    public async Task Update(string key, int value)
+    {
+        if (Notify != null)
+        {
+            await Notify.Invoke(key, value);
+        }
+    }
+
+    public event Func&lt;string, int, Task&gt; Notify;
+}
+</code></pre>
+<p>注册 <code>NotifierService</code>：</p>
+<ul>
+<li><p>在 Blazor WebAssembly 中，在 <code>Program.Main</code> 中将服务注册为单一实例：</p>
+<pre><code class="lang-csharp">builder.Services.AddSingleton&lt;NotifierService&gt;();
+</code></pre>
+</li>
+<li><p>在 Blazor Server 中，在 <code>Startup.ConfigureServices</code> 中将服务注册为有作用域：</p>
+<pre><code class="lang-csharp">services.AddScoped&lt;NotifierService&gt;();
+</code></pre>
+</li>
+</ul>
+<p>使用 <code>NotifierService</code> 更新组件：</p>
+<pre><code class="lang-razor">@page &quot;/&quot;
+@inject NotifierService Notifier
+@implements IDisposable
+
+&lt;p&gt;Last update: @lastNotification.key = @lastNotification.value&lt;/p&gt;
+
+@code {
+    private (string key, int value) lastNotification;
+
+    protected override void OnInitialized()
+    {
+        Notifier.Notify += OnNotify;
+    }
+
+    public async Task OnNotify(string key, int value)
+    {
+        await InvokeAsync(() =&gt;
+        {
+            lastNotification = (key, value);
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        Notifier.Notify -= OnNotify;
+    }
+}
+</code></pre>
+<p>在前面的示例中，<code>NotifierService</code> 在 Blazor 的同步上下文之外调用组件的 <code>OnNotify</code> 方法。 <code>InvokeAsync</code> 用于切换到正确的上下文，并将呈现排入队列。</p>
+<h2 id="use-key-to-control-the-preservation-of-elements-and-components">使用 @ 键控制是否保留元素和组件</h2>
+<p>在呈现元素或组件的列表并且元素或组件随后发生更改时，Blazor 的比较算法必须决定之前的元素或组件中有哪些可以保留，以及模型对象应如何映射到这些元素或组件。 通常，此过程是自动的，可以忽略，但在某些情况下，可能需要控制该过程。</p>
+<p>请看下面的示例：</p>
+<pre><code class="lang-csharp">@foreach (var person in People)
+{
+    &lt;DetailsEditor Details=&quot;@person.Details&quot; /&gt;
+}
+
+@code {
+    [Parameter]
+    public IEnumerable&lt;Person&gt; People { get; set; }
+}
+</code></pre>
+<p><code>People</code> 集合的内容可能会随插入、删除或重新排序的条目而更改。 当组件重新呈现时，<code>&lt;DetailsEditor&gt;</code> 组件可能会更改以接收不同的 <code>Details</code> 参数值。 这可能导致重新呈现比预期更复杂。 在某些情况下，重新呈现可能会导致可见行为差异，如失去元素焦点。</p>
+<p>可通过 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 指令属性来控制映射过程。 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 使比较算法保证基于键的值保留元素或组件：</p>
+<pre><code class="lang-csharp">@foreach (var person in People)
+{
+    &lt;DetailsEditor @key=&quot;person&quot; Details=&quot;@person.Details&quot; /&gt;
+}
+
+@code {
+    [Parameter]
+    public IEnumerable&lt;Person&gt; People { get; set; }
+}
+</code></pre>
+<p>当 <code>People</code> 集合发生更改时，比较算法会保留 <code>&lt;DetailsEditor&gt;</code> 实例与 <code>person</code> 实例之间的关联：</p>
+<ul>
+<li>如果从 <code>People</code> 列表中删除 <code>Person</code>，则仅从 UI 中删除相应的 <code>&lt;DetailsEditor&gt;</code> 实例。 其他实例保持不变。</li>
+<li>如果在列表中的某个位置插入 <code>Person</code>，则会在相应位置插入一个新的 <code>&lt;DetailsEditor&gt;</code> 实例。 其他实例保持不变。</li>
+<li>如果对 <code>Person</code> 项进行重新排序，则保留相应的 <code>&lt;DetailsEditor&gt;</code> 实例，并在 UI 中重新排序。</li>
+</ul>
+<p>在某些场景中，使用 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 可最大程度降低重新呈现的复杂性，并避免在 DOM 的有状态部分发生变化时出现潜在问题，如焦点位置。</p>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>对于每个容器元素或组件而言，键是本地的。 不会在整个文档中全局地比较键。</p>
+</div>
+<h3 id="when-to-use-key">何时使用 @key</h3>
+<p>通常，每当列表呈现（例如，在 <a href="/dotnet/csharp/language-reference/keywords/foreach-in">foreach</a> 块中）且存在合适的值来定义 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 时，最好使用 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a>。</p>
+<p>还可以使用 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 来防止 Blazor 在对象发生更改时保留元素或组件子树：</p>
+<pre><code class="lang-razor">&lt;div @key=&quot;currentPerson&quot;&gt;
+    ... content that depends on currentPerson ...
+&lt;/div&gt;
+</code></pre>
+<p>如果 <code>@currentPerson</code> 更改，则 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 属性指令强制 Blazor 放弃整个 <code>&lt;div&gt;</code> 及其子代，并利用新的元素和组件在 UI 中重新生成子树。 如果需要确保在 <code>@currentPerson</code> 更改时不保留 UI 状态，这会很有用。</p>
+<h3 id="when-not-to-use-key">何时不使用 @key</h3>
+<p>与 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 进行比较时，会产生性能成本。 性能成本不是很大，但仅在控制元素或组件保留规则对应用有利的情况下才指定 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a>。</p>
+<p>即使未使用 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a>，Blazor 也会尽可能地保留子元素和组件实例。 使用 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 的唯一优点是控制如何将模型实例映射到保留的组件实例，而不是选择映射的比较算法。</p>
+<h3 id="what-values-to-use-for-key">@key 使用哪些值</h3>
+<p>通常，为 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 提供以下类型之一的值：</p>
+<ul>
+<li>模型对象实例（例如，先前示例中的 <code>Person</code> 实例）。 这可确保基于对象引用相等性的保留。</li>
+<li>唯一标识符（例如，<code>int</code>、<code>string</code> 或 <code>Guid</code> 类型的主键值）。</li>
+</ul>
+<p>确保用于 <a class="xref" href="../../mvc/views/razor.html#key"><code>@key</code></a> 的值不冲突。 如果在同一父元素内检测到冲突值，则 Blazor 引发异常，因为它无法明确地将旧元素或组件映射到新元素或组件。 仅使用非重复值，例如对象实例或主键值。</p>
+<h2 id="overwritten-parameters">重写参数</h2>
+<p>在父组件重新呈现时提供了新的参数值，这通常会重写现有参数。</p>
+<p>请考虑使用以下 <code>Expander</code> 组件，它们会：</p>
+<ul>
+<li>呈现子内容。</li>
+<li>切换以使用组件参数显示子内容。</li>
+</ul>
+<pre><code class="lang-razor">&lt;div @onclick=&quot;@Toggle&quot; class=&quot;card bg-light mb-3&quot; style=&quot;width:30rem&quot;&gt;
+    &lt;div class=&quot;card-body&quot;&gt;
+        &lt;h2 class=&quot;card-title&quot;&gt;Toggle (&lt;code&gt;Expanded&lt;/code&gt; = @Expanded)&lt;/h2&gt;
+
+        @if (Expanded)
+        {
+            &lt;p class=&quot;card-text&quot;&gt;@ChildContent&lt;/p&gt;
+        }
+    &lt;/div&gt;
+&lt;/div&gt;
+
+@code {
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private void Toggle()
+    {
+        Expanded = !Expanded;
+    }
+}
+</code></pre>
+<p><code>Expander</code> 组件会添加到可调用 &lt;xref:Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged%2A&gt;的父组件中：</p>
+<pre><code class="lang-razor">@page &quot;/expander&quot;
+
+&lt;Expander Expanded=&quot;true&quot;&gt;
+    Expander 1 content
+&lt;/Expander&gt;
+
+&lt;Expander Expanded=&quot;true&quot; /&gt;
+
+&lt;button @onclick=&quot;StateHasChanged&quot;&gt;
+    Call StateHasChanged
+&lt;/button&gt;
+</code></pre>
+<p>最初，在切换 <code>Expanded</code> 属性时，<code>Expander</code> 组件独立地作出行为。 子组件会按预期方式维护其状态。 在父组件中调用 &lt;xref:Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged%2A&gt; 时，第一个子组件的 <code>Expanded</code> 会重新重置为它的初始值 (<code>true</code>)。 第二个 <code>Expander</code> 组件的 <code>Expanded</code> 值不会重置，因为第二个组件中没有呈现任何子内容。</p>
+<p>要维持在前述情况中的状态，请在 <code>Expander</code> 组件中使用私有字段来保留它的切换状态。</p>
+<p>以下经修定的 <code>Expander</code> 组件：</p>
+<ul>
+<li>接受父项中的 <code>Expanded</code> 组件参数值。</li>
+<li>将组件参数值分配给 <a class="xref" href="lifecycle.html#component-initialization-methods">OnInitialized 事件</a>中的私有字段 (<code>expanded</code>)。</li>
+<li>使用私有字段来维持它的内部切换状态。</li>
+</ul>
+<pre><code class="lang-razor">&lt;div @onclick=&quot;@Toggle&quot; class=&quot;card bg-light mb-3&quot; style=&quot;width:30rem&quot;&gt;
+    &lt;div class=&quot;card-body&quot;&gt;
+        &lt;h2 class=&quot;card-title&quot;&gt;Toggle (&lt;code&gt;expanded&lt;/code&gt; = @expanded)&lt;/h2&gt;
+
+        @if (expanded)
+        {
+            &lt;p class=&quot;card-text&quot;&gt;@ChildContent&lt;/p&gt;
+        }
+    &lt;/div&gt;
+&lt;/div&gt;
+
+@code {
+    private bool expanded;
+
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        expanded = Expanded;
+    }
+
+    private void Toggle()
+    {
+        expanded = !expanded;
+    }
+}
+</code></pre>
+<h2 id="apply-an-attribute">应用属性</h2>
+<p>可以通过 <a class="xref" href="../../mvc/views/razor.html#attribute"><code>@attribute</code></a> 指令在 Razor 组件中应用属性。 下面的示例将 <a href="xref:Microsoft.AspNetCore.Authorization.AuthorizeAttribute"><code>[Authorize]</code></a> 特性应用于组件类：</p>
+<pre><code class="lang-razor">@page &quot;/&quot;
+@attribute [Authorize]
+</code></pre>
+<h2 id="conditional-html-element-attributes">条件 HTML 元素属性</h2>
+<p>HTML 元素属性基于 .NET 值有条件地呈现。 如果值为 <code>false</code> 或 <code>null</code>，则不会呈现属性。 如果值为 <code>true</code>，则以最小化呈现属性。</p>
+<p>在下面的示例中，<code>IsCompleted</code> 确定是否在元素的标记中呈现 <code>checked</code>：</p>
+<pre><code class="lang-razor">&lt;input type=&quot;checkbox&quot; checked=&quot;@IsCompleted&quot; /&gt;
+
+@code {
+    [Parameter]
+    public bool IsCompleted { get; set; }
+}
+</code></pre>
+<p>如果 <code>IsCompleted</code> 为 <code>true</code>，则复选框呈现为：</p>
+<pre><code class="lang-html">&lt;input type=&quot;checkbox&quot; checked /&gt;
+</code></pre>
+<p>如果 <code>IsCompleted</code> 为 <code>false</code>，则复选框呈现为：</p>
+<pre><code class="lang-html">&lt;input type=&quot;checkbox&quot; /&gt;
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="../../mvc/views/razor.html">razor 语法参考 ASP.NET Core</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>.NET 类型为 <code>bool</code> 时，某些 HTML 属性（如 <a href="https://developer.mozilla.org/docs/Web/Accessibility/ARIA/Roles/button_role#Toggle_buttons"><code>aria-pressed</code></a>）无法正常运行。 在这些情况下，请使用 <code>string</code> 类型，而不是 <code>bool</code>。</p>
+</div>
+<h2 id="raw-html">原始 HTML</h2>
+<p>通常使用 DOM 文本节点呈现字符串，这意味着将忽略它们可能包含的任何标记，并将其视为文字文本。 若要呈现原始 HTML，请将 HTML 内容包装在 <code>MarkupString</code> 值中。 将该值分析为 HTML 或 SVG，并插入到 DOM 中。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>呈现从任何不受信任的源构造的原始 HTML 存在安全风险，应避免！</p>
+</div>
+<p>下面的示例演示如何使用 <code>MarkupString</code> 类型向组件的呈现输出添加静态 HTML 内容块：</p>
+<pre><code class="lang-html">@((MarkupString)myMarkup)
+
+@code {
+    private string myMarkup = 
+        &quot;&lt;p class='markup'&gt;This is a &lt;em&gt;markup string&lt;/em&gt;.&lt;/p&gt;&quot;;
+}
+</code></pre>
+<h2 id="no-locrazor-templates">Razor 模板</h2>
+<p>可以使用 Razor 模板语法来定义呈现片段。 Razor 模板是一种定义 UI 代码片段的方法，请使用以下格式：</p>
+<pre><code class="lang-razor">@&lt;{HTML tag}&gt;...&lt;/{HTML tag}&gt;
+</code></pre>
+<p>下面的示例演示如何在组件中指定 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment&gt; 和 &lt;xref:Microsoft.AspNetCore.Components.RenderFragment%601&gt; 值并直接呈现模板。 还可以将呈现片段作为参数传递给<a class="xref" href="templated-components.html">模板化组件</a>。</p>
+<pre><code class="lang-razor">@timeTemplate
+
+@petTemplate(new Pet { Name = &quot;Rex&quot; })
+
+@code {
+    private RenderFragment timeTemplate = @&lt;p&gt;The time is @DateTime.Now.&lt;/p&gt;;
+    private RenderFragment&lt;Pet&gt; petTemplate = (pet) =&gt; @&lt;p&gt;Pet: @pet.Name&lt;/p&gt;;
+
+    private class Pet
+    {
+        public string Name { get; set; }
+    }
+}
+</code></pre>
+<p>以上代码的呈现输出：</p>
+<pre><code class="lang-html">&lt;p&gt;The time is 10/04/2018 01:26:52.&lt;/p&gt;
+
+&lt;p&gt;Pet: Rex&lt;/p&gt;
+</code></pre>
+<h2 id="static-assets">静态资产</h2>
+<p>Blazor 遵循 ASP.NET Core 应用的约定，将静态资产放在项目的 <a class="xref" href="../../fundamentals/index.html#web-root"><code>web root (wwwroot)</code> 文件夹</a>下。</p>
+<p>使用基相对路径 (<code>/</code>) 来引用静态资产的 Web 根。 在下面的示例中，<code>logo.png</code> 实际位于 <code>{PROJECT ROOT}/wwwroot/images</code> 文件夹中：</p>
+<pre><code class="lang-razor">&lt;img alt=&quot;Company logo&quot; src=&quot;/images/logo.png&quot; /&gt;
+</code></pre>
+<p>Razor 组件不支持波浪符斜杠表示法 (<code>~/</code>)。</p>
+<p>有关设置应用基路径的信息，请参阅 <a class="xref" href="../host-and-deploy/index.html#app-base-path">托管和部署 ASP.NET Core Blazor</a>。</p>
+<h2 id="tag-helpers-arent-supported-in-components">组件中不支持标记帮助程序</h2>
+<p>Razor 组件（<code>.razor</code> 文件）不支持 <a class="xref" href="../../mvc/views/tag-helpers/intro.html"><code>Tag Helpers</code></a>。 若要在 Blazor 中提供类似标记帮助程序的功能，请创建一个具有与标记帮助程序相同功能的组件，并改为使用该组件。</p>
+<h2 id="scalable-vector-graphics-svg-images">可缩放的向量图形 (SVG) 图像</h2>
+<p>由于 Blazor 呈现 HTML，因此通过 <code>&lt;img&gt;</code> 标记支持浏览器支持的图像，包括可缩放的矢量图形 (SVG) 图像(<code>.svg</code>)：</p>
+<pre><code class="lang-html">&lt;img alt=&quot;Example image&quot; src=&quot;some-image.svg&quot; /&gt;
+</code></pre>
+<p>同样，样式表文件 (<code>.css</code>) 的 CSS 规则支持 SVG 图像：</p>
+<pre><code class="lang-css">.my-element {
+    background-image: url(&quot;some-image.svg&quot;);
+}
+</code></pre>
+<p>但是，并非在所有情况下都支持内联的 SVG 标记。 如果将 <code>&lt;svg&gt;</code> 标记直接放入组件文件 (<code>.razor</code>)，则支持基本图像呈现，但很多高级场景尚不受支持。 例如，当前未遵循 <code>&lt;use&gt;</code> 标记，并且 <a class="xref" href="../../mvc/views/razor.html#bind"><code>@bind</code></a> 不能与某些 SVG 标记一起使用。 有关详细信息，请参阅 <a href="https://github.com/dotnet/aspnetcore/issues/18271">Blazor (dotnet/aspnetcore #18271) 中的 SVG 支持</a>。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../security/server/threat-mitigation.html">ASP.NET Core Blazor Server 的威胁缓解指南</a>：包括有关如何生成必须应对资源耗尽的 Blazor Server应用的指南。</li>
+</ul>
+<!--Reference links in article-->
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../../styles/main.js"></script>
+  </body>
+</html>

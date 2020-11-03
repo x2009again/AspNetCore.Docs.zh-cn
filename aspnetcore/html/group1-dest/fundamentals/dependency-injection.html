@@ -1,0 +1,1235 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ASP.NET Core &#20381;&#36182;&#27880;&#20837; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ASP.NET Core &#20381;&#36182;&#27880;&#20837; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/dependency-injection">
+<h1 id="dependency-injection-in-aspnet-core">ASP.NET Core 依赖注入</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://twitter.com/serpent5">Kirk Larkin</a>、<a href="https://ardalis.com/">Steve Smith</a>、<a href="https://scottaddie.com">Scott Addie</a> 和 <a href="https://github.com/brandondahler">Brandon Dahler</a></p>
+<p>ASP.NET Core 支持依赖关系注入 (DI) 软件设计模式，这是一种在类及其依赖关系之间实现<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#dependency-inversion">控制反转 (IoC)</a> 的技术。</p>
+<p>有关 MVC 控制器中依赖关系注入的详细信息，请参阅 <a class="xref" href="../mvc/controllers/dependency-injection.html">在 ASP.NET Core 中将依赖项注入到控制器</a>。</p>
+<p>有关选项的依赖项注入的详细信息，请参阅 <a class="xref" href="configuration/options.html">ASP.NET Core 中的选项模式</a>。</p>
+<p>本主题介绍 ASP.NET Core 中的依赖关系注入。 若要了解如何在控制台应用中使用依赖关系注入，请参阅 <a href="/dotnet/core/extensions/dependency-injection">.NET 中的依赖关系注入</a>。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/dependency-injection/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="overview-of-dependency-injection">依赖关系注入概述</h2>
+<p>依赖项是指另一个对象所依赖的对象。 使用其他类所依赖的 <code>WriteMessage</code> 方法检查以下 <code>MyDependency</code> 类：</p>
+<pre><code class="lang-csharp">public class MyDependency
+{
+    public void WriteMessage(string message)
+    {
+        Console.WriteLine($&quot;MyDependency.WriteMessage called. Message: {message}&quot;);
+    }
+}
+</code></pre>
+<p>类可以创建 <code>MyDependency</code> 类的实例，以便利用其 <code>WriteMessage</code> 方法。 在以下示例中，<code>MyDependency</code> 类是 <code>IndexModel</code> 类的依赖项：</p>
+<pre><code class="lang-csharp">public class IndexModel : PageModel
+{
+    private readonly MyDependency _dependency = new MyDependency();
+
+    public void OnGet()
+    {
+        _dependency.WriteMessage(&quot;IndexModel.OnGet created this message.&quot;);
+    }
+}
+</code></pre>
+<p>该类创建并直接依赖于 <code>MyDependency</code> 类。 代码依赖项（如前面的示例）会产生问题，应避免使用，原因如下：</p>
+<ul>
+<li>要用不同的实现替换 <code>MyDependency</code>，必须修改 <code>IndexModel</code> 类。</li>
+<li>如果 <code>MyDependency</code> 具有依赖项，则必须由 <code>IndexModel</code> 类对其进行配置。 在具有多个依赖于 <code>MyDependency</code> 的类的大型项目中，配置代码将分散在整个应用中。</li>
+<li>这种实现很难进行单元测试。 应用需使用模拟或存根 <code>MyDependency</code> 类，而该类不能使用此方法。</li>
+</ul>
+<p>依赖关系注入通过以下方式解决了这些问题：</p>
+<ul>
+<li>使用接口或基类将依赖关系实现抽象化。</li>
+<li>在服务容器中注册依赖关系。 ASP.NET Core 提供了一个内置的服务容器 &lt;xref:System.IServiceProvider&gt;。 服务通常已在应用的 <code>Startup.ConfigureServices</code> 方法中注册。</li>
+<li>将服务注入到使用它的类的构造函数中。 框架负责创建依赖关系的实例，并在不再需要时将其释放。</li>
+</ul>
+<p>在<a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/dependency-injection/samples">示例应用</a>中，<code>IMyDependency</code> 接口定义 <code>WriteMessage</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此接口由具体类型 <code>MyDependency</code> 实现：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用使用具体类型 <code>MyDependency</code> 注册 <code>IMyDependency</code> 服务。 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddScoped%2A&gt; 方法使用范围内生存期（单个请求的生存期）注册服务。 本主题后面将介绍<a href="#service-lifetimes">服务生存期</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在示例应用中，请求 <code>IMyDependency</code> 服务并用于调用 <code>WriteMessage</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>通过使用 DI 模式，表示控制器：</p>
+<ul>
+<li>不使用具体类型 <code>MyDependency</code>，仅使用它实现的 <code>IMyDependency</code> 接口。 这样可以轻松地更改控制器使用的实现，而无需修改控制器。</li>
+<li>不创建 <code>MyDependency</code> 的实例，这由 DI 容器创建。</li>
+</ul>
+<p>可以通过使用内置日志记录 API 来改善 <code>IMyDependency</code> 接口的实现：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>更新的 <code>ConfigureServices</code> 方法注册新的 <code>IMyDependency</code> 实现：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MyDependency2</code> 依赖于 &lt;xref:Microsoft.Extensions.Logging.ILogger%601&gt;，并在构造函数中对其进行请求。 <code>ILogger&lt;TCategoryName&gt;</code> 是<a href="#framework-provided-services">框架提供的服务</a>。</p>
+<p>以链式方式使用依赖关系注入并不罕见。 每个请求的依赖关系相应地请求其自己的依赖关系。 容器解析图中的依赖关系并返回完全解析的服务。 必须被解析的依赖关系的集合通常被称为“依赖关系树”、“依赖关系图”或“对象图”。</p>
+<p>容器通过利用<a href="/dotnet/csharp/language-reference/language-specification/types#open-and-closed-types">（泛型）开放类型</a>解析 <code>ILogger&lt;TCategoryName&gt;</code>，而无需注册每个<a href="/dotnet/csharp/language-reference/language-specification/types#constructed-types">（泛型）构造类型</a>。</p>
+<p>在依赖项注入术语中，服务：</p>
+<ul>
+<li>通常是向其他对象提供服务的对象，如 <code>IMyDependency</code> 服务。</li>
+<li>与 Web 服务无关，尽管服务可能使用 Web 服务。</li>
+</ul>
+<p>框架提供可靠的<a class="xref" href="logging/index.html">日志记录</a>系统。 编写上述示例中的 <code>IMyDependency</code> 实现来演示基本的 DI，而不是来实现日志记录。 大多数应用都不需要编写记录器。 下面的代码演示如何使用默认日志记录，这不要求在 <code>ConfigureServices</code> 中注册任何服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>使用前面的代码时，无需更新 <code>ConfigureServices</code>，因为框架提供<a class="xref" href="logging/index.html">日志记录</a>。</p>
+<h2 id="services-injected-into-startup">注入 Startup 的服务</h2>
+<p>服务可以注入 <code>Startup</code> 构造函数和 <code>Startup.Configure</code> 方法。</p>
+<p>使用泛型主机 (&lt;xref:Microsoft.Extensions.Hosting.IHostBuilder&gt;) 时，只能将以下服务注入 <code>Startup</code> 构造函数：</p>
+<ul>
+<li>&lt;xref:Microsoft.AspNetCore.Hosting.IWebHostEnvironment&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.Hosting.IHostEnvironment&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.Configuration.IConfiguration&gt;</li>
+</ul>
+<p>任何向 DI 容器注册的服务都可以注入 <code>Startup.Configure</code> 方法：</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, ILogger&lt;Startup&gt; logger)
+{
+    ...
+}
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a> 和<a class="xref" href="configuration/index.html#access-configuration-in-startup">访问 Startup 中的配置</a>。</p>
+<h2 id="register-groups-of-services-with-extension-methods">使用扩展方法注册服务组</h2>
+<p>ASP.NET Core 框架使用一种约定来注册一组相关服务。 约定使用单个 <code>Add{GROUP_NAME}</code> 扩展方法来注册该框架功能所需的所有服务。 例如，&lt;Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions.AddControllers&gt; 扩展方法会注册 MVC 控制器所需的服务。</p>
+<p>下面的代码通过个人用户帐户由 Razor 页面模板生成，并演示如何使用扩展方法 &lt;xref:Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.AddDbContext%2A&gt; 和 &lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServiceCollectionUIExtensions.AddDefaultIdentity%2A&gt; 将其他服务添加到容器中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><p><a name="csc"></a></p>
+<p>请考虑下面的 <code>ConfigureServices</code> 方法，该方法可注册服务并配置选项：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>可以将相关的注册组移动到扩展方法以注册服务。 例如，配置服务会被添加到以下类中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>剩余的服务会在类似的类中注册。 下面的 <code>ConfigureServices</code> 方法使用新扩展方法来注册服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><strong>注意：</strong> 每个 <code>services.Add{GROUP_NAME}</code> 扩展方法添加并可能配置服务。 例如，&lt;xref:Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions.AddControllersWithViews%2A&gt; 会添加带视图的 MVC 控制器所需的服务，&lt;xref:Microsoft.Extensions.DependencyInjection.MvcServiceCollectionExtensions.AddRazorPages%2A&gt; 会添加 Razor Pages 所需的服务。 我们建议应用遵循此命名约定。 将扩展方法置于 &lt;xref:Microsoft.Extensions.DependencyInjection?displayProperty=fullName&gt; 命名空间中以封装服务注册的组。</p>
+<h2 id="service-lifetimes">服务生存期</h2>
+<p>可以使用以下任一生存期注册服务：</p>
+<ul>
+<li>暂时</li>
+<li>作用域</li>
+<li>单例</li>
+</ul>
+<p>下列各部分描述了上述每个生存期。 为每个注册的服务选择适当的生存期。</p>
+<h3 id="transient">暂时</h3>
+<p>暂时生存期服务是每次从服务容器进行请求时创建的。 这种生存期适合轻量级、 无状态的服务。 向 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddTransient%2A&gt; 注册暂时性服务。</p>
+<p>在处理请求的应用中，在请求结束时会释放暂时服务。</p>
+<h3 id="scoped">作用域</h3>
+<p>作用域生存期服务针对每个客户端请求（连接）创建一次。 向 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddScoped%2A&gt; 注册范围内服务。</p>
+<p>在处理请求的应用中，在请求结束时会释放有作用域的服务。</p>
+<p>使用 Entity Framework Core 时，默认情况下 &lt;xref:Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.AddDbContext%2A&gt; 扩展方法使用范围内生存期来注册 <code>DbContext</code> 类型。</p>
+<p>不要从单一实例解析范围内服务。 当处理后续请求时，它可能会导致服务处于不正确的状态。 可以：</p>
+<ul>
+<li>从范围内或暂时性服务解析单一实例服务。</li>
+<li>从其他范围内或暂时性服务解析范围内服务。</li>
+</ul>
+<p>默认情况下在开发环境中，从具有较长生存期的其他服务解析服务将引发异常。 有关详细信息，请参阅<a href="#sv">作用域验证</a>。</p>
+<p>要在中间件中使用范围内服务，请使用以下方法之一：</p>
+<ul>
+<li>将服务注入中间件的 <code>Invoke</code> 或 <code>InvokeAsync</code> 方法。 使用<a class="xref" href="../mvc/controllers/dependency-injection.html#constructor-injection">构造函数注入</a>会引发运行时异常，因为它强制使范围内服务的行为与单一实例类似。 <a href="#lifetime-and-registration-options">生存期和注册选项</a>部分中的示例演示了 <code>InvokeAsync</code> 方法。</li>
+<li>使用<a class="xref" href="middleware/extensibility.html">基于工厂的中间件</a>。 使用此方法注册的中间件按客户端请求（连接）激活，这也使范围内服务可注入中间件的 <code>InvokeAsync</code> 方法。</li>
+</ul>
+<p>有关详细信息，请参阅 <a class="xref" href="middleware/write.html#per-request-middleware-dependencies">写入自定义 ASP.NET Core 中间件</a>。</p>
+<h3 id="singleton">单例</h3>
+<p>创建单例生命周期服务的情况如下：</p>
+<ul>
+<li>在首次请求它们时进行创建；或者</li>
+<li>在向容器直接提供实现实例时由开发人员进行创建。 很少用到此方法。</li>
+</ul>
+<p>每个后续请求都使用相同的实例。 如果应用需要单一实例行为，则允许服务容器管理服务的生存期。 不要实现单一实例设计模式，或提供代码来释放单一实例。 服务永远不应由解析容器服务的代码释放。 如果类型或工厂注册为单一实例，则容器自动释放单一实例。</p>
+<p>向 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton%2A&gt; 注册单一实例服务。 单一实例服务必须是线程安全的，并且通常在无状态服务中使用。</p>
+<p>在处理请求的应用中，当应用关闭并释放 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceProvider&gt; 时，会释放单一实例服务。 由于应用关闭之前不释放内存，因此请考虑单一实例服务的内存使用。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>不要从单一实例解析范围内服务。 当处理后续请求时，它可能会导致服务处于不正确的状态。 可以从范围内或暂时性服务解析单一实例服务。</p>
+</div>
+<h2 id="service-registration-methods">服务注册方法</h2>
+<p>框架提供了适用于特定场景的服务注册扩展方法：</p>
+<!-- Review: Auto disposal at end of app lifetime is not what you think of auto disposal  -->
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th style="text-align: center;">自动<br>对象 (object)<br>释放</th>
+<th style="text-align: center;">多种<br>实现</th>
+<th style="text-align: center;">传递参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Add{LIFETIME}&lt;{SERVICE}, {IMPLEMENTATION}&gt;()</code><br>示例：<br><code>services.AddSingleton&lt;IMyDep, MyDep&gt;();</code></td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td><code>Add{LIFETIME}&lt;{SERVICE}&gt;(sp =&gt; new {IMPLEMENTATION})</code><br>示例：<br><code>services.AddSingleton&lt;IMyDep&gt;(sp =&gt; new MyDep());</code><br><code>services.AddSingleton&lt;IMyDep&gt;(sp =&gt; new MyDep(99));</code></td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>Add{LIFETIME}&lt;{IMPLEMENTATION}&gt;()</code><br>示例：<br><code>services.AddSingleton&lt;MyDep&gt;();</code></td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td><code>AddSingleton&lt;{SERVICE}&gt;(new {IMPLEMENTATION})</code><br>示例：<br><code>services.AddSingleton&lt;IMyDep&gt;(new MyDep());</code><br><code>services.AddSingleton&lt;IMyDep&gt;(new MyDep(99));</code></td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>AddSingleton(new {IMPLEMENTATION})</code><br>示例：<br><code>services.AddSingleton(new MyDep());</code><br><code>services.AddSingleton(new MyDep(99));</code></td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<p>要详细了解释放类型，请参阅<a href="#disposal-of-services">服务释放</a>部分。 在<a class="xref" href="../test/integration-tests.html#inject-mock-services">为测试模拟类型</a>时，使用多个实现很常见。</p>
+<p>框架还提供 <code>TryAdd{LIFETIME}</code> 扩展方法，只有当尚未注册某个实现时，才注册该服务。</p>
+<p>在下面的示例中，对 <code>AddSingleton</code> 的调用会将 <code>MyDependency</code> 注册为 <code>IMyDependency</code>的实现。 对 <code>TryAddSingleton</code> 的调用没有任何作用，因为 <code>IMyDependency</code> 已有一个已注册的实现：</p>
+<pre><code class="lang-csharp">services.AddSingleton&lt;IMyDependency, MyDependency&gt;();
+// The following line has no effect:
+services.TryAddSingleton&lt;IMyDependency, DifferentDependency&gt;();
+</code></pre>
+<p>有关详细信息，请参阅：</p>
+<ul>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd%2A&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient%2A&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped%2A&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton%2A&gt;</li>
+</ul>
+<p><a href="xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable%2A">TryAddEnumerable(ServiceDescriptor)</a> 方法仅会在没有同一类型实现的情况下才注册该服务。 多个服务通过 <code>IEnumerable&lt;{SERVICE}&gt;</code> 解析。 注册服务时，开发人员应在尚未添加一个相同类型时添加实例。 通常库作者使用 <code>TryAddEnumerable</code> 来避免在容器中注册实现的多个副本。</p>
+<p>在下面的示例中，对 <code>TryAddEnumerable</code> 的第一次调用会将 <code>MyDependency</code> 注册为 <code>IMyDependency1</code>的实现。 第二次调用向 <code>IMyDependency2</code> 注册 <code>MyDependency</code>。 第三次调用没有任何作用，因为 <code>IMyDependency1</code> 已有一个 <code>MyDependency</code> 的已注册的实现：</p>
+<pre><code class="lang-csharp">public interface IMyDependency1 { }
+public interface IMyDependency2 { }
+
+public class MyDependency : IMyDependency1, IMyDependency2 { }
+
+services.TryAddEnumerable(ServiceDescriptor.Singleton&lt;IMyDependency1, MyDependency&gt;());
+services.TryAddEnumerable(ServiceDescriptor.Singleton&lt;IMyDependency2, MyDependency&gt;());
+services.TryAddEnumerable(ServiceDescriptor.Singleton&lt;IMyDependency1, MyDependency&gt;());
+</code></pre>
+<p>服务注册通常与顺序无关，除了注册同一类型的多个实现时。</p>
+<p><code>IServiceCollection</code> 是 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceDescriptor&gt; 对象的集合。 以下示例演示如何通过创建和添加 <code>ServiceDescriptor</code> 来注册服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>内置 <code>Add{LIFETIME}</code> 方法使用同一种方式。 相关示例请参阅 <a href="https://github.com/dotnet/extensions/blob/v3.1.6/src/DependencyInjection/DI.Abstractions/src/ServiceCollectionServiceExtensions.cs#L216-L237">AddScoped 源代码</a>。</p>
+<h3 id="constructor-injection-behavior">构造函数注入行为</h3>
+<p>服务可使用以下方式来解析：</p>
+<ul>
+<li>&lt;xref:System.IServiceProvider&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.ActivatorUtilities&gt;:
+<ul>
+<li>创建未在容器中注册的对象。</li>
+<li>与框架功能一起使用，例如<a class="xref" href="../mvc/views/tag-helpers/intro.html">标记帮助程序</a>、<a class="xref" href="../mvc/models/model-binding.html">MVC 控制器</a>和模型绑定器。</li>
+</ul>
+</li>
+</ul>
+<p>构造函数可以接受非依赖关系注入提供的参数，但参数必须分配默认值。</p>
+<p>当服务由 <code>IServiceProvider</code> 或 <code>ActivatorUtilities</code> 解析时，<a class="xref" href="../mvc/controllers/dependency-injection.html#constructor-injection">构造函数注入</a>需要 public 构造函数。</p>
+<p>当服务由 <code>ActivatorUtilities</code> 解析时，<a class="xref" href="../mvc/controllers/dependency-injection.html#constructor-injection">构造函数注入</a>要求只存在一个适用的构造函数。 支持构造函数重载，但其参数可以全部通过依赖注入来实现的重载只能存在一个。</p>
+<h2 id="entity-framework-contexts">实体框架上下文</h2>
+<p>默认情况下，使用<a href="#service-lifetimes">设置了范围的生存期</a>将实体框架上下文添加到服务容器中，因为 Web 应用数据库操作通常将范围设置为客户端请求。 要使用其他生存期，请使用 &lt;xref:Microsoft.Extensions.DependencyInjection.EntityFrameworkServiceCollectionExtensions.AddDbContext%2A&gt; 重载来指定生存期。 给定生存期的服务不应使用生存期比服务生存期短的数据库上下文。</p>
+<h2 id="lifetime-and-registration-options">生存期和注册选项</h2>
+<p>为了演示服务生存期和注册选项之间的差异，请考虑以下接口，将任务表示为具有标识符 <code>OperationId</code> 的操作。 根据为以下接口配置操作服务的生存期的方式，容器在类请求时提供相同或不同的服务实例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下 <code>Operation</code> 类实现了前面的所有接口。 <code>Operation</code> 构造函数生成 GUID，并将最后 4 个字符存储在 <code>OperationId</code> 属性中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><!--
+An `OperationService` is registered that depends on each of the other `Operation` types. When `OperationService` is requested via dependency injection, it receives either a new instance of each service or an existing instance based on the lifetime of the dependent service.
+
+* When transient services are created when requested from the container, the `OperationId` of the `IOperationTransient` service is different than the `OperationId` of the `OperationService`. `OperationService` receives a new instance of the `IOperationTransient` class. The new instance yields a different `OperationId`.
+* When scoped services are created per client request, the `OperationId` of the `IOperationScoped` service is the same as that of `OperationService` within a client request. Across client requests, both services share a different `OperationId` value.
+* When singleton and singleton-instance services are created once and used across all client requests and all services, the `OperationId` is constant across all service requests.
+
+[!code-csharp[](dependency-injection/samples/3.x/DependencyInjectionSample/Services/OperationService.cs?name=snippet1)]
+-->
+<p><code>Startup.ConfigureServices</code> 方法根据命名生存期创建 <code>Operation</code> 类的多个注册：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>示例应用一并演示了请求中和请求之间的对象生存期。 <code>IndexModel</code> 和中间件请求每种 <code>IOperation</code> 类型，并记录各自的 <code>OperationId</code>：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>与 <code>IndexModel</code> 类似，中间件会解析相同的服务：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>范围内服务必须在 <code>InvokeAsync</code> 方法中进行解析：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>记录器输出显示：</p>
+<ul>
+<li>暂时性对象始终不同。 <code>IndexModel</code> 和中间件中的临时 <code>OperationId</code> 值不同。</li>
+<li>范围内对象对每个请求而言是相同的，但在请求之间不同。</li>
+<li>单一实例对象对于每个请求是相同的。</li>
+</ul>
+<p>若要减少日志记录输出，请在 appsettings.Development.json 文件中设置“Logging:LogLevel:Microsoft:Error”：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="call-services-from-main">从 main 调用服务</h2>
+<p>使用 <a href="xref:Microsoft.Extensions.DependencyInjection.IServiceScopeFactory.CreateScope%2A">IServiceScopeFactory.CreateScope</a> 创建 &lt;xref:Microsoft.Extensions.DependencyInjection.IServiceScope&gt; 以解析应用范围内的作用域服务。  此方法可以用于在启动时访问有作用域的服务以便运行初始化任务。</p>
+<p>以下示例演示如何访问范围内 <code>IMyDependency</code> 服务并在 <code>Program.Main</code> 中调用其 <code>WriteMessage</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><a name="sv"></a></p>
+<h2 id="scope-validation">作用域验证</h2>
+<p>如果应用在<a class="xref" href="environments.html">开发环境</a>中运行，并调用 <a class="xref" href="host/generic-host.html#default-builder-settings">CreateDefaultBuilder</a> 以生成主机，默认服务提供程序会执行检查，以确认以下内容：</p>
+<ul>
+<li>没有从根服务提供程序解析到范围内服务。</li>
+<li>未将范围内服务注入单一实例。</li>
+</ul>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider%2A&gt; 时创建根服务提供程序。 在启动提供程序和应用时，根服务提供程序的生存期对应于应用的生存期，并在关闭应用时释放。</p>
+<p>有作用域的服务由创建它们的容器释放。 如果范围内服务创建于根容器，则该服务的生存期实际上提升至单一实例，因为根容器只会在应用关闭时将其释放。 验证服务作用域，将在调用 <code>BuildServiceProvider</code> 时收集这类情况。</p>
+<p>有关详细信息，请参阅<a class="xref" href="host/web-host.html#scope-validation">作用域验证</a>。</p>
+<h2 id="request-services">请求服务</h2>
+<p>ASP.NET Core 请求中可用的服务通过 <a href="xref:Microsoft.AspNetCore.Http.HttpContext.RequestServices">HttpContext.RequestServices</a> 集合公开。 从请求内部请求服务时，将从 <code>RequestServices</code> 集合解析服务及其依赖项。</p>
+<p>为每个请求创建一个作用域，<code>RequestServices</code> 公开作用域服务提供程序。 只要请求处于活动状态，所有作用域服务都有效。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>与解析 <code>RequestServices</code> 集合中的服务相比，以构造函数参数的形式请求依赖项是更优先的选择。 这样生成的类更易于测试。</p>
+</div>
+<h2 id="design-services-for-dependency-injection">设计能够进行依赖关系注入的服务</h2>
+<p>在设计能够进行依赖注入的服务时：</p>
+<ul>
+<li>避免有状态的、静态类和成员。 通过将应用设计为改用单一实例服务，避免创建全局状态。</li>
+<li>避免在服务中直接实例化依赖类。 直接实例化会将代码耦合到特定实现。</li>
+<li>不在服务中包含过多内容，确保设计规范，并易于测试。</li>
+</ul>
+<p>如果一个类有过多注入依赖项，这可能表明该类拥有过多的责任并且违反了<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#single-responsibility">单一责任原则 (SRP)</a>。 尝试通过将某些职责移动到一个新类来重构类。 请记住，Razor Pages 页面模型类和 MVC 控制器类应关注用户界面问题。</p>
+<h3 id="disposal-of-services">服务释放</h3>
+<p>容器为其创建的 &lt;xref:System.IDisposable&gt; 类型调用 &lt;xref:System.IDisposable.Dispose%2A&gt;。 从容器中解析的服务绝对不应由开发人员释放。 如果类型或工厂注册为单一实例，则容器自动释放单一实例。</p>
+<p>在下面的示例中，服务由服务容器创建，并自动释放：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>每次刷新索引页后，调试控制台显示以下输出：</p>
+<pre><code class="lang-console">Service1: IndexModel.OnGet
+Service2: IndexModel.OnGet
+Service3: IndexModel.OnGet
+Service1.Dispose
+</code></pre>
+<h3 id="services-not-created-by-the-service-container">不由服务容器创建的服务</h3>
+<p>考虑下列代码：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在上述代码中：</p>
+<ul>
+<li>服务实例不是由服务容器创建的。</li>
+<li>框架不会自动释放服务。</li>
+<li>开发人员负责释放服务。</li>
+</ul>
+<h3 id="idisposable-guidance-for-transient-and-shared-instances">暂时和共享实例的 IDisposable 指南</h3>
+<h4 id="transient-limited-lifetime">暂时、有限的生存期</h4>
+<p><strong>方案</strong></p>
+<p>应用需要一个 &lt;xref:System.IDisposable&gt; 实例，该实例在以下任一情况下具有暂时性生存期：</p>
+<ul>
+<li>在根范围（根容器）内解析实例。</li>
+<li>应在作用域结束之前释放实例。</li>
+</ul>
+<p><strong>解决方案</strong></p>
+<p>使用工厂模式在父作用域外创建实例。  在这种情况下，应用通常会使用一个 <code>Create</code> 方法，该方法直接调用最终类型的构造函数。 如果最终类型具有其他依赖项，则工厂可以：</p>
+<ul>
+<li>在其构造函数中接收 &lt;xref:System.IServiceProvider&gt;。</li>
+<li>使用 &lt;xref:Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance%2A?displayProperty=nameWithType&gt; 在容器外部实例化实例，同时将容器用于其依赖项。</li>
+</ul>
+<h4 id="shared-instance-limited-lifetime">共享实例，有限的生存期</h4>
+<p><strong>方案</strong></p>
+<p>应用需要跨多个服务的共享 &lt;xref:System.IDisposable&gt; 实例，但 &lt;xref:System.IDisposable&gt; 实例应具有有限的生存期。</p>
+<p><strong>解决方案</strong></p>
+<p>为实例注册作用域生存期。 使用 &lt;xref:Microsoft.Extensions.DependencyInjection.IServiceScopeFactory.CreateScope%2A?displayProperty=nameWithType&gt; 创建新 &lt;xref:Microsoft.Extensions.DependencyInjection.IServiceScope&gt;。 使用作用域的 &lt;xref:System.IServiceProvider&gt; 获取所需的服务。 如果不再需要范围，请将其释放。</p>
+<h4 id="general-idisposable-guidelines">一般 IDisposable 准则</h4>
+<ul>
+<li>不要为 &lt;xref:System.IDisposable&gt; 实例注册暂时性生存期。 请改用工厂模式。</li>
+<li>不要在根范围内解析具有暂时性或范围内生存期的 &lt;xref:System.IDisposable&gt; 实例。 唯一的例外是应用创建/重新创建并释放 &lt;xref:System.IServiceProvider&gt; 的情况，但这不是理想模式。</li>
+<li>通过 DI 接收 &lt;xref:System.IDisposable&gt; 依赖项不要求接收方自行实现 &lt;xref:System.IDisposable&gt;。 &lt;xref:System.IDisposable&gt; 依赖项的接收方不能对该依赖项调用 &lt;xref:System.IDisposable.Dispose%2A&gt;。</li>
+<li>使用范围控制服务的生存期。  作用域不区分层次，并且在各作用域之间没有特定联系。</li>
+</ul>
+<h2 id="default-service-container-replacement">默认服务容器替换</h2>
+<p>内置的服务容器旨在满足框架和大多数消费者应用的需求。 我们建议使用内置容器，除非你需要的特定功能不受它支持，例如：</p>
+<ul>
+<li>属性注入</li>
+<li>基于名称的注入</li>
+<li>子容器</li>
+<li>自定义生存期管理</li>
+<li>对迟缓初始化的 <code>Func&lt;T&gt;</code> 支持</li>
+<li>基于约定的注册</li>
+</ul>
+<p>以下第三方容器可用于 ASP.NET Core 应用：</p>
+<ul>
+<li><a href="https://autofac.readthedocs.io/en/latest/integration/aspnetcore.html">Autofac</a></li>
+<li><a href="https://www.nuget.org/packages/DryIoc.Microsoft.DependencyInjection">DryIoc</a></li>
+<li><a href="https://www.nuget.org/packages/Grace.DependencyInjection.Extensions">Grace</a></li>
+<li><a href="https://github.com/seesharper/LightInject.Microsoft.DependencyInjection">LightInject</a></li>
+<li><a href="https://jasperfx.github.io/lamar/">Lamar</a></li>
+<li><a href="https://github.com/z4kn4fein/stashbox-extensions-dependencyinjection">Stashbox</a></li>
+<li><a href="https://www.nuget.org/packages/Unity.Microsoft.DependencyInjection">Unity</a></li>
+</ul>
+<h2 id="thread-safety">线程安全</h2>
+<p>创建线程安全的单一实例服务。 如果单一实例服务依赖于一个暂时服务，那么暂时服务可能也需要线程安全，具体取决于单一实例使用它的方式。</p>
+<p>单个服务的工厂方法（例如 <a href="xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton%2A">AddSingleton&lt;TService&gt;(IServiceCollection, Func&lt;IServiceProvider,TService&gt;)</a> 的第二个参数）不必是线程安全的。 像类型 (<code>static</code>) 构造函数一样，它保证仅由单个线程调用一次。</p>
+<h2 id="recommendations">建议</h2>
+<ul>
+<li><p>不支持基于<code>async/await</code> 和 <code>Task</code> 的服务解析。 由于 C# 不支持异步构造函数，因此请在同步解析服务后使用异步方法。</p>
+</li>
+<li><p>避免在服务容器中直接存储数据和配置。 例如，用户的购物车通常不应添加到服务容器中。 配置应使用 <a class="xref" href="configuration/options.html">选项模型</a>。 同样，避免“数据持有者”对象，也就是仅仅为实现对另一个对象的访问而存在的对象。 最好通过 DI 请求实际项。</p>
+</li>
+<li><p>避免静态访问服务。 例如，避免将 <a href="xref:Microsoft.AspNetCore.Builder.IApplicationBuilder.ApplicationServices">IApplicationBuilder.ApplicationServices</a> 捕获为静态字段或属性以便在其他地方使用。</p>
+</li>
+<li><p>使 DI 工厂保持快速且同步。</p>
+</li>
+<li><p>避免使用服务定位器模式。 例如，可以使用 DI 代替时，不要调用 &lt;xref:System.IServiceProvider.GetService%2A&gt;  来获取服务实例：</p>
+<p><strong>不正确：</strong></p>
+<p><img src="dependency-injection/_static/bad.png" alt="错误代码"></p>
+<p><strong>正确</strong>：</p>
+<pre><code class="lang-csharp">public class MyClass
+{
+    private readonly IOptionsMonitor&lt;MyOptions&gt; _optionsMonitor;
+
+    public MyClass(IOptionsMonitor&lt;MyOptions&gt; optionsMonitor)
+    {
+        _optionsMonitor = optionsMonitor;
+    }
+
+    public void MyMethod()
+    {
+        var option = _optionsMonitor.CurrentValue.Option;
+
+        ...
+    }
+}
+</code></pre>
+</li>
+<li><p>要避免的另一个服务定位器变体是注入需在运行时解析依赖项的工厂。 这两种做法混合了<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#dependency-inversion">控制反转</a>策略。</p>
+</li>
+<li><p>避免静态访问 <code>HttpContext</code>（例如，<a href="xref:Microsoft.AspNetCore.Http.IHttpContextAccessor.HttpContext">IHttpContextAccessor.HttpContext</a>）。</p>
+</li>
+</ul>
+<p><a name="ASP0000"></a></p>
+<ul>
+<li><p>避免在 <code>ConfigureServices</code> 中调用 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider%2A&gt;。 当开发人员想要在 <code>ConfigureServices</code> 中解析服务时，通常会调用 <code>BuildServiceProvider</code>。 例如，假设 <code>LoginPath</code> 从配置中加载。 避免采用以下方法：</p>
+<p><img src="dependency-injection/_static/badcodeX.png" alt="调用 BuildServiceProvider 的错误代码"></p>
+<p>在上图中，选择 <code>services.BuildServiceProvider</code> 下的绿色波浪线将显示以下 ASP0000 警告：</p>
+<blockquote>
+<p>ASP0000 从应用程序代码调用“BuildServiceProvider”会导致创建单一实例服务的其他副本。 考虑依赖项注入服务等替代项作为“Configure”的参数。</p>
+</blockquote>
+<p>调用 <code>BuildServiceProvider</code> 会创建第二个容器，该容器可创建残缺的单一实例并导致跨多个容器引用对象图。</p>
+<p>获取 <code>LoginPath</code> 的正确方法是使用选项模式对 DI 的内置支持：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div></li>
+<li><p>可释放的暂时性服务由容器捕获以进行释放。 如果从顶级容器解析，这会变为内存泄漏。</p>
+</li>
+<li><p>启用范围验证，确保应用没有捕获范围内服务的单一实例。 有关详细信息，请参阅<a href="#scope-validation">作用域验证</a>。</p>
+</li>
+</ul>
+<p>像任何一组建议一样，你可能会遇到需要忽略某建议的情况。 例外情况很少见，主要是框架本身内部的特殊情况。</p>
+<p>DI 是静态/全局对象访问模式的替代方法。 如果将其与静态对象访问混合使用，则可能无法意识到 DI 的优点。</p>
+<h2 id="recommended-patterns-for-multi-tenancy-in-di">DI 中适用于多租户的推荐模式</h2>
+<p><a href="https://github.com/OrchardCMS/OrchardCore">Orchard Core</a> 是用于在 ASP.NET Core 上构建模块化多租户应用程序的应用程序框架。 有关详细信息，请参阅 <a href="https://docs.orchardcore.net/en/dev/">Orchard Core 文档</a>。</p>
+<p>请参阅 <a href="https://github.com/OrchardCMS/OrchardCore.Samples">Orchard Core 示例</a>，获取有关如何仅使用 Orchard Core Framework 而无需任何 CMS 特定功能来构建模块化和多租户应用的示例。</p>
+<h2 id="framework-provided-services">框架提供的服务</h2>
+<p><code>Startup.ConfigureServices</code> 方法注册应用使用的服务，包括 Entity Framework Core 和 ASP.NET Core MVC 等平台功能。 最初，提供给 <code>ConfigureServices</code> 的 <code>IServiceCollection</code> 具有框架定义的服务（具体取决于<a class="xref" href="index.html#host">主机配置方式</a>）。 对于基于 ASP.NET Core 模板的应用，该框架会注册 250 个以上的服务。</p>
+<p>下表列出了框架注册的这些服务的一小部分：</p>
+<table>
+<thead>
+<tr>
+<th>服务类型</th>
+<th>生存期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.Builder.IApplicationBuilderFactory?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Hosting.IHostApplicationLifetime&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IWebHostEnvironment&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IStartup?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IStartupFilter?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.Server.IServer?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Http.IHttpContextFactory?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Logging.ILogger%601?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Logging.ILoggerFactory?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.ObjectPool.ObjectPoolProvider?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Options.IConfigureOptions%601?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Options.IOptions%601?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:System.Diagnostics.DiagnosticSource?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:System.Diagnostics.DiagnosticListener?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+</tbody>
+</table>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../mvc/views/dependency-injection.html">在 ASP.NET Core 中将依赖项注入到视图</a></li>
+<li><a class="xref" href="../mvc/controllers/dependency-injection.html">在 ASP.NET Core 中将依赖项注入到控制器</a></li>
+<li><a class="xref" href="../security/authorization/dependencyinjection.html">ASP.NET Core 中的要求处理程序中的依赖项注入</a></li>
+<li><a class="xref" href="../blazor/fundamentals/dependency-injection.html">ASP.NET Core Blazor 依赖关系注入</a></li>
+<li><a href="https://www.youtube.com/watch?v=x-C-CNBVTaY">用于 DI 应用开发的 NDC 会议模式</a></li>
+<li><a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a></li>
+<li><a class="xref" href="middleware/extensibility.html">ASP.NET Core 中基于工厂的中间件激活</a></li>
+<li><a href="https://andrewlock.net/four-ways-to-dispose-idisposables-in-asp-net-core/">在 ASP.NET Core 中释放 IDisposable 的四种方式</a></li>
+<li><a href="/archive/msdn-magazine/2016/may/asp-net-writing-clean-code-in-asp-net-core-with-dependency-injection">在 ASP.NET Core 中使用依赖关系注入编写干净代码 (MSDN) </a></li>
+<li><a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#explicit-dependencies">显式依赖关系原则</a></li>
+<li><a href="https://www.martinfowler.com/articles/injection.html">控制反转容器和依赖关系注入模式 (Martin Fowler)</a></li>
+<li><a href="https://andrewlock.net/how-to-register-a-service-with-multiple-interfaces-for-in-asp-net-core-di/">如何在 ASP.NET Core DI 中注册具有多个接口的服务</a></li>
+</ul>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>作者：<a href="https://ardalis.com/">Steve Smith</a>、<a href="https://scottaddie.com">Scott Addie</a> 和 <a href="https://github.com/brandondahler">Brandon Dahler</a></p>
+<p>ASP.NET Core 支持依赖关系注入 (DI) 软件设计模式，这是一种在类及其依赖关系之间实现<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#dependency-inversion">控制反转 (IoC)</a> 的技术。</p>
+<p>有关 MVC 控制器中依赖关系注入的详细信息，请参阅 <a class="xref" href="../mvc/controllers/dependency-injection.html">在 ASP.NET Core 中将依赖项注入到控制器</a>。</p>
+<p><a href="https://github.com/aspnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/dependency-injection/samples">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="overview-of-dependency-injection">依赖关系注入概述</h2>
+<p>依赖项是指另一个对象所需的任何对象。 查看以下具有 <code>WriteMessage</code> 方法的 <code>MyDependency</code> 类，此类为应用中其他类所依赖：</p>
+<pre><code class="lang-csharp">public class MyDependency
+{
+    public MyDependency()
+    {
+    }
+
+    public Task WriteMessage(string message)
+    {
+        Console.WriteLine(
+            $&quot;MyDependency.WriteMessage called. Message: {message}&quot;);
+
+        return Task.FromResult(0);
+    }
+}
+</code></pre>
+<p>可以创建 <code>MyDependency</code> 类的实例以使 <code>WriteMessage</code> 方法可用于其他类。 <code>MyDependency</code> 类是 <code>IndexModel</code> 类的依赖项：</p>
+<pre><code class="lang-csharp">public class IndexModel : PageModel
+{
+    MyDependency _dependency = new MyDependency();
+
+    public async Task OnGetAsync()
+    {
+        await _dependency.WriteMessage(
+            &quot;IndexModel.OnGetAsync created this message.&quot;);
+    }
+}
+</code></pre>
+<p>该类创建并直接依赖于 <code>MyDependency</code> 实例。 代码依赖关系（如前面的示例）会产生问题，应避免使用，原因如下：</p>
+<ul>
+<li>若要用另一个实现替换 <code>MyDependency</code>，则必须修改类。</li>
+<li>如果 <code>MyDependency</code> 具有依赖关系，则必须由类对其进行配置。 在具有多个依赖于 <code>MyDependency</code> 的类的大型项目中，配置代码将分散在整个应用中。</li>
+<li>这种实现很难进行单元测试。 应用需使用模拟或存根 <code>MyDependency</code> 类，而该类不能使用此方法。</li>
+</ul>
+<p>依赖关系注入通过以下方式解决了这些问题：</p>
+<ul>
+<li>使用接口或基类将依赖关系实现抽象化。</li>
+<li>在服务容器中注册依赖关系。 ASP.NET Core 提供了一个内置的服务容器 &lt;xref:System.IServiceProvider&gt;。 服务已在应用的 <code>Startup.ConfigureServices</code> 方法中注册。</li>
+<li>将服务注入到使用它的类的构造函数中。 框架负责创建依赖关系的实例，并在不再需要时将其释放。</li>
+</ul>
+<p>在<a href="https://github.com/aspnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/dependency-injection/samples">示例应用</a>中，<code>IMyDependency</code> 接口定义了服务为应用提供的方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此接口由具体类型 <code>MyDependency</code> 实现：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>MyDependency</code> 在其构造函数中请求一个 &lt;xref:Microsoft.Extensions.Logging.ILogger`1&gt;。 以链式方式使用依赖关系注入并不罕见。 每个请求的依赖关系相应地请求其自己的依赖关系。 容器解析图中的依赖关系并返回完全解析的服务。 必须被解析的依赖关系的集合通常被称为“依赖关系树”、“依赖关系图”或“对象图”。</p>
+<p>必须在服务容器中注册 <code>IMyDependency</code> 和 <code>ILogger&lt;TCategoryName&gt;</code>。 <code>IMyDependency</code> 在 <code>Startup.ConfigureServices</code> 中注册。 <code>ILogger&lt;TCategoryName&gt;</code> 由日志记录抽象基础结构注册，因此它是框架默认注册的<a href="#framework-provided-services">框架提供的服务</a>。</p>
+<p>容器通过利用<a href="/dotnet/csharp/language-reference/language-specification/types#open-and-closed-types">（泛型）开放类型</a>解析 <code>ILogger&lt;TCategoryName&gt;</code>，而无需注册每个<a href="/dotnet/csharp/language-reference/language-specification/types#constructed-types">（泛型）构造类型</a>：</p>
+<pre><code class="lang-csharp">services.AddSingleton(typeof(ILogger&lt;&gt;), typeof(Logger&lt;&gt;));
+</code></pre>
+<p>在示例应用中，使用具体类型 <code>MyDependency</code> 注册 <code>IMyDependency</code> 服务。 注册将服务生存期的范围限定为单个请求的生存期。 本主题后面将介绍<a href="#service-lifetimes">服务生存期</a>。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>每个 <code>services.Add{SERVICE_NAME}</code> 扩展方法添加（并可能配置）服务。 例如，<code>services.AddMvc()</code> 添加 Razor Pages 和 MVC 需要的服务。 我们建议应用遵循此约定。 将扩展方法置于 <a href="/dotnet/api/microsoft.extensions.dependencyinjection">Microsoft.Extensions.DependencyInjection</a> 命名空间中以封装服务注册组。</p>
+</div>
+<p>如果服务的构造函数需要<a href="/dotnet/csharp/language-reference/keywords/built-in-types-table">内置类型</a>（如 <code>string</code>），则可以使用<a class="xref" href="configuration/index.html">配置</a>或<a class="xref" href="configuration/options.html">选项模式</a>注入该类型：</p>
+<pre><code class="lang-csharp">public class MyDependency : IMyDependency
+{
+    public MyDependency(IConfiguration config)
+    {
+        var myStringValue = config[&quot;MyStringKey&quot;];
+
+        // Use myStringValue
+    }
+
+    ...
+}
+</code></pre>
+<p>可通过类的构造函数请求服务实例，在该函数中可使用服务并将其分配给私有字段。 该字段用于在整个类中根据需要访问服务。</p>
+<p>在示例应用中，请求 <code>IMyDependency</code> 实例并将其用于调用服务的 <code>WriteMessage</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h2 id="services-injected-into-startup">注入 Startup 的服务</h2>
+<p>使用泛型主机 (&lt;xref:Microsoft.Extensions.Hosting.IHostBuilder&gt;) 时，只能将以下服务类型注入 <code>Startup</code> 构造函数：</p>
+<ul>
+<li><code>IWebHostEnvironment</code></li>
+<li>&lt;xref:Microsoft.Extensions.Hosting.IHostEnvironment&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.Configuration.IConfiguration&gt;</li>
+</ul>
+<p>服务可以注入 <code>Startup.Configure</code>：</p>
+<pre><code class="lang-csharp">public void Configure(IApplicationBuilder app, IOptions&lt;MyOptions&gt; options)
+{
+    ...
+}
+</code></pre>
+<p>有关详细信息，请参阅 <a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a>。</p>
+<h2 id="framework-provided-services">框架提供的服务</h2>
+<p><code>Startup.ConfigureServices</code> 方法负责定义应用使用的服务，包括 Entity Framework Core 和 ASP.NET Core MVC 等平台功能。 最初，提供给 <code>ConfigureServices</code> 的 <code>IServiceCollection</code> 具有框架定义的服务（具体取决于<a class="xref" href="index.html#host">主机配置方式</a>）。 基于 ASP.NET Core 模板的应用程序具有框架注册的数百个服务的情况并不少见。 下表列出了框架注册的服务的一小部分。</p>
+<table>
+<thead>
+<tr>
+<th>服务类型</th>
+<th>生存期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.Builder.IApplicationBuilderFactory?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IApplicationLifetime?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IHostingEnvironment?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IStartup?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.IStartupFilter?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Hosting.Server.IServer?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.AspNetCore.Http.IHttpContextFactory?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Logging.ILogger`1?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Logging.ILoggerFactory?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.ObjectPool.ObjectPoolProvider?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Options.IConfigureOptions`1?displayProperty=fullName&gt;</td>
+<td>暂时</td>
+</tr>
+<tr>
+<td>&lt;xref:Microsoft.Extensions.Options.IOptions`1?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:System.Diagnostics.DiagnosticSource?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+<tr>
+<td>&lt;xref:System.Diagnostics.DiagnosticListener?displayProperty=fullName&gt;</td>
+<td>单例</td>
+</tr>
+</tbody>
+</table>
+<h2 id="register-additional-services-with-extension-methods">使用扩展方法注册附加服务</h2>
+<p>当服务集合扩展方法可用于注册服务（及其依赖服务，如果需要）时，约定使用单个 <code>Add{SERVICE_NAME}</code> 扩展方法来注册该服务所需的所有服务。 以下代码是如何使用扩展方法 <a href="/dotnet/api/microsoft.extensions.dependencyinjection.entityframeworkservicecollectionextensions.adddbcontext">AddDbContext&lt;TContext&gt;</a> 和 &lt;xref:Microsoft.Extensions.DependencyInjection.IdentityServiceCollectionExtensions.AddIdentityCore*&gt; 向容器添加附加服务的示例：</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    ...
+
+    services.AddDbContext&lt;ApplicationDbContext&gt;(options =&gt;
+        options.UseSqlServer(Configuration.GetConnectionString(&quot;DefaultConnection&quot;)));
+
+    services.AddIdentity&lt;ApplicationUser, IdentityRole&gt;()
+        .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()
+        .AddDefaultTokenProviders();
+
+    ...
+}
+</code></pre>
+<p>有关详细信息，请参阅 API 文档中的 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollection&gt; 类。</p>
+<h2 id="service-lifetimes">服务生存期</h2>
+<p>为每个注册的服务选择适当的生存期。 可以使用以下生存期配置 ASP.NET Core 服务：</p>
+<h3 id="transient">暂时</h3>
+<p>暂时生存期服务 (&lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddTransient*&gt;) 是每次从服务容器进行请求时创建的。 这种生存期适合轻量级、 无状态的服务。</p>
+<p>在处理请求的应用中，在请求结束时会释放暂时服务。</p>
+<h3 id="scoped">作用域</h3>
+<p>作用域生存期服务 (&lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddScoped*&gt;) 针对每个客户端请求（连接）创建一次。</p>
+<p>在处理请求的应用中，在请求结束时会释放有作用域的服务。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>在中间件内使用有作用域的服务时，请将该服务注入至 <code>Invoke</code> 或 <code>InvokeAsync</code> 方法。 请不要通过<a class="xref" href="../mvc/controllers/dependency-injection.html#constructor-injection">构造函数注入</a>进行注入，因为它会强制服务的行为与单一实例类似。 有关详细信息，请参阅 <a class="xref" href="middleware/write.html#per-request-middleware-dependencies">写入自定义 ASP.NET Core 中间件</a>。</p>
+</div>
+<h3 id="singleton">单例</h3>
+<p>单一实例生存期服务 (&lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton*&gt;) 是在第一次请求时（或者在运行 <code>Startup.ConfigureServices</code> 并且使用服务注册指定实例时）创建的。 每个后续请求都使用相同的实例。 如果应用需要单一实例行为，建议允许服务容器管理服务的生存期。 不要在类中实现单一实例设计模式并提供用户代码来管理对象的生存期。</p>
+<p>在处理请求的应用中，当应用关闭并释放 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceProvider&gt; 时，会释放单一实例服务。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>从单一实例解析有作用域的服务很危险。 当处理后续请求时，它可能会导致服务处于不正确的状态。</p>
+</div>
+<h2 id="service-registration-methods">服务注册方法</h2>
+<p>服务注册扩展方法提供适用于特定场景的重载。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th style="text-align: center;">自动<br>对象 (object)<br>释放</th>
+<th style="text-align: center;">多种<br>实现</th>
+<th style="text-align: center;">传递参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Add{LIFETIME}&lt;{SERVICE}, {IMPLEMENTATION}&gt;()</code><br>示例：<br><code>services.AddSingleton&lt;IMyDep, MyDep&gt;();</code></td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td><code>Add{LIFETIME}&lt;{SERVICE}&gt;(sp =&gt; new {IMPLEMENTATION})</code><br>示例：<br><code>services.AddSingleton&lt;IMyDep&gt;(sp =&gt; new MyDep());</code><br><code>services.AddSingleton&lt;IMyDep&gt;(sp =&gt; new MyDep(&quot;A string!&quot;));</code></td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>Add{LIFETIME}&lt;{IMPLEMENTATION}&gt;()</code><br>示例：<br><code>services.AddSingleton&lt;MyDep&gt;();</code></td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr>
+<td><code>AddSingleton&lt;{SERVICE}&gt;(new {IMPLEMENTATION})</code><br>示例：<br><code>services.AddSingleton&lt;IMyDep&gt;(new MyDep());</code><br><code>services.AddSingleton&lt;IMyDep&gt;(new MyDep(&quot;A string!&quot;));</code></td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">是</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr>
+<td><code>AddSingleton(new {IMPLEMENTATION})</code><br>示例：<br><code>services.AddSingleton(new MyDep());</code><br><code>services.AddSingleton(new MyDep(&quot;A string!&quot;));</code></td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">否</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<p>要详细了解释放类型，请参阅<a href="#disposal-of-services">服务释放</a>部分。 多个实现的常见场景是<a class="xref" href="../test/integration-tests.html#inject-mock-services">为了测试而模拟各个类型</a>。</p>
+<p><code>TryAdd{LIFETIME}</code> 方法仅当尚未注册实现时，注册该服务。</p>
+<p>在以下示例中，第一行向 <code>IMyDependency</code> 注册 <code>MyDependency</code>。 第二行没有任何作用，因为 <code>IMyDependency</code> 已有一个已注册的实现：</p>
+<pre><code class="lang-csharp">services.AddSingleton&lt;IMyDependency, MyDependency&gt;();
+// The following line has no effect:
+services.TryAddSingleton&lt;IMyDependency, DifferentDependency&gt;();
+</code></pre>
+<p>有关详情，请参阅：</p>
+<ul>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAdd*&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient*&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped*&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton*&gt;</li>
+</ul>
+<p><a href="xref:Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable*">TryAddEnumerable(ServiceDescriptor)</a> 方法仅当没有同一类型的实现时，注册该服务。 多个服务通过 <code>IEnumerable&lt;{SERVICE}&gt;</code> 解析。 注册服务时，开发人员只希望在尚未添加一个相同类型时添加实例。 通常情况下，库创建者使用此方法来避免在容器中注册一个实例的两个副本。</p>
+<p>在以下示例中，第一行向 <code>IMyDep1</code> 注册 <code>MyDep</code>。 第二行向 <code>IMyDep2</code> 注册 <code>MyDep</code>。 第三行没有任何作用，因为 <code>IMyDep1</code> 已有一个 <code>MyDep</code> 的已注册的实现：</p>
+<pre><code class="lang-csharp">public interface IMyDep1 {}
+public interface IMyDep2 {}
+
+public class MyDep : IMyDep1, IMyDep2 {}
+
+services.TryAddEnumerable(ServiceDescriptor.Singleton&lt;IMyDep1, MyDep&gt;());
+services.TryAddEnumerable(ServiceDescriptor.Singleton&lt;IMyDep2, MyDep&gt;());
+// Two registrations of MyDep for IMyDep1 is avoided by the following line:
+services.TryAddEnumerable(ServiceDescriptor.Singleton&lt;IMyDep1, MyDep&gt;());
+</code></pre>
+<h3 id="constructor-injection-behavior">构造函数注入行为</h3>
+<p>服务可以通过两种机制来解析：</p>
+<ul>
+<li>&lt;xref:System.IServiceProvider&gt;</li>
+<li>&lt;xref:Microsoft.Extensions.DependencyInjection.ActivatorUtilities&gt;：允许在依赖关系注入容器中创建没有服务注册的对象。 <code>ActivatorUtilities</code> 用于面向用户的抽象，例如标记帮助器、MVC 控制器和模型绑定器。</li>
+</ul>
+<p>构造函数可以接受非依赖关系注入提供的参数，但参数必须分配默认值。</p>
+<p>当服务由 <code>IServiceProvider</code> 或 <code>ActivatorUtilities</code> 解析时，<a class="xref" href="../mvc/controllers/dependency-injection.html#constructor-injection">构造函数注入</a>需要 public 构造函数。</p>
+<p>当服务由 <code>ActivatorUtilities</code> 解析时，<a class="xref" href="../mvc/controllers/dependency-injection.html#constructor-injection">构造函数注入</a>要求只存在一个适用的构造函数。 支持构造函数重载，但其参数可以全部通过依赖注入来实现的重载只能存在一个。</p>
+<h2 id="entity-framework-contexts">实体框架上下文</h2>
+<p>通常将实体框架上下文添加到使用<a href="#service-lifetimes">作用域生存期</a>的服务容器中，因为 Web 应用数据库操作通常将范围设置为客户端请求。 如果在注册数据库上下文时，<a href="/dotnet/api/microsoft.extensions.dependencyinjection.entityframeworkservicecollectionextensions.adddbcontext">AddDbContext&lt;TContext&gt;</a> 重载未指定生存期，则默认生存期为作用域。 给定生存期的服务不应使用生存期比服务短的数据库上下文。</p>
+<h2 id="lifetime-and-registration-options">生存期和注册选项</h2>
+<p>为了演示生存期和注册选项之间的差异，请考虑以下接口，将任务表示为具有唯一标识符 <code>OperationId</code> 的操作。 根据为以下接口配置操作服务的生存期的方式，容器在类请求时提供相同或不同的服务实例：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>接口在 <code>Operation</code> 类中实现。 <code>Operation</code> 构造函数将生成一个 GUID（如果未提供）：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>注册 <code>OperationService</code> 取决于，每个其他 <code>Operation</code> 类型。 当通过依赖关系注入请求 <code>OperationService</code> 时，它将基于依赖服务的生存期接收每个服务的新实例或现有实例。</p>
+<ul>
+<li>如果从容器请求时创建了临时服务，则 <code>IOperationTransient</code> 服务的 <code>OperationId</code> 与 <code>OperationService</code> 的 <code>OperationId</code> 不同。 <code>OperationService</code> 将接收 <code>IOperationTransient</code> 类的新实例。 新实例将生成一个不同的 <code>OperationId</code>。</li>
+<li>如果按客户端请求创建有作用域的服务，则 <code>IOperationScoped</code> 服务的 <code>OperationId</code> 与客户端请求中 <code>OperationService</code> 的该 ID 相同。 在客户端请求中，两个服务共享不同的 <code>OperationId</code> 值。</li>
+<li>如果创建了一次单例服务和单例实例服务并在所有客户端请求和所有服务中使用，则 <code>OperationId</code> 在所有服务请求中保持不变。</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>在 <code>Startup.ConfigureServices</code> 中，根据其指定的生存期，将每个类型添加到容器中：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p><code>IOperationSingletonInstance</code> 服务正在使用已知 ID 为 <code>Guid.Empty</code> 的特定实例。 此类型在使用时很明显（其 GUID 全部为零）。</p>
+<p>示例应用演示了各个请求中和请求之间的对象生存期。 示例应用的 <code>IndexModel</code> 请求每种 <code>IOperation</code> 类型和 <code>OperationService</code>。 然后，页面通过属性分配显示所有页面模型类和服务的 <code>OperationId</code> 值：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>以下两个输出显示了两个请求的结果：</p>
+<p><strong>第一个请求：</strong></p>
+<p>控制器操作：</p>
+<p>暂时性：d233e165-f417-469b-a866-1cf1935d2518<br>
+作用域：5d997e2d-55f5-4a64-8388-51c4e3a1ad19<br>
+单一实例：01271bc1-9e31-48e7-8f7c-7261b040ded9<br>
+实例：00000000-0000-0000-0000-000000000000</p>
+<p><code>OperationService</code> 操作：</p>
+<p>暂时性：c6b049eb-1318-4e31-90f1-eb2dd849ff64<br>
+作用域：5d997e2d-55f5-4a64-8388-51c4e3a1ad19<br>
+单一实例：01271bc1-9e31-48e7-8f7c-7261b040ded9<br>
+实例：00000000-0000-0000-0000-000000000000</p>
+<p><strong>第二个请求：</strong></p>
+<p>控制器操作：</p>
+<p>暂时性：b63bd538-0a37-4ff1-90ba-081c5138dda0<br>
+作用域：31e820c5-4834-4d22-83fc-a60118acb9f4<br>
+单一实例：01271bc1-9e31-48e7-8f7c-7261b040ded9<br>
+实例：00000000-0000-0000-0000-000000000000</p>
+<p><code>OperationService</code> 操作：</p>
+<p>暂时性：c4cbacb8-36a2-436d-81c8-8c1b78808aaf<br>
+作用域：31e820c5-4834-4d22-83fc-a60118acb9f4<br>
+单一实例：01271bc1-9e31-48e7-8f7c-7261b040ded9<br>
+实例：00000000-0000-0000-0000-000000000000</p>
+<p>观察哪个 <code>OperationId</code> 值会在一个请求之内和不同请求之间变化：</p>
+<ul>
+<li>暂时性对象始终不同。 第一个和第二个客户端请求的暂时性 <code>OperationId</code> 值对于 <code>OperationService</code> 操作和在客户端请求内都是不同的。 为每个服务请求和客户端请求提供了一个新实例。</li>
+<li>作用域对象在一个客户端请求中是相同的，但在多个客户端请求中是不同的。</li>
+<li>单一实例对象对每个对象和每个请求都是相同的（不管 <code>Startup.ConfigureServices</code> 中是否提供 <code>Operation</code> 实例）。</li>
+</ul>
+<h2 id="call-services-from-main">从 main 调用服务</h2>
+<p>使用 <a href="xref:Microsoft.Extensions.DependencyInjection.IServiceScopeFactory.CreateScope*">IServiceScopeFactory.CreateScope</a> 创建 &lt;xref:Microsoft.Extensions.DependencyInjection.IServiceScope&gt; 以解析应用范围内的作用域服务。  此方法可以用于在启动时访问有作用域的服务以便运行初始化任务。 以下示例演示如何在 <code>Program.Main</code> 中获取 <code>MyScopedService</code> 的上下文：</p>
+<pre><code class="lang-csharp">using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var host = CreateWebHostBuilder(args).Build();
+
+        using (var serviceScope = host.Services.CreateScope())
+        {
+            var services = serviceScope.ServiceProvider;
+
+            try
+            {
+                var serviceContext = services.GetRequiredService&lt;MyScopedService&gt;();
+                // Use the context here
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService&lt;ILogger&lt;Program&gt;&gt;();
+                logger.LogError(ex, &quot;An error occurred.&quot;);
+            }
+        }
+
+        await host.RunAsync();
+    }
+
+    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =&gt;
+        WebHost.CreateDefaultBuilder(args)
+            .UseStartup&lt;Startup&gt;();
+}
+</code></pre>
+<h2 id="scope-validation">作用域验证</h2>
+<p>如果在开发环境中运行应用，默认的服务提供程序会执行检查，从而确认以下内容：</p>
+<ul>
+<li>没有从根服务提供程序直接或间接解析到有作用域的服务。</li>
+<li>未将有作用域的服务直接或间接注入到单一实例。</li>
+</ul>
+<p>调用 &lt;xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider*&gt; 时创建根服务提供程序。 在启动提供程序和应用时，根服务提供程序的生存期对应于应用/服务的生存期，并在关闭应用时释放。</p>
+<p>有作用域的服务由创建它们的容器释放。 如果作用域服务创建于根容器，则该服务的生存期会实际上提升至单一实例，因为根容器只会在应用/服务关闭时将其释放。 验证服务作用域，将在调用 <code>BuildServiceProvider</code> 时收集这类情况。</p>
+<p>有关详细信息，请参阅 <a class="xref" href="host/web-host.html#scope-validation">ASP.NET Core Web 主机</a>。</p>
+<h2 id="request-services">请求服务</h2>
+<p>来自 <code>HttpContext</code> 的 ASP.NET Core 请求中可用的服务通过 <a href="xref:Microsoft.AspNetCore.Http.HttpContext.RequestServices">HttpContext.RequestServices</a> 集合公开。</p>
+<p>请求服务表示作为应用的一部分配置和请求的服务。 当对象指定依赖关系时，<code>RequestServices</code>（而不是 <code>ApplicationServices</code>）中的类型将满足这些要求。</p>
+<p>通常，应用不应直接使用这些属性。 相反，通过类构造函数请求类所需的类型，并允许框架注入依赖关系。 这样生成的类更易于测试。</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>与访问 <code>RequestServices</code> 集合相比，以构造函数参数的形式请求依赖项是更优先的选择。</p>
+</div>
+<h2 id="design-services-for-dependency-injection">设计能够进行依赖关系注入的服务</h2>
+<p>最佳做法是：</p>
+<ul>
+<li>设计服务以使用依赖关系注入来获取其依赖关系。</li>
+<li>避免有状态的、静态类和成员。 将应用设计为改用单一实例服务，可避免创建全局状态。</li>
+<li>避免在服务中直接实例化依赖类。 直接实例化会将代码耦合到特定实现。</li>
+<li>不在应用类中包含过多内容，确保设计规范，并易于测试。</li>
+</ul>
+<p>如果一个类似乎有过多的依赖关系注入，这通常表明该类拥有过多的责任并且违反了<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#single-responsibility">单一责任原则 (SRP)</a>。 尝试通过将某些职责移动到一个新类来重构类。 请记住，Razor Pages 页面模型类和 MVC 控制器类应关注用户界面问题。 业务规则和数据访问实现细节应保留在适用于这些<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#separation-of-concerns">分离的关注点</a>的类中。</p>
+<h3 id="disposal-of-services">服务释放</h3>
+<p>容器为其创建的 &lt;xref:System.IDisposable&gt; 类型调用 &lt;xref:System.IDisposable.Dispose*&gt;。 如果实例是通过用户代码添加到容器中，则不会自动释放该实例。</p>
+<p>在下面的示例中，服务由服务容器创建，并自动释放：</p>
+<pre><code class="lang-csharp">public class Service1 : IDisposable {}
+public class Service2 : IDisposable {}
+
+public interface IService3 {}
+public class Service3 : IService3, IDisposable {}
+
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddScoped&lt;Service1&gt;();
+    services.AddSingleton&lt;Service2&gt;();
+    services.AddSingleton&lt;IService3&gt;(sp =&gt; new Service3());
+}
+</code></pre>
+<p>如下示例中：</p>
+<ul>
+<li>服务实例不是由服务容器创建的。</li>
+<li>框架不知道预期的服务生存期。</li>
+<li>框架不会自动释放服务。</li>
+<li>服务如果未通过开发者代码显式释放，则会一直保留，直到应用关闭。</li>
+</ul>
+<pre><code class="lang-csharp">public class Service1 : IDisposable {}
+public class Service2 : IDisposable {}
+
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSingleton&lt;Service1&gt;(new Service1());
+    services.AddSingleton(new Service2());
+}
+</code></pre>
+<h3 id="idisposable-guidance-for-transient-and-shared-instances">暂时和共享实例的 IDisposable 指南</h3>
+<h4 id="transient-limited-lifetime">暂时、有限的生存期</h4>
+<p><strong>方案</strong></p>
+<p>应用需要一个 &lt;xref:System.IDisposable&gt; 实例，该实例在以下任一情况下具有暂时性生存期：</p>
+<ul>
+<li>在根作用域内解析实例。</li>
+<li>应在作用域结束之前释放实例。</li>
+</ul>
+<p><strong>解决方案</strong></p>
+<p>使用工厂模式在父作用域外创建实例。  在这种情况下，应用通常会使用一个 <code>Create</code> 方法，该方法直接调用最终类型的构造函数。 如果最终类型具有其他依赖项，则工厂可以：</p>
+<ul>
+<li>在其构造函数中接收 &lt;xref:System.IServiceProvider&gt;。</li>
+<li>使用 &lt;xref:Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance%2A?displayProperty=nameWithType&gt; 在容器外部实例化实例，同时将容器用于其依赖项。</li>
+</ul>
+<h4 id="shared-instance-limited-lifetime">共享实例，有限的生存期</h4>
+<p><strong>方案</strong></p>
+<p>应用需要跨多个服务的共享 &lt;xref:System.IDisposable&gt; 实例，但 &lt;xref:System.IDisposable&gt; 应具有有限的生存期。</p>
+<p><strong>解决方案</strong></p>
+<p>为实例注册作用域生存期。  使用 &lt;xref:Microsoft.Extensions.DependencyInjection.IServiceScopeFactory.CreateScope%2A?displayProperty=nameWithType&gt; 启动并创建新的 &lt;xref:Microsoft.Extensions.DependencyInjection.IServiceScope&gt;。 使用作用域的 &lt;xref:System.IServiceProvider&gt; 获取所需的服务。 在生存期应结束时释放作用域。</p>
+<h4 id="general-guidelines">通用准则</h4>
+<ul>
+<li>不要为&lt;xref:System.IDisposable&gt; 实例注册暂时作用域。 请改用工厂模式。</li>
+<li>不要在根作用域内解析暂时或作用域 &lt;xref:System.IDisposable&gt; 实例。 唯一的一般性例外是应用创建/重建和释放 &lt;xref:System.IServiceProvider&gt; 的情况，这不是理想的模式。</li>
+<li>通过 DI 接收 &lt;xref:System.IDisposable&gt; 依赖项不要求接收方自行实现 &lt;xref:System.IDisposable&gt;。 &lt;xref:System.IDisposable&gt; 依赖项的接收方不能对该依赖项调用 &lt;xref:System.IDisposable.Dispose%2A&gt;。</li>
+<li>作用域应该用于控制服务的生存期。  作用域不区分层次，并且在各作用域之间没有特定联系。</li>
+</ul>
+<h2 id="default-service-container-replacement">默认服务容器替换</h2>
+<p>内置的服务容器旨在满足框架和大多数消费者应用的需求。 我们建议使用内置容器，除非你需要的特定功能不受内置容器支持，例如：</p>
+<ul>
+<li>属性注入</li>
+<li>基于名称的注入</li>
+<li>子容器</li>
+<li>自定义生存期管理</li>
+<li>对迟缓初始化的 <code>Func&lt;T&gt;</code> 支持</li>
+<li>基于约定的注册</li>
+</ul>
+<p>以下第三方容器可用于 ASP.NET Core 应用：</p>
+<ul>
+<li><a href="https://autofac.readthedocs.io/en/latest/integration/aspnetcore.html">Autofac</a></li>
+<li><a href="https://www.nuget.org/packages/DryIoc.Microsoft.DependencyInjection">DryIoc</a></li>
+<li><a href="https://www.nuget.org/packages/Grace.DependencyInjection.Extensions">Grace</a></li>
+<li><a href="https://github.com/seesharper/LightInject.Microsoft.DependencyInjection">LightInject</a></li>
+<li><a href="https://jasperfx.github.io/lamar/">Lamar</a></li>
+<li><a href="https://github.com/z4kn4fein/stashbox-extensions-dependencyinjection">Stashbox</a></li>
+<li><a href="https://www.nuget.org/packages/Unity.Microsoft.DependencyInjection">Unity</a></li>
+</ul>
+<h3 id="thread-safety">线程安全</h3>
+<p>创建线程安全的单一实例服务。 如果单例服务依赖于一个暂时服务，那么暂时服务可能也需要线程安全，具体取决于单例使用它的方式。</p>
+<p>单个服务的工厂方法（例如 <a href="xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton*">AddSingleton&lt;TService&gt;(IServiceCollection, Func&lt;IServiceProvider,TService&gt;)</a> 的第二个参数）不必是线程安全的。 像类型 (<code>static</code>) 构造函数一样，它保证单个线程只调用一次。</p>
+<h2 id="recommendations">建议</h2>
+<ul>
+<li><p>不支持基于 <code>async/await</code> 和 <code>Task</code> 的服务解析。 C# 不支持异步构造函数；因此建议模式是在同步解析服务后使用异步方法。</p>
+</li>
+<li><p>避免在服务容器中直接存储数据和配置。 例如，用户的购物车通常不应添加到服务容器中。 配置应使用 <a class="xref" href="configuration/options.html">选项模型</a>。 同样，避免&quot;数据持有者&quot;对象，也就是仅仅为实现对某些其他对象的访问而存在的对象。 最好通过 DI 请求实际项。</p>
+</li>
+<li><p>避免静态访问服务。 例如，避免静态键入 <a href="xref:Microsoft.AspNetCore.Builder.IApplicationBuilder.ApplicationServices">IApplicationBuilder.ApplicationServices</a> 以便在其他地方使用。</p>
+</li>
+<li><p>避免使用服务定位器模式，该模式混合了<a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#dependency-inversion">控制反转</a>策略。</p>
+<ul>
+<li><p>可以使用 DI 代替时，不要调用 &lt;xref:System.IServiceProvider.GetService*&gt; 来获取服务实例：</p>
+<p><strong>不正确：</strong></p>
+<pre><code class="lang-csharp">public class MyClass()
+
+  public void MyMethod()
+  {
+      var optionsMonitor = 
+          _services.GetService&lt;IOptionsMonitor&lt;MyOptions&gt;&gt;();
+      var option = optionsMonitor.CurrentValue.Option;
+
+      ...
+  }
+</code></pre>
+<p><strong>正确</strong>：</p>
+<pre><code class="lang-csharp">public class MyClass
+{
+    private readonly IOptionsMonitor&lt;MyOptions&gt; _optionsMonitor;
+
+    public MyClass(IOptionsMonitor&lt;MyOptions&gt; optionsMonitor)
+    {
+        _optionsMonitor = optionsMonitor;
+    }
+
+    public void MyMethod()
+    {
+        var option = _optionsMonitor.CurrentValue.Option;
+
+        ...
+    }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>避免注入一个使用 &lt;xref:System.IServiceProvider.GetService*&gt; 在运行时解析依赖项的中心。</p>
+</li>
+<li><p>避免静态访问 <code>HttpContext</code>（例如，<a href="xref:Microsoft.AspNetCore.Http.IHttpContextAccessor.HttpContext">IHttpContextAccessor.HttpContext</a>）。</p>
+</li>
+</ul>
+<p>像任何一组建议一样，你可能会遇到需要忽略某建议的情况。 例外情况很少见，主要是框架本身内部的特殊情况。</p>
+<p>DI 是静态/全局对象访问模式的替代方法。 如果将其与静态对象访问混合使用，则可能无法意识到 DI 的优点。</p>
+<h2 id="additional-resources">其他资源</h2>
+<ul>
+<li><a class="xref" href="../mvc/views/dependency-injection.html">在 ASP.NET Core 中将依赖项注入到视图</a></li>
+<li><a class="xref" href="../mvc/controllers/dependency-injection.html">在 ASP.NET Core 中将依赖项注入到控制器</a></li>
+<li><a class="xref" href="../security/authorization/dependencyinjection.html">ASP.NET Core 中的要求处理程序中的依赖项注入</a></li>
+<li><a class="xref" href="../blazor/fundamentals/dependency-injection.html">ASP.NET Core Blazor 依赖关系注入</a></li>
+<li><a class="xref" href="startup.html">ASP.NET Core 中的应用启动</a></li>
+<li><a class="xref" href="middleware/extensibility.html">ASP.NET Core 中基于工厂的中间件激活</a></li>
+<li><a href="https://andrewlock.net/four-ways-to-dispose-idisposables-in-asp-net-core/">在 ASP.NET Core 中释放 IDisposable 的四种方式</a></li>
+<li><a href="/archive/msdn-magazine/2016/may/asp-net-writing-clean-code-in-asp-net-core-with-dependency-injection">在 ASP.NET Core 中使用依赖关系注入编写干净代码 (MSDN) </a></li>
+<li><a href="/dotnet/standard/modern-web-apps-azure-architecture/architectural-principles#explicit-dependencies">显式依赖关系原则</a></li>
+<li><a href="https://www.martinfowler.com/articles/injection.html">控制反转容器和依赖关系注入模式 (Martin Fowler)</a></li>
+<li><a href="https://andrewlock.net/how-to-register-a-service-with-multiple-interfaces-for-in-asp-net-core-di/">如何在 ASP.NET Core DI 中注册具有多个接口的服务</a></li>
+</ul>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

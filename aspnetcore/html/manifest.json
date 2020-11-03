@@ -1,0 +1,6945 @@
+{
+  "homepages": [],
+  "source_base_path": "F:/开源/AspNetCore.Docs.zh-cn/aspnetcore",
+  "xrefmap": "group1.xrefmap.yml",
+  "files": [
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "azure/devops/cicd.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/azure/devops/cicd.html",
+          "hash": "s+7YjEV4df/l0dNkcXzAhA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "azure/devops/deploying-to-app-service.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/azure/devops/deploying-to-app-service.html",
+          "hash": "VYYDOum26r28ZGR2Y9DdkA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "azure/devops/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/azure/devops/index.html",
+          "hash": "M0BBxIBgRr97n3SAEbPzDg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "azure/devops/monitoring.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/azure/devops/monitoring.html",
+          "hash": "DvgM1mFosQn/LnRdLQspyA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "azure/devops/next-steps.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/azure/devops/next-steps.html",
+          "hash": "SQ/+hRF0QbyZchnlEhjURA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "azure/devops/tools-and-downloads.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/azure/devops/tools-and-downloads.html",
+          "hash": "+fUOmlMvjKRIynlVm2U8eQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/advanced-scenarios.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/advanced-scenarios.html",
+          "hash": "7t8yJI7yRDOI1qfuHSdZMQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/blazor-server-ef-core.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/blazor-server-ef-core.html",
+          "hash": "srUmqTBvClILYOKnr2FsAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/call-dotnet-from-javascript.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/call-dotnet-from-javascript.html",
+          "hash": "ADRnOn7gJOyyaZZPPDexuQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/call-javascript-from-dotnet.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/call-javascript-from-dotnet.html",
+          "hash": "kEnUwRxc9Pr/elY037O6EQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/call-web-api.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/call-web-api.html",
+          "hash": "J+Z137kUn/wJje0JZMx2Pw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/cascading-values-and-parameters.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/cascading-values-and-parameters.html",
+          "hash": "x62XuhzkCQptQUmZ3Pjqeg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/class-libraries.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/class-libraries.html",
+          "hash": "asB+7NxTzdkb5/D5SduaFA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/data-binding.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/data-binding.html",
+          "hash": "6UUkX7Vmz8qh5wjKAyz2dg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/event-handling.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/event-handling.html",
+          "hash": "0/fC1TGen9HqYnVasEoJNg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/index.html",
+          "hash": "ONSoQOgzLOJJ08y7yLTsdA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/integrate-components.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/integrate-components.html",
+          "hash": "3DJcGFTZwV3j3MDKEsksNA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/lifecycle.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/lifecycle.html",
+          "hash": "AqHQQb4VAn2OiRwsMFO/2A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/templated-components.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/templated-components.html",
+          "hash": "hR920wPqUdqq2Lj/qjm/Ag=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/components/virtualization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/components/virtualization.html",
+          "hash": "8R1lsw06jOdDDW7oAqiX+g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/debug.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/debug.html",
+          "hash": "zFsOsyh4PzBeljB1CxvKLA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/file-uploads.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/file-uploads.html",
+          "hash": "hMk9SccO4IbYqc4IfhyY1A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/forms-validation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/forms-validation.html",
+          "hash": "Pms+rrZwkx8qXPpuErnaHw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/additional-scenarios.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/additional-scenarios.html",
+          "hash": "jCXGKt64+jXZxjrSUnuyoQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/configuration.html",
+          "hash": "vBg+EjQKvveIoiHH9gu+zA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/dependency-injection.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/dependency-injection.html",
+          "hash": "2qt87FZ9tn09jh2WuSLX6Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/environments.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/environments.html",
+          "hash": "U28Cbld/9hpVybEwW62AtA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/handle-errors.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/handle-errors.html",
+          "hash": "Gjjkxxssuj+X/sx8snmDtg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/logging.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/logging.html",
+          "hash": "+wUlD5/SLz6vey8aQ3wSdw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/fundamentals/routing.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/fundamentals/routing.html",
+          "hash": "bTl1pvoNSybGlPR/brOD2g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/globalization-localization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/globalization-localization.html",
+          "hash": "mzuhZvzpkEKlE4cJ/yCSXg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/host-and-deploy/configure-linker.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/host-and-deploy/configure-linker.html",
+          "hash": "L1t66lrKEr5yXM3UdFW3Aw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/host-and-deploy/configure-trimmer.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/host-and-deploy/configure-trimmer.html",
+          "hash": "U2N3ugYP2LKJZmXLiZaWLg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/host-and-deploy/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/host-and-deploy/index.html",
+          "hash": "rhCXrcgQbXKxKb03G49Heg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/host-and-deploy/server.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/host-and-deploy/server.html",
+          "hash": "q6uanygHgQsLPNclDU858Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/host-and-deploy/webassembly.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/host-and-deploy/webassembly.html",
+          "hash": "S4VsiUKa8rn2Nn3wamWGKQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/hosting-models.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/hosting-models.html",
+          "hash": "SLeTOM9faaTeWZjITYrsyg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/index.html",
+          "hash": "2axY5uU0uRPHvMWgmavx3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/layouts.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/layouts.html",
+          "hash": "BhJgXtZbZ9fXCxsOIToe/Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/progressive-web-app.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/progressive-web-app.html",
+          "hash": "h1DoJSGw9sKBW45unNaWtw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/content-security-policy.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/content-security-policy.html",
+          "hash": "4poMOIr0jksQHz9rdHN0Cg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/index.html",
+          "hash": "iVtd7yzf3pQ1i065q2RKGg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/server/additional-scenarios.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/server/additional-scenarios.html",
+          "hash": "lSBtSKmAtqI4J6GyX/rGIQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/server/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/server/index.html",
+          "hash": "pzr9EEcoiXGdxuBitOcNCg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/server/threat-mitigation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/server/threat-mitigation.html",
+          "hash": "0t4eAnGL0HCyVXIfcUNoKA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/additional-scenarios.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/additional-scenarios.html",
+          "hash": "3QonYuu4vc5OXE3iEXollw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/azure-active-directory-groups-and-roles.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/azure-active-directory-groups-and-roles.html",
+          "hash": "aCKNQnhX3LKJW/L0WB4XTA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/hosted-with-azure-active-directory-b2c.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/hosted-with-azure-active-directory-b2c.html",
+          "hash": "0MFcAKu8cFQyBjE6lkRtnA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/hosted-with-azure-active-directory.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/hosted-with-azure-active-directory.html",
+          "hash": "nx8Y8tl/ilmcTmtx24j1WQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/hosted-with-identity-server.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/hosted-with-identity-server.html",
+          "hash": "VxTBRVuTxkhonZo7pnWxQA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/index.html",
+          "hash": "IOL8u2PVSv3glR4FRrHbEQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/standalone-with-authentication-library.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/standalone-with-authentication-library.html",
+          "hash": "i3I7fWaPRPYJzHQ2ujNZiA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/standalone-with-azure-active-directory-b2c.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/standalone-with-azure-active-directory-b2c.html",
+          "hash": "qiFom5EQ9frPbG17YPPgIA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/standalone-with-azure-active-directory.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/standalone-with-azure-active-directory.html",
+          "hash": "wnzlqZwxHvHwkqQc1iyJ5w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/security/webassembly/standalone-with-microsoft-accounts.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/security/webassembly/standalone-with-microsoft-accounts.html",
+          "hash": "b3VokOq+HhtgqArra8vMAw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/state-management.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/state-management.html",
+          "hash": "ZMtf17hJ+9svDGpc7OZF1g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/supported-platforms.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/supported-platforms.html",
+          "hash": "e7v9sQwW1cAyc4NZD/h9rA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/templates.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/templates.html",
+          "hash": "ZHNRnyrctcgCo3lPExt94A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/test.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/test.html",
+          "hash": "O/fG/mLrFOva5ViB6IVacA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "blazor/tooling.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/tooling.html",
+          "hash": "BntA0iomTNsX00CzrsB5RQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/webassembly-lazy-load-assemblies.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/webassembly-lazy-load-assemblies.html",
+          "hash": "93htKhZgWQ0aFc4tEhw52g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "blazor/webassembly-performance-best-practices.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/blazor/webassembly-performance-best-practices.html",
+          "hash": "MEE/saY73T3E59xxiXzvow=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "breadcrumb/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/breadcrumb/toc.html",
+          "hash": "j+AWOGHRCE4nC4kdaLLjQQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "client-side/bundling-and-minification.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/bundling-and-minification.html",
+          "hash": "a2x/r7cHse9Jn6LaMCfTBw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "client-side/libman/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/libman/index.html",
+          "hash": "nRAVnZJ97sqBNDynBTcCWg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "include-not-found",
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "client-side/libman/libman-cli.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/libman/libman-cli.html",
+          "hash": "jql4S920Cy8nxQ+kiQRRyA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "client-side/libman/libman-vs.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/libman/libman-vs.html",
+          "hash": "7gu4CqPB6mWZ1m0SHc6F6g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "client-side/spa-services.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/spa-services.html",
+          "hash": "x0yhC04yB6P6WrY9WbYI6A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "client-side/spa/angular.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/spa/angular.html",
+          "hash": "NApmsYD88IeBKL0DfOGXjw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "client-side/spa/react-with-redux.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/spa/react-with-redux.html",
+          "hash": "jlnjhVjh4u0xf6Gif/clSA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "client-side/spa/react.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/spa/react.html",
+          "hash": "aPZ7u7tJhkgmkJbZ9ZxA/g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "client-side/using-browserlink.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/using-browserlink.html",
+          "hash": "Uu4PYha1mWZd9UtlH9TEwg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "client-side/using-grunt.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/client-side/using-grunt.html",
+          "hash": "lcXm//iLiz/aWKIzLVY87g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/advanced.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/advanced.html",
+          "hash": "Voxl/8/NtQfa1iGNiiSJsQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/complex-data-model.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/complex-data-model.html",
+          "hash": "EjN7FVCPBIJvZZPDQfZdmg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/concurrency.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/concurrency.html",
+          "hash": "yXHYajfymelmCdLrFBauzQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/crud.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/crud.html",
+          "hash": "fMzEIague2sdvy+wU3p44w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/index.html",
+          "hash": "GNblOaa6T5wjY+dyuHx63g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/inheritance.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/inheritance.html",
+          "hash": "bYC16Rrb5oeBfUFgLwUPIw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/intro.html",
+          "hash": "IYr4ylhaNQtwlkv5IO34rA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/migrations.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/migrations.html",
+          "hash": "3ZDC8ht39jxPasqX8PZF8A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/read-related-data.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/read-related-data.html",
+          "hash": "x8rDacmOpzA22sEqgkL3hQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/sort-filter-page.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/sort-filter-page.html",
+          "hash": "3hBpsf0uY1libR+Y1jxRNA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-mvc/update-related-data.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-mvc/update-related-data.html",
+          "hash": "DAE0Vyj7mgpzoXblkmHRCw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/complex-data-model.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/complex-data-model.html",
+          "hash": "UVP1UnWHSJRk5DOX3pEJgQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/concurrency.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/concurrency.html",
+          "hash": "fCd2pJjsUKY0pLTuCwHaxg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/crud.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/crud.html",
+          "hash": "mUintm5qwOioABShZ3A2Mw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/intro.html",
+          "hash": "3XGlHCf0lGqb9bV31mNI8w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/migrations.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/migrations.html",
+          "hash": "nQqy3i80fBgPUZnRI9n6xA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/read-related-data.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/read-related-data.html",
+          "hash": "pYObwks87oFHFjapToZ+Mg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/sort-filter-page.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/sort-filter-page.html",
+          "hash": "sAJItWZJXXXPUWF4H2ijVg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/ef-rp/update-related-data.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/ef-rp/update-related-data.html",
+          "hash": "H2YImZBTah+Wnm0A/UMvbw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "data/entity-framework-6.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/data/entity-framework-6.html",
+          "hash": "VVzCmIdWvm4aBNEScYgJ+Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/app-state.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/app-state.html",
+          "hash": "Wwlrp8DNUCaOxSfZ2lsXpw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/change-tokens.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/change-tokens.html",
+          "hash": "VYvnhQE21nGtGfXcsPzAcA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/choose-aspnet-framework.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/choose-aspnet-framework.html",
+          "hash": "JZcxyJMdG/k4UEusFfx6Fw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/configuration/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/configuration/index.html",
+          "hash": "xjNnjLmWqO3sa447ZOG5hA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/configuration/options.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/configuration/options.html",
+          "hash": "gvLw1vvAIdhUNGcESptoPQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/dependency-injection.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/dependency-injection.html",
+          "hash": "YZhmzP7dAGJiE/GdaAeFPg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/environments.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/environments.html",
+          "hash": "vjdWLOvhzIukvUJhOTqLdg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/error-handling.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/error-handling.html",
+          "hash": "g/3VcGhWfH3w68m3qM+KTg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/file-providers.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/file-providers.html",
+          "hash": "xJcb9xpoy7VB3aUtv2Q4pQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/host/generic-host.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/host/generic-host.html",
+          "hash": "rKRLMy7keUZgj/t168U9Jw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/host/hosted-services.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/host/hosted-services.html",
+          "hash": "xn8jszBozkcMFTNDBR+JGQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/host/platform-specific-configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/host/platform-specific-configuration.html",
+          "hash": "l7kuqTzjDc+pFiGbjzHChg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/host/web-host.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/host/web-host.html",
+          "hash": "waB3U/Umzy7kWBvBr6tV5Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/http-context.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/http-context.html",
+          "hash": "eBaeaEal7rk7xYvlYD7SHw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/http-requests.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/http-requests.html",
+          "hash": "pGQA/VN8b1rRN4Rw3klCcw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/index.html",
+          "hash": "E26UI/NSSO+bKFsmmDnIKw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/localization-extensibility.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/localization-extensibility.html",
+          "hash": "0qEP79ah4xKVWOfB62FClw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/localization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/localization.html",
+          "hash": "lXwNHukgdKW3gDvH2eUq6w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/logging/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/logging/index.html",
+          "hash": "uKP33Xar+DSpsEnhPXVbug=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/logging/loggermessage.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/logging/loggermessage.html",
+          "hash": "pRk9ObrXJpKEq3ZJL2+w9A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/metapackage-app.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/metapackage-app.html",
+          "hash": "xWawNSQ0DCoJ8UzLr/Lgkw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/metapackage.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/metapackage.html",
+          "hash": "e+vZihc2yu3OglK9KxIuSA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/middleware/extensibility-third-party-container.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/middleware/extensibility-third-party-container.html",
+          "hash": "uLfMW8CK4O+n4aDPto1BIQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/middleware/extensibility.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/middleware/extensibility.html",
+          "hash": "7NAieTYGxAL0wiUtxVWDew=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/middleware/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/middleware/index.html",
+          "hash": "V6meW+HHeIJ+/3bZZv8o6Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/middleware/request-response.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/middleware/request-response.html",
+          "hash": "mJk9ZWrAcz6IBf5/hiAQIQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/middleware/write.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/middleware/write.html",
+          "hash": "0RBlYCXSEUEiyhxElvm9ZQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/owin.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/owin.html",
+          "hash": "59ZNSswwOnxLG0CwLsbfeQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/portable-object-localization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/portable-object-localization.html",
+          "hash": "2q6zqq3xj6lghtjM3RWNNA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/request-features.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/request-features.html",
+          "hash": "Rz9T/TBa7sW0j3PF8QAxcw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/routing.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/routing.html",
+          "hash": "yN0UmUUy7Jaiy3qhlM0Ylg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/servers/httpsys.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/servers/httpsys.html",
+          "hash": "mhw6eKd3VwjJmsJ6XC2i3w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/servers/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/servers/index.html",
+          "hash": "5UaMvmrUl3E/g3myqPC9OA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/servers/kestrel.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/servers/kestrel.html",
+          "hash": "0mO+/dd28C+5MCiHLf2YQQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/startup.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/startup.html",
+          "hash": "/HF8Y2/lp+YW0KF6yJzvsA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/static-files.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/static-files.html",
+          "hash": "Vs970SeDoac3DYOCHt1HeA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/target-aspnetcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/target-aspnetcore.html",
+          "hash": "gTf4wAcGK3TtJPoErRKTcA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/tools/dotnet-aspnet-codegenerator.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/tools/dotnet-aspnet-codegenerator.html",
+          "hash": "c62YwALC832dBAnRTYaJfA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/troubleshoot-aspnet-core-localization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/troubleshoot-aspnet-core-localization.html",
+          "hash": "BJ8cXOta96Kqv31Jx+jKGQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/url-rewriting.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/url-rewriting.html",
+          "hash": "5yh0ONcCX5H42cL3Ob8z2w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "fundamentals/websockets.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/fundamentals/websockets.html",
+          "hash": "FkZ0IxgedKausdzJpvNxvw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "getting-started/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/getting-started/index.html",
+          "hash": "liSfoOu5AsT7gZcp8C/iig=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/aspnetcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/aspnetcore.html",
+          "hash": "a9TMXjjmzzDDnzS3LWBNMg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/authn-and-authz.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/authn-and-authz.html",
+          "hash": "4WwG0H1OmJi6fWfQDmHVXA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/basics.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/basics.html",
+          "hash": "Wj/z5YSmDa99EvVGu1BGAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/browser.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/browser.html",
+          "hash": "/CSQHShr+J4CespRtqpvVA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/client.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/client.html",
+          "hash": "hbhQmlhB0SSM0zEfSjeF8A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/clientfactory.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/clientfactory.html",
+          "hash": "RBnhtj5FeFcLAWNWeGBf9A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/comparison.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/comparison.html",
+          "hash": "yM6vfL+Qp0IwAJC7Ih1U0A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/configuration.html",
+          "hash": "OjnUhWnA/s6+3v9sjVZFFA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/deadlines-cancellation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/deadlines-cancellation.html",
+          "hash": "p0ocydMK82ju7zq8bvKEbw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/diagnostics.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/diagnostics.html",
+          "hash": "mE986A5xLJgK0Dyu6CGZdQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/dotnet-grpc.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/dotnet-grpc.html",
+          "hash": "otBCwz9Ps546EwSz8G4Vug=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/httpapi.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/httpapi.html",
+          "hash": "O0cejroj6xgcYI0opYCNCw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/index.html",
+          "hash": "4H++yjQl0BDSpb23N26C7Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/interprocess.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/interprocess.html",
+          "hash": "t7QhRUnCSoXE4XsfCPCMRg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/migration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/migration.html",
+          "hash": "4GQ/pJFpX9DV9pBsB2ZdjA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/performance.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/performance.html",
+          "hash": "8+TZFbFCoji8/MNyJuD0qQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/protobuf.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/protobuf.html",
+          "hash": "OkDQTgDP1f9ea0fctcROJQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/security.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/security.html",
+          "hash": "GgYW5FPfo27WTapQUBx9GQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/services.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/services.html",
+          "hash": "613fh/KkH+gP3EY+Ug/0Zw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/test-tools.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/test-tools.html",
+          "hash": "ftPKiWRYl95ljUClICQOyw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/troubleshoot.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/troubleshoot.html",
+          "hash": "FmT1mtHdWry1oe0pTRLWdw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "grpc/versioning.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/versioning.html",
+          "hash": "73MAXf9+tmUdkuwzE5UnBA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "grpc/why-migrate-wcf-to-dotnet-grpc.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/grpc/why-migrate-wcf-to-dotnet-grpc.html",
+          "hash": "vpIJqc1xzbugbBc2G0dJug=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/app-offline.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/app-offline.html",
+          "hash": "Xu2gPz+tmC49jZV7ouKoXw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/aspnet-core-module.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/aspnet-core-module.html",
+          "hash": "r1GUP7BeOLahBT7KRUmYZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/azure-apps/azure-continuous-deployment.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/azure-apps/azure-continuous-deployment.html",
+          "hash": "2RwoatQwwZeWnI164XZ/AA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/azure-apps/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/azure-apps/index.html",
+          "hash": "DC9XlXdDNucdSTvlP0pe2A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/azure-iis-errors-reference.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/azure-iis-errors-reference.html",
+          "hash": "1LcGqX5mjL+wS+21MY7dCQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/directory-structure.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/directory-structure.html",
+          "hash": "GaM+ctF4PsZNrXF9dtVJlQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/docker/building-net-docker-images.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/docker/building-net-docker-images.html",
+          "hash": "FMdXxMtTb4uV9RLbOqJ60w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/docker/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/docker/index.html",
+          "hash": "UZGk0PG1BOcUwWGr8qgcwA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/docker/visual-studio-tools-for-docker.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/docker/visual-studio-tools-for-docker.html",
+          "hash": "zsOOB0wdkHsRX3s6D2g2uw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/health-checks.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/health-checks.html",
+          "hash": "CJnQfbZUk5RWqSwWiuqdwg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/advanced.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/advanced.html",
+          "hash": "cv9icpW1eHOHEjOyXSw9mg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/development-time-iis-support.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/development-time-iis-support.html",
+          "hash": "FNjrmuQDxNbBCgAO9b1OeA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/hosting-bundle.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/hosting-bundle.html",
+          "hash": "Xjql3cG0gD+OX8fcUmrGGw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/in-process-hosting.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/in-process-hosting.html",
+          "hash": "EVx7zWfzTCHemqjjZGGhTQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/index.html",
+          "hash": "MseNgf4hJSB17V0rcpp7JQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/logging-and-diagnostics.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/logging-and-diagnostics.html",
+          "hash": "IlnL7oGBHwIdGhbyQC7yTg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/modules.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/modules.html",
+          "hash": "5znQcsdcemwk1WGiB6Wu0g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/out-of-process-hosting.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/out-of-process-hosting.html",
+          "hash": "i7vrZW8DPZR8wWC/I2nkWQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/protocols.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/protocols.html",
+          "hash": "GIuRzXKCUxR8mxKEqcZp/Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/transform-webconfig.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/transform-webconfig.html",
+          "hash": "1zzqBcOwmgGlMc2gycZcBg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/iis/web-config.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/iis/web-config.html",
+          "hash": "jct98N8WbQP5kRwLmorZaQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/index.html",
+          "hash": "IWpAft3u/x6Pi12v32LYuQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/linux-apache.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/linux-apache.html",
+          "hash": "jX9f0BSD9rvrkqu3ueDfLg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/linux-nginx.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/linux-nginx.html",
+          "hash": "WaX/eYGuQWO+6ctGozYpHg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/proxy-load-balancer.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/proxy-load-balancer.html",
+          "hash": "8jA1PnYMlvRr1kSYsL5hMw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/visual-studio-publish-profiles.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/visual-studio-publish-profiles.html",
+          "hash": "CQcKPZyLboHm3YTNXEvj8A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/web-farm.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/web-farm.html",
+          "hash": "7ewbn4tnITgJRErMLJABUw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "host-and-deploy/windows-service.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/host-and-deploy/windows-service.html",
+          "hash": "vK5UXp9W7kKszA+XP+5YyA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "introduction-to-aspnet-core.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/introduction-to-aspnet-core.html",
+          "hash": "3mMkSeRjz4SEks2HAeHGdQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/1x-to-2x/identity-2x.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/1x-to-2x/identity-2x.html",
+          "hash": "ez2utM6upbOWD1LxWcuL3A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/1x-to-2x/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/1x-to-2x/index.html",
+          "hash": "oc/STQKKUv/3OEb/RC+4jw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/20_21.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/20_21.html",
+          "hash": "KGL3LxTmVKvXV2FBS3VlJw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/21-to-22.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/21-to-22.html",
+          "hash": "ND7f+9OIr4+BoTFkm0ewWA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/22-to-30.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/22-to-30.html",
+          "hash": "fAOlTOuVCE4a6tu0cFXdSg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "migration/30-to-31.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/30-to-31.html",
+          "hash": "C/NwbUXmO3Ig0LBar3zhkA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/31-to-50.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/31-to-50.html",
+          "hash": "kzt1+dQfyEorNEA/w4ofDw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "migration/Logging-nonaspnetcore.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/Logging-nonaspnetcore.html",
+          "hash": "MH7k+iE44kzUvocMVxWPuw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "migration/claimsprincipal-current.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/claimsprincipal-current.html",
+          "hash": "IrUzuWvtB45iHaGm7TKNaQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/configuration.html",
+          "hash": "OjZeBKSUaz9DfsHJnjCeVA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/http-modules.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/http-modules.html",
+          "hash": "tcV5lBtrkPC/qsZ5A8SjGw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "migration/identity.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/identity.html",
+          "hash": "NM2QQbKz4mHCpapX0N0QaA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/mvc.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/mvc.html",
+          "hash": "540R4c/tf8LsWuaayYNriA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/proper-to-2x/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/proper-to-2x/index.html",
+          "hash": "2AnaltMqpegZ5kNknjJVXg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/proper-to-2x/membership-to-core-identity.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/proper-to-2x/membership-to-core-identity.html",
+          "hash": "rRr+An9FFdHBh1Bnl9DnmA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/proper-to-2x/mvc2.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/proper-to-2x/mvc2.html",
+          "hash": "xxHnrMZ3Su5OmwA1c5jtbg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "migration/webapi.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/migration/webapi.html",
+          "hash": "VoPtbuljy9jZoaXEpgSIAw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "mobile/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mobile/index.html",
+          "hash": "3BUWZM5VCzN+0ndZvjk18A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mobile/native-mobile-backend.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mobile/native-mobile-backend.html",
+          "hash": "U1rc+pR7971E6nVaE858gQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/advanced/app-parts.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/advanced/app-parts.html",
+          "hash": "AboFM2xfoT0Ts3ZiJCV+9A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/advanced/custom-model-binding.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/advanced/custom-model-binding.html",
+          "hash": "MXkoGgFvab6gEr5WjUL5FA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/compatibility-version.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/compatibility-version.html",
+          "hash": "S3EZ+r9VN8JjgvWzkKCfzg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/actions.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/actions.html",
+          "hash": "++wyffYE9DZIZ3PC/z7XZg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/application-model.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/application-model.html",
+          "hash": "U4wq9uj3id7VmsG0maMV2w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/areas.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/areas.html",
+          "hash": "HilhPuwRZ5v50/F1LuwE8A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/dependency-injection.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/dependency-injection.html",
+          "hash": "SYJO6ild0R60Z4B46IFY5w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/filters.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/filters.html",
+          "hash": "N5Er5PkGytrmjWRtkgBNMA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/routing.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/routing.html",
+          "hash": "89YBhZp1HGSaHN0aTqkGcw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/controllers/testing.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/controllers/testing.html",
+          "hash": "oGu7xfSZ35HygTsvzFru4Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/models/file-uploads.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/models/file-uploads.html",
+          "hash": "CTCsR6mV8PuFi9wpjhma+g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/models/model-binding.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/models/model-binding.html",
+          "hash": "9e4Jx3UjnNrwyM5fOHT1gQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/models/validation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/models/validation.html",
+          "hash": "jhx7j6+2YtF8SzpoMlqHAg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/overview.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/overview.html",
+          "hash": "pgnTJI37BWuK5JSxRfctPA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/dependency-injection.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/dependency-injection.html",
+          "hash": "XAD2mrdwBkgaDV+VjRB/ow=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/layout.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/layout.html",
+          "hash": "Nvi38Up1/MTmbrYmnqIPAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/overview.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/overview.html",
+          "hash": "OhTKSc4QF1ZaLuIu8rhuvA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/partial.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/partial.html",
+          "hash": "C70JtAa0kVcEly5j/CY2tA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/razor.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/razor.html",
+          "hash": "4VpkWcIGhfTmsJ8+ZfzcSQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/authoring.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/authoring.html",
+          "hash": "AbrTlCYa38OEoYEQOhpX4w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/anchor-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/anchor-tag-helper.html",
+          "hash": "DLLuZSYHlipeqGsrFHOdug=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/cache-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/cache-tag-helper.html",
+          "hash": "FLMD8k9qa44v9uzMUQKWkw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/component-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/component-tag-helper.html",
+          "hash": "tTy95RPJJko/1K1NhQRCqQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/distributed-cache-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/distributed-cache-tag-helper.html",
+          "hash": "z9h7/eB4a1P48Dxh+Yyw8w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/environment-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/environment-tag-helper.html",
+          "hash": "z2hXKtmUjG/3PEbMPxrmPw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/image-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/image-tag-helper.html",
+          "hash": "CCOvhyZfDStn0ajvYRT5Cg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/index.html",
+          "hash": "7YFYTKKk2q8czPdjgDeSsg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/link-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/link-tag-helper.html",
+          "hash": "7zS2oXsz3ed4UimSAGFt7g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/partial-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/partial-tag-helper.html",
+          "hash": "zlg+ll4ZWofvQVMQy66hpQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/built-in/script-tag-helper.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/built-in/script-tag-helper.html",
+          "hash": "gSWvJjXqn54zih0U3QUJUg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/intro.html",
+          "hash": "4yM5dt1kIruQ9q7hakNYrg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/tag-helpers/th-components.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/tag-helpers/th-components.html",
+          "hash": "pe+5OqGn8mBRTB+TqiGjsQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/view-compilation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/view-compilation.html",
+          "hash": "MUh0E5oSn0s9ydqr7IyBEw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/view-components.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/view-components.html",
+          "hash": "HoMU6duLYSkpkJl8aBDbpw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "mvc/views/working-with-forms.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/mvc/views/working-with-forms.html",
+          "hash": "030dJR/0e+7y3OwL0ODx3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/ObjectPool.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/ObjectPool.html",
+          "hash": "sYYlIyrcimcYB/nuLYxJ/g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/caching/distributed.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/caching/distributed.html",
+          "hash": "V4pov+v+/VDisKpWqBYy1Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/caching/memory.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/caching/memory.html",
+          "hash": "8stlNcdb6fxGdq9L7Wqe0A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/caching/middleware.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/caching/middleware.html",
+          "hash": "64eNCQx6YIzIukb1AxUwIg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/caching/response.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/caching/response.html",
+          "hash": "NKsFZACSAyYT9fpUv2ry2Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "performance/diagnostic-tools.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/diagnostic-tools.html",
+          "hash": "xOtOccAWi3/LSHtIOYYo2A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/memory.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/memory.html",
+          "hash": "92uaTMyyQVotqE9kodaCeA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/performance-best-practices.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/performance-best-practices.html",
+          "hash": "vP9oReTcS932Rrj8FGd/bA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "performance/response-compression.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/performance/response-compression.html",
+          "hash": "scegIGiITE6hxeo9Qh7MZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "razor-pages/filter.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/razor-pages/filter.html",
+          "hash": "Tb8/aaZ7ikwzE+nnaTERNg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "razor-pages/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/razor-pages/index.html",
+          "hash": "cUQyMIWRembcJhI7db07pg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "razor-pages/razor-pages-conventions.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/razor-pages/razor-pages-conventions.html",
+          "hash": "r0yNGFqBf7ygGR1yRdZfkQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "razor-pages/sdk.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/razor-pages/sdk.html",
+          "hash": "JtBNknToOsiMUK9Bl0cZWg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "razor-pages/ui-class.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/razor-pages/ui-class.html",
+          "hash": "OBcLfOh8G3STIK3HH5MdzA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "razor-pages/web-sdk.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/razor-pages/web-sdk.html",
+          "hash": "lsXHpyO6LJ8CMa6FLsRFsQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "release-notes/aspnetcore-1.1.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/release-notes/aspnetcore-1.1.html",
+          "hash": "aKZQYcap8avJZFO5MSX2Pw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "release-notes/aspnetcore-2.0.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/release-notes/aspnetcore-2.0.html",
+          "hash": "ueMJnNMlVM6I2CmBDRqTDg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "release-notes/aspnetcore-2.1.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/release-notes/aspnetcore-2.1.html",
+          "hash": "JI6ACAkOZTeEqi+bBIzzMA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "release-notes/aspnetcore-2.2.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/release-notes/aspnetcore-2.2.html",
+          "hash": "iwx8pZcZHnDznx4+71zT3A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "release-notes/aspnetcore-3.0.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/release-notes/aspnetcore-3.0.html",
+          "hash": "reSU/rOJ/DT+GXu9BrUNDg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "release-notes/aspnetcore-3.1.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/release-notes/aspnetcore-3.1.html",
+          "hash": "bmZmOnPwc/3NyG9RvosM/A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/anti-request-forgery.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/anti-request-forgery.html",
+          "hash": "/h+mWnmSXbWz+GRY9eFHqA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/app-secrets.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/app-secrets.html",
+          "hash": "+GbCkZltLvByU57uk0H4rQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/2fa.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/2fa.html",
+          "hash": "PMa+tn8+vpF2mv4TF+d4jA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/accconfirm.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/accconfirm.html",
+          "hash": "RlMNBdrCHzBZxqSSLGOdhg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/add-user-data.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/add-user-data.html",
+          "hash": "c2ri/k2pRZLHF5/3KgTdQg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/azure-active-directory/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/azure-active-directory/index.html",
+          "hash": "6lvQa0cTl9mNXIs15WI5bw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/azure-ad-b2c.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/azure-ad-b2c.html",
+          "hash": "CULH8Sq/9p1rQkGrI2lJcg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/certauth.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/certauth.html",
+          "hash": "zKZVtlF9K7ICYaEal10O+w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/community.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/community.html",
+          "hash": "TOfT1fQXQ1GnOzaKnFn3fA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/cookie.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/cookie.html",
+          "hash": "zU0kcG2uctT1b/r007VNKg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/customize-identity-model.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/customize-identity-model.html",
+          "hash": "/l6addwZemXSsotDerWzXA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/identity-api-authorization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/identity-api-authorization.html",
+          "hash": "bMmALbH3D+hyRRNIbBk5nw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/identity-configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/identity-configuration.html",
+          "hash": "hahd406zmDRr5StT4VELHg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/identity-custom-storage-providers.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/identity-custom-storage-providers.html",
+          "hash": "AUZINhuWfN5YHRPsLlQ2YQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/identity-enable-qrcodes.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/identity-enable-qrcodes.html",
+          "hash": "+Z3RXxj2zkLzRpNldTKa6A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/identity.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/identity.html",
+          "hash": "2EXd5xkKG8OdVSG28XgARw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/index.html",
+          "hash": "iLnzREPdPDuCf1RrOknP6w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/individual.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/individual.html",
+          "hash": "WHhMZA8PqulpAEWzt2+1GA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/mfa.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/mfa.html",
+          "hash": "KFCjwFCxvH67yMOxlydzHA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/policyschemes.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/policyschemes.html",
+          "hash": "oHWAUGtuZdFbjfW7qcgoZg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/samples.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/samples.html",
+          "hash": "hQkgPTdCLKSa4JVn0V3NAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/scaffold-identity.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/scaffold-identity.html",
+          "hash": "TmQ+yEu93AH8KuVhi+lclg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/additional-claims.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/additional-claims.html",
+          "hash": "e4gXSJbNW3kg8TzGfBn2XQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/facebook-logins.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/facebook-logins.html",
+          "hash": "K3tTRjdvXDQZWvJ0GDNNGw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/google-logins.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/google-logins.html",
+          "hash": "vkVy+x4NPXOv0rtglVZxkg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/index.html",
+          "hash": "x5uJxqo1mRjxJYslHWjrVA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/microsoft-logins.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/microsoft-logins.html",
+          "hash": "6gUsXXOHdv4yEiVKttnkmw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/other-logins.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/other-logins.html",
+          "hash": "Ca41v7CJS+QxB1U0pPS8CA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/social-without-identity.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/social-without-identity.html",
+          "hash": "I9s51Wk5Mr9c8aHysoxWvg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/social/twitter-logins.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/social/twitter-logins.html",
+          "hash": "po7R2kIT1RXZIVlyF0m0vw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/windowsauth.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/windowsauth.html",
+          "hash": "q/lsHYcfx83+Q3WYC6fKJg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authentication/ws-federation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authentication/ws-federation.html",
+          "hash": "lNHTmHDg6xB5lxHPOd4NhQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/claims.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/claims.html",
+          "hash": "dMEfatANpShKx/sn6fBm3Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/customizingauthorizationmiddlewareresponse.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/customizingauthorizationmiddlewareresponse.html",
+          "hash": "L/4UL/cy8yUZ9cTX6FWNpg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/dependencyinjection.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/dependencyinjection.html",
+          "hash": "ki2p9Xmomn120gLLVx6iuA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/iauthorizationpolicyprovider.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/iauthorizationpolicyprovider.html",
+          "hash": "WAaXsDYfrm64t5/5YEsgqw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/introduction.html",
+          "hash": "FuXYLoiXlqSVplsoMmQGrQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/limitingidentitybyscheme.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/limitingidentitybyscheme.html",
+          "hash": "bg3YGPYXdmB+OfbJJbD/XA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/policies.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/policies.html",
+          "hash": "iCg/EPBO9SwEn5zJ6ruRYw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/razor-pages-authorization.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/razor-pages-authorization.html",
+          "hash": "uiUTB7Ao6M9iNQ71LOJKLA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/resourcebased.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/resourcebased.html",
+          "hash": "odcWHhqeztUpPwDyyN0B4Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/roles.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/roles.html",
+          "hash": "zEf8Jm3JIfFJ6BoAthyICQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/secure-data.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/secure-data.html",
+          "hash": "V1yo1XfxJW65lZNg8iH/cA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/simple.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/simple.html",
+          "hash": "g1HwKxoIL6PgU6IbYbGtxA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/authorization/views.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/authorization/views.html",
+          "hash": "eoACAa+BYsv4NDUFxwa10Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/cookie-sharing.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/cookie-sharing.html",
+          "hash": "H1oHvtDiNp3KEJAK0675LA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/cors.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/cors.html",
+          "hash": "cSJWuMiUHgyzVDBvDI44Yw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/cross-site-scripting.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/cross-site-scripting.html",
+          "hash": "FZRV9a9hIqCe/6qMI+sfWA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/compatibility/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/compatibility/index.html",
+          "hash": "gHmQXzF2GzztRfjrFeWifQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/compatibility/replacing-machinekey.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/compatibility/replacing-machinekey.html",
+          "hash": "cbOFukJXI2sNurJE//VUWw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/configuration/default-settings.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/configuration/default-settings.html",
+          "hash": "hdov65dflxBb2Im9znrDvQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/configuration/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/configuration/index.html",
+          "hash": "N/0fF7wbJYnqZskrYM/Sdg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/configuration/machine-wide-policy.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/configuration/machine-wide-policy.html",
+          "hash": "XXqXiA3jtFKWdYo25trHfw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/configuration/non-di-scenarios.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/configuration/non-di-scenarios.html",
+          "hash": "M5RF4TI597ug3R+Ol+S8eg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/configuration/overview.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/configuration/overview.html",
+          "hash": "yDboF5ddvqwkwsAj5dUekQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/consumer-apis/dangerous-unprotect.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/consumer-apis/dangerous-unprotect.html",
+          "hash": "duHQe4PLA48eMmXrzJD8xQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/consumer-apis/limited-lifetime-payloads.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/consumer-apis/limited-lifetime-payloads.html",
+          "hash": "Uso3rlEEqoauh9EEkRLQuQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/consumer-apis/overview.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/consumer-apis/overview.html",
+          "hash": "yiSfwwEnDMTnlO4V9jBK4g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/consumer-apis/password-hashing.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/consumer-apis/password-hashing.html",
+          "hash": "Q9T3WI/6wLhSqJrM2HtTZQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/consumer-apis/purpose-strings-multitenancy.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/consumer-apis/purpose-strings-multitenancy.html",
+          "hash": "EuIpMi2TFiZeeLDCj95OiQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/consumer-apis/purpose-strings.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/consumer-apis/purpose-strings.html",
+          "hash": "8XMJz1MVYGDLAw8adhQyPQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/extensibility/core-crypto.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/extensibility/core-crypto.html",
+          "hash": "ik7dZg2QCQ+t4jhLqCFgVw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/extensibility/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/extensibility/index.html",
+          "hash": "L2cm6gd2meucR06dtQhYiA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/extensibility/key-management.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/extensibility/key-management.html",
+          "hash": "fiQ1IM/RZNqocFbqiaQa3w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/extensibility/misc-apis.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/extensibility/misc-apis.html",
+          "hash": "skma5kYW/CmAXvV0/DlQEg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/authenticated-encryption-details.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/authenticated-encryption-details.html",
+          "hash": "O/JYFDP53ofrubhdH/p8jA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/context-headers.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/context-headers.html",
+          "hash": "Xi44PbkxqU5/KSSDZenX3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/index.html",
+          "hash": "fgw7phVXKlPrg7NyVpTwzA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/key-encryption-at-rest.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/key-encryption-at-rest.html",
+          "hash": "Cy0Guy1jtKU+zZ6fEwFlsQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/key-immutability.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/key-immutability.html",
+          "hash": "Yty71oYtGQW4/7zllLy5PA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/key-management.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/key-management.html",
+          "hash": "DTP8zQw5p5cHSKjWO0Oa2Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/key-storage-ephemeral.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/key-storage-ephemeral.html",
+          "hash": "nO83Wj749SVu0cruxbOIEw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/key-storage-format.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/key-storage-format.html",
+          "hash": "xylKhPIY4f8c438Dm0Q2lg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/key-storage-providers.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/key-storage-providers.html",
+          "hash": "pOfbIbxxrSJSIeCULJvi4Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/implementation/subkeyderivation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/implementation/subkeyderivation.html",
+          "hash": "shxns8BDyTv0RCglKkOfHg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/introduction.html",
+          "hash": "kP4BgpLwEO+dKMcPtRHSfA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/data-protection/using-data-protection.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/data-protection/using-data-protection.html",
+          "hash": "AahxCJXC74TOO1Vbr2PRTA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/docker-compose-https.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/docker-compose-https.html",
+          "hash": "W0fZHBb3FOKYtn5YR8E8ZQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/docker-https.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/docker-https.html",
+          "hash": "qj/yD46F66YV3iC2jeSIWQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/enforcing-ssl.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/enforcing-ssl.html",
+          "hash": "l5rRoczhi3F4TRjaLUhZWA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/gdpr.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/gdpr.html",
+          "hash": "zWLwph8yAWS1xrQ6U2OGJw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "security/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/index.html",
+          "hash": "x1IuWQSOt0brf0WOdIGmgA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/ip-safelist.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/ip-safelist.html",
+          "hash": "vFYkysIiTsdETAJXuBRaog=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/key-vault-configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/key-vault-configuration.html",
+          "hash": "SIruYt6V+VHS82wKnmnbyw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/preventing-open-redirects.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/preventing-open-redirects.html",
+          "hash": "02ucnOF7+pKdpEcG/lLA8w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/samesite.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/samesite.html",
+          "hash": "qSNAUN3T74JEGbfugncsjg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/samesite/mvc21.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/samesite/mvc21.html",
+          "hash": "Vfr23qQi/wV3/mdL9ambdQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/samesite/rp21.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/samesite/rp21.html",
+          "hash": "8TFv/KuAKe5KtxpagPWkSQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "security/samesite/rp31.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/security/samesite/rp31.html",
+          "hash": "7jcWmiZMpE6NphrpN4UDdw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/api-design.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/api-design.html",
+          "hash": "Vv3h2KkVNWweIXO6GLtjEg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/authn-and-authz.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/authn-and-authz.html",
+          "hash": "owOzm0IdTmeDaBTr801ORA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/background-services.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/background-services.html",
+          "hash": "NZDlNcUPQ0pU7RrrR2ooQg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "signalr/client-features.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/client-features.html",
+          "hash": "tZTY81pong6xefQ3ObuSGw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/configuration.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/configuration.html",
+          "hash": "5ZQVTyWR8tlzjzBY7mpyKw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/diagnostics.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/diagnostics.html",
+          "hash": "XBTmew5tsvOHTS+S/64nbg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/dotnet-client.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/dotnet-client.html",
+          "hash": "YH//h+7M0kerhyljquIZ1g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/groups.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/groups.html",
+          "hash": "WEaEqfmIZkuFmGECyQh5aA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "signalr/hub-filters.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/hub-filters.html",
+          "hash": "vIywD9X0WbeJeXlY+d6UmQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/hubcontext.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/hubcontext.html",
+          "hash": "ShWlfHBmEg5eIWAONRqPEg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/hubs.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/hubs.html",
+          "hash": "QLOYpxlUjh0c3LRJmcshDw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "signalr/introduction.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/introduction.html",
+          "hash": "Fihn5bOyKPuThZKzhJ9q0g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/java-client.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/java-client.html",
+          "hash": "3HzhQgchKhoOdowdvJmWAg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/javascript-client.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/javascript-client.html",
+          "hash": "4Htlvw3fIuO2C9u01qdVGw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "signalr/messagepackhubprotocol.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/messagepackhubprotocol.html",
+          "hash": "soePTyh56953laYVQfRKNg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/publish-to-azure-web-app.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/publish-to-azure-web-app.html",
+          "hash": "U30zp9pAtgDJp8Zk46pKgw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/redis-backplane.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/redis-backplane.html",
+          "hash": "es+cvhGsuiIIAdeXpsvh6w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/scale.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/scale.html",
+          "hash": "6hU+ESjuytEKwJoho5jkqQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/security.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/security.html",
+          "hash": "pf7nfF3MXzZXJxO0ShGL5A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/streaming.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/streaming.html",
+          "hash": "wBlohYMT88QvsUPNXeFF2g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "signalr/supported-platforms.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/supported-platforms.html",
+          "hash": "kc6duCaX/oZh+XWzPzflkw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "signalr/troubleshoot.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/troubleshoot.html",
+          "hash": "JahpcI1d8LqWrkIxuQ+/fA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "signalr/version-differences.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/signalr/version-differences.html",
+          "hash": "dpGZyLUGANJ87wGnUK4XTA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "test/integration-tests.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/test/integration-tests.html",
+          "hash": "QqZ4U8mIXpA0v2FXPMMZXw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "test/load-tests.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/test/load-tests.html",
+          "hash": "y9Aypiu6Qt7Btbk0YNHMJQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "test/middleware.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/test/middleware.html",
+          "hash": "RVuxPr9aS2xRSHdUfwybBw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "test/razor-pages-tests.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/test/razor-pages-tests.html",
+          "hash": "+b/5/+FjbwiAl+xy6nGJeg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "test/troubleshoot-azure-iis.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/test/troubleshoot-azure-iis.html",
+          "hash": "An329Q8903W0nsytfAp1nA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "test/troubleshoot.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/test/troubleshoot.html",
+          "hash": "JARpinSgMbYPZB5ivB4w/w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/toc.html",
+          "hash": "JfP3e0JISGca+a3rZtEnQA=="
+        }
+      },
+      "is_incremental": false,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/build-a-blazor-app.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/build-a-blazor-app.html",
+          "hash": "HlwsCMLf2j1SQ4S1jC/YRA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/dotnet-watch.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/dotnet-watch.html",
+          "hash": "ZgEWTgR0Q2ovZ2bImx7cyw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mongo-app.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mongo-app.html",
+          "hash": "KI64jssXlxu3xz5jGcq76w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/adding-controller.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/adding-controller.html",
+          "hash": "pY5BoB59P9Lj3b+wzKvqPA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/adding-model.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/adding-model.html",
+          "hash": "LxzXCzc6f3CNpR1wa/86kQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/adding-view.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/adding-view.html",
+          "hash": "qMne+KSD6H/AlT4RQ5NCpg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/controller-methods-views.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/controller-methods-views.html",
+          "hash": "N3sGtly8gjZt69v/+5xnBA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/details.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/details.html",
+          "hash": "zrB71aBloaORPmRmhSUrAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/index.html",
+          "hash": "49KqEW2qOqHK8x58Tw+AJQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/new-field.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/new-field.html",
+          "hash": "DkmashDP1eNT/RZo7yIDbA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/search.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/search.html",
+          "hash": "l+g9/ArUlIEPZws/fyOexA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/start-mvc.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/start-mvc.html",
+          "hash": "e2yg19u2Kj+EnfVHr4XmWQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/validation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/validation.html",
+          "hash": "e19VX9eEhck60oPFhrrxkw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-mvc-app/working-with-sql.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-mvc-app/working-with-sql.html",
+          "hash": "5DRnyvE018YNudkBN2qm0w=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/first-web-api.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/first-web-api.html",
+          "hash": "ea+LekqiYwAQvtu7DiVLrA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/getting-started-with-NSwag.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/getting-started-with-NSwag.html",
+          "hash": "B5m/9leuQG6u/I5/8X7OzQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/getting-started-with-swashbuckle.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/getting-started-with-swashbuckle.html",
+          "hash": "hbca7I3WRvCu3GUnp6f5yQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/grpc/grpc-start.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/grpc/grpc-start.html",
+          "hash": "NCJLlR3CUR++x9hkMVlkJQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/publish-to-azure-api-management-using-vs.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/publish-to-azure-api-management-using-vs.html",
+          "hash": "VpDt11oJvNpHKhNIlFex5g=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/publish-to-azure-webapp-using-vs.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/publish-to-azure-webapp-using-vs.html",
+          "hash": "kVEEoOq1dxiOu0YYglFjBQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/publish-to-azure-webapp-using-vscode.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/publish-to-azure-webapp-using-vscode.html",
+          "hash": "ZsWfqCmArpIZI0/HUZnFXw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/publish-to-iis.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/publish-to-iis.html",
+          "hash": "S66w50/aP2xXH5MGHRwZTQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/da1.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/da1.html",
+          "hash": "VY/5qynb37FHXAD69vCFSQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/index.html",
+          "hash": "kJbEcwWJGm0P0NgRHz3xdw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/model.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/model.html",
+          "hash": "0zR1EmSUjBa+Qxeq2oqAgA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/new-field.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/new-field.html",
+          "hash": "2+gksIO6HTmqHzRN1j3Sgg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/page.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/page.html",
+          "hash": "U09EzBh4yrhVyZyto2nyHQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/razor-pages-start.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/razor-pages-start.html",
+          "hash": "d7W32DpDg80c/LHTt2qTLA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/search.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/search.html",
+          "hash": "teAIJiCw/DJRMlK+EU7Vgw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/sql.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/sql.html",
+          "hash": "A14MKYx5LIXJUClQbqJkYA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/razor-pages/validation.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/razor-pages/validation.html",
+          "hash": "6vGbhMawtD7rEWAL1wXZpA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/signalr-blazor-webassembly.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/signalr-blazor-webassembly.html",
+          "hash": "1hgkIcz/aROuVai8UcK6fg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/signalr-typescript-webpack.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/signalr-typescript-webpack.html",
+          "hash": "0+DiqZAu2+1r1cX+p4DoOQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/signalr.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/signalr.html",
+          "hash": "FlOeLW+1R918iEdy9VjR6A=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/web-api-help-pages-using-swagger.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/web-api-help-pages-using-swagger.html",
+          "hash": "ex0NYl38+683SATmhgAK4Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/web-api-javascript.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/tutorials/web-api-javascript.html",
+          "hash": "0/LdSdrhCDypcjvDjwTFEA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "web-api/Microsoft.dotnet-openapi.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/Microsoft.dotnet-openapi.html",
+          "hash": "VNwmkZzLxBfMcq/Q6dkZzQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/action-return-types.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/action-return-types.html",
+          "hash": "ObU6WYp8il6bJJP2JrCRig=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/advanced/analyzers.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/advanced/analyzers.html",
+          "hash": "flDn+HmnIJtKUCjY9XoJGA=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/advanced/conventions.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/advanced/conventions.html",
+          "hash": "YnUyclhB33qzdRlYRYqZcQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/advanced/custom-formatters.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/advanced/custom-formatters.html",
+          "hash": "7ylmBXeEuLBfcBXTV1ltWw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/advanced/formatting.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/advanced/formatting.html",
+          "hash": "4RmDzGNWMgyKCQuTu4H6Xg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink",
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/handle-errors.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/handle-errors.html",
+          "hash": "VGj5fS/5uiQ2CwhetTx3hg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "web-api/http-repl.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/http-repl.html",
+          "hash": "SKdnrhPcQ/OxJEFocMj0nw=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/index.html",
+          "hash": "rZCBjTtF2BaS+ZBMbbSlWg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "log_codes": [
+        "codesnippet-not-found",
+        "UidNotFound"
+      ],
+      "type": "Conceptual",
+      "source_relative_path": "web-api/jsonpatch.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/web-api/jsonpatch.html",
+          "hash": "bSvsCDI+wdt0sAelnPSKew=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-03.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-03.html",
+          "hash": "nji6JL3gxI5T9TBin3vtkQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-04.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-04.html",
+          "hash": "FWOogfCI1pxroA+XYNb0tQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-05.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-05.html",
+          "hash": "EV6Vc1Cmjh5xBLt7zoNlEQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-06.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-06.html",
+          "hash": "BTcuIPHVNv+JVRd24ZkLxQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-07.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-07.html",
+          "hash": "cGuBH2iNS3h3jfu2g8bUFQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-08.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-08.html",
+          "hash": "/Uz0HABovfvs+HSkTxlSLg=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "whats-new/2020-09.md",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/2020-09.html",
+          "hash": "7fQAd0BHoEVXnB6hoj0F3Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": "group1",
+      "group": "group1"
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "whats-new/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "group1-dest/whats-new/toc.html",
+          "hash": "VMlUb+BiK2t7N+2DgaZy3w=="
+        }
+      },
+      "is_incremental": false,
+      "version": "group1",
+      "group": "group1"
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 432,
+          "skipped_file_count": 432
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {
+    "group1": {
+      "version_folder": "group1-dest/"
+    }
+  },
+  "groups": [
+    {
+      "name": "group1",
+      "dest": "group1-dest",
+      "xrefmap": "group1.xrefmap.yml",
+      "moniker_range": ">= aspnetcore-1.0"
+    }
+  ]
+}

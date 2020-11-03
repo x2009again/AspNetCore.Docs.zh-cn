@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#23545; ASP.NET Core &#26412;&#22320;&#21270;&#36827;&#34892;&#25925;&#38556;&#25490;&#38500; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#23545; ASP.NET Core &#26412;&#22320;&#21270;&#36827;&#34892;&#25925;&#38556;&#25490;&#38500; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/troubleshoot-aspnet-core-localization">
+<h1 id="troubleshoot-aspnet-core-localization">对 ASP.NET Core 本地化进行故障排除</h1>
+
+<p>作者：<a href="https://github.com/hishamco">Hisham Bin Ateya</a></p>
+<p>本文说明了如何诊断 ASP.NET Core 应用本地化问题。</p>
+<h2 id="localization-configuration-issues">本地化配置问题</h2>
+<p><strong>本地化中间件顺序</strong><br>
+由于本地化中间件未按预期方式排序，因此应用可能未本地化。</p>
+<p>要解决此问题，请确保在 MVC 中间件之前注册本地化中间件。 否则，不会应用本地化中间件。</p>
+<pre><code class="lang-csharp">public void ConfigureServices(IServiceCollection services)
+{
+    services.AddLocalization(options =&gt; options.ResourcesPath = &quot;Resources&quot;);
+
+    services.AddMvc();
+}
+</code></pre>
+<p><strong>找不到本地化资源路径</strong></p>
+<p><strong>RequestCultureProvider 中受支持的区域性与注册的区域性不匹配</strong></p>
+<h2 id="resource-file-naming-issues">资源文件命名问题</h2>
+<p>ASP.NET Core 具有针对本地化资源文件命名的预定义规则和指导，<a class="xref" href="localization.html?view=aspnetcore-2.2#resource-file-naming">此处</a>是其详细描述。</p>
+<h2 id="missing-resources">缺少资源</h2>
+<p>找不到资源的常见原因包括：</p>
+<ul>
+<li><code>resx</code> 文件或本地化工具请求中资源名称拼写错误。</li>
+<li><code>resx</code> 中缺少某些语言的资源，但存在其他语言的资源。</li>
+<li>如果仍有问题，请检查本地化日志消息（在 <code>Debug</code> 日志级别），了解有关缺少资源的详细信息。</li>
+</ul>
+<p><em><strong>提示：</strong> 使用 <code>CookieRequestCultureProvider</code> 时，验证未对本地化 cookie 值内的区域性使用单引号。例如，<code>c='en-UK'|uic='en-US'</code> 是无效的cookie 值，而 <code>c=en-UK|uic=en-US</code> 有效。</em></p>
+<h2 id="resources--class-libraries-issues">资源和类库问题</h2>
+<p>默认情况下，ASP.NET Core 提供一种方法，允许类库通过 <a href="/dotnet/api/microsoft.extensions.localization.resourcelocationattribute?view=aspnetcore-2.1">ResourceLocationAttribute</a> 查找其资源文件。</p>
+<p>类库的常见问题包括：</p>
+<ul>
+<li>类库中缺少 <code>ResourceLocationAttribute</code> 会使 <code>ResourceManagerStringLocalizerFactory</code> 无法发现资源。</li>
+<li>资源文件命名。 有关详细信息，请参阅<a href="#resource-file-naming-issues">资源文件命名</a>部分。</li>
+<li>更改类库的根命名空间。 有关详细信息，请参阅<a href="#root-namespace-issues">根命名空间问题</a>部分。</li>
+</ul>
+<h2 id="customrequestcultureprovider-doesnt-work-as-expected">CustomRequestCultureProvider 未按预期工作</h2>
+<p><code>RequestLocalizationOptions</code> 类具有三个默认提供程序：</p>
+<ol>
+<li><code>QueryStringRequestCultureProvider</code></li>
+<li><code>CookieRequestCultureProvider</code></li>
+<li><code>AcceptLanguageHeaderRequestCultureProvider</code></li>
+</ol>
+<p><a href="/dotnet/api/microsoft.aspnetcore.localization.customrequestcultureprovider?view=aspnetcore-2.1">CustomRequestCultureProvider</a> 可用于自定义在应用中提供本地化区域性的方式。 在默认提供程序无法满足需求时，可使用 <code>CustomRequestCultureProvider</code>。</p>
+<ul>
+<li><p>自定义提供程序未正常工作的一个常见原因是它不是 <code>RequestCultureProviders</code> 列表中的第一个提供程序。 若要解决此问题，请执行以下操作：</p>
+</li>
+<li><p>在 <code>RequestCultureProviders</code> 列表的位置 0 处插入自定义提供程序，如下所示：</p>
+</li>
+</ul>
+<div range="&lt; aspnetcore-3.0">
+<pre><code class="lang-csharp">options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(async context =&gt;
+    {
+        // My custom request culture logic
+        return new ProviderCultureResult(&quot;en&quot;);
+    }));
+</code></pre>
+</div>
+<div range="&gt;= aspnetcore-3.0">
+<pre><code class="lang-csharp">options.AddInitialRequestCultureProvider(new CustomRequestCultureProvider(async context =&gt;
+    {
+        // My custom request culture logic
+        return new ProviderCultureResult(&quot;en&quot;);
+    }));
+</code></pre>
+</div>
+<ul>
+<li>使用 <code>AddInitialRequestCultureProvider</code> 扩展方法将自定义提供程序设置为初始提供程序。</li>
+</ul>
+<h2 id="root-namespace-issues">根命名空间问题</h2>
+<p>如果程序集的根命名空间不同于程序集名称，则默认情况下本地化无法工作。 若要避免此问题，请使用 <a href="/dotnet/api/microsoft.extensions.localization.rootnamespaceattribute?view=aspnetcore-2.1">RootNamespace</a>，<a class="xref" href="localization.html?view=aspnetcore-2.2#resource-file-naming">此处</a>是其详细描述</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>当项目名称不是有效的 .NET 标识符时，可能会发生这种情况。 例如，<code>my-project-name.csproj</code> 将使用根命名空间 <code>my_project_name</code> 和导致此错误的程序集名称 <code>my-project-name</code>。</p>
+</div>
+<h2 id="resources--build-action">设置和生成操作</h2>
+<p>如果使用资源文件进行本地化，则该资源文件必须具有相应的生成操作。 它们应是“嵌入的资源”  ，否则 <code>ResourceStringLocalizer</code> 找不到这些资源。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

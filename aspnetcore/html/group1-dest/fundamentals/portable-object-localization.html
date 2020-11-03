@@ -1,0 +1,408 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#22312; ASP.NET Core &#20013;&#37197;&#32622;&#21487;&#31227;&#26893;&#23545;&#35937;&#26412;&#22320;&#21270; </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#22312; ASP.NET Core &#20013;&#37197;&#32622;&#21487;&#31227;&#26893;&#23545;&#35937;&#26412;&#22320;&#21270; ">
+    <meta name="generator" content="docfx 2.56.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="/foo">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="fundamentals/portable-object-localization">
+<h1 id="configure-portable-object-localization-in-aspnet-core">在 ASP.NET Core 中配置可移植对象本地化</h1>
+
+<div range="&gt;= aspnetcore-3.0">
+<p>作者：<a href="https://github.com/sebastienros">Sébastien Ros</a>、<a href="https://twitter.com/Scott_Addie">Scott Addie</a> 和 <a href="https://github.com/hishamco">Hisham Bin Ateya</a></p>
+<p>本文演示通过 <a href="https://github.com/OrchardCMS/OrchardCore">Orchard Core</a> 框架在 ASP.NET Core 应用程序中使用可移植对象 (PO) 文件的步骤。</p>
+<p><strong>注意：</strong> Orchard Core 不是 Microsoft 产品。 因此，Microsoft 不提供针对此功能的支持。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/localization/sample/3.x/POLocalization">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="what-is-a-po-file">什么是 PO 文件？</h2>
+<p>PO 文件作为包含给定语言的已转换字符串的文本文件分发。 使用 PO 文件替代 .resx 文件的一些优势包括：</p>
+<ul>
+<li>PO 文件支持复数形式；而 .resx 文件不支持复数形式。</li>
+<li>PO 文件的编译方法与 .resx 文件不同。 同样，无需专用工具和生成步骤。</li>
+<li>PO 文件可很好地与协作联机编辑工具结合使用。</li>
+</ul>
+<h3 id="example">示例</h3>
+<p>下面是一个包含两个法语字符串（其中一个具有复数形式）转换的示例 PO 文件：</p>
+<p>fr.po</p>
+<pre><code class="lang-text">#: Services/EmailService.cs:29
+msgid &quot;Enter a comma separated list of email addresses.&quot;
+msgstr &quot;Entrez une liste d'emails séparés par une virgule.&quot;
+
+#: Views/Email.cshtml:112
+msgid &quot;The email address is \&quot;{0}\&quot;.&quot;
+msgid_plural &quot;The email addresses are \&quot;{0}\&quot;.&quot;
+msgstr[0] &quot;L'adresse email est \&quot;{0}\&quot;.&quot;
+msgstr[1] &quot;Les adresses email sont \&quot;{0}\&quot;&quot;
+</code></pre>
+<p>此示例使用下列语法：</p>
+<ul>
+<li><code>#:</code>：用于指示要转换的字符串的上下文的注释。 根据使用的位置，可对相同字符串进行不同转换。</li>
+<li><code>msgid</code>：未转换的字符串。</li>
+<li><code>msgstr</code>：已转换的字符串。</li>
+</ul>
+<p>在支持复数形式的情况下，可定义多个条目。</p>
+<ul>
+<li><code>msgid_plural</code>：未转换的复数形式字符串。</li>
+<li><code>msgstr[0]</code>：针对事例 0 的已转换的字符串。</li>
+<li><code>msgstr[N]</code>：针对事例 N 的已转换的字符串。</li>
+</ul>
+<p>可在<a href="https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html">此处</a>找到 PO 文件规范。</p>
+<h2 id="configuring-po-file-support-in-aspnet-core">在 ASP.NET Core 中配置 PO 文件支持</h2>
+<p>此示例基于从 Visual Studio 2017 项目模板中生成的 ASP.NET Core MVC 应用程序。</p>
+<h3 id="referencing-the-package">引用包</h3>
+<p>添加对 <code>OrchardCore.Localization.Core</code> NuGet 包的引用。 它可在 <a href="https://www.myget.org/">MyGet</a> 上的以下包源中获得： <a href="https://www.myget.org/F/orchardcore-preview/api/v3/index.json">https://www.myget.org/F/orchardcore-preview/api/v3/index.json</a></p>
+<p>.csproj 文件现在包含类似于以下内容的行（版本号可能不同）：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="registering-the-service">注册服务</h3>
+<p>将所需服务添加到 Startup.cs 的 <code>ConfigureServices</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将所需中间件添加到 Startup.cs 的 <code>Configure</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将以下代码添加到所选的 Razor 视图中。 在此示例中，使用了 About.cshtml。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>注入了 <code>IViewLocalizer</code> 实例并将其用于转换文本“Hello world！”。</p>
+<h3 id="creating-a-po-file">创建 PO 文件</h3>
+<p>在应用程序根文件夹中创建名为 &lt;culture code&gt;.po 的文件。 在此示例中，文件名为 fr.po，因为使用了法语：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此文件存储了要转换的字符串和已转换为法语的字符串。 如有必要，转换将还原为其父级区域性。 在此示例中，如果请求的区域性为 <code>fr-FR</code> 或 <code>fr-CA</code>，则使用 fr.po 文件。</p>
+<h3 id="testing-the-application">测试应用程序</h3>
+<p>运行应用程序并导航到 URL <code>/Home/About</code>。 此时将显示文本 Hello world! 。</p>
+<p>导航到 URL <code>/Home/About?culture=fr-FR</code>。 此时将显示文本 Bonjour le monde! 。</p>
+<h2 id="pluralization">复数形式</h2>
+<p>PO 文件支持复数形式，在相同字符串需要基于基数以不同方式进行转换时，这非常有用。 此任务较为复杂，因为每种语言均定义了自定义规则，以基于基数选择要使用的字符串。</p>
+<p>Orchard 本地化包提供了一个 API 以自动调用这些不同的复数形式。</p>
+<h3 id="creating-pluralization-po-files">创建复数形式 PO 文件</h3>
+<p>将以下内容添加到前面所述的 fr.po 文件：</p>
+<pre><code class="lang-text">msgid &quot;There is one item.&quot;
+msgid_plural &quot;There are {0} items.&quot;
+msgstr[0] &quot;Il y a un élément.&quot;
+msgstr[1] &quot;Il y a {0} éléments.&quot;
+</code></pre>
+<p>有关此示例中每个条目所表示的内容的说明，请参阅<a href="#what-is-a-po-file">什么是 PO 文件？</a>。</p>
+<h3 id="adding-a-language-using-different-pluralization-forms">使用不同的复数形式添加语言</h3>
+<p>前面的示例中使用了英语和法语字符串。 英语和法语只有两种复数形式且拥有相同形式规则，即一的基数映射到第一种复数形式。 任何其他基数映射到第二种复数形式。</p>
+<p>并非所有语言都拥有相同的规则。 捷克语就是一个例子，它具有三种复数形式。</p>
+<p>如下所示，创建 <code>cs.po</code> 文件，并记下复数形式如何需要三种不同转换：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要接受捷克语本地化，请将 <code>&quot;cs&quot;</code> 添加到 <code>ConfigureServices</code> 方法中受支持的区域性列表：</p>
+<pre><code class="lang-csharp">var supportedCultures = new List&lt;CultureInfo&gt;
+{
+    new CultureInfo(&quot;en-US&quot;),
+    new CultureInfo(&quot;en&quot;),
+    new CultureInfo(&quot;fr-FR&quot;),
+    new CultureInfo(&quot;fr&quot;),
+    new CultureInfo(&quot;cs&quot;)
+};
+</code></pre>
+<p>编辑 Views/Home/About.cshtml 文件以呈现一些基数的已本地化复数形式字符串：</p>
+<pre><code class="lang-cshtml">&lt;p&gt;@Localizer.Plural(1, &quot;There is one item.&quot;, &quot;There are {0} items.&quot;)&lt;/p&gt;
+&lt;p&gt;@Localizer.Plural(2, &quot;There is one item.&quot;, &quot;There are {0} items.&quot;)&lt;/p&gt;
+&lt;p&gt;@Localizer.Plural(5, &quot;There is one item.&quot;, &quot;There are {0} items.&quot;)&lt;/p&gt;
+</code></pre>
+<p><strong>注意：</strong> 在实际方案中，将使用变量表示计数。 此处，我们通过三个不同的值重复相同代码，以公开非常特定的事例。</p>
+<p>切换区域性时，将显示如下内容：</p>
+<p>对于 <code>/Home/About</code>：</p>
+<pre><code class="lang-html">There is one item.
+There are 2 items.
+There are 5 items.
+</code></pre>
+<p>对于 <code>/Home/About?culture=fr</code>：</p>
+<pre><code class="lang-html">Il y a un élément.
+Il y a 2 éléments.
+Il y a 5 éléments.
+</code></pre>
+<p>对于 <code>/Home/About?culture=cs</code>：</p>
+<pre><code class="lang-html">Existuje jedna položka.
+Existují 2 položky.
+Existuje 5 položek.
+</code></pre>
+<p>请注意，对于捷克语区域性，这三种转换各不相同。 对于最后两个已转换字符串，法语和英语区域性具有相同构造。</p>
+<h2 id="advanced-tasks">高级任务</h2>
+<h3 id="contextualizing-strings">将字符串置于上下文中理解</h3>
+<p>应用程序通常包含要在多个位置中进行转换的字符串。 在应用中的特定位置（Razor 视图或类文件），相同字符串可能具有不同转换。 PO 文件支持文件上下文概念，此概念可用于对所表示的字符串进行分类。 使用文件上下文，可将字符串进行不同转换，具体取决于文件上下文（或缺乏文件上下文）。</p>
+<p>PO 本地化服务使用完整类的名称或转换字符串时使用的视图。 这通过在 <code>msgctxt</code> 条目上设置值来完成。</p>
+<p>请考虑对以前的 fr.po 示例作一点小小的补充。 可通过设置保留的 <code>msgctxt</code> 条目的值将位于 Views/Home/About.cshtml 的 Razor 视图定义为文件上下文：</p>
+<pre><code class="lang-text">msgctxt &quot;Views.Home.About&quot;
+msgid &quot;Hello world!&quot;
+msgstr &quot;Bonjour le monde!&quot;
+</code></pre>
+<p>这样设置 <code>msgctxt</code> 后，导航到 <code>/Home/About?culture=fr-FR</code> 时将发生文本转换。 而导航到 <code>/Home/Contact?culture=fr-FR</code> 时，则不发生转换。</p>
+<p>当没有特定条目与给定文件上下文相匹配时，Orchard Core 的回退机制将在没有上下文的情况下查找适当的 PO 文件。 假设不存在针对 Views/Home/Contact.cshtml 定义的特定文件上下文，导航到 <code>/Home/Contact?culture=fr-FR</code>，加载 PO 文件，如：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="changing-the-location-of-po-files">更改 PO 文件的位置</h3>
+<p>可以在 <code>ConfigureServices</code> 中更改 PO 文件的默认位置：</p>
+<pre><code class="lang-csharp">services.AddPortableObjectLocalization(options =&gt; options.ResourcesPath = &quot;Localization&quot;);
+</code></pre>
+<p>在此示例中，从本地化文件夹加载 PO 文件。</p>
+<h3 id="implementing-a-custom-logic-for-finding-localization-files">实现用于查找本地化文件的自定义逻辑</h3>
+<p>当需要更复杂的逻辑以查找 PO 文件时，可实现 <code>OrchardCore.Localization.PortableObject.ILocalizationFileLocationProvider</code> 接口并将其注册为服务。 在可将 PO 文件存储于不同位置或在文件夹层次结构中找到文件时，这非常有用。</p>
+<h3 id="using-a-different-default-pluralized-language">使用不同默认复数形式语言</h3>
+<p>此包包含特定于两种复数形式的 <code>Plural</code> 扩展方法。 对于需要更多复数形式的语言，请创建扩展方法。 通过扩展方法，无需提供默认语言的任何本地化文件 — 可在代码中直接使用原始字符串。</p>
+<p>可使用更加广泛的、接受转换的字符串数组的 <code>Plural(int count, string[] pluralForms, params object[] arguments)</code> 重载。</p>
+</div>
+<div range="&lt; aspnetcore-3.0">
+<p>作者：<a href="https://github.com/sebastienros">Sébastien Ros</a> 和 <a href="https://twitter.com/Scott_Addie">Scott Addie</a></p>
+<p>本文演示通过 <a href="https://github.com/OrchardCMS/OrchardCore">Orchard Core</a> 框架在 ASP.NET Core 应用程序中使用可移植对象 (PO) 文件的步骤。</p>
+<p><strong>注意：</strong> Orchard Core 不是 Microsoft 产品。 因此，Microsoft 不提供针对此功能的支持。</p>
+<p><a href="https://github.com/dotnet/AspNetCore.Docs/tree/master/aspnetcore/fundamentals/localization/sample/2.x/POLocalization">查看或下载示例代码</a>（<a class="xref" href="../introduction-to-aspnet-core.html#how-to-download-a-sample">如何下载</a>）</p>
+<h2 id="what-is-a-po-file">什么是 PO 文件？</h2>
+<p>PO 文件作为包含给定语言的已转换字符串的文本文件分发。 使用 PO 文件替代 .resx 文件的一些优势包括：</p>
+<ul>
+<li>PO 文件支持复数形式；而 .resx 文件不支持复数形式。</li>
+<li>PO 文件的编译方法与 .resx 文件不同。 同样，无需专用工具和生成步骤。</li>
+<li>PO 文件可很好地与协作联机编辑工具结合使用。</li>
+</ul>
+<h3 id="example">示例</h3>
+<p>下面是一个包含两个法语字符串（其中一个具有复数形式）转换的示例 PO 文件：</p>
+<p>fr.po</p>
+<pre><code class="lang-text">#: Services/EmailService.cs:29
+msgid &quot;Enter a comma separated list of email addresses.&quot;
+msgstr &quot;Entrez une liste d'emails séparés par une virgule.&quot;
+
+#: Views/Email.cshtml:112
+msgid &quot;The email address is \&quot;{0}\&quot;.&quot;
+msgid_plural &quot;The email addresses are \&quot;{0}\&quot;.&quot;
+msgstr[0] &quot;L'adresse email est \&quot;{0}\&quot;.&quot;
+msgstr[1] &quot;Les adresses email sont \&quot;{0}\&quot;&quot;
+</code></pre>
+<p>此示例使用下列语法：</p>
+<ul>
+<li><code>#:</code>：用于指示要转换的字符串的上下文的注释。 根据使用的位置，可对相同字符串进行不同转换。</li>
+<li><code>msgid</code>：未转换的字符串。</li>
+<li><code>msgstr</code>：已转换的字符串。</li>
+</ul>
+<p>在支持复数形式的情况下，可定义多个条目。</p>
+<ul>
+<li><code>msgid_plural</code>：未转换的复数形式字符串。</li>
+<li><code>msgstr[0]</code>：针对事例 0 的已转换的字符串。</li>
+<li><code>msgstr[N]</code>：针对事例 N 的已转换的字符串。</li>
+</ul>
+<p>可在<a href="https://www.gnu.org/savannah-checkouts/gnu/gettext/manual/html_node/PO-Files.html">此处</a>找到 PO 文件规范。</p>
+<h2 id="configuring-po-file-support-in-aspnet-core">在 ASP.NET Core 中配置 PO 文件支持</h2>
+<p>此示例基于从 Visual Studio 2017 项目模板中生成的 ASP.NET Core MVC 应用程序。</p>
+<h3 id="referencing-the-package">引用包</h3>
+<p>添加对 <code>OrchardCore.Localization.Core</code> NuGet 包的引用。 它可在 <a href="https://www.myget.org/">MyGet</a> 上的以下包源中获得： <a href="https://www.myget.org/F/orchardcore-preview/api/v3/index.json">https://www.myget.org/F/orchardcore-preview/api/v3/index.json</a></p>
+<p>.csproj 文件现在包含类似于以下内容的行（版本号可能不同）：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="registering-the-service">注册服务</h3>
+<p>将所需服务添加到 Startup.cs 的 <code>ConfigureServices</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将所需中间件添加到 Startup.cs 的 <code>Configure</code> 方法：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>将以下代码添加到所选的 Razor 视图中。 在此示例中，使用了 About.cshtml。</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>注入了 <code>IViewLocalizer</code> 实例并将其用于转换文本“Hello world！”。</p>
+<h3 id="creating-a-po-file">创建 PO 文件</h3>
+<p>在应用程序根文件夹中创建名为 &lt;culture code&gt;.po 的文件。 在此示例中，文件名为 fr.po，因为使用了法语：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>此文件存储了要转换的字符串和已转换为法语的字符串。 如有必要，转换将还原为其父级区域性。 在此示例中，如果请求的区域性为 <code>fr-FR</code> 或 <code>fr-CA</code>，则使用 fr.po 文件。</p>
+<h3 id="testing-the-application">测试应用程序</h3>
+<p>运行应用程序并导航到 URL <code>/Home/About</code>。 此时将显示文本 Hello world! 。</p>
+<p>导航到 URL <code>/Home/About?culture=fr-FR</code>。 此时将显示文本 Bonjour le monde! 。</p>
+<h2 id="pluralization">复数形式</h2>
+<p>PO 文件支持复数形式，在相同字符串需要基于基数以不同方式进行转换时，这非常有用。 此任务较为复杂，因为每种语言均定义了自定义规则，以基于基数选择要使用的字符串。</p>
+<p>Orchard 本地化包提供了一个 API 以自动调用这些不同的复数形式。</p>
+<h3 id="creating-pluralization-po-files">创建复数形式 PO 文件</h3>
+<p>将以下内容添加到前面所述的 fr.po 文件：</p>
+<pre><code class="lang-text">msgid &quot;There is one item.&quot;
+msgid_plural &quot;There are {0} items.&quot;
+msgstr[0] &quot;Il y a un élément.&quot;
+msgstr[1] &quot;Il y a {0} éléments.&quot;
+</code></pre>
+<p>有关此示例中每个条目所表示的内容的说明，请参阅<a href="#what-is-a-po-file">什么是 PO 文件？</a>。</p>
+<h3 id="adding-a-language-using-different-pluralization-forms">使用不同的复数形式添加语言</h3>
+<p>前面的示例中使用了英语和法语字符串。 英语和法语只有两种复数形式且拥有相同形式规则，即一的基数映射到第一种复数形式。 任何其他基数映射到第二种复数形式。</p>
+<p>并非所有语言都拥有相同的规则。 捷克语就是一个例子，它具有三种复数形式。</p>
+<p>如下所示，创建 <code>cs.po</code> 文件，并记下复数形式如何需要三种不同转换：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div>
+<p>若要接受捷克语本地化，请将 <code>&quot;cs&quot;</code> 添加到 <code>ConfigureServices</code> 方法中受支持的区域性列表：</p>
+<pre><code class="lang-csharp">var supportedCultures = new List&lt;CultureInfo&gt;
+{
+    new CultureInfo(&quot;en-US&quot;),
+    new CultureInfo(&quot;en&quot;),
+    new CultureInfo(&quot;fr-FR&quot;),
+    new CultureInfo(&quot;fr&quot;),
+    new CultureInfo(&quot;cs&quot;)
+};
+</code></pre>
+<p>编辑 Views/Home/About.cshtml 文件以呈现一些基数的已本地化复数形式字符串：</p>
+<pre><code class="lang-cshtml">&lt;p&gt;@Localizer.Plural(1, &quot;There is one item.&quot;, &quot;There are {0} items.&quot;)&lt;/p&gt;
+&lt;p&gt;@Localizer.Plural(2, &quot;There is one item.&quot;, &quot;There are {0} items.&quot;)&lt;/p&gt;
+&lt;p&gt;@Localizer.Plural(5, &quot;There is one item.&quot;, &quot;There are {0} items.&quot;)&lt;/p&gt;
+</code></pre>
+<p><strong>注意：</strong> 在实际方案中，将使用变量表示计数。 此处，我们通过三个不同的值重复相同代码，以公开非常特定的事例。</p>
+<p>切换区域性时，将显示如下内容：</p>
+<p>对于 <code>/Home/About</code>：</p>
+<pre><code class="lang-html">There is one item.
+There are 2 items.
+There are 5 items.
+</code></pre>
+<p>对于 <code>/Home/About?culture=fr</code>：</p>
+<pre><code class="lang-html">Il y a un élément.
+Il y a 2 éléments.
+Il y a 5 éléments.
+</code></pre>
+<p>对于 <code>/Home/About?culture=cs</code>：</p>
+<pre><code class="lang-html">Existuje jedna položka.
+Existují 2 položky.
+Existuje 5 položek.
+</code></pre>
+<p>请注意，对于捷克语区域性，这三种转换各不相同。 对于最后两个已转换字符串，法语和英语区域性具有相同构造。</p>
+<h2 id="advanced-tasks">高级任务</h2>
+<h3 id="contextualizing-strings">将字符串置于上下文中理解</h3>
+<p>应用程序通常包含要在多个位置中进行转换的字符串。 在应用中的特定位置（Razor 视图或类文件），相同字符串可能具有不同转换。 PO 文件支持文件上下文概念，此概念可用于对所表示的字符串进行分类。 使用文件上下文，可将字符串进行不同转换，具体取决于文件上下文（或缺乏文件上下文）。</p>
+<p>PO 本地化服务使用完整类的名称或转换字符串时使用的视图。 这通过在 <code>msgctxt</code> 条目上设置值来完成。</p>
+<p>请考虑对以前的 fr.po 示例作一点小小的补充。 可通过设置保留的 <code>msgctxt</code> 条目的值将位于 Views/Home/About.cshtml 的 Razor 视图定义为文件上下文：</p>
+<pre><code class="lang-text">msgctxt &quot;Views.Home.About&quot;
+msgid &quot;Hello world!&quot;
+msgstr &quot;Bonjour le monde!&quot;
+</code></pre>
+<p>这样设置 <code>msgctxt</code> 后，导航到 <code>/Home/About?culture=fr-FR</code> 时将发生文本转换。 而导航到 <code>/Home/Contact?culture=fr-FR</code> 时，则不发生转换。</p>
+<p>当没有特定条目与给定文件上下文相匹配时，Orchard Core 的回退机制将在没有上下文的情况下查找适当的 PO 文件。 假设不存在针对 Views/Home/Contact.cshtml 定义的特定文件上下文，导航到 <code>/Home/Contact?culture=fr-FR</code>，加载 PO 文件，如：</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>It looks like the sample you are looking for does not exist.</p>
+</div><h3 id="changing-the-location-of-po-files">更改 PO 文件的位置</h3>
+<p>可以在 <code>ConfigureServices</code> 中更改 PO 文件的默认位置：</p>
+<pre><code class="lang-csharp">services.AddPortableObjectLocalization(options =&gt; options.ResourcesPath = &quot;Localization&quot;);
+</code></pre>
+<p>在此示例中，从本地化文件夹加载 PO 文件。</p>
+<h3 id="implementing-a-custom-logic-for-finding-localization-files">实现用于查找本地化文件的自定义逻辑</h3>
+<p>当需要更复杂的逻辑以查找 PO 文件时，可实现 <code>OrchardCore.Localization.PortableObject.ILocalizationFileLocationProvider</code> 接口并将其注册为服务。 在可将 PO 文件存储于不同位置或在文件夹层次结构中找到文件时，这非常有用。</p>
+<h3 id="using-a-different-default-pluralized-language">使用不同默认复数形式语言</h3>
+<p>此包包含特定于两种复数形式的 <code>Plural</code> 扩展方法。 对于需要更多复数形式的语言，请创建扩展方法。 通过扩展方法，无需提供默认语言的任何本地化文件 — 可在代码中直接使用原始字符串。</p>
+<p>可使用更加广泛的、接受转换的字符串数组的 <code>Plural(int count, string[] pluralForms, params object[] arguments)</code> 重载。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
